@@ -68,7 +68,7 @@ namespace exeng {
             
 			template< template<typename T> class BinaryOperator >
 			static void unroll(Sequence &out, const Sequence &arr1, const Sequence &arr2) {
-                PrevUnroller::unroll< BinaryOperator >(out, arr1, arr2);
+                PrevUnroller::template unroll< BinaryOperator >(out, arr1, arr2);
                 out[Index] = BinaryOperator<Type>::eval(arr1[Index], arr2[Index]);
 			}
 			
@@ -76,7 +76,7 @@ namespace exeng {
 			template< template<typename T> class AssignBinaryOperator >
 			static void unrollAssign(Sequence &out, const Sequence &arr) {
                 
-				PrevUnroller::unrollAssign < AssignBinaryOperator >(out, arr);
+				PrevUnroller::template unrollAssign < AssignBinaryOperator >(out, arr);
                 AssignBinaryOperator<Type>::eval(out[Index], arr[Index]);
 			}
 
@@ -84,7 +84,7 @@ namespace exeng {
 			template< template<typename T> class BinaryOperator >
 			static void unrollScalar(Sequence &out, const Sequence &arr, Type scalar) {
                 
-                PrevUnroller::unrollScalar<BinaryOperator>(out, arr, scalar);
+                PrevUnroller::template unrollScalar<BinaryOperator>(out, arr, scalar);
                 out[Index] = BinaryOperator<Type>::eval(arr[Index], scalar);
 			}
 		};
