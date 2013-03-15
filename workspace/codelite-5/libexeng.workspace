@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="libexeng" Database="./libexeng.tags">
+  <Project Name="exeng" Path="exeng.project" Active="No"/>
+  <Project Name="raytracer" Path="raytracer.project" Active="Yes"/>
+  <Project Name="test" Path="test.project"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Project Name="exeng" ConfigName="Debug"/>
+      <Project Name="raytracer" ConfigName="Debug"/>
+      <Project Name="test" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="no">
+      <Project Name="exeng" ConfigName="Release"/>
+      <Project Name="raytracer" ConfigName="Release"/>
+      <Project Name="test" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="..\..\src\raytracer\Application.hpp" />
+    <ClInclude Include="..\..\src\raytracer\RayTracerApp.hpp" />
+    <ClInclude Include="..\..\src\raytracer\SphereGeometry.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\raytracer\Application.cpp" />
+    <ClCompile Include="..\..\src\raytracer\RayTracerApp.cpp" />
+    <ClCompile Include="..\..\src\raytracer\SphereGeometry.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\src\raytracer\CMakeLists.txt" />
+  </ItemGroup>
+</Project>
