@@ -1,12 +1,13 @@
 
 #include <cstring>
+#include <iostream>
 
 namespace exeng {
 	namespace graphics {
+        typedef exeng::math::SequenceTypeTraits<Color> ColorSequenceTraits;
+		typedef exeng::math::Unroller<ColorSequenceTraits> ColorUnroller;
 
-		typedef exeng::math::Unroller< exeng::math::SequenceTypeTraits<Color> > ColorUnroller;
-
-		Color::Color() {}
+		inline Color::Color() {}
 
 		inline Color::Color(float value) {
 			this->red = this->green = this->blue = this->alpha = value;
@@ -82,31 +83,74 @@ namespace exeng {
 			return *this;
 		}
 
-		inline Color Color::operator*( float scale ) const {
+		
+		inline Color Color::operator*( float scale ) {
+            Color result;
+            ColorUnroller::unrollScalar< exeng::math::BinaryOperators::Mul >(result, *this, scale);
+            return result;
+            
 		}
 
 
-		inline Color Color::operator/( float scale) const {
+		inline Color Color::operator/( float scale) {
+            Color result;
+            ColorUnroller::unrollScalar< exeng::math::BinaryOperators::Div >(result, *this, scale);
+            return result;
 		}
 
 
-		inline Color& Color::operator*=( float scale ) const {
-
+		inline Color& Color::operator*=( float scale ) {
+            ColorUnroller::unrollScalar< exeng::math::BinaryOperators::Mul >(*this, *this, scale);
+            return *this;
 		}
 
 
-		inline Color& Color::operator/=( float scale) const {
+		inline Color& Color::operator/=( float scale) {
+            ColorUnroller::unrollScalar< exeng::math::BinaryOperators::Div >(*this, *this, scale);
+            return *this;
 		}
 
 
 		inline float& Color::operator[] (int index) {
-
-			this->data[index];
+#ifdef EXENG_DEBUG
+            if (index >= 4) {
+                throw std::runtime_error("Index out of bounds");
+            }
+#endif
+            return this->data[index];
 		}
 
 
 		inline const float& Color::operator[] (int index) const {
+#ifdef EXENG_DEBUG
+            if (index >= 4) {
+                throw std::runtime_error("Index out of bounds");
+            }
+#endif
 			return this->data[index];
 		}
+		
+		
+		inline Color::operator std::uint32_t() const {
+            union {
+                std::uint8_t values[4];
+                std::uint32_t value;
+            } convColor;
+            
+            // Convertir las componentes de cada color
+            for (int i=0; i<4; ++i) {
+                convColor.values[i] = static_cast<std::uint8_t>(this->data[i] * 255.0f);
+            }
+            
+            return convColor.value;
+        }
+        
+        
+        inline void Color::set(float red, float green, float blue, float alpha) {
+            this->red = red;
+            this->green = green;
+            this->blue = blue;
+            this->alpha = alpha;
+        }
 	}
 }

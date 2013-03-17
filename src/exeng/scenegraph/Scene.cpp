@@ -5,43 +5,38 @@
 #include "Camera.hpp"
 #include "Light.hpp"
 
-struct exeng::scenegraph::Scene::Private
-{
-    exeng::scenegraph::SceneNode *rootNode;
-    exeng::math::Vector4f backColor;
+using exeng::graphics::Color;
+using exeng::scenegraph::SceneNode;
+
+struct exeng::scenegraph::Scene::Private {
+    SceneNode *rootNode;
+    Color backColor;
     
-    Private()
-    {
-        this->rootNode = new exeng::scenegraph::SceneNode("");
+    Private() {
+        this->rootNode = new SceneNode("");
     }
 };
 
 
-namespace exeng
-{
-    namespace scenegraph
-    {
-        Scene::Scene()
-        {
+namespace exeng {
+    namespace scenegraph {
+        Scene::Scene() {
             this->impl = new Scene::Private();
         }
         
         
-        Scene::~Scene()
-        {
+        Scene::~Scene() {
             delete this->impl;
         }
         
         
-        auto Scene::getRootNodePtr() -> SceneNode*
-        {
+        auto Scene::getRootNodePtr() -> SceneNode* {
             return this->impl->rootNode;
         }
         
         
-        auto Scene::addCamera(Camera *camera) -> SceneNode*
-        {
-            SceneNode *cameraNode = NULL;
+        auto Scene::addCamera(Camera *camera) -> SceneNode* {
+            SceneNode *cameraNode = nullptr;
             
             cameraNode = this->getRootNodePtr()->addChildPtr("");
             cameraNode->setDataPtr(camera);
@@ -50,9 +45,8 @@ namespace exeng
         }
         
         
-        auto Scene::addLight(Light *light)  -> SceneNode*
-        {
-            SceneNode *lightNode = NULL;
+        auto Scene::addLight(Light *light)  -> SceneNode* {
+            SceneNode *lightNode = nullptr;
             
             lightNode = this->getRootNodePtr()->addChildPtr("");
             lightNode->setDataPtr(light);
@@ -61,14 +55,12 @@ namespace exeng
         }
         
         
-        auto Scene::setBackgroundColor(const math::Vector4f &color) -> void 
-        {
+        auto Scene::setBackgroundColor(const Color &color) -> void  {
             this->impl->backColor = color;
         }
         
         
-        auto Scene::getBackgroundColor() const -> math::Vector4f 
-        {
+        auto Scene::getBackgroundColor() const -> Color  {
             return this->impl->backColor;
         }
     }

@@ -7,6 +7,7 @@ add_library(exeng
 ./Object.hpp ./Object.cpp 
 ./Version.hpp ./Version.cpp 
 ./Root.hpp ./Root.cpp
+./TypeInfo.hpp ./TypeInfo.cpp
 ./TFlags.hpp ./TFlags.inl
 
 ./graphics/GraphicsDriverBase.cpp ./graphics/GraphicsManager.cpp ./graphics/Image.cpp 

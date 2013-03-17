@@ -60,7 +60,6 @@ namespace exeng {
 		 */
 		template< typename _SequenceTypeTraits, int Index=_SequenceTypeTraits::Dimension-1 >
 		struct Unroller {
-            
             typedef typename _SequenceTypeTraits::SequenceType      Sequence;
             typedef typename _SequenceTypeTraits::SequenceValueType Type;
             typedef Unroller<_SequenceTypeTraits, Index - 1>        PrevUnroller;
@@ -92,7 +91,6 @@ namespace exeng {
 
 		template<typename _SequenceTypeTraits>
 		struct Unroller<_SequenceTypeTraits, 0> {
-            
             typedef typename _SequenceTypeTraits::SequenceType      Sequence;
             typedef typename _SequenceTypeTraits::SequenceValueType Type;
             
@@ -109,7 +107,7 @@ namespace exeng {
 			
 			
 			template< template<typename> class BinaryOperator >
-            static void unrollAssign(Sequence &out, const Sequence &arr, Type scalar) {
+            static void unrollScalar(Sequence &out, const Sequence &arr, Type scalar) {
                 out[0] = BinaryOperator<Type>::eval(arr[0], scalar);
             }
 		};

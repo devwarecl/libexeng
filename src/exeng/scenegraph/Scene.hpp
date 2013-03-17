@@ -4,13 +4,12 @@
 
 #include "../Object.hpp"
 #include "../math/TVector.hpp"
+#include "../graphics/Color.hpp"
 
 #include <vector>
 
-namespace exeng
-{
-    namespace scenegraph
-    {
+namespace exeng {
+    namespace scenegraph {
         class EXENGAPI Light;
         class EXENGAPI Camera;
         class EXENGAPI SceneNode;
@@ -20,8 +19,7 @@ namespace exeng
         /**
          *@brief Clase de grafos de escena
          */
-        class EXENGAPI Scene : public Object
-        {
+        class EXENGAPI Scene : public Object {
         public:
             Scene();
             
@@ -50,14 +48,14 @@ namespace exeng
              * @param color Un color como vector de cuatro componentes en punto flotante, 
              * representado como RGBA
              */
-            auto setBackgroundColor(const exeng::math::Vector4f &color) -> void;
+            auto setBackgroundColor(const exeng::graphics::Color &color) -> void;
             
             
             /**
              * @brief Devuelve el color de fondo de la escena
-             * @return Color RGBA, punto flotante, encapsulado en un objeto Exeng::Math::Vector4f
+             * @return Color RGBA, punto flotante, encapsulado en un objeto exeng::graphics::Color
              */
-            auto getBackgroundColor() const -> exeng::math::Vector4f;
+            auto getBackgroundColor() const -> exeng::graphics::Color;
 
 
         private:

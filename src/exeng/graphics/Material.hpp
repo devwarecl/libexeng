@@ -4,6 +4,7 @@
 
 #include "../Object.hpp"
 #include "../math/TVector.hpp"
+#include "Color.hpp"
 
 namespace exeng
 {
@@ -93,22 +94,22 @@ namespace exeng
             /**
              *  @brief 
              */
-            void setAmbient( const exeng::math::Vector4f &color );
+            void setAmbient( const Color &color );
             
             /**
              *  @brief 
              */
-            void setDiffuse( const exeng::math::Vector4f &color );
+            void setDiffuse( const Color &color );
             
             /**
              *  @brief 
              */
-            void setSpecular( const exeng::math::Vector4f &color);
+            void setSpecular( const Color &color);
             
             /**
              *  @brief 
              */
-            void setEmissive( const exeng::math::Vector4f &color );
+            void setEmissive( const Color &color );
             
             /**
              *  @brief 
@@ -118,22 +119,22 @@ namespace exeng
             /**
              *  @brief 
              */
-            exeng::math::Vector4f getAmbient() const;
+            Color getAmbient() const;
             
             /**
              *  @brief 
              */
-            exeng::math::Vector4f getDiffuse() const;
+            Color getDiffuse() const;
             
             /**
              *  @brief 
              */
-            exeng::math::Vector4f getSpecular() const;
+            Color getSpecular() const;
             
             /**
              *  @brief 
              */
-            exeng::math::Vector4f getEmissive() const;
+            Color getEmissive() const;
             
             /**
              *  @brief 

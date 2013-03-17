@@ -11,15 +11,12 @@
 #include "PixelFormat.hpp"
 #include "PixelType.hpp"
 
-namespace exeng
-{
-    namespace graphics
-    {
+namespace exeng {
+    namespace graphics {
         /**
          * @brief Image class.
          */
-        class EXENGAPI Image
-        {
+        class EXENGAPI Image {
         public:
             Image();
             Image(const math::Vector3i& size, ColorFormat::Type format, PixelType::Type type=PixelType::Integer);
