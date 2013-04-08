@@ -2,16 +2,22 @@
 #include "SphereGeometry.hpp"
 #include <algorithm>
 
-namespace RayTracer {
+using exeng::scenegraph::Ray;
+using exeng::scenegraph::IntersectInfo;
+using exeng::math::Vector3f;
+using exeng::math::Boxf;
+
+
+namespace raytracer {
 	SphereGeometry::SphereGeometry() {}
 	SphereGeometry::~SphereGeometry() {}
 	
-	SphereGeometry::SphereGeometry(float radius, const exeng::math::Vector3f &position) {
+	SphereGeometry::SphereGeometry(float radius, const Vector3f &position) {
 		this->sphere.setAttributes(radius, position);
 	}
 
 
-	bool SphereGeometry::hit(const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo) {
+	bool SphereGeometry::hit(const Ray &ray, IntersectInfo *intersectInfo) {
 		bool result = this->sphere.intersect(ray, intersectInfo);
 
 		if (result == true) {
@@ -22,10 +28,10 @@ namespace RayTracer {
 	}
 
 
-	exeng::math::Boxf SphereGeometry::getBoundingBox() const {
+	Boxf SphereGeometry::getBoundingBox() const {
 		auto halfRadius = 0.5f * this->sphere.getRadius();
-		auto point = exeng::math::Vector3f(halfRadius);
+		auto point = Vector3f(halfRadius);
 		
-		return exeng::math::Boxf(-point, point);
+		return Boxf(-point, point);
 	}
 }

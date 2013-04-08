@@ -286,7 +286,7 @@ namespace exeng {
                 Result.set(static_cast<OtherType>(0));
 
 				for(int i=0; i<MinSize; ++i) {
-                    Result[i] = static_cast<OtherType>( this->Data[i] );
+                    Result[i] = static_cast<OtherType>( this->data[i] );
 				}
                 
                 return Result;

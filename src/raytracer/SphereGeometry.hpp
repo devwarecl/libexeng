@@ -6,8 +6,7 @@
 #include <exeng/scenegraph/Sphere.hpp>
 #include <exeng/math/TVector.hpp>
 
-namespace RayTracer
-{
+namespace raytracer {
 	/**
 	 * 	@brief Permite que agreguemos esferas al grafo de escena.
 	 */

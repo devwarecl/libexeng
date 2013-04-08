@@ -27,8 +27,9 @@ namespace exeng {
 			return Color(*this);
 		}
 
-
+		
 		inline Color Color::operator-() const {
+            return *this;
 		}
 
 

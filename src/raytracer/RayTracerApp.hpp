@@ -7,10 +7,9 @@
 
 #include "Application.hpp"
 
-namespace RayTracer
-{
-    class RayTracerApp : public Application
-    {
+namespace raytracer {
+    
+    class RayTracerApp : public Application {
     public:
         RayTracerApp();
         

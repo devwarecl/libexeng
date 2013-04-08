@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <iostream>
 
-namespace RayTracer {
+namespace raytracer {
     int Application::run(const StringVector& cmdLine) {
         try {
             Application *app = Application::instance;
@@ -54,9 +54,9 @@ namespace RayTracer {
 
 
 int main(int argc, char** argv) {
-    using namespace RayTracer;
+    using namespace raytracer;
 
-    RayTracer::StringVector cmdLine;
+    raytracer::StringVector cmdLine;
 
     // Inicializar la linea de comandos
     cmdLine.reserve(argc);
@@ -67,5 +67,5 @@ int main(int argc, char** argv) {
     }
 
     // Ejecutar la aplicacion
-    return RayTracer::Application::run(cmdLine);
+    return raytracer::Application::run(cmdLine);
 }

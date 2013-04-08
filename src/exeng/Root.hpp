@@ -4,10 +4,8 @@
 
 #include "Config.hpp"
 
-namespace exeng
-{
-	namespace system
-	{
+namespace exeng {
+	namespace system {
 		class EXENGAPI PluginManager;
 	}
 
@@ -15,8 +13,7 @@ namespace exeng
      * @brief La clase raiz del motor multimedia. Contiene referencias a 
 	 * los distintos subsistemas del engine.
      */
-	class EXENGAPI Root
-	{
+	class EXENGAPI Root {
 	public:
 
 		/**

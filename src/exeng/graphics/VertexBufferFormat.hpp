@@ -7,15 +7,12 @@
 
 #include "../Config.hpp"
 
-namespace exeng
-{
-    namespace graphics
-    {
+namespace exeng {
+    namespace graphics {
         /**
          * @brief Describe the vertex format
          */
-        class EXENGAPI VertexBufferFormat
-        {
+        class EXENGAPI VertexBufferFormat {
         public:
             /**
              * @brief

@@ -5,17 +5,14 @@
 #include <vector>
 #include <string>
 
-namespace RayTracer
-{
+namespace raytracer {
     typedef std::vector<std::string> StringVector;
 
     /**
      * @brief Describe los posibles estados en los que se puede encontrar una aplicacion de renderizacion determinada.
      */
-    namespace ApplicationStatus
-    {
-        enum Enum
-        {
+    namespace ApplicationStatus {
+        enum Enum {
             Running,
             Stopped
         };
@@ -25,8 +22,7 @@ namespace RayTracer
     /**
      * @brief Interfaz a una aplicacion grafica de tiempo real.
      */
-    class Application
-    {
+    class Application {
     public:
         inline virtual ~Application() {}
         

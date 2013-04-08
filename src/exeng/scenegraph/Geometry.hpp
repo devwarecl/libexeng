@@ -10,6 +10,7 @@
 
 namespace exeng {
     namespace scenegraph {
+        
 		class EXENGAPI Ray;
 		struct EXENGAPI IntersectInfo;
 		

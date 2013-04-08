@@ -11,7 +11,7 @@ set (EXENG_VERSION_MINOR 1)
 
 ## Compiler flags
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++0x") 
+    set(CMAKE_CXX_FLAGS "-std=c++0x -Wall") 
     #set(CMAKE_EXE_LINKER_FLAGS "-s")
 endif()
 

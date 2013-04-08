@@ -21,6 +21,7 @@ add_library(exeng
 ./scenegraph/Plane.hpp ./scenegraph/Plane.inl
 ./scenegraph/IntersectInfo.hpp ./scenegraph/IntersectInfo.cpp
 ./scenegraph/Sphere.hpp ./scenegraph/Sphere.inl
+./scenegraph/Mesh.hpp ./scenegraph/Mesh.cpp
 
 ./system/Library.hpp ./system/Library.cpp 
 ./system/Plugin.hpp ./system/Plugin.cpp 
