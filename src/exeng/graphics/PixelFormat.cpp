@@ -5,6 +5,7 @@
 #include <cassert>
 #include <stdexcept>
 
+/*
 namespace exeng
 {
     namespace graphics
@@ -38,3 +39,4 @@ namespace exeng
         }
     }
 }
+*/

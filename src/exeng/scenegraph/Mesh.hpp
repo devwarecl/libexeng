@@ -22,16 +22,23 @@ namespace exeng {
             
             virtual bool hit( const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo);
             
+            
             /**
              *  @brief Devuelve la cantidad total de MeshSubset's contenidos en la malla.
              */
-            int getMeshPartCount() const;
+            int getPartCount() const;
             
             
             /**
              *  @brief Devuelve el meshsubset contenido en el indice indicado
              */
-            MeshPart* getMeshPart(int index);
+            MeshPart* getPart(int index);
+            
+            
+            /**
+             *  @brief Devuelve el meshsubset contenido en el indice indicado
+             */
+            const MeshPart* getPart(int index) const;
             
         private:
             struct Private;

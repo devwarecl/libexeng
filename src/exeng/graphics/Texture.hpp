@@ -9,43 +9,34 @@
 #include "../math/TVector.hpp"
 #include "PixelFormat.hpp"
 
-namespace exeng
-{
-    namespace graphics
-    {
-        /**
-         * @brief
-         */
-        namespace TextureType
-        {
-            enum Type
-            {
-                Tex1D,
-                Tex2D,
-                Tex3D,
-                TexCubeMap
-            };
-        }
-        
+namespace exeng {
+    namespace graphics {
         
         /**
          * @brief
          */
-        namespace TextureCubeMapFace
-        {
-            enum Type
-            {
-                PositiveX, NegativeX,
-                PositiveY, NegativeY,
-                PositiveZ, NegativeZ
-            };
-        }
+        enum class TextureType {
+            Tex1D,
+            Tex2D,
+            Tex3D,
+            TexCubeMap
+        };
+                
+        /**
+         * @brief
+         */
+        
+        enum class TextureCubeMapFace {
+            PositiveX, NegativeX,
+            PositiveY, NegativeY,
+            PositiveZ, NegativeZ
+        };
         
         
         /**
          * @brief
          */
-        class EXENGAPI  Texture : public Object
+        class EXENGAPI Texture : public Object
         {
         public:
             virtual ~Texture() {}
@@ -58,7 +49,7 @@ namespace exeng
             /**
              * @brief
              */
-            virtual void* lock(TextureCubeMapFace::Type Face) = 0;
+            virtual void* lock(TextureCubeMapFace Face) = 0;
             
             /**
              * @brief
@@ -68,17 +59,17 @@ namespace exeng
             /**
              * @brief
              */
-            virtual TextureType::Type getTextureType() const = 0;
+            virtual TextureType getTextureType() const = 0;
             
             /**
              * @brief
              */
-            virtual ColorFormat::Type getColorFormat() const = 0;
+            virtual ColorFormat getColorFormat() const = 0;
             
             /**
              * @brief
              */
-            virtual math::Vector3i getSize() const = 0;
+            virtual exeng::math::Vector3i getSize() const = 0;
             
             /**
              * @brief

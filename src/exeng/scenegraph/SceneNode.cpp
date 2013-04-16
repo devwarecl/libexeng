@@ -6,12 +6,10 @@
 
 #include "SceneNode.hpp"
 
-
 /**
  * @brief Atributos privados de la clase exeng::scenegraph::SceneNode::Private
  */
-struct exeng::scenegraph::SceneNode::Private
-{
+struct exeng::scenegraph::SceneNode::Private {
     /**
      * @brief El nombre del nodo. Debe ser unico
      */
@@ -41,10 +39,9 @@ struct exeng::scenegraph::SceneNode::Private
     /**
      * @brief Constructor por defecto
      */
-    Private()
-    {   
-        this->data = NULL;
-        this->parentPtr = NULL;
+    Private() {   
+        this->data = nullptr;
+        this->parentPtr = nullptr;
         this->transform.identity();
     }
     
@@ -52,19 +49,15 @@ struct exeng::scenegraph::SceneNode::Private
     /**
      * @brief Destructor
      */
-    ~Private() 
-    {
-    }
+    ~Private()  { }
     
-
     /**
      * @brief Busca el nodo hijo con el nombre indicado, y devuelve un iterador.
      * En caso de que no exista, se devuelve el fin de la secuencia
      * @param name
      * @return 
      */
-    auto getChild(const std::string &name) -> SceneNodeVectorIterator
-    {
+    auto getChild(const std::string &name) -> SceneNodeVectorIterator {
         SceneNode *child = NULL; 
 
         auto &childs = this->childVector;
@@ -83,18 +76,14 @@ struct exeng::scenegraph::SceneNode::Private
 };
 
 
-namespace exeng
-{
-    namespace scenegraph
-    {
-        SceneNode::SceneNode()
-        {
+namespace exeng {
+    namespace scenegraph {
+        SceneNode::SceneNode() {
             this->impl = new SceneNode::Private();
         }
 
 
-        SceneNode::SceneNode(const std::string &name)
-        {
+        SceneNode::SceneNode(const std::string &name) {
             this->impl = new SceneNode::Private();
 
             // Pueden existir nodos hermanos que tengan, potencialmente, 
@@ -103,43 +92,40 @@ namespace exeng
         }
 
 
-        SceneNode::~SceneNode()
-        {
+        SceneNode::~SceneNode() {
             this->orphan();
             boost::checked_delete(this->impl);
         }
 
 
-        std::string SceneNode::toString() const
-        {
+        std::string SceneNode::toString() const {
             assert(this->impl != NULL);
 
             // Construye una especie de ruta que indica la jerarquia a la que pertenece este nodo de escena
-            if (this->hasParent() == false)
+            if (this->hasParent() == false) {
                 return "";
-            else
+            }
+            else {
                 return this->getParentPtr()->toString() + "\\" + this->getName();
+            }
         }
 
 
-        math::Matrix4f SceneNode::getTransform() const
-        {
+        math::Matrix4f SceneNode::getTransform() const {
             assert(this->impl != NULL);
 
             return this->impl->transform;
         }
 
 
-        void SceneNode::setTransform(const math::Matrix4f& transform)
-        {
+        void SceneNode::setTransform(const math::Matrix4f& transform) {
             assert(this->impl != NULL);
 
             this->impl->transform = transform;
         }
 
 
-        std::string SceneNode::getName() const
-        {
+        std::string SceneNode::getName() const {
             assert(this->impl != NULL);
 
             // Devuelve el nombre por valor 
@@ -147,14 +133,11 @@ namespace exeng
         }
 
 
-        void SceneNode::setName(const std::string &name)
-        {
+        void SceneNode::setName(const std::string &name) {
             assert(this->impl != NULL);
 
-            if (this->hasParent() == true)
-            {
-                if (this->getParentPtr()->existChild(name) == true)
-                {
+            if (this->hasParent() == true) {
+                if (this->getParentPtr()->existChild(name) == true) {
                     throw std::logic_error("Ya existe un nodo hermano con ese nombre.");
                 }
             }
@@ -163,22 +146,19 @@ namespace exeng
         }
 
 
-        int SceneNode::getChildCount() const
-        {
+        int SceneNode::getChildCount() const {
             assert(this->impl != NULL);
             return this->impl->childVector.size();
         }
 
 
-        SceneNode* SceneNode::getChildPtr(int index) const
-        {
+        SceneNode* SceneNode::getChildPtr(int index) const {
             assert(this->impl != NULL);
             return this->impl->childVector[index];
         }
 
 
-        SceneNode* SceneNode::getChildPtr(const std::string& name)
-        {
+        SceneNode* SceneNode::getChildPtr(const std::string& name) {
             assert(this->impl != NULL);
 
             SceneNode *childPtr = NULL;
@@ -186,23 +166,22 @@ namespace exeng
             childPtr = *this->impl->getChild(name);
 
             // Como no existe el nodo hijo, instanciamos uno y devolvemos su referencia
-            if (childPtr == NULL)
+            if (childPtr == nullptr) {
                 childPtr = this->addChildPtr(name);
+            }
 
             return childPtr;
         }
 
 
-        SceneNode* SceneNode::getChildPtr(const std::string& name) const
-        {
+        SceneNode* SceneNode::getChildPtr(const std::string& name) const {
             assert(this->impl != NULL);
 
             SceneNode *childPtr = NULL;
             
             childPtr = *this->impl->getChild(name);
 
-            if (childPtr == NULL)
-            {
+            if (childPtr == NULL) {
                 // Lanzar una excpecion, ya que no podemos modificar al grafo de escena 
                 // si este es constante
                 std::string msg;
@@ -218,12 +197,10 @@ namespace exeng
         }
 
 
-        SceneNode* SceneNode::getParentPtr() const
-        {
+        SceneNode* SceneNode::getParentPtr() const {
             assert(this->impl != NULL);
 
-            if (this->hasParent() == false)
-            {
+            if (this->hasParent() == false) {
                 std::string msg;
 
                 msg += "El nodo " + this->toString();
@@ -236,14 +213,12 @@ namespace exeng
         }
 
 
-        void SceneNode::setParentPtr(SceneNode* parent)
-        {
+        void SceneNode::setParentPtr(SceneNode* parent) {
             assert(this->impl != NULL);
 
             // Para cambiar el padre, es necesario primero desvincular al nodo 
             // de su padre previo (si lo tiene)
-            if (this->hasParent() == true)
-            {
+            if (this->hasParent() == true) {
                 this->getParentPtr()->removeChildPtr(this);
             }
 
@@ -252,15 +227,13 @@ namespace exeng
         }
 
 
-        bool SceneNode::hasParent() const
-        {
+        bool SceneNode::hasParent() const {
             assert(this->impl != NULL);
             return this->impl->parentPtr != NULL;
         }
 
 
-        bool SceneNode::existChild(const std::string &name) const
-        {
+        bool SceneNode::existChild(const std::string &name) const {
             assert(this->impl != NULL);
 
             // Si el nodo hijo con el nombre indicado existe, entonces devolvemos true
@@ -268,17 +241,15 @@ namespace exeng
         }
 
 
-        SceneNode* SceneNode::addChildPtr(SceneNode *childPtr)
-        {
+        SceneNode* SceneNode::addChildPtr(SceneNode *childPtr) {
             assert(this->impl != NULL);
 
             // Debemos considerar que este metodo debe modificar los padres directamente, 
             // ya que en la implementacion actual, otros metodos relacionados con la modificacion
             // de la jerarquia del grafo de escena son depedientes de este.
 
-            if (childPtr->hasParent() == true)
-            {
-                // Debemos desvincular al nodo padre 
+            if (childPtr->hasParent() == true) {
+                // Desvincular al nodo padre 
                 childPtr->getParentPtr()->removeChildPtr(childPtr);
             }
 
@@ -290,8 +261,7 @@ namespace exeng
         }
 
 
-        SceneNode* SceneNode::removeChildPtr(const std::string& name)
-        {
+        SceneNode* SceneNode::removeChildPtr(const std::string& name) {
             assert(this->impl != NULL);
 
             // Implementacion rapida y sucia
@@ -302,21 +272,19 @@ namespace exeng
         }
 
 
-        SceneNode* SceneNode::removeChildPtr(SceneNode* childPtr)
-        {
+        SceneNode* SceneNode::removeChildPtr(SceneNode* childPtr) {
             assert(this->impl != NULL);
 
             // Determinar si el padre de este nodo somos nosotros antes de continuar
-            if (this->impl->parentPtr == this)
-            {
+            if (this->impl->parentPtr == this) {
                 // Buscar el iterador correspondiente
                 auto &childs = this->impl->childVector;
                 auto it = childs.begin();
 
-                for (it=childs.begin(); it!=childs.end(); ++it)
-                {
-                    if (*it == childPtr)
+                for (it=childs.begin(); it!=childs.end(); ++it) {
+                    if (*it == childPtr) {
                         break;
+                    }
                 }
 
                 // Indica en tiempo de ejecucion errores internos
@@ -328,8 +296,7 @@ namespace exeng
 
                 return childPtr;
             }
-            else	
-            {
+            else {
                 std::string msg;
 
                 msg += "El nodo '" + 
@@ -342,8 +309,7 @@ namespace exeng
         }
 
 
-        SceneNode* SceneNode::addChildPtr(const std::string& name)
-        {
+        SceneNode* SceneNode::addChildPtr(const std::string& name) {
             assert(this->impl != NULL);
 
             SceneNode* childPtr = new SceneNode(name);
@@ -351,27 +317,24 @@ namespace exeng
         }
 
 
-        void SceneNode::orphan()
-        {
-            if (this->hasParent() == true)
+        void SceneNode::orphan() {
+            if (this->hasParent() == true) {
                 this->getParentPtr()->removeChildPtr(this);
+            }
         }
 
         
-        void SceneNode::setDataPtr(SceneNodeData* data)
-        {
+        void SceneNode::setDataPtr(SceneNodeData* data) {
             this->impl->data = data;
         }
 
 
-        SceneNodeData* SceneNode::getDataPtr() const
-        {
+        SceneNodeData* SceneNode::getDataPtr() const {
             return this->impl->data;
         }
         
         
-        const SceneNodeVector& SceneNode::getChilds() const
-        {
+        const SceneNodeVector& SceneNode::getChilds() const {
             return this->impl->childVector;
         }
     }

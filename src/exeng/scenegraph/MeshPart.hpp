@@ -4,14 +4,16 @@
 
 #include <cstdint>
 #include <vector>
+
 #include "../math/TVector.hpp"
+#include "../Object.hpp"
 #include "../graphics/Material.hpp"
 
 namespace exeng {
     namespace scenegraph {
         
         /**
-         *  @brief El tipo de primitiva
+         *  @brief El tipo de primitiva a renderizar
          */
         enum class PrimitiveType {
             PointList,
@@ -24,41 +26,17 @@ namespace exeng {
         };
         
         
-        /**
-         *  @brief Estructura de un vertice de pruebas
-         */
-        struct Vertex {
-            exeng::math::Vector3f coord;
-            exeng::math::Vector3f normal;
-            exeng::math::Vector2f texCoord;
-        };
-        
+        // typedef std::vector<Vertex> VertexArray;
+        // typedef std::vector<int> IntArray;
         
         /**
          *  @brief Seccion de un modelo tridimensional. Referencia a un material
          */
-        class EXENGAPI MeshPart {
+        class EXENGAPI MeshPart : public Object {
         public:            
-            MeshPart(std::uint32_t vertexCount);
+            MeshPart();
             
             virtual ~MeshPart();
-            
-            /**
-             *  @brief Devuelve la cantidad de vertices de la seccion.
-             */
-            std::uint32_t getVertexCount() const;
-            
-            
-            /**
-             *  @brief Devuelve un puntero al arreglo de vertices
-             */
-            Vertex* getVertex(std::uint32_t index);
-            
-            
-            /**
-             *  @brief Devuelve un puntero al arreglo de vertices
-             */
-            const Vertex* getVertex(std::uint32_t index) const;
             
             /**
              *  @brief Devuelve el tipo de primitiva
@@ -69,24 +47,53 @@ namespace exeng {
             /**
              *  @brief Establece el tipo de primitiva
              */
-            void setPrimitiveType(PrimitiveType pt);
+            void setPrimitiveType(PrimitiveType primitiveType);
             
             
             /**
-             *  @brief Devuelve el material actual
+             *  @brief Devuelve el material actual de renderizacion
              */
             const exeng::graphics::Material* getMaterial() const;
             
             
             /**
-             *  @brief Establece el material actual
+             *  @brief Establece el material actual de renderizacion
              */
             void setMaterial(const exeng::graphics::Material* material);
+            
             
             
             /**
              *  @brief Establece el arreglo de indices actual. 
              */
+            
+            // void setIndexArray(const IntArray &indexArray);
+            
+            
+            /**
+             * @brief Devuelve una copia del arreglo de indices actual
+             */
+            // const IntArray& getIndexArray() const;
+            
+            /**
+             * @brief Comprueba si esta parte posee indices.
+             */
+            
+            bool hasIndices() const;
+            
+            /**
+             * @brief Establece el arreglo de vertices actual
+             */
+            // void setVertexArray(const VertexArray &vertexArray);
+            
+            
+            /**
+             * @brief Establece el arreglo de vertices actual
+             */
+            // const VertexArray& getVertexArray() const;
+            
+            
+            virtual TypeInfo getTypeInfo() const;
             
             
         private:

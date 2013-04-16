@@ -8,16 +8,14 @@
 #include "DataTypes.hpp"
 #include "TypeInfo.hpp"
 
-namespace exeng
-{
+namespace exeng {
 	/**
 	 * @brief Clase base de la jerarquia de objetos del motor multimedia. Se utiliza una clase raiz para que los objetos
 	 * creados dinamicamente por el engine tengan un comportamiento homogeneo con respecto a ciertas operaciones comunes. 
 	 * Los objetos heredados son dinamicos y mutables.
 	 */
 	
-	class EXENGAPI Object
-	{
+	class EXENGAPI Object {
 	public:
 		virtual ~Object() = 0;
 		

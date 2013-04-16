@@ -7,8 +7,7 @@
 
 #include <cstdint>
 
-namespace exeng
-{
+namespace exeng {
 	/**
 	 * @brief Clase de plantilla para el manejo de Flags.
 	 *
@@ -22,8 +21,7 @@ namespace exeng
 		//! El tipo de datos usado para el almacenamiento
 		typename _StorageType = std::uint32_t
 	>
-	class TFlags
-	{
+	class TFlags {
 	public:
 		// Definir alias para posibilitar el uso en un ambiente de 
 		// programacion de plantillas

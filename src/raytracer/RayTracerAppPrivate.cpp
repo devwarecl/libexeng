@@ -5,12 +5,15 @@
 #include "RayTracerAppPrivate.hpp"
 #include "samplers/JitteredSampler.hpp"
 
+#include <boost/timer/timer.hpp>
+
 namespace raytracer {
+    
     RayTracerApp::Private::Private() {
         this->defaultColor = 0xFF000000;
-        this->backbuffer = NULL;
+        this->backbuffer = nullptr;
         this->running = false;
-        this->cameraView.size.set(640, 480);
+        this->cameraView.size.set(320, 200);
         
         this->sampler.reset(new raytracer::samplers::JitteredSampler(25));
         this->scene.reset(new exeng::scenegraph::Scene());
@@ -89,7 +92,6 @@ namespace raytracer {
     
     
     void RayTracerApp::Private::flattenHierarchy(SceneNodeList &out, SceneNode* node) const {
-        
         // Poner los nodos de escena
         if (node != nullptr && node->getDataPtr() != nullptr) {
             if (node->getDataPtr()->getTypeInfo() == TypeInfo::get<Geometry>())  {
@@ -108,7 +110,7 @@ namespace raytracer {
 
         // Determinar colision con el contenido del nodo
         for (auto node : nodes) {
-            auto geometry = static_cast<Geometry*>( node->getDataPtr() );
+            Geometry* geometry = static_cast<Geometry*>( node->getDataPtr() );
             assert(geometry != nullptr);
 
             if (geometry->hit(ray, &currentInfo) == true) {
@@ -135,16 +137,16 @@ namespace raytracer {
         
         Color color(0.0f, 0.0f, 0.0f, 1.0f);
         
-        auto pixelSample = static_cast<Vector2f>(pixel);
+        Vector2f pixelSample = static_cast<Vector2f>(pixel);
         
         for (int i=0; i<this->sampler->getSampleCount(); ++i) {
             
             // Trazar un rayo
-            auto sample = this->sampler->sampleUnitSquare();
-            auto ray = this->castRay(pixel, sample);
+            Vector2f sample = this->sampler->sampleUnitSquare();
+            Ray ray = this->castRay(pixel, sample);
             
             // Intersectarlo con los objetos de la escena
-            auto info = this->intersectRay(sceneNodeList, ray);
+            IntersectInfo info = this->intersectRay(sceneNodeList, ray);
             
             if (info.intersect == true)  {
                 // Determinar el color

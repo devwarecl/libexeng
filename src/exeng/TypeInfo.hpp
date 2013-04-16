@@ -5,11 +5,11 @@
 #include <typeinfo>
 #include "Config.hpp"
 
-namespace exeng
-{
-	//! Wrapper para objetos std::type_info.
-	class EXENGAPI TypeInfo
-	{
+namespace exeng {
+	/**
+     *  @brief Wrapper para objetos std::type_info.
+     */
+	class EXENGAPI TypeInfo {
 	public:
 		TypeInfo();
 		
@@ -32,8 +32,7 @@ namespace exeng
 
 
 		template<typename Type>
-		static TypeInfo get()
-		{
+		static TypeInfo get() {
 			TypeInfo info;
 
 			info.setStdTypeInfo(typeid(Type));
@@ -42,7 +41,7 @@ namespace exeng
 		}
 
 	private:
-		std::type_info* typeInfo;
+		std::type_info *typeInfo;
 	};
 
 

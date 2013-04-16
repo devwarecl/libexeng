@@ -5,42 +5,38 @@
 #include "Root.hpp"
 #include "system/PluginManager.hpp"
 
-struct exeng::Root::Private
-{
-    Root *root;
-    system::PluginManager *pluginManager;
+namespace exeng {
+    
+    /**
+     * @brief Atributos privados.
+     */
+    struct Root::Private {
+        Private(Root *root) : root(NULL), pluginManager(NULL) {
+            this->root = root;
+            this->pluginManager = new system::PluginManager(*root);
+        }
+        
+        ~Private() {
+            boost::checked_delete(this->pluginManager);
+        }    
+        
+        Root *root;
+        system::PluginManager *pluginManager;
+    };
 
-    Private(Root *root) : root(NULL), pluginManager(NULL)
-    {
-        this->root = root;
-        this->pluginManager = new system::PluginManager(*root);
-    }
-	
-    ~Private()
-    {
-        boost::checked_delete(this->pluginManager);
-    }    
-};
-
-
-namespace exeng
-{
-	Root::Root() : impl(NULL)
-	{
+    
+	Root::Root() : impl(NULL) {
 		this->impl = new Root::Private(this);
 	}
 
 
-	Root::~Root()
-	{
+	Root::~Root() {
 		boost::checked_delete(this->impl);
 	}
 
 
-	system::PluginManager& Root::getPluginManagerRef()
-	{
+	system::PluginManager& Root::getPluginManagerRef() {
 		assert(this->impl != NULL);
-
 		return *this->impl->pluginManager;
 	}
 }

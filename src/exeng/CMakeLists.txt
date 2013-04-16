@@ -1,7 +1,6 @@
 include_directories( ${PROJECT_SOURCE_DIR}/src )
 
 add_library(exeng 
-
 ./Exeng.hpp ./DetectEnv.hpp ./Config.hpp ./DataTypes.hpp 
 
 ./Object.hpp ./Object.cpp 
@@ -22,6 +21,9 @@ add_library(exeng
 ./scenegraph/IntersectInfo.hpp ./scenegraph/IntersectInfo.cpp
 ./scenegraph/Sphere.hpp ./scenegraph/Sphere.inl
 ./scenegraph/Mesh.hpp ./scenegraph/Mesh.cpp
+./scenegraph/MeshPart.hpp ./scenegraph/MeshPart.cpp
+./scenegraph/VertexBuffer.hpp ./scenegraph/VertexBuffer.cpp
+./scenegraph/IndexBuffer.hpp ./scenegraph/IndexBuffer.cpp
 
 ./system/Library.hpp ./system/Library.cpp 
 ./system/Plugin.hpp ./system/Plugin.cpp 
@@ -34,5 +36,4 @@ add_library(exeng
 ./math/TMatrix.hpp ./math/TMatrix.inl 
 ./math/TSize.hpp ./math/TSize.inl 
 ./math/TVector.hpp ./math/TVector.inl 
-
 )

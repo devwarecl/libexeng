@@ -6,8 +6,41 @@
 #include <list>
 
 #include "RayTracerAppPrivate.hpp"
+#include <boost/timer/timer.hpp>
 
 namespace raytracer {
+     
+   /*
+    class BackbufferHandler {  
+    public:
+        BackbufferHandler() : backbuffer(nullptr) {
+        }
+        
+        explicit BackbufferHandler(SDL_Surface *backbuffer) {
+            this->backbuffer = backbuffer;
+        }
+        
+        
+        void lock() {
+        }
+        
+        
+        void unlock() {   
+            
+        }
+        
+        
+        void putPixel() {
+        }
+        
+        
+    private:
+        SDL_Surface *backbuffer;
+    };
+    */
+    
+    
+    
     RayTracerApp::RayTracerApp() {
 		this->impl.reset(new RayTracerApp::Private());
     }
@@ -23,7 +56,7 @@ namespace raytracer {
         
         auto screenSize = this->impl->cameraView.size;
         
-        auto flags = SDL_DOUBLEBUF | SDL_HWSURFACE;
+        auto flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
         auto buffer = SDL_SetVideoMode(screenSize.x, screenSize.y, 32, flags);
 
         this->impl->backbuffer = buffer;
@@ -63,6 +96,7 @@ namespace raytracer {
 
 
     void RayTracerApp::present() {
+        boost::timer::auto_cpu_timer autoTimer;
         
         auto screenSize = this->impl->cameraView.size;
         IntersectInfo info;

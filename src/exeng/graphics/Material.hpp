@@ -6,17 +6,14 @@
 #include "../math/TVector.hpp"
 #include "Color.hpp"
 
-namespace exeng
-{
-	namespace graphics
-    {
+namespace exeng {
+	namespace graphics {
         class EXENGAPI Texture;
         
         /**
          *  @brief Capa de un material
          */
-        class EXENGAPI MaterialLayer
-        {
+        class EXENGAPI MaterialLayer {
         public:
             
             /**
@@ -73,8 +70,7 @@ namespace exeng
         /**
          *  @brief Describe la apariencia visual de un objeto tridimensional
          */
-	    class EXENGAPI Material : public Object
-	    {
+	    class EXENGAPI Material : public Object {
         public:
             /**
              *  @brief 

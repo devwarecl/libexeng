@@ -267,7 +267,7 @@ namespace exeng
             /**
              * @brief Create a new texture object.
              */
-            virtual Texture* createTexture(TextureType::Type TextureType, const math::Vector3f& TextureSize) = 0;
+            virtual Texture* createTexture(TextureType TextureType, const math::Vector3f& TextureSize) = 0;
             
             /**
              * @brief Set the current transformation matrix

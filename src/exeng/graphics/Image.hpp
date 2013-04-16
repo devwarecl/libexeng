@@ -19,7 +19,7 @@ namespace exeng {
         class EXENGAPI Image {
         public:
             Image();
-            Image(const math::Vector3i& size, ColorFormat::Type format, PixelType::Type type=PixelType::Integer);
+            Image(const math::Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
             
             virtual ~Image();
             
@@ -36,12 +36,12 @@ namespace exeng {
             /**
              * @brief Get the current image format
              */
-            ColorFormat::Type getFormat() const;
+            ColorFormat getFormat() const;
             
             /**
              * @brief Get the pixel data type storage
              */
-            PixelType::Type getType() const;
+            PixelType getType() const;
             
             /**
              * @brief 
@@ -51,7 +51,7 @@ namespace exeng {
             /**
              * @brief 
              */
-            void initialize( const math::Vector3i& size, ColorFormat::Type format, PixelType::Type type=PixelType::Integer);
+            void initialize( const math::Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
             
             /**
              * @brief 

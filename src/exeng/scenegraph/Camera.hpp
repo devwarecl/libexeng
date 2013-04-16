@@ -1,5 +1,5 @@
 /**
- * @brief Documentacion pendiente.
+ * @brief Define la interfaz para la clase de camaras, y sus clases de soporte
  */
 
 #ifndef __EXENG_SCENEGRAPH_CAMERA_HPP__
@@ -8,64 +8,40 @@
 #include "../Object.hpp"
 #include "../math/TVector.hpp"
 #include "../math/TSize.hpp"
+#include "../math/TBoundary.hpp"
 #include "../scenegraph/SceneNodeData.hpp"
 
-
-namespace exeng
-{
-    namespace scenegraph
-    {
-        /**
-         * @brief Un viewport
+namespace exeng {
+    namespace scenegraph {
+        
+        
+        /** 
+         * @brief enum class ProjectionType
          */
-        struct Viewport
-        {
-            exeng::math::Vector2f position;
-            exeng::math::Size2f size;
-            
-            Viewport()
-            {
-                this->position = exeng::math::Vector2f(0.0f, 0.0f);
-                this->size = exeng::math::Size2f(1.0f, 1.0f);
-            }
+        enum class CameraProjectionType {
+            Orthographic,
+            Perspective
         };
         
         
         /**
          * @brief The Projection struct
          */
-        struct Projection
-        {
-            exeng::Float32 left, right;
-            exeng::Float32 bottom, top;
-            exeng::Float32 back, front;
+        struct CameraProjection {
+            exeng::math::Boxf box;
+            exeng::scenegraph::CameraProjectionType type;
             
-            Projection()
-            {
-                this->left = this->bottom = this->back = -1.0f;
-                this->right = this->top = this->front = 1.0f;
+            CameraProjection() {
+                this->box.set(1.0f);
+                this->type = CameraProjectionType::Orthographic;
             }
         };
-        
-        
-        /** 
-         * @brief enum class ProjectionType
-         */
-        namespace ProjectionType
-        {
-            enum Enum    
-            {
-                Orthographic,
-                Perspective
-            };
-        }
         
         
         /**
          * @brief The Camera class
          */
-        class EXENGAPI Camera : public SceneNodeData
-        {            
+        class EXENGAPI Camera : public SceneNodeData {
         public:
             Camera();
             
@@ -119,48 +95,33 @@ namespace exeng
              * @brief setViewport
              * @param viewport
              */
-            auto setViewport(const Viewport &viewport) -> void;
+            auto setViewport(const exeng::math::Rectf &viewport) -> void;
             
             /**
              * @brief getViewport
              * @return 
              */
-            auto getViewport() const -> Viewport;
+            auto getViewport() const -> exeng::math::Rectf;
             
             
             /**
              * @brief setProjection
              * @param proj
              */
-            auto setProjection(const Projection &proj) -> void;
+            auto setProjection(const CameraProjection &proj) -> void;
             
             
             /**
              * @brief getProjection
              * @return 
              */
-            auto getProjection() -> Projection;
-            
-            
-            /**
-             * @brief setProjectionType
-             * @param type
-             */
-            auto setProjectionType(ProjectionType::Enum projType) -> void;
-            
-            
-            /**
-             * @brief Regresa la proyeccion actual que usa la camara.
-             * @return 
-             */
-            auto getProjectionType() -> ProjectionType::Enum;
-            
+            auto getProjection() const -> CameraProjection;
+        
             
         private:
             struct Private;
             Private *impl;
         };
-    
     }
 }
 

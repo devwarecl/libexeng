@@ -1,170 +1,145 @@
+/**
+ * @brief Implementacion de la clase Camera, y sus clases asociadas
+ */
 
 #include <cassert>
 #include <stdexcept>
+#include <boost/checked_delete.hpp>
+
 #include "Camera.hpp"
 
+using exeng::math::Vector3f;
+using exeng::math::Size2f;
+using exeng::math::Rectf;
+using exeng::scenegraph::CameraProjection;
+using exeng::scenegraph::CameraProjectionType;
 
-/**
- * @brief Atributos y funciones privados de la clase Camera.
- */
-struct exeng::scenegraph::Camera::Private
-{
-    exeng::math::Vector3f position;   
-    exeng::math::Vector3f lookAt;
-    exeng::math::Vector3f up;
-    exeng::scenegraph::Viewport viewport;
-    exeng::scenegraph::Projection proj;
-    exeng::scenegraph::ProjectionType::Enum projType;
-    
-    Private()
-    {
-        this->position = exeng::math::Vector3f(0.0f, 0.0f, 1.0f);
-        this->up = exeng::math::Vector3f(0.0, 1.0, 0.0);
+namespace exeng {
+    namespace scenegraph {
         
-        this->viewport.size = exeng::math::Size2f(1.0, 1.0);
-        this->projType = exeng::scenegraph::ProjectionType::Orthographic;
-    }
-};
-
-
-namespace exeng
-{
-    namespace scenegraph
-    {
-        std::string invalidArgument = "La posicion no puede ser igual al punto de vision de la camara";
-    
-    
-        Camera::Camera()
-        {
-            this->impl = new Camera::Private();
+        /**
+         * @brief Atributos y funciones privados de la clase Camera.
+         */
+        struct Camera::Private {
+            Private() {
+                this->position = Vector3f(0.0f, 0.0f, 1.0f);
+                this->up = Vector3f(0.0, 1.0, 0.0);
+                
+                // Toda la pantalla por defecto
+                this->viewport.set(1.0f);                
+            }
+            
+            Vector3f position;   
+            Vector3f lookAt;
+            Vector3f up;
+            Rectf viewport;
+            CameraProjection proj;
+        };
+        
+        const char *invalidArgument = "La posicion no puede ser igual al punto de vision de la camara";
+        
+        
+        Camera::Camera() : impl(new Camera::Private()) {
         }
 		
 		
-		Camera::~Camera() 
-		{
-			delete this->impl;
+		Camera::~Camera() {
+            boost::checked_delete(this->impl);
 		}
 		
         
-        void Camera::setOrientation(const exeng::math::Vector3f &pos, const exeng::math::Vector3f &lookAt)
-        {
-            if (pos == lookAt)
+        void Camera::setOrientation(const Vector3f &pos, const Vector3f &lookAt) {
+            if (pos == lookAt) {
                 throw std::invalid_argument(invalidArgument);
+            }
             
             this->impl->position = pos;
             this->impl->lookAt = lookAt;
         }
         
         
-        auto Camera::setPosition(const exeng::math::Vector3f &pos) -> void
-        {
-            assert(this->impl != NULL);
+        void Camera::setPosition(const Vector3f &pos) {
+            assert(this->impl != nullptr);
             
-            if (pos == this->impl->lookAt)
+            if (pos == this->impl->lookAt) {
                 throw std::invalid_argument(invalidArgument);
+            }
             
             this->impl->position = pos;
         }
         
         
-        auto Camera::getPosition() const -> exeng::math::Vector3f
-        {
-            assert(this->impl != NULL);
+        Vector3f Camera::getPosition() const{
+            assert(this->impl != nullptr);
             
             return this->impl->position;
         }
         
         
-        auto Camera::setLookAt(const exeng::math::Vector3f &lookAt) -> void
-        {
-            assert(this->impl != NULL);
+        void Camera::setLookAt(const Vector3f &lookAt) {
+            assert(this->impl != nullptr);
             
-            if (this->impl->position == lookAt)
+            if (this->impl->position == lookAt) {
                 throw std::invalid_argument(invalidArgument);
+            }
             
             this->impl->lookAt = lookAt;
         }
         
         
-        auto Camera::getLookAt() const -> exeng::math::Vector3f
-        {
-            assert(this->impl != NULL);
+        Vector3f Camera::getLookAt() const {
+            assert(this->impl != nullptr);
             
             return this->impl->lookAt;
         }
         
         
-        auto Camera::getUp() const -> exeng::math::Vector3f
-        {
-            assert(this->impl != NULL);
+        Vector3f Camera::getUp() const {
+            assert(this->impl != nullptr);
             
             return this->impl->up;
         }
         
         
-        auto Camera::setUp(const exeng::math::Vector3f &up) -> void
-        {
-            assert(this->impl != NULL);
+        void Camera::setUp(const Vector3f &up) {
+            assert(this->impl != nullptr);
             
-            if (up == exeng::math::Vector3f(0.0, 0.0, 0.0))
+            if (up.isZero() == false) {
                 throw std::invalid_argument("La direccion superior de la camara no puede ser el vector cero.");
+            }
             
             this->impl->up = up;
             this->impl->up.normalize();
         }
         
         
-        auto Camera::setViewport(const Viewport &viewport) -> void
-        {
-            assert(this->impl != NULL);
-            
-            if (viewport.size == exeng::math::Size2f(0.0, 0.0))
+        void Camera::setViewport(const Rectf &viewport) {
+            assert(this->impl != nullptr);
+
+            if (viewport.getSize() == Size2f(0.0, 0.0)) {   
                 throw std::invalid_argument("El tamanio debe tener todos sus valores positivos");
+            }
             
             this->impl->viewport = viewport;
         }
         
         
-        auto Camera::getViewport() const -> Viewport
-        {
-            assert(this->impl != NULL);
-            
+        Rectf Camera::getViewport() const {
+            assert(this->impl != nullptr);
             return this->impl->viewport;
         }
         
         
-        auto Camera::setProjection(const Projection &proj) -> void
-        {
-            assert(this->impl != NULL);
-            
-            if (proj.back > proj.left || proj.bottom > proj.top || proj.front > proj.back)
-                throw std::invalid_argument("El objeto de proyeccion tiene algunos valores invalidos");
-            
+        void Camera::setProjection(const CameraProjection &proj) {
+            assert(this->impl != nullptr);
             this->impl->proj = proj;
         }
         
         
-        auto Camera::getProjection() -> Projection
-        {
-            assert(this->impl != NULL);
+        CameraProjection Camera::getProjection() const {
+            assert(this->impl != nullptr);
             
             return this->impl->proj;
-        }
-        
-        
-        auto Camera::setProjectionType(ProjectionType::Enum projType) -> void
-        {
-            assert(this->impl != NULL);
-            
-            this->impl->projType = projType;
-        }
-        
-        
-        auto Camera::getProjectionType() -> ProjectionType::Enum
-        {
-            assert(this->impl != NULL);
-            
-            return this->impl->projType;
         }
     }
 }

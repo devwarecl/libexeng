@@ -36,6 +36,12 @@ namespace exeng {
 	 * @brief 
 	 */
     namespace system {}
+    
+    
+    /**
+     * @brief 
+     */
+    namespace scenegraph {}
 }
 
 #endif  //__EXENG_HPP__

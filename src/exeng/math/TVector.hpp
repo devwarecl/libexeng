@@ -336,8 +336,25 @@ namespace exeng {
              * @brief Interpolacion cubica
              */
             static Vector hermite(const Vector& V1, const Vector& T1, const Vector& V2, const Vector& T2, Type S);
+            
+            /**
+             * @brief Comprueba si dos vectores son iguales. Solo tiene sentido si el vector esta basado
+             * en un tipo de datos de ṕunto flotante.
+             */
+            bool equals(Vector &other, Type epsilon=Type()) const;
+            
+            
+            /**
+             * @brief Comprueba si el vector actual corresponde al vector zero.
+             */
+            bool isZero() const;
+            
+            /**
+             * @brief Regresa el vector zero
+             */
+            static Vector zero();
         };
-
+        
         
         typedef TVector<float, 2> Vector2f;
         typedef TVector<float, 3> Vector3f;

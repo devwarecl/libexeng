@@ -421,21 +421,44 @@ namespace exeng {
         Type TVector<Type, Size>::comp(const TVector<Type, Size> &other) const {
 			return this->dot(other) / this->getMagnitude();
         }
+        
+        
+        template<typename Type, int Size>
+        bool TVector<Type, Size>::equals(TVector<Type, Size> &other, Type epsilon) const {
+            for (int i=0; i<Size; ++i) {
+                if ( exeng::math::abs( this->data[i] - other.data[i] ) > epsilon ) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        
+        template<typename Type, int Size>
+        bool TVector<Type, Size>::isZero() const {
+            return *this == TVector<Type, Size>::zero();
+        }
+        
+        
+        template<typename Type, int Size>
+        TVector<Type, Size> TVector<Type, Size>::zero() {
+            return TVector<Type, Size>(Type());
+        }
     }
 }
 
 
 template<typename Type, int Size>
-std::ostream& operator<< (std::ostream &os, const exeng::math::TVector<Type, Size>& Vector)
-{
+std::ostream& operator<< (std::ostream &os, const exeng::math::TVector<Type, Size>& Vector) {
     os << "(";
     
-    for(int i=0; i<Size; ++i)
-    {
+    for(int i=0; i<Size; ++i) {
         os << std::fixed << std::setprecision( 4 ) << Vector[i];
         
-        if (i + 1 != Size)
+        if (i + 1 != Size) {
             os << ", ";
+        }
     }
     
     os << ")";
