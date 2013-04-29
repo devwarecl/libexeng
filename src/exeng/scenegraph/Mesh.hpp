@@ -18,27 +18,37 @@ namespace exeng {
             
             virtual ~Mesh();
             
+            /**
+             * @brief Calcula la caja de colision actual para el objeto actual.
+             * 
+             * Esta implementacion asume que todos los mesh parts no son punteros nulos, ni vacios.
+             */
             virtual exeng::math::Boxf getBoundingBox() const;
             
             virtual bool hit( const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo);
             
             
             /**
-             *  @brief Devuelve la cantidad total de MeshSubset's contenidos en la malla.
+             * @brief Devuelve la cantidad total de MeshSubset's contenidos en la malla.
              */
             int getPartCount() const;
             
             
             /**
-             *  @brief Devuelve el meshsubset contenido en el indice indicado
+             * @brief Devuelve el meshsubset contenido en el indice indicado
              */
             MeshPart* getPart(int index);
             
             
             /**
-             *  @brief Devuelve el meshsubset contenido en el indice indicado
+             * @brief Devuelve el meshsubset contenido en el indice indicado
              */
             const MeshPart* getPart(int index) const;
+            
+            /**
+             * @brief Establece la parte de la malla indicada.
+             */
+            void setPart(int index, MeshPart *part);
             
         private:
             struct Private;

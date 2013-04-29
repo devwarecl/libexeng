@@ -61,7 +61,7 @@ namespace exeng {
             /**
              * @brief Comprueba si es posible bloquear al buffer.
              */
-            bool tryLock();
+            bool isLocked() const;
             
             /**
              * @brief Desbloquea al buffer, en caso de que ya este bloqueado.

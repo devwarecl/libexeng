@@ -357,7 +357,12 @@ namespace exeng {
 
             return result;
         }
-
+        
+        
+        template<typename Type, int Size>
+        Type TVector<Type, Size>::triple(const TVector<Type, Size> &other1, const TVector<Type, Size> &other2) const {
+            return this->cross(other1).dot(other2);
+        }
 
         //Maximiza un TVector<Type, Size>
         template<typename Type, int Size>

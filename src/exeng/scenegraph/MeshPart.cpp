@@ -6,37 +6,26 @@
 #include <boost/checked_delete.hpp>
 
 using exeng::graphics::Material;
+using exeng::math::Boxf;
 
 namespace exeng {
     namespace scenegraph {
         
         struct MeshPart::Private {
             const Material *material;
-            // VertexArray vertexArray;
-            // IntArray indexArray;
+            VertexBuffer *vertexBuffer;
+            IndexBuffer *indexBuffer;
             PrimitiveType primitiveType;
+            
+            Private() : material(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr) {
+                this->primitiveType = PrimitiveType::TriangleList;
+            }
         };
         
         
         MeshPart::MeshPart() : impl(nullptr) {
             this->impl = new MeshPart::Private();
         }
-        
-        /*
-        MeshPart::MeshPart(const VertexArray &vertexArray) : impl(nullptr)  {
-            this->impl = new MeshPart::Private();
-            
-            this->setVertexArray(vertexArray);
-        }
-        
-        
-        MeshPart::MeshPart(const VertexArray &vertexArray, const IntArray &indexArray) : impl(nullptr)  {
-            this->impl = new MeshPart::Private();
-            
-            this->setVertexArray(vertexArray);
-            this->setIndexArray(indexArray);
-        }
-        */
         
         
         MeshPart::~MeshPart() {
@@ -64,27 +53,34 @@ namespace exeng {
         }
         
         
-        /*
-        void MeshPart::setIndexArray(const IntArray &indexArray) {
-            this->impl->indexArray = indexArray;
+        void MeshPart::setIndexBuffer(IndexBuffer *buffer) {
+            this->impl->indexBuffer = buffer;
         }
         
         
-        
-        const IntArray& MeshPart::getIndexArray() const {
-            return this->impl->indexArray;
+        const IndexBuffer* MeshPart::getIndexBuffer() const {
+            return this->impl->indexBuffer;
         }
         
         
-        void MeshPart::setVertexArray(const VertexArray &vertexArray) {
-            this->impl->vertexArray = vertexArray;
+        IndexBuffer* MeshPart::getIndexBuffer() {
+            return this->impl->indexBuffer;
         }
         
         
-        const VertexArray& MeshPart::getVertexArray() const {
-            return this->impl->vertexArray;
+        void MeshPart::setVertexBuffer(VertexBuffer *buffer) {
+            this->impl->vertexBuffer = buffer;
         }
-        */
+        
+        
+        const VertexBuffer* MeshPart::getVertexBuffer() const {
+            return this->impl->vertexBuffer;
+        }
+        
+        
+        VertexBuffer* MeshPart::getVertexBuffer(){
+            return this->impl->vertexBuffer;
+        }
         
         
         TypeInfo MeshPart::getTypeInfo() const {
@@ -92,8 +88,20 @@ namespace exeng {
         }
         
         
-        bool MeshPart::hasIndices() const {
-            return true;
+        Boxf MeshPart::getBox() const {
+            //! TODO: Este metodo debe ser mas generico en el futuro. Por
+            //! ahora vamos a asumir que TODOS los bufferes de vertices 
+            //! poseen vertices estandar (con posicion, normal y coordenadas de textura).
+            
+            VertexBuffer *vb = const_cast<VertexBuffer *>(this->getVertexBuffer());
+            VertexArray<Vertex> vertices(vb);
+            Boxf box(vertices[0].coord, vertices[0].coord);
+            
+            for(int i=1; i<vertices.size(); ++i) {
+                box.expand(vertices[i].coord);
+            }
+            
+            return box;
         }
     }
 }

@@ -22,6 +22,7 @@ add_library(exeng
 ./scenegraph/Sphere.hpp ./scenegraph/Sphere.inl
 ./scenegraph/Mesh.hpp ./scenegraph/Mesh.cpp
 ./scenegraph/MeshPart.hpp ./scenegraph/MeshPart.cpp
+./scenegraph/Buffer.hpp ./scenegraph/Buffer.cpp
 ./scenegraph/VertexBuffer.hpp ./scenegraph/VertexBuffer.cpp
 ./scenegraph/IndexBuffer.hpp ./scenegraph/IndexBuffer.cpp
 

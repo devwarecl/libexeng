@@ -305,6 +305,13 @@ namespace exeng {
              */
             Vector cross(const Vector &other) const;
 
+            
+            /**
+             * @brief Calcula el triple producto escalar entre tres vectores
+             */
+            Type triple(const Vector &other1, const Vector &other2) const;
+            
+            
             /**
              * @brief Maximiza un vector
              */

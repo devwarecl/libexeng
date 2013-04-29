@@ -6,14 +6,17 @@
 #include <vector>
 
 #include "../math/TVector.hpp"
+#include "../math/TBoundary.hpp"
 #include "../Object.hpp"
 #include "../graphics/Material.hpp"
 
+#include "IndexBuffer.hpp"
+#include "VertexBuffer.hpp"
+
 namespace exeng {
     namespace scenegraph {
-        
         /**
-         *  @brief El tipo de primitiva a renderizar
+         * @brief El tipo de primitiva a renderizar
          */
         enum class PrimitiveType {
             PointList,
@@ -26,11 +29,11 @@ namespace exeng {
         };
         
         
-        // typedef std::vector<Vertex> VertexArray;
-        // typedef std::vector<int> IntArray;
-        
         /**
-         *  @brief Seccion de un modelo tridimensional. Referencia a un material
+         * @brief Seccion de un modelo tridimensional. Referencia a un material
+         * 
+         * @TODO Definir de forma mas apropiada los setters y getters para los buffers de 
+         * vertices e indices.
          */
         class EXENGAPI MeshPart : public Object {
         public:            
@@ -43,58 +46,66 @@ namespace exeng {
              */
             PrimitiveType getPrimitiveType() const;
             
-            
             /**
              *  @brief Establece el tipo de primitiva
              */
             void setPrimitiveType(PrimitiveType primitiveType);
-            
             
             /**
              *  @brief Devuelve el material actual de renderizacion
              */
             const exeng::graphics::Material* getMaterial() const;
             
-            
             /**
-             *  @brief Establece el material actual de renderizacion
+             *  @brief Establece el material actual de renderizacion.
              */
             void setMaterial(const exeng::graphics::Material* material);
             
-            
+            /**
+             * @brief Establece el buffer de indices actual.
+             * @param buffer El buffer de indices a establecer.
+             * 
+             * Establece el buffer de vertices actual. El MeshPart gana el control
+             * de la vida del objeto buffer. Para efectos de renderizacion, este buffer 
+             * es completamente opcional, 
+             */            
+            void setIndexBuffer(IndexBuffer *buffer);
             
             /**
-             *  @brief Establece el arreglo de indices actual. 
+             * @brief Devuelve el buffer de indices actual
              */
-            
-            // void setIndexArray(const IntArray &indexArray);
-            
+            const IndexBuffer* getIndexBuffer() const;
             
             /**
-             * @brief Devuelve una copia del arreglo de indices actual
+             * @brief Devuelve el buffer de indices actual
              */
-            // const IntArray& getIndexArray() const;
+            IndexBuffer* getIndexBuffer();
             
             /**
-             * @brief Comprueba si esta parte posee indices.
+             * @brief Establece el buffer de vertices actual.
+             * @param buffer El buffer de vertices a establecer.
+             * 
+             * Establece el buffer de vertices actual. El MeshPart gana el control
+             * de la vida del objeto buffer.
              */
-            
-            bool hasIndices() const;
+            void setVertexBuffer(VertexBuffer *buffer);
             
             /**
              * @brief Establece el arreglo de vertices actual
              */
-            // void setVertexArray(const VertexArray &vertexArray);
-            
+            const VertexBuffer* getVertexBuffer() const;
             
             /**
              * @brief Establece el arreglo de vertices actual
              */
-            // const VertexArray& getVertexArray() const;
+            VertexBuffer* getVertexBuffer();
             
+            /**
+             * @brief Calcula la caja de colision de la parte actual
+             */
+            exeng::math::Boxf getBox() const;
             
             virtual TypeInfo getTypeInfo() const;
-            
             
         private:
             struct Private;

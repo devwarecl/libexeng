@@ -33,7 +33,7 @@ namespace exeng {
 			/**
 			 * @brief Material de la superficie en el punto de interseccion
 			 */
-			exeng::graphics::Material* surfaceMaterial;
+			const exeng::graphics::Material* surfaceMaterial;
 
 
 			IntersectInfo();

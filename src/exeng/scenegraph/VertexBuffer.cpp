@@ -1,8 +1,13 @@
 
 /**
- * @brief Implementacion trivial de los buffers de vertices
+ * @brief Implementacion trivial de los buffers de vertices.
+ * 
+ * Esta implementacion no hizo uso de una clase std::vector, ya que era necesario
+ * tener un buffer bruto de memoria, con el fin de poder almacenar cualquier tipo 
+ * de vertice, en futuras versiones.
  */
 
+#include "Buffer.hpp"
 #include "VertexBuffer.hpp"
 #include <boost/checked_delete.hpp>
 #include <cstdlib>
@@ -12,32 +17,21 @@
 namespace exeng {
     namespace scenegraph {
         
-        const char errLockedBuffer[] = "The buffer is locked";
-        const char errUnlockedBuffer[] = "The buffer is unlocked";
-        
         struct VertexBuffer::Private {
-            void* data;
-            bool locked;
-            int size;
+            Buffer buffer;
+            
+            /**
+             * @brief Numero de vertices que almacena este buffer
+             */
             int count;
             
-            Private() : data(nullptr), locked(false), size(0), count(0) {}
+            /**
+             * @brief Tamaño, en bytes, de cada vertice, dentro del buffer de vertices
+             */
+            int size;
             
-            
-            ~Private() {
-                this->release();
-            }
-        
-            
-            void allocate(int size) {
-                this->data = std::malloc(size);
-            }
-            
-            
-            void release() {
-                std::free(this->data);
-                this->data = nullptr;
-            }
+            Private() : count(0), size(0) {}
+            ~Private() { }
         };
         
         
@@ -58,12 +52,7 @@ namespace exeng {
         void VertexBuffer::allocate(int vertexSize, int vertexCount)  {
             assert(this->impl != nullptr);
             
-            if (this->impl->locked == true) {
-                throw std::runtime_error(errLockedBuffer);
-            }
-            
-            this->impl->allocate(vertexSize * vertexCount);
-            this->impl->size = vertexSize;
+            this->impl->buffer.allocate(vertexSize * vertexCount);
             this->impl->count = vertexCount;
         }
          
@@ -71,69 +60,47 @@ namespace exeng {
         void VertexBuffer::release() {
             assert(this->impl != nullptr);
             
-            if (this->impl->locked == true) {
-                throw std::runtime_error(errLockedBuffer);
-            }
-            
-            this->impl->release();
+            this->impl->buffer.release();
         }
         
         
         bool VertexBuffer::isEmpty() const {   
             assert(this->impl != nullptr);
-            
-            if (this->impl->locked == true) {
-                throw std::runtime_error(errLockedBuffer);
-            }
-            
-            if (this->impl->data != nullptr) {
-                return false;
-            } else {
-                return true;
-            }
+            return this->isEmpty();
         }
         
         
         void* VertexBuffer::lock() {
             assert(this->impl != nullptr);
-            
-            if (this->impl->locked == true) {
-                throw std::runtime_error(errLockedBuffer);
-            }
-            
-            this->impl->locked = true;
-            
-            return this->impl->data;
+
+            return this->impl->buffer.lock();
         }
         
         
-        bool VertexBuffer::tryLock() {
+        bool VertexBuffer::isLocked() const {
             assert(this->impl != nullptr);
             
-            if (this->impl->locked == true) {
-                return false;
-            } else {
-                return true;
-            }
+            return this->impl->buffer.isLocked();
         }
+        
         
         void VertexBuffer::unlock() {
             assert(this->impl != nullptr);
             
-            if (this->impl->locked == false) {
-                throw std::runtime_error(errUnlockedBuffer);
-            }
-            
-            this->impl->locked = false;
+            this->unlock();
         }
         
 
         int VertexBuffer::getCount() const {
+            assert(this->impl != nullptr);
+            
             return this->impl->count;
         }
         
         
         int VertexBuffer::getSize() const {
+            assert(this->impl != nullptr);
+            
             return this->impl->size;
         }
     }

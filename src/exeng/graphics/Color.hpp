@@ -5,9 +5,9 @@
 #include "../math/Operations.hpp"
 
 namespace exeng {
-	namespace graphics {
-		struct Color;
-	}
+    namespace graphics {
+        struct Color;
+    }
 }
 
 namespace exeng {
@@ -22,18 +22,17 @@ namespace exeng {
 }
 
 
-
 namespace exeng {
-	namespace graphics {
+    namespace graphics {
 
-		/**
-		 *	@brief Clase para almacenar numeros en punto flotante RGBA
-		 */
-		struct Color {
-			Color();
+        /**
+         *	@brief Clase para almacenar numeros en punto flotante RGBA
+         */
+        struct Color {
+            Color();
 
-			explicit Color(float value);
-			explicit Color(const float *values);
+            explicit Color(float value);
+            explicit Color(const float *values);
             
             template<typename ArrayLikeType>
             explicit Color(const ArrayLikeType &other) {
@@ -42,41 +41,41 @@ namespace exeng {
                 }
             }
             
-			Color(float red, float green, float blue, float alpha=1.0f);
+            Color(float red, float green, float blue, float alpha=1.0f);
             
             void set(float red, float green, float blue, float alpha);
             
-			Color operator+() const;
-			Color operator-() const;
-			Color operator+(const Color &other) const;
-			Color operator-(const Color &other) const;
-			Color operator*(const Color &other) const;
+            Color operator+() const;
+            Color operator-() const;
+            Color operator+(const Color &other) const;
+            Color operator-(const Color &other) const;
+            Color operator*(const Color &other) const;
             Color operator/(const Color &other) const;
             Color operator*(float scale);
             Color operator/(float scale);
 
-			Color& operator+=(const Color &other);
-			Color& operator-=(const Color &other);
-			Color& operator*=(const Color &other);
-			Color& operator/=(const Color &other);
-			Color& operator*=(float scale);
-			Color& operator/=(float scale);
+            Color& operator+=(const Color &other);
+            Color& operator-=(const Color &other);
+            Color& operator*=(const Color &other);
+            Color& operator/=(const Color &other);
+            Color& operator*=(float scale);
+            Color& operator/=(float scale);
 
-			float& operator[] (int index);
+            float& operator[] (int index);
 
-			const float& operator[] (int index) const;
+            const float& operator[] (int index) const;
             
             operator std::uint32_t() const;
             
-			union {
-				struct {
-					float red, green, blue, alpha;
-				};
+            union {
+                struct {
+                    float red, green, blue, alpha;
+                };
                 
                 float data[4];
-			};
-		};
-	}
+            };
+        };
+    }
 }
 
 #include "Color.inl"

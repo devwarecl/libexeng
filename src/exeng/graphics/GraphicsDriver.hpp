@@ -13,17 +13,13 @@
 #include "../graphics/IndexBuffer.hpp"
 #include "../graphics/Material.hpp"
 
-namespace exeng
-{
-    namespace graphics
-    {
+namespace exeng {
+    namespace graphics {
         /**
          * @brief Fundamental rendering primitives
          */
-        namespace Primitive
-        {
-            enum Type
-            {
+        namespace Primitive {
+            enum Type {
                 PointList,      //! Point lists
                 LineList,       //! Line lists.
                 LineStrip,      //! Line strip.
@@ -38,21 +34,20 @@ namespace exeng
         /**
          * @brief Encapsulate a display mode.
          */
-        class DisplayMode
-        {
+        class DisplayMode {
         public:
             DisplayMode() {}
             
             /**
              * @brief Get the display mode size (width and height), in pixels.
              */
-            math::Size2i getSize() const {return this->size;}
+            exeng::math::Size2i getSize() const {return this->size;}
             
             /**
              * @brief Set the size (both width and height, in pixels), of the display mode object.
              * This method doesn't validate the input value.
              */
-            void setSize(const math::Size2i& size) { }
+            void setSize(const exeng::math::Size2i& size) { }
             
             /**
              * @brief Get the detailed pixel format, and also enable the clients for modifying it. 
@@ -80,10 +75,8 @@ namespace exeng
         /**
          * @brief 
          */
-        namespace FrameBufferFlags
-        {
-            enum __Type
-            {
+        namespace FrameBufferFlags {
+            enum __Type {
                 ColorBuffer = 0x01,
                 DepthBuffer = 0x02,
                 StencilBuffer = 0x04,
@@ -97,10 +90,8 @@ namespace exeng
         /**
          * @brief 
          */
-        namespace Transform
-        {            
-            enum Type
-            {
+        namespace Transform {            
+            enum Type {
                 View,
                 World,
                 Projection
@@ -111,8 +102,7 @@ namespace exeng
         /**
          * @brief 
          */
-        struct EventData
-        {
+        struct EventData {
             int type;
             void *data;
 
@@ -123,8 +113,7 @@ namespace exeng
         /**
          * @brief 
          */
-        class EXENGAPI IEvtHandler
-        {
+        class EXENGAPI IEvtHandler {
         public:
             virtual ~IEvtHandler() {}
             virtual void handleEvent(const Object& Sender, EventData& Data) = 0;
@@ -140,10 +129,8 @@ namespace exeng
         /**
          * @brief Modos de pantalla
          */
-        namespace ScreenMode
-        {
-            enum Type
-            {
+        namespace ScreenMode {
+            enum Type {
                 Windowed,	//! Modo ventana
                 FullScreen	//! Modo pantalla completa
             };
@@ -153,8 +140,7 @@ namespace exeng
         /**
          * @brief Controlador grafico. Renderizador de graficos rasterizados
          */
-        class EXENGAPI GraphicsDriver : public Object
-        {
+        class EXENGAPI GraphicsDriver : public Object {
         public:
             virtual ~GraphicsDriver() {}
             

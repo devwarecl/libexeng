@@ -64,7 +64,7 @@ namespace exeng {
             /**
              * @brief Comprueba si es posible bloquear al buffer.
              */
-            bool tryLock();
+            bool isLocked() const;
             
             /**
              * @brief Desbloquea al buffer, en caso de que ya este bloqueado.
@@ -107,26 +107,29 @@ namespace exeng {
             }
             
             
-            VertexType& operator[] (int index) {
+            VertexType& operator[] (int index) {          
+#ifdef EXENG_DEBUG
                 if (index >= this->buffer->getCount()) {
-                    throw std::out_of_range();
+                    throw std::out_of_range("");
                 }
+#endif
                 
                 return this->bufferData[index];
             }
             
             
             const VertexType& operator[] (int index) const {
+#ifdef EXENG_DEBUG
                 if (index >= this->buffer->getCount()) {
-                    throw std::out_of_range();
+                    throw std::out_of_range("");
                 }
-                
+#endif                
                 return this->bufferData[index];
             }
             
             
-            std::size_t size() const {
-                return static_cast<std::size_t>(this->buffer->getCount());
+            int size() const {
+                return this->buffer->getCount();
             }
             
             

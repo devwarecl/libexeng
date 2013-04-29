@@ -41,11 +41,25 @@ namespace exeng
             
             
             /**
+             * @brief Plane
+             * @param p1
+             * @param p2
+             * @param p3
+             */
+            Plane(const exeng::math::Vector3f& p1, const exeng::math::Vector3f& p2, const exeng::math::Vector3f& p3);
+            
+            
+            /**
              * @brief Inicializa un objeto de planos
              * @param basePoint
              * @param normal
              */
             auto set(const exeng::math::Vector3f& point, const exeng::math::Vector3f& normal) -> void;
+            
+            /**
+             * @brief Inicializa un plano a partir de tres puntos en el espacio
+             */
+            void set(const exeng::math::Vector3f& p1, const exeng::math::Vector3f& p2, const exeng::math::Vector3f& p3);
             
             
             /**
