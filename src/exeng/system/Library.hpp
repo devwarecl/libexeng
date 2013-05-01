@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #ifndef __EXENG_SYSTEM_LIBRARY_HPP__
 #define __EXENG_SYSTEM_LIBRARY_HPP__
@@ -5,14 +17,11 @@
 #include "../Object.hpp"
 #include <string>
 
-namespace exeng
-{
-    namespace system
-    {
+namespace exeng {
+    namespace system  {
         typedef void* FunctionPtr;
 
-        class EXENGAPI Library : public Object
-        {
+        class EXENGAPI Library : public Object {
         public:
             Library();
 

@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #ifndef __EXENG_GRAPHICS_MATERIAL_HPP__
 #define __EXENG_GRAPHICS_MATERIAL_HPP__
@@ -49,12 +61,12 @@ namespace exeng {
             /**
              *  @brief Compara si la capa de textura contiene la misma textura o no
              */
-            bool operator == (const MaterialLayer& other) const;
+            bool operator== (const MaterialLayer& other) const;
 
             /**
              *  @brief Compara si tienen texturas diferentes
              */
-            bool operator != (const MaterialLayer& other) const;
+            bool operator!= (const MaterialLayer& other) const;
             
             /**
              *  @brief Asigna la informacion de una capa de textura en otra

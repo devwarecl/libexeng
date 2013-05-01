@@ -42,14 +42,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>../../src;$(IncludePath)</IncludePath>
-    <LibraryPath>./Debug;E:\Development\UnitTest++\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>./Debug;$(LibraryPath)</LibraryPath>
     <LibraryWPath>$(LibraryWPath)</LibraryWPath>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>../../src;$(IncludePath)</IncludePath>
-    <LibraryPath>./Release;E:\Development\UnitTest++\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>./Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -62,7 +62,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>UnitTest++.vsnet2005.lib;exeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>UnitTest++d.lib;exeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>.\Debug\test.exe</Command>
@@ -83,7 +83,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>UnitTest++.vsnet2005.lib;exeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>UnitTest++.lib;exeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>.\Release\test.exe</Command>

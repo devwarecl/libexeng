@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #ifndef __EXENG_SCENEGRAPH_MESHPART_HPP__
 #define __EXENG_SCENEGRAPH_MESHPART_HPP__
@@ -19,20 +31,23 @@ namespace exeng {
          * @brief El tipo de primitiva a renderizar
          */
         enum class PrimitiveType {
-            PointList,
-            LineList,
-            LineStrip,
-            LineLoop,
-            TriangleList,
-            TriangleStrip,
-            TriangleFan
+            Point           = 0x00001000,
+            PointList       = 0x00001001,
+            Line            = 0x00002000,
+            LineList        = 0x00002001,
+            LineStrip       = 0x00002002,
+            LineLoop        = 0x00002003,
+            Triangle        = 0x00004000,
+            TriangleList    = 0x00004001,
+            TriangleStrip   = 0x00004002,
+            TriangleFan     = 0x00004003
         };
         
         
         /**
          * @brief Seccion de un modelo tridimensional. Referencia a un material
          * 
-         * @TODO Definir de forma mas apropiada los setters y getters para los buffers de 
+         * @todo Definir de forma mas apropiada los setters y getters para los buffers de 
          * vertices e indices.
          */
         class EXENGAPI MeshPart : public Object {

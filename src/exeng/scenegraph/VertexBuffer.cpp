@@ -1,13 +1,17 @@
-
 /**
- * @brief Implementacion trivial de los buffers de vertices.
- * 
- * Esta implementacion no hizo uso de una clase std::vector, ya que era necesario
- * tener un buffer bruto de memoria, con el fin de poder almacenar cualquier tipo 
- * de vertice, en futuras versiones.
+ * @file 
+ * @brief 
  */
 
-#include "Buffer.hpp"
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
+#include "../HeapBuffer.hpp"
 #include "VertexBuffer.hpp"
 #include <boost/checked_delete.hpp>
 #include <cstdlib>
@@ -18,7 +22,7 @@ namespace exeng {
     namespace scenegraph {
         
         struct VertexBuffer::Private {
-            Buffer buffer;
+            HeapBuffer buffer;
             
             /**
              * @brief Numero de vertices que almacena este buffer

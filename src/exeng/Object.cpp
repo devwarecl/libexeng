@@ -1,3 +1,17 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
+
 
 #include <cassert>
 #include <typeinfo>
@@ -10,37 +24,32 @@ namespace exeng {
 	Object::~Object()  { }
 
 	std::string	Object::toString() const {
-		// Por defecto, devuelve el nombre del tipo dinamico que lo representa, junto con la 
-		// direccion de memoria
+        // By default, convert the direction address to a string
 		std::stringstream ss;
 
-		ss << "Objeto " << typeid(*this).name() << " en " << this;
+		ss << "Object " << typeid(*this).name() << " at " << this;
 
 		return ss.str();
 	}
-
-
+    
+    
 	Object* Object::clone() const { 
-		// Preferible lanzar una excepcion
 		throw std::runtime_error("Metodo Object::clone no reimplementado.");
 	}
 
 
 	bool Object::equals(const Object &other) const {
-		// Se deberia reimplementar este metodo
 		return this == &other;
 	}
 
 
 	bool Object::lesserThan(const Object& other) const {
-		// Solo devolver la comparacion de "menor que" para las direcciones de memoria 
-		// de los objetos
-		return this < &other;
+        throw std::runtime_error("Must reimplement the method Object::lesserThan.");
 	}
 
 
 	void Object::assign(const Object& other) {
-		throw std::runtime_error("Metodo Object::assign no reimplementado.");
+		throw std::runtime_error("Must reimplement the method Object::assign.");
 	}
 
 
@@ -81,6 +90,6 @@ namespace exeng {
 
 
 	TypeInfo Object::getTypeInfo() const {
-		throw std::runtime_error("Metodo Object::getTypeInfo no reimplementado.");
+        return TypeInfo::get<Object>();
 	}
 }

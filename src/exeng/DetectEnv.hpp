@@ -1,6 +1,14 @@
 /**
- *	@brief Detecta las caracteristicas actuales del entorno de destino de la compilacion.
- *	@todo Segmentar caracteristicas segun la version del compilador
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 #ifndef __EXENG_DETECTENV_HPP__

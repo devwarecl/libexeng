@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #ifndef __EXENG_SCENEGRAPH_MESH_HPP__
 #define __EXENG_SCENEGRAPH_MESH_HPP__
@@ -23,7 +35,7 @@ namespace exeng {
              * 
              * Esta implementacion asume que todos los mesh parts no son punteros nulos, ni vacios.
              */
-            virtual exeng::math::Boxf getBoundingBox() const;
+            virtual exeng::math::Boxf getBox() const;
             
             virtual bool hit( const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo);
             

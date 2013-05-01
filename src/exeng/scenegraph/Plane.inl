@@ -1,6 +1,16 @@
 /**
- * @brief Implementa los metodos de la clase de planos
+ * @file 
+ * @brief 
  */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
 
 namespace exeng {
     namespace scenegraph {
@@ -60,7 +70,7 @@ namespace exeng {
         }
         
         
-        inline auto Plane::intersect(const Ray& ray, IntersectInfo* intersectInfo) -> bool {
+        inline bool Plane::intersect(const Ray& ray, IntersectInfo* intersectInfo) {
             using namespace exeng::math;
             
             auto p = this->point;
@@ -81,7 +91,7 @@ namespace exeng {
             
             if (intersectInfo != nullptr) {
                 intersectInfo->intersect = result;
-                intersectInfo->parametricCoord = t;
+                intersectInfo->distance = t;
             }
             
             return result;

@@ -1,6 +1,7 @@
 
 #include <ctime>
 #include <cstdlib>
+#include <cstdint>
 
 #include "Sampler.hpp"
 
@@ -10,7 +11,8 @@ namespace raytracer {
     namespace samplers {
         Sampler::Sampler() {
             // Inicializa el generador de numeros aleatorios
-            std::srand(std::time(nullptr));
+			auto time = std::time(nullptr);
+            std::srand(static_cast<std::uint32_t>(time));
             
             this->sampleCount = 0;
             this->setCount = 1;

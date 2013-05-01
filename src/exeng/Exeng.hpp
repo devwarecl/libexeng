@@ -1,5 +1,14 @@
 /**
+ * @file 
  * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 #ifndef __EXENG_HPP__
@@ -11,6 +20,7 @@
 #include "TFlags.hpp"
 #include "Object.hpp"
 #include "Version.hpp"
+#include "Root.hpp"
 
 #include "math/Common.hpp"
 #include "math/TSize.hpp"
@@ -19,27 +29,27 @@
 #include "math/TBoundary.hpp"
 
 /**
- * @brief 
+ * @brief The common namespace for the engine.
  */
 namespace exeng {
 	/**
-	 * @brief 
+	 * @brief Classes for rendering raw 2D and 3D graphics.
 	 */
     namespace graphics {}
     
     /**
-	 * @brief 
+	 * @brief Common mathematical namespace
 	 */
     namespace math {}
     
     /**
-	 * @brief 
+	 * @brief Loading for plugins and dynamic linking libraries.
 	 */
     namespace system {}
     
     
     /**
-     * @brief 
+     * @brief Scenegraph module, for rendering 3D graphics.
      */
     namespace scenegraph {}
 }

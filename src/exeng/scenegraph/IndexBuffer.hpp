@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #ifndef __EXENG_SCENEGRAPH_INDEXBUFFER_HPP__
 #define __EXENG_SCENEGRAPH_INDEXBUFFER_HPP__
@@ -13,7 +25,7 @@ namespace exeng {
          */
         enum class IndexFormat {
             Index16=16,
-            Index32=32,
+            Index32=32
         };
         
         
@@ -122,8 +134,8 @@ namespace exeng {
             }
             
             
-            std::size_t size() const {
-                return static_cast<std::size_t>(this->buffer->getCount());
+            int size() const {
+                return this->buffer->getCount();
             }
             
             

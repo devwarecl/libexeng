@@ -1,9 +1,17 @@
-
 /**
- * @brief Implementacion trivial de los buffers de indices
+ * @file 
+ * @brief 
  */
 
-#include "Buffer.hpp"
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
+#include "../HeapBuffer.hpp"
 #include "IndexBuffer.hpp"
 #include <boost/checked_delete.hpp>
 #include <cstdlib>
@@ -14,7 +22,7 @@ namespace exeng {
     namespace scenegraph {
         
         struct IndexBuffer::Private {
-            Buffer buffer;
+            HeapBuffer buffer;
             int count;
             IndexFormat format;
             

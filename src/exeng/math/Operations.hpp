@@ -1,9 +1,14 @@
 /**
- * @brief Contiene funciones de plantilla varias para operar con secuencias de valores
- * 
- * Salvo algunas excepciones, todas las funciones devuelven en su primer
- * parametro el resultado de la operacion
- * 
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 #ifndef __EXENG_MATH_OPERATIONS_HPP__

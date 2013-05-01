@@ -1,5 +1,14 @@
 /**
- * @brief Documentacion pendiente
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 
@@ -15,10 +24,8 @@
 #include <map>
 #include <cassert>
 
-namespace exeng
-{
-    namespace system
-    {
+namespace exeng {
+    namespace system {
         typedef boost::shared_ptr<Plugin> PluginSharedPtr;
         typedef boost::scoped_ptr<Plugin> PluginScopedPtr;
         typedef boost::shared_ptr<Library> LibraryPtr;
@@ -29,21 +36,20 @@ namespace exeng
          * 
          * Es una interfaz orientada a objetos de los metodos exportados por el plugin
          */
-        class PluginLibrary : public Plugin
-        {
+        class PluginLibrary : public Plugin {
         public:
             
             /**
              * @brief Inicializa los objetos internos del plugin.
              */
-            PluginLibrary(LibraryPtr libraryPtr)
-            {
+            PluginLibrary(LibraryPtr libraryPtr) {
                 FunctionPtr functionPtr;
                 ExengGetPluginObjectProc getPluginObjectProc;
 
                 // Validar que el parametro sea correcto
-                if (!libraryPtr)
+                if (!libraryPtr) {
                     throw std::invalid_argument("");
+                }
 
                 // Obtener la funcion que nos devolvera el objeto plugin
                 functionPtr = libraryPtr->getFunctionPtr(EXENG_GET_PLUGIN_OBJECT_NAME_STR);
@@ -55,37 +61,30 @@ namespace exeng
             }
 
 
-            virtual ~PluginLibrary()
-            {
-            }
+            virtual ~PluginLibrary() { }
 
 
-            virtual std::string getName() const
-            {
+            virtual std::string getName() const {
                 return this->pluginPtr->getName();
             }
 
                 
-            virtual std::string getDescription() const
-            {
+            virtual std::string getDescription() const {
                 return this->pluginPtr->getDescription();
             }
 
 
-            virtual Version getVersion() const
-            {
+            virtual Version getVersion() const {
                 return this->pluginPtr->getVersion();
             }
 
             
-            virtual void initialize(Root &root)
-            {
+            virtual void initialize(Root &root) {
                 this->pluginPtr->initialize(root);
             }
 
 
-            virtual void terminate()
-            {
+            virtual void terminate() {
                 this->pluginPtr->terminate();
             }
 
@@ -108,8 +107,7 @@ namespace exeng
         typedef PluginMap::iterator PluginMapIt;
 
         
-        struct PluginManager::Private
-        {
+        struct PluginManager::Private {
             /**
              * @brief Los plugins actualmente cargados 
              */
@@ -117,21 +115,17 @@ namespace exeng
         };
 
 
-        PluginManager::PluginManager(Root& root) : impl(NULL)
-        {
+        PluginManager::PluginManager(Root& root) : impl(NULL) {
             this->impl = new PluginManager::Private();
         }
 
 
-        PluginManager::~PluginManager()
-        {
+        PluginManager::~PluginManager() {
             boost::checked_delete(this->impl);
         }
         
-
-        // 
-        void PluginManager::load(const std::string &name)
-        {
+        
+        void PluginManager::load(const std::string &name) {
             assert(this->impl != NULL);
 
             // el nombre de archivo de la libreria
@@ -141,33 +135,29 @@ namespace exeng
             libraryName = name;
 
             // determinar si la libreria solicitada estaba cargada con anterioridad
-            if (this->impl->plugins.find(name) == this->impl->plugins.end())
-            {
+            if (this->impl->plugins.find(name) == this->impl->plugins.end()) {
                 LibraryPtr libraryPtr;
                 PluginSharedPtr pluginPtr;
-
+                
                 libraryPtr.reset(new Library());
                 libraryPtr->load(libraryName);
-
+                
                 pluginPtr.reset( new PluginLibrary(libraryPtr) );
-
+                
                 this->impl->plugins[name] = pluginPtr;
             }
-
         }
 
 
-        void PluginManager::unload(const std::string &name)
-        {
+        void PluginManager::unload(const std::string &name) {
             assert(this->impl != NULL);
-
-            PluginMapIt it;
-
-            it = this->impl->plugins.find(name);
+            
+            auto it = this->impl->plugins.find(name);
 
             // simplemente busca y elimina el elemento indicado
-            if ( it != this->impl->plugins.end() )
+            if (it != this->impl->plugins.end()) {
                 this->impl->plugins.erase(name);
+            }
         }
     }
 }

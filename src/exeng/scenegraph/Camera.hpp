@@ -1,5 +1,14 @@
 /**
- * @brief Define la interfaz para la clase de camaras, y sus clases de soporte
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 #ifndef __EXENG_SCENEGRAPH_CAMERA_HPP__
@@ -13,7 +22,6 @@
 
 namespace exeng {
     namespace scenegraph {
-        
         
         /** 
          * @brief enum class ProjectionType
@@ -52,70 +60,70 @@ namespace exeng {
              * @param pos
              * @param lookAt
              */
-            auto setOrientation(const exeng::math::Vector3f &pos, const exeng::math::Vector3f& lookAt) -> void;
+            void setOrientation(const exeng::math::Vector3f &pos, const exeng::math::Vector3f& lookAt);
             
             
             /**
              * @brief setPosition
              * @param position
              */
-            auto setPosition(const exeng::math::Vector3f &position) -> void;
+            void setPosition(const exeng::math::Vector3f &position);
             
             /**
              * @brief getPosition
              * @return 
              */
-            auto getPosition() const -> exeng::math::Vector3f;
+            exeng::math::Vector3f getPosition() const;
             
             /**
              * @brief setLookAt
              * @param lookAt
              */
-            auto setLookAt(const exeng::math::Vector3f &lookAt) -> void;
+            void setLookAt(const exeng::math::Vector3f &lookAt);
             
             /**
              * @brief getLookAt
              * @return 
              */
-            auto getLookAt() const -> exeng::math::Vector3f;
+            exeng::math::Vector3f getLookAt() const;
             
             /**
              * @brief getUp
              * @return 
              */
-            auto getUp() const -> exeng::math::Vector3f;
+            exeng::math::Vector3f getUp() const;
             
             /**
              * @brief setUp
              * @param up
              */
-            auto setUp(const exeng::math::Vector3f &up) -> void;
+            void setUp(const exeng::math::Vector3f &up);
             
             /**
              * @brief setViewport
              * @param viewport
              */
-            auto setViewport(const exeng::math::Rectf &viewport) -> void;
+            void setViewport(const exeng::math::Rectf &viewport);
             
             /**
              * @brief getViewport
              * @return 
              */
-            auto getViewport() const -> exeng::math::Rectf;
+            exeng::math::Rectf getViewport() const;
             
             
             /**
              * @brief setProjection
              * @param proj
              */
-            auto setProjection(const CameraProjection &proj) -> void;
+            void setProjection(const CameraProjection &proj);
             
             
             /**
              * @brief getProjection
              * @return 
              */
-            auto getProjection() const -> CameraProjection;
+            CameraProjection getProjection() const;
         
             
         private:

@@ -34,7 +34,7 @@ namespace raytracer {
 		/**
 		 * 	@brief Devuelve la caja de colision de la esfera
 		 */
-		virtual exeng::math::Boxf getBoundingBox() const;
+		virtual exeng::math::Boxf getBox() const;
 
 		exeng::scenegraph::Sphere sphere;	// La esfera
 		exeng::graphics::Material material;	// El material de la esfera

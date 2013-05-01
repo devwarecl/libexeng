@@ -1,16 +1,22 @@
-
 /**
- * @brief Implementa la logica de la clase Sphere.
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 
 #include "Ray.hpp"
 #include "IntersectInfo.hpp"
 
-namespace exeng
-{
-    namespace scenegraph
-    {
+namespace exeng {
+    namespace scenegraph {
         inline Sphere::Sphere() {
             this->setAttributes(1.0f, exeng::math::Vector3f(0.0));
         }
@@ -18,7 +24,6 @@ namespace exeng
         
         inline Sphere::Sphere(float radius) {
             this->setAttributes(radius, exeng::math::Vector3f(0.0));
-            
         }
         
         
@@ -34,8 +39,9 @@ namespace exeng
         
         
         inline auto Sphere::setRadius(float radius) -> void {
-            if (radius < 0.0f)
+            if (radius < 0.0f) {
                 radius = 0.0;
+            }
             
             this->radius = radius;
         }
@@ -98,7 +104,7 @@ namespace exeng
 				// Determinar el primer punto de interseccion
                 float t1 = ( -B - rootDisc ) / 2.0f;
 				float t2 = ( -B + rootDisc ) / 2.0f;
-
+                
 				t = std::max(t1, t2);
 
 				if (t > 0.0f) {
@@ -117,8 +123,8 @@ namespace exeng
 					auto normal = ray.getPointAt(t);
 					normal.normalize();
 
-					intersectInfo->surfaceNormal = normal;
-					intersectInfo->parametricCoord = t;
+					intersectInfo->normal = normal;
+					intersectInfo->distance = t;
 				}
             }
             

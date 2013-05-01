@@ -21,14 +21,14 @@ namespace raytracer {
 		bool result = this->sphere.intersect(ray, intersectInfo);
 
 		if (result == true) {
-			intersectInfo->surfaceMaterial = &this->material;
+			intersectInfo->materialPtr = &this->material;
 		}
 
 		return result;
 	}
 
 
-	Boxf SphereGeometry::getBoundingBox() const {
+	Boxf SphereGeometry::getBox() const {
 		auto halfRadius = 0.5f * this->sphere.getRadius();
 		auto point = Vector3f(halfRadius);
 		

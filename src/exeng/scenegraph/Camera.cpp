@@ -1,5 +1,14 @@
 /**
- * @brief Implementacion de la clase Camera, y sus clases asociadas
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 #include <cassert>
@@ -26,10 +35,11 @@ namespace exeng {
                 this->up = Vector3f(0.0, 1.0, 0.0);
                 
                 // Toda la pantalla por defecto
-                this->viewport.set(1.0f);                
+                this->viewport.set(1.0f);
+                
             }
             
-            Vector3f position;   
+            Vector3f position;
             Vector3f lookAt;
             Vector3f up;
             Rectf viewport;

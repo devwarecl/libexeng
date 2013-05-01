@@ -1,106 +1,83 @@
+/**
+ * @file 
+ * @brief GraphicsDriver class API and support structures and enumerations.
+ */
 
-#ifndef __EXENG_GRAPHICS_GRAPHICSDRIVER_HPP__
-#define __EXENG_GRAPHICS_GRAPHICSDRIVER_HPP__
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
+#ifndef exeng_graphics_graphicsdriver_hpp
+#define exeng_graphics_graphicsdriver_hpp
 
 #include <string>
 #include <vector>
 
-#include "../TFlags.hpp"
 #include "../math/TBoundary.hpp"
 #include "../math/TMatrix.hpp"
-#include "../graphics/Texture.hpp"
-#include "../graphics/VertexBuffer.hpp"
-#include "../graphics/IndexBuffer.hpp"
-#include "../graphics/Material.hpp"
 
 namespace exeng {
     namespace graphics {
+        
         /**
          * @brief Fundamental rendering primitives
          */
-        namespace Primitive {
-            enum Type {
-                PointList,      //! Point lists
-                LineList,       //! Line lists.
-                LineStrip,      //! Line strip.
-                LineLoop,       //! Line loop
-                TriangleList,   //! Triangle lists
-                TriangleStrip,  //! Triangle strips
-                TriangleFan     //! Triangle fans
-            };
-        }
+        enum class Primitive {
+            PointList,      //! Point lists
+            LineList,       //! Line lists.
+            LineStrip,      //! Line strip.
+            LineLoop,       //! Line loop
+            TriangleList,   //! Triangle lists
+            TriangleStrip,  //! Triangle strips
+            TriangleFan     //! Triangle fans
+        };
         
         
         /**
          * @brief Encapsulate a display mode.
          */
-        class DisplayMode {
-        public:
+        struct DisplayMode {
             DisplayMode() {}
             
-            /**
-             * @brief Get the display mode size (width and height), in pixels.
-             */
-            exeng::math::Size2i getSize() const {return this->size;}
+            DisplayMode(const exeng::math::Size2i &size, PixelFormat format) {
+                this->size = size;
+                this->format = format;
+                this->frequency = 0;
+            }
             
-            /**
-             * @brief Set the size (both width and height, in pixels), of the display mode object.
-             * This method doesn't validate the input value.
-             */
-            void setSize(const exeng::math::Size2i& size) { }
-            
-            /**
-             * @brief Get the detailed pixel format, and also enable the clients for modifying it. 
-             * See the PixelFormat class refrence for more information.
-             */
-            PixelFormat& getFormatRef() { return this->format; }
-            
-            /**
-             * @brief Get the detailed pixel format, for read-only operations. See the 
-             * PixelFormat class refrence for more information.
-             */
-            const PixelFormat& getFormatRef() const { return this->format; }
-            
-            /**
-             * @brief  Convert the display mode to a string.
-             */
-            virtual std::string toString() const { return ""; }
-            
-        private:
-            math::Size2i size;
+            exeng::math::Size2i size;
             PixelFormat format;
+            int frequency;
         };
         
         
         /**
-         * @brief 
+         * @brief Framebuffer clearing flags.
          */
-        namespace FrameBufferFlags {
-            enum __Type {
-                ColorBuffer = 0x01,
-                DepthBuffer = 0x02,
-                StencilBuffer = 0x04,
-                Default = ColorBuffer | DepthBuffer | StencilBuffer
-            };
-
-            typedef TFlags<__Type> Type;
-        }
-        
-
-        /**
-         * @brief 
-         */
-        namespace Transform {            
-            enum Type {
-                View,
-                World,
-                Projection
-            };
-        }
+        enum class FrameBufferFlags { 
+            ColorBuffer = 0x01,
+            DepthBuffer = 0x02,
+            StencilBuffer = 0x04,
+            Default = ColorBuffer | DepthBuffer | StencilBuffer
+        };
         
         
         /**
-         * @brief 
+         * @brief Transformation types
+         */
+        enum class Transform {
+            View,
+            World,
+            Projection
+        };
+        
+        
+        /**
+         * @brief Event data.
          */
         struct EventData {
             int type;
@@ -121,24 +98,27 @@ namespace exeng {
         
 
         /**
-         * @brief 
+         * @brief Array of display modes
          */
         typedef std::vector<DisplayMode> DisplayModeVector;
         
 
         /**
-         * @brief Modos de pantalla
+         * @brief Screen modes
          */
-        namespace ScreenMode {
-            enum Type {
-                Windowed,	//! Modo ventana
-                FullScreen	//! Modo pantalla completa
-            };
-        }
+        enum class ScreenMode {
+            Windowed,	//! Windowed mode
+            FullScreen	//! Fullscreen mode
+        };
 
         
+        class EXENGAPI Texture;
+        class EXENGAPI VertexBuffer;
+        class EXENGAPI IndexBuffer;
+        class EXENGAPI Material;
+        
         /**
-         * @brief Controlador grafico. Renderizador de graficos rasterizados
+         * @brief GraphicsDriver
          */
         class EXENGAPI GraphicsDriver : public Object {
         public:
@@ -279,7 +259,7 @@ namespace exeng {
              * @brief Render, using the specified primitive and the currently setted material, 
              * vertex and index buffers, if any. 
              */
-            virtual void render(Primitive::Type PrimitiveType, int PrimitiveCount) = 0;
+            virtual void render(Primitive PrimitiveType, int PrimitiveCount) = 0;
         };
     }
 }

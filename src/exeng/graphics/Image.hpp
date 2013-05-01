@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 /**
  * @brief Define the engine's basic data types. Also, define fixed-size, elemental platform-independent.
@@ -6,7 +18,7 @@
 #ifndef __EXENG_GRAPHICS_IMAGE_HPP__
 #define __EXENG_GRAPHICS_IMAGE_HPP__
 
-#include "../DataTypes.hpp"
+#include <cstdint>
 #include "../math/TVector.hpp"
 #include "PixelFormat.hpp"
 #include "PixelType.hpp"
@@ -56,12 +68,12 @@ namespace exeng {
             /**
              * @brief 
              */
-            UInt32 getPixel(const math::Vector2i& position) const;
+            std::uint32_t getPixel(const math::Vector2i& position) const;
             
             /**
              * @brief 
              */
-            void setPixel(const math::Vector2i& position, UInt32 color);
+            void setPixel(const math::Vector2i& position, std::uint32_t color);
             
         private:
             int getOffset(const math::Vector2i& position) const;

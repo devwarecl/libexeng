@@ -115,14 +115,14 @@ namespace raytracer {
 
             if (geometry->hit(ray, &currentInfo) == true) {
                 
-                bool isFirst = prevInfo.parametricCoord == 0.0f;
-                bool isBetter = currentInfo.parametricCoord > prevInfo.parametricCoord;
+                bool isFirst = prevInfo.distance == 0.0f;
+                bool isBetter = currentInfo.distance > prevInfo.distance;
 
                 if (isFirst == true || isBetter == true) {
                     info = currentInfo;
                     
-                    assert(info.surfaceMaterial != nullptr);
-                    assert(info.surfaceNormal != Vector3f(0.0f));
+                    assert(info.materialPtr != nullptr);
+                    assert(info.normal != Vector3f(0.0f));
                 }
 
                 prevInfo = currentInfo;
@@ -150,8 +150,8 @@ namespace raytracer {
             
             if (info.intersect == true)  {
                 // Determinar el color
-                auto factor = info.surfaceNormal.dot(ray.getDirection());
-                color += info.surfaceMaterial->getDiffuse() * factor;
+                auto factor = info.normal.dot(ray.getDirection());
+                color += info.materialPtr->getDiffuse() * factor;
             } /*else {
                 color += this->scene->getBackgroundColor();
             } */

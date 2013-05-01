@@ -316,27 +316,6 @@ SUITE( TestMatrixSuite )
 }
 
 
-
-SUITE(DataTypesSuite)
-{
-    TEST(TestDataTypes)
-    {
-        CHECK_EQUAL( sizeof(UInt8), 1 );
-        CHECK_EQUAL( sizeof(UInt16), 2 );
-        CHECK_EQUAL( sizeof(UInt32), 4 );
-        CHECK_EQUAL( sizeof(UInt64), 8 );
-        
-        CHECK_EQUAL( sizeof(Int8), 1 );
-        CHECK_EQUAL( sizeof(Int16), 2 );
-        CHECK_EQUAL( sizeof(Int32), 4 );
-        CHECK_EQUAL( sizeof(Int64), 8 );
-        
-        CHECK_EQUAL( sizeof(Float32), 4 );
-        CHECK_EQUAL( sizeof(Float64), 8 );
-    }
-}
-
-
 int main(int argc, char** argv) {   
     UnitTest::RunAllTests();
     return 0;

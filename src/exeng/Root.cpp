@@ -1,3 +1,10 @@
+/**
+ * @file
+ *
+ * @brief Implement the Root class.
+ *
+ */
+
 
 #include <cassert>
 #include <boost/checked_delete.hpp>
@@ -7,11 +14,8 @@
 
 namespace exeng {
     
-    /**
-     * @brief Atributos privados.
-     */
     struct Root::Private {
-        Private(Root *root) : root(NULL), pluginManager(NULL) {
+        Private(Root *root) : root(nullptr), pluginManager(nullptr) {
             this->root = root;
             this->pluginManager = new system::PluginManager(*root);
         }
@@ -25,7 +29,7 @@ namespace exeng {
     };
 
     
-	Root::Root() : impl(NULL) {
+	Root::Root() : impl(nullptr) {
 		this->impl = new Root::Private(this);
 	}
 
@@ -36,7 +40,7 @@ namespace exeng {
 
 
 	system::PluginManager& Root::getPluginManagerRef() {
-		assert(this->impl != NULL);
+		assert(this->impl != nullptr);
 		return *this->impl->pluginManager;
 	}
 }

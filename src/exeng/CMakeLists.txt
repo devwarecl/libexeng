@@ -1,16 +1,23 @@
 include_directories( ${PROJECT_SOURCE_DIR}/src )
 
 add_library(exeng 
-./Exeng.hpp ./DetectEnv.hpp ./Config.hpp ./DataTypes.hpp 
+./Exeng.hpp ./DetectEnv.hpp ./Config.hpp
 
 ./Object.hpp ./Object.cpp 
 ./Version.hpp ./Version.cpp 
 ./Root.hpp ./Root.cpp
 ./TypeInfo.hpp ./TypeInfo.cpp
 ./TFlags.hpp ./TFlags.inl
+./Buffer.hpp ./Buffer.cpp 
+./HeapBuffer.hpp ./HeapBuffer.cpp 
 
-./graphics/GraphicsDriverBase.cpp ./graphics/GraphicsManager.cpp ./graphics/Image.cpp 
-./graphics/Material.cpp ./graphics/PixelFormat.cpp ./graphics/VertexBufferFormat.cpp
+./graphics/GraphicsDriver.hpp 
+./graphics/GraphicsDriverBase.hpp ./graphics/GraphicsDriverBase.cpp 
+./graphics/GraphicsManager.hpp ./graphics/GraphicsManager.cpp 
+./graphics/Image.hpp ./graphics/Image.cpp 
+./graphics/Material.hpp ./graphics/Material.cpp 
+./graphics/PixelFormat.hpp ./graphics/PixelFormat.cpp 
+./graphics/VertexBufferFormat.hpp ./graphics/VertexBufferFormat.cpp
 
 ./scenegraph/SceneNode.hpp ./scenegraph/SceneNode.cpp ./scenegraph/Scene.hpp ./scenegraph/Scene.cpp
 ./scenegraph/Camera.hpp ./scenegraph/Camera.cpp ./scenegraph/Light.hpp ./scenegraph/Light.cpp
@@ -22,7 +29,6 @@ add_library(exeng
 ./scenegraph/Sphere.hpp ./scenegraph/Sphere.inl
 ./scenegraph/Mesh.hpp ./scenegraph/Mesh.cpp
 ./scenegraph/MeshPart.hpp ./scenegraph/MeshPart.cpp
-./scenegraph/Buffer.hpp ./scenegraph/Buffer.cpp
 ./scenegraph/VertexBuffer.hpp ./scenegraph/VertexBuffer.cpp
 ./scenegraph/IndexBuffer.hpp ./scenegraph/IndexBuffer.cpp
 

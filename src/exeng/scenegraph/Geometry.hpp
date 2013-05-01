@@ -1,5 +1,14 @@
 /**
- * @brief Define la clase abstracta Geometry.
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 #ifndef __EXENG_SCENEGRAPH_GEOMETRY_HPP__
@@ -25,7 +34,7 @@ namespace exeng {
              * @brief Calcula la caja de colision asociada con los ejes.
              * @return Un objeto de tipo Exeng::Math::Boxf, con la caja de colision
              */
-            virtual auto getBoundingBox() const -> exeng::math::Boxf = 0;
+            virtual auto getBox() const -> exeng::math::Boxf = 0;
             
             
             /**

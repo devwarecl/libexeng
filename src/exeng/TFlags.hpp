@@ -1,5 +1,14 @@
 /**
- * @brief Define la plantilla TFlags, usada para el encapsulamiento de flags
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 #ifndef __EXENG_TFLAGS_HPP__

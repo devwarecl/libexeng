@@ -1,5 +1,14 @@
 /**
- * @brief Documentacion pendiente
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
  */
 
 #ifndef __EXENG_SYSTEM_PLUGINMANAGER_HPP__
@@ -9,17 +18,14 @@
 
 #include "../Object.hpp"
 
-namespace exeng
-{
+namespace exeng {
     class EXENGAPI Root;
 
-    namespace system
-    {
+    namespace system {
         /**
          * @brief Administrador de plugins. No es instanciable directamente por el usuario
          */
-        class EXENGAPI PluginManager
-        {
+        class EXENGAPI PluginManager {
             friend class exeng::Root;
 
         public:
@@ -53,7 +59,7 @@ namespace exeng
 
             PluginManager(Root& root);
             PluginManager(const PluginManager &other);
-            PluginManager& operator= (const PluginManager& other);
+            PluginManager& operator= (const PluginManager& other); 
         };
     }
 }

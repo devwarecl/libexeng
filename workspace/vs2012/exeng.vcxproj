@@ -87,6 +87,7 @@
     <Text Include="..\..\src\exeng\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\exeng\Buffer.hpp" />
     <ClInclude Include="..\..\src\exeng\Config.hpp" />
     <ClInclude Include="..\..\src\exeng\DataTypes.hpp" />
     <ClInclude Include="..\..\src\exeng\DetectEnv.hpp" />
@@ -103,6 +104,7 @@
     <ClInclude Include="..\..\src\exeng\graphics\Texture.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\VertexBuffer.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\VertexBufferFormat.hpp" />
+    <ClInclude Include="..\..\src\exeng\HeapBuffer.hpp" />
     <ClInclude Include="..\..\src\exeng\math\Common.hpp" />
     <ClInclude Include="..\..\src\exeng\math\Operations.hpp" />
     <ClInclude Include="..\..\src\exeng\math\TBoundary.hpp" />
@@ -131,12 +133,14 @@
     <ClInclude Include="..\..\src\exeng\Version.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\exeng\Buffer.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\GraphicsDriverBase.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\GraphicsManager.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\Image.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\Material.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\PixelFormat.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\VertexBufferFormat.cpp" />
+    <ClCompile Include="..\..\src\exeng\HeapBuffer.cpp" />
     <ClCompile Include="..\..\src\exeng\Object.cpp" />
     <ClCompile Include="..\..\src\exeng\Root.cpp" />
     <ClCompile Include="..\..\src\exeng\scenegraph\Camera.cpp" />

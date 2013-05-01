@@ -1,11 +1,23 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
 
 #ifndef __EXENG_SCENEGRAPH_VERTEXBUFFER_HPP__
 #define __EXENG_SCENEGRAPH_VERTEXBUFFER_HPP__
 
+#include <stdexcept>
 #include "../Object.hpp"
 #include "../math/TVector.hpp"
-
-#include <stdexcept>
 
 namespace exeng {
     namespace scenegraph {
@@ -57,7 +69,7 @@ namespace exeng {
             bool isEmpty() const;
             
             /**
-             * @brief Bloquea al buffe__EXENG_SCENEGRAPH_INDEXBUFFER_HPP__r.
+             * @brief Bloquea al buffer.
              */
             void* lock();
             

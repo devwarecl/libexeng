@@ -112,6 +112,8 @@
     <ClInclude Include="..\..\src\exeng\graphics\Color.hpp">
       <Filter>graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\exeng\Buffer.hpp" />
+    <ClInclude Include="..\..\src\exeng\HeapBuffer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\exeng\Object.cpp" />
@@ -181,6 +183,8 @@
     <ClCompile Include="..\..\src\exeng\scenegraph\Sphere.inl">
       <Filter>scenegraph</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\exeng\Buffer.cpp" />
+    <ClCompile Include="..\..\src\exeng\HeapBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\exeng\TFlags.inl" />

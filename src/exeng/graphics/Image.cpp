@@ -1,5 +1,18 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #include <stdexcept>
+#include <cstdint>
 #include <boost/shared_array.hpp>
 
 #include "Image.hpp"
@@ -8,7 +21,7 @@ struct exeng::graphics::Image::Private {
     exeng::math::Vector3i size;
     exeng::graphics::ColorFormat format;
     exeng::graphics::PixelType type;
-    boost::shared_array<UInt8> data;
+    boost::shared_array<std::uint8_t> data;
             
     Private() : size(0, 0, 0), format(ColorFormat::Unknown), type(PixelType::Unknown) {
     }
@@ -65,7 +78,7 @@ namespace exeng {
         
         
         void Image::initialize(const exeng::math::Vector3i& size, ColorFormat format, PixelType type) {
-            UInt32 imageSize;
+            std::uint32_t imageSize;
             
             //Validar el formato y el tipo de datos
             if (format == ColorFormat::Unknown) {
@@ -94,27 +107,27 @@ namespace exeng {
             this->Data->type = type;
             this->Data->size = size;
             
-            this->Data->data.reset(new UInt8[imageSize]);
+            this->Data->data.reset(new std::uint8_t[imageSize]);
         }
         
         
-        UInt32 Image::getPixel(const math::Vector2i& position) const {
+        std::uint32_t Image::getPixel(const math::Vector2i& position) const {
             assert( this->Data != nullptr );
             assert( position.x <  this->Data->size.x );
             assert( position.y <  this->Data->size.y );
             
-            UInt32 *imagePointer = (UInt32*)( this->Data->data.get() );
+            std::uint32_t *imagePointer = (std::uint32_t*)( this->Data->data.get() );
             
             return imagePointer[ this->getOffset(position) ];
         }
         
             
-        void Image::setPixel(const math::Vector2i& position, UInt32 color) {
+        void Image::setPixel(const math::Vector2i& position, std::uint32_t color) {
             assert( this->Data != nullptr );
             assert( position.x <  this->Data->size.x );
             assert( position.y <  this->Data->size.y );
             
-            UInt32 *imagePointer = (UInt32*)( this->Data->data.get() );
+            std::uint32_t *imagePointer = (std::uint32_t*)( this->Data->data.get() );
 
             imagePointer[ this->getOffset(position) ] = color;
         }

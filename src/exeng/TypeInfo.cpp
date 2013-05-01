@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #include <cassert>
 #include <string>
@@ -9,10 +21,10 @@ namespace exeng {
 	const std::string invalidTypePtr = "TypeInfo: Debe asignar primero un objeto std::type_info";
 
 
-	TypeInfo::TypeInfo() : typeInfo(NULL) {}
+	TypeInfo::TypeInfo() : typeInfo(nullptr) {}
 
 
-	TypeInfo::TypeInfo(const std::type_info& info) : typeInfo(NULL) {
+	TypeInfo::TypeInfo(const std::type_info& info) : typeInfo(nullptr) {
 		this->setStdTypeInfo(info);
 	}
 
@@ -65,6 +77,6 @@ namespace exeng {
 
 
 	bool TypeInfo::isEmpty() const {
-		return this->typeInfo == NULL;
+		return this->typeInfo == nullptr;
 	}
 }

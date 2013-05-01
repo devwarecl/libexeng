@@ -1,4 +1,3 @@
-
 set(CMAKE_CXX_FLAGS "-std=c++0x")
 
 include_directories( ${PROJECT_SOURCE_DIR}/src)

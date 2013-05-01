@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #ifndef __EXENG_GRAPHICS_GRAPHICSMANAGER_HPP__
 #define __EXENG_GRAPHICS_GRAPHICSMANAGER_HPP__
@@ -55,9 +67,11 @@ namespace exeng {
             virtual GraphicsDriverInfo& getDriverInfo() const = 0;
             virtual GraphicsDriver* create() = 0;
         };
-
-
-        //! Clase "manager" del subsistema de graficos.
+        
+        
+        /**
+         * @brief Clase "manager" del subsistema de graficos.
+         */
         class EXENGAPI GraphicsManager {
             friend class exeng::Root;
 

@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #include "Mesh.hpp"
 #include "MeshPart.hpp"
@@ -210,7 +222,7 @@ namespace exeng {
         }
         
         
-        Boxf Mesh::getBoundingBox() const {
+        Boxf Mesh::getBox() const {
             assert(this->impl != nullptr);
             
             auto &parts = this->impl->parts;
@@ -264,13 +276,13 @@ namespace exeng {
                     
                     // Si se intersecto con el punto, ver si el punto esta 
                     // dentro de las coordenadas del triangulo        
-                    if (info.parametricCoord <= 0.0) {
+                    if (info.distance <= 0.0) {
                         continue;
                     }
                     
                     // Comprobar si el punto de interseccion pertenece al triangulo o no, usando 
                     // coordenadas baricentricas
-                    Vector3f r0=ray.getPointAt(info.parametricCoord);
+                    Vector3f r0=ray.getPointAt(info.distance);
                     Vector3f p=ray.getPoint(), q=r0;
                     Vector3f a=tri.p1, b=tri.p2, c=tri.p3;
                     
@@ -289,15 +301,15 @@ namespace exeng {
                         if (intersectInfo != nullptr){
                             
                             intersectInfo->intersect = true;
-                            intersectInfo->parametricCoord = info.parametricCoord;
-                            intersectInfo->surfaceMaterial = meshPart.getMaterial();
+                            intersectInfo->distance = info.distance;
+                            intersectInfo->materialPtr = meshPart.getMaterial();
                             
                             // Calcular la normal del triangulo
                             Vector3f v1 = tri.p2 - tri.p1;
                             Vector3f v2 = tri.p3 - tri.p1;
                             Vector3f normal = v2 - v1;
                             normal.normalize();
-                            intersectInfo->surfaceNormal = normal;
+                            intersectInfo->normal = normal;
                         }
                         
                         return true;
@@ -320,10 +332,10 @@ namespace exeng {
             
             for (MeshPart &meshPart : this->impl->parts) {
                 bool intersect = meshSubsetHit(meshPart, ray, &info);
-                bool isFront =  info.parametricCoord >= 0.0;
+                bool isFront =  info.distance >= 0.0;
                 
                 if ( intersect == true && isFront == true) {
-                    if (info.parametricCoord > bestInfo.parametricCoord) {
+                    if (info.distance > bestInfo.distance) {
                         bestInfo = info;
                     }
                 }

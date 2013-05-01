@@ -1,21 +1,30 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #ifndef __EXENG_SCENEGRAPH_SPHERE_HPP__
 #define __EXENG_SCENEGRAPH_SPHERE_HPP__
 
 #include "../math/TVector.hpp"
 
-namespace exeng
-{
-    namespace scenegraph
-    {
+namespace exeng {
+    namespace scenegraph {
         class Ray;
         struct IntersectInfo;
 
         /**
          * @brief Esfera en el espacio tridimensional.
          */
-        class Sphere
-        {
+        class Sphere {
         public:
             
             /**

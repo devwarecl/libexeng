@@ -1,7 +1,15 @@
 /**
- * @brief Documentacion pendiente
+ * @file 
+ * @brief 
  */
 
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #ifndef __EXENG_SYSTEM_PLUGIN_HPP__
 #define __EXENG_SYSTEM_PLUGIN_HPP__
@@ -9,12 +17,10 @@
 #include "../Object.hpp"
 #include "../Version.hpp"
 
-namespace exeng
-{
+namespace exeng {
     class EXENGAPI Root;
 
-    namespace system
-    {
+    namespace system {
         class EXENGAPI Library;
         
         /**
@@ -23,8 +29,7 @@ namespace exeng
          * es posible tener un engine con un minimo de dependencias y dejar al usuario
          * decidir como quiere "extenderlo".
          */
-        class EXENGAPI Plugin : public Object
-        {
+        class EXENGAPI Plugin : public Object {
         public:
             virtual ~Plugin();
             
@@ -94,13 +99,12 @@ namespace exeng
  * el objeto devuelto no volvera a ser valido.
  */
 #define EXENG_EXPORT_PLUGIN(PluginImpl)                                                         \
-    extern "C"  Exeng::System::Plugin* EXENG_CALLCONV EXENG_GET_PLUGIN_OBJECT_NAME() EXENGAPI   \
-    {                                                                                           \
-        static PluginImpl *plugin = NULL;                                                       \
+    extern "C"  Exeng::System::Plugin* EXENG_CALLCONV EXENG_GET_PLUGIN_OBJECT_NAME() EXENGAPI { \
+        static PluginImpl *plugin = nullptr;                                                    \
                                                                                                 \
-        if (plugin == NULL)                                                                     \
+        if (plugin == nullptr) {                                                                \
             plugin = new PluginImpl();                                                          \
-                                                                                                \
+        }                                                                                       \
         return plugin;                                                                          \
     }
 
