@@ -22,26 +22,12 @@
 #include "../Object.hpp"
 #include "../graphics/Material.hpp"
 
-#include "IndexBuffer.hpp"
-#include "VertexBuffer.hpp"
+#include "../graphics/IndexBuffer.hpp"
+#include "../graphics/VertexBuffer.hpp"
 
 namespace exeng {
-    namespace scenegraph {
-        /**
-         * @brief El tipo de primitiva a renderizar
-         */
-        enum class PrimitiveType {
-            Point           = 0x00001000,
-            PointList       = 0x00001001,
-            Line            = 0x00002000,
-            LineList        = 0x00002001,
-            LineStrip       = 0x00002002,
-            LineLoop        = 0x00002003,
-            Triangle        = 0x00004000,
-            TriangleList    = 0x00004001,
-            TriangleStrip   = 0x00004002,
-            TriangleFan     = 0x00004003
-        };
+    namespace graphics {
+
         
         
         /**
@@ -84,17 +70,17 @@ namespace exeng {
              * de la vida del objeto buffer. Para efectos de renderizacion, este buffer 
              * es completamente opcional, 
              */            
-            void setIndexBuffer(IndexBuffer *buffer);
+            void setIndexBuffer( exeng::graphics::IndexBuffer *buffer);
             
             /**
              * @brief Devuelve el buffer de indices actual
              */
-            const IndexBuffer* getIndexBuffer() const;
+            const exeng::graphics::IndexBuffer* getIndexBuffer() const;
             
             /**
              * @brief Devuelve el buffer de indices actual
              */
-            IndexBuffer* getIndexBuffer();
+            exeng::graphics::IndexBuffer* getIndexBuffer();
             
             /**
              * @brief Establece el buffer de vertices actual.
@@ -103,17 +89,17 @@ namespace exeng {
              * Establece el buffer de vertices actual. El MeshPart gana el control
              * de la vida del objeto buffer.
              */
-            void setVertexBuffer(VertexBuffer *buffer);
+            void setVertexBuffer(exeng::graphics::VertexBuffer *buffer);
             
             /**
              * @brief Establece el arreglo de vertices actual
              */
-            const VertexBuffer* getVertexBuffer() const;
+            const exeng::graphics::VertexBuffer* getVertexBuffer() const;
             
             /**
              * @brief Establece el arreglo de vertices actual
              */
-            VertexBuffer* getVertexBuffer();
+            exeng::graphics::VertexBuffer* getVertexBuffer();
             
             /**
              * @brief Calcula la caja de colision de la parte actual

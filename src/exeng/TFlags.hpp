@@ -70,7 +70,7 @@ namespace exeng {
          * @brief Comprueba si los estados de dos contenedores de flags son exactamente los mismos
 		 */
 		bool operator == (const TFlags<EnumType>& Other) const;
-
+        
 		/**
          * @brief Comprueba si los estados de dos contenedores de flags son distintos
 		 */

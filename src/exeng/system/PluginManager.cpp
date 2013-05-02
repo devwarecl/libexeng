@@ -18,6 +18,7 @@
 #include "Library.hpp"
 #include "Plugin.hpp"
 
+#include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <stdexcept>
@@ -32,30 +33,27 @@ namespace exeng {
 
 
         /**
-         * @brief Plugin cargado que es cargado desde una biblioteca externa.
+         * @brief External library plugin object.
          * 
-         * Es una interfaz orientada a objetos de los metodos exportados por el plugin
+         * Object oriented interface to the functions exported by the dynamic library.
          */
         class PluginLibrary : public Plugin {
         public:
             
-            /**
-             * @brief Inicializa los objetos internos del plugin.
-             */
             PluginLibrary(LibraryPtr libraryPtr) {
                 FunctionPtr functionPtr;
                 ExengGetPluginObjectProc getPluginObjectProc;
 
-                // Validar que el parametro sea correcto
+                // Validate non null
                 if (!libraryPtr) {
                     throw std::invalid_argument("");
                 }
 
-                // Obtener la funcion que nos devolvera el objeto plugin
+                // Store the function pointer to the plugin getter
                 functionPtr = libraryPtr->getFunctionPtr(EXENG_GET_PLUGIN_OBJECT_NAME_STR);
                 getPluginObjectProc = (ExengGetPluginObjectProc) functionPtr;
 
-                // Obtener el objeto de plugin
+                // Store the plugin getter object.
                 this->libraryPtr = libraryPtr;
                 this->pluginPtr.reset(getPluginObjectProc());
             }
@@ -96,27 +94,35 @@ namespace exeng {
         
 
         /**
-         * @brief Mapa de punteros inteligentes de Plugin
+         * @brief Plugin map of smart pointers
+         * @todo Consider the use of the boost map pointer class.
          */
-        typedef std::map<std::string, PluginSharedPtr> PluginMap;
-        
-        
-        /**
-         * @brief Iterador del tipo PluginMap
-         */
+        typedef std::map<std::string, PluginSharedPtr> PluginMap;   
         typedef PluginMap::iterator PluginMapIt;
 
         
+        /**
+         * @brief Private attributes of the plugin manager.
+         */
         struct PluginManager::Private {
-            /**
-             * @brief Los plugins actualmente cargados 
-             */
-            PluginMap plugins;
+        public:
+            Private() : root(nullptr) {
+            }
+            
+        public:
+            PluginMap plugins;  //! The currently loaded plugins.
+            Root* root;         //! The root object
         };
 
-
-        PluginManager::PluginManager(Root& root) : impl(NULL) {
+        
+        PluginManager::PluginManager(Root* root) : impl(nullptr) {
+            if (root == nullptr) {
+                char msg[] = "PluginManager::PluginManager: The root object can't be nullptr.";
+                throw std::invalid_argument(msg);
+            }
+            
             this->impl = new PluginManager::Private();
+            this->impl->root = root;
         }
 
 
@@ -126,31 +132,25 @@ namespace exeng {
         
         
         void PluginManager::load(const std::string &name) {
-            assert(this->impl != NULL);
+            assert(this->impl != nullptr);
 
-            // el nombre de archivo de la libreria
-            std::string libraryName;
+            std::string libraryName;    // The library filename.
+            libraryName = name;         // TODO: Get the library filename
 
-            // determinar el nombre de archivo (depende del sistema operativo)
-            libraryName = name;
-
-            // determinar si la libreria solicitada estaba cargada con anterioridad
+            // check if the library is loaded previously
             if (this->impl->plugins.find(name) == this->impl->plugins.end()) {
-                LibraryPtr libraryPtr;
-                PluginSharedPtr pluginPtr;
-                
-                libraryPtr.reset(new Library());
+                LibraryPtr libraryPtr = boost::make_shared<Library>();
                 libraryPtr->load(libraryName);
                 
-                pluginPtr.reset( new PluginLibrary(libraryPtr) );
-                
+                PluginSharedPtr pluginPtr = boost::make_shared<PluginLibrary>(libraryPtr);
+
                 this->impl->plugins[name] = pluginPtr;
             }
         }
 
 
         void PluginManager::unload(const std::string &name) {
-            assert(this->impl != NULL);
+            assert(this->impl != nullptr);
             
             auto it = this->impl->plugins.find(name);
 

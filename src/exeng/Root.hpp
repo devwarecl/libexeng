@@ -11,13 +11,12 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_ROOT_HPP__
-#define __EXENG_ROOT_HPP__
+#ifndef exeng_root_hpp
+#define exeng_root_hpp
 
 #include "Config.hpp"
 
 namespace exeng {
-
 	namespace system {
 		class EXENGAPI PluginManager;
 	}
@@ -36,8 +35,14 @@ namespace exeng {
         /**
          * @brief Get the current plugin manager.
          */
-		exeng::system::PluginManager& getPluginManagerRef();
+		exeng::system::PluginManager* getPluginManager();
+        
+        /**
+         * @brief Get the current plugin manager.
+         */
+		const exeng::system::PluginManager* getPluginManager() const;
 
+        
 	private:
 		struct Private;
 		Private *impl;

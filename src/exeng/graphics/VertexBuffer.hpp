@@ -1,52 +1,157 @@
 /**
- * @brief
+ * @file 
+ * @brief 
  */
 
-#ifndef __EXENG_GRAPHICS_VERTEXBUFFER_HPP__
-#define __EXENG_GRAPHICS_VERTEXBUFFER_HPP__
 
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
+
+#ifndef exeng_graphics_vertexbuffer_hpp
+#define exeng_graphics_vertexbuffer_hpp
+
+#include <stdexcept>
 #include "../Object.hpp"
-#include "VertexBufferFormat.hpp"
+#include "../math/TVector.hpp"
 
-namespace exeng
-{
-    namespace graphics
-    {
+#include "VertexFormat.hpp"
+
+namespace exeng {
+    namespace graphics {
+        
+    
         /**
-         * @brief Graphics driver specific 
+         *  @brief Simple vertex structure
          */
-        class EXENGAPI VertexBuffer : public Object
-        {
+        struct Vertex {
+            exeng::math::Vector3f coord;
+            exeng::math::Vector3f normal;
+            exeng::math::Vector2f texCoord;
+        };
+        
+        
+        /**
+         * @brief Area de memoria dedicada a almacenar informacion sobre vertices, del formato estandar.
+         */
+        class VertexBuffer : public Object {
+        public:
+            /**
+             * @brief 
+             */
+            VertexBuffer();
+            
+            /**
+             * @brief 
+             */
+            VertexBuffer(int vertexSize, int vertexCount);
+            
+            /**
+             * @brief 
+             */
+            virtual ~VertexBuffer();
+            
+            /**
+             * @brief 
+             */
+            void allocate(int vertexSize, int vertexCount);
+            
+            /**
+             * @brief 
+             */
+            void release();
+            
+            /**
+             * @brief Comprueba si el buffer ya esta bloqueado.
+             */
+            bool isEmpty() const;
+            
+            /**
+             * @brief Bloquea al buffer.
+             */
+            void* lock();
+            
+            /**
+             * @brief Comprueba si es posible bloquear al buffer.
+             */
+            bool isLocked() const;
+            
+            /**
+             * @brief Desbloquea al buffer, en caso de que ya este bloqueado.
+             */
+            void unlock();
+            
+            
+            /**
+             * @brief Devuelve la cantidad de vertices del buffer.
+             */
+            int getCount() const;
+            
+            /**
+             * @brief Devuelve el tamaño en bytes, de cada vertice almacenado.
+             */
+            int getSize() const;
+            
+        private:
+            struct Private;
+            Private *impl;
+        };
+        
+        
+        /**
+         * @brief Ayuda a inicializar buffers de vertices, a travez de una interfaz similar a la de un 
+         * arreglo.
+         */
+        template<typename VertexType>
+        class VertexArray {
         public:
             
-            /**
-             * @brief
-             */
-            virtual ~VertexBuffer() {}
+            VertexArray(VertexBuffer *buffer) {
+                this->bufferData = static_cast<VertexType*>(buffer->lock());
+                this->buffer = buffer;
+            }
             
-            /**
-             * @brief Lock the vertex and get a raw pointer to the vertex data, enabling high-performance manipulation o data retrieval. 
-             * A locked vertex buffer can't be used for rendering operations
-             */
-            virtual void* lock() = 0;
             
-            /**
-             * @brief Unlock the vertex buffer, making it valid for rendering operations. 
-             * The previously returned buffer isn't valid anymore.
-             */
-            virtual void unlock() = 0;
+            ~VertexArray() {
+                this->buffer->unlock();
+            }
             
-            /**
-             * @brief Get the vertex format descriptor. 
-             */
-            virtual VertexBufferFormat getFormat() const = 0;
             
-            /**
-             * @brief Get total number of vertices holded by this vertex buffer.
-             */
-            virtual int getCount() const = 0;
+            VertexType& operator[] (int index) {          
+#ifdef EXENG_DEBUG
+                if (index >= this->buffer->getCount()) {
+                    throw std::out_of_range("");
+                }
+#endif
+                
+                return this->bufferData[index];
+            }
+            
+            
+            const VertexType& operator[] (int index) const {
+#ifdef EXENG_DEBUG
+                if (index >= this->buffer->getCount()) {
+                    throw std::out_of_range("");
+                }
+#endif                
+                return this->bufferData[index];
+            }
+            
+            
+            int size() const {
+                return this->buffer->getCount();
+            }
+            
+            
+        private:
+            VertexBuffer *buffer;
+            VertexType *bufferData;
         };
     }
 }
 
-#endif
+#endif  //exeng_graphics_vertexbuffer_hpp

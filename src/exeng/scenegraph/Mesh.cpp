@@ -11,6 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
+#include "../math/TVector.hpp"
 #include "Mesh.hpp"
 #include "MeshPart.hpp"
 #include "Plane.hpp"
@@ -25,6 +26,11 @@ using exeng::math::Boxf;
 using exeng::scenegraph::Ray;
 using exeng::scenegraph::IntersectInfo;
 using exeng::scenegraph::MeshPart;
+
+using exeng::graphics::Vertex;
+using exeng::graphics::VertexArray;
+using exeng::graphics::VertexBuffer;
+using exeng::graphics::IndexBuffer;
 
 typedef boost::ptr_vector<MeshPart> MeshPartVector;
 typedef MeshPartVector::iterator MeshPartVectorIt;

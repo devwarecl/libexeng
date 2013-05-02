@@ -16,7 +16,6 @@
 
 #include "DetectEnv.hpp"
 #include "Config.hpp"
-#include "DataTypes.hpp"
 #include "TFlags.hpp"
 #include "Object.hpp"
 #include "Version.hpp"
@@ -46,7 +45,6 @@ namespace exeng {
 	 * @brief Loading for plugins and dynamic linking libraries.
 	 */
     namespace system {}
-    
     
     /**
      * @brief Scenegraph module, for rendering 3D graphics.

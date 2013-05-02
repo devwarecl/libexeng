@@ -12,14 +12,15 @@
  */
 
 
-#ifndef __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
-#define __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
+#ifndef exeng_graphics_graphicsdriverbase_hpp
+#define exeng_graphics_graphicsdriverbase_hpp
 
 #include "GraphicsDriver.hpp"
 #include <list>
 
 namespace exeng {
     namespace graphics {
+        
         /**
          * @brief Base common functionality for easing the process of implementing graphics drivers
          */
@@ -31,7 +32,7 @@ namespace exeng {
             
             virtual DisplayMode getDisplayMode() const;
             
-            virtual exeng::math::Matrix4f getTransform(Transform::Type transform);
+            virtual exeng::math::Matrix4f getTransform(Transform transform);
             
             virtual bool getFullScreenStatus() const;
             
@@ -44,17 +45,14 @@ namespace exeng {
             exeng::math::Matrix4f view;
             exeng::math::Matrix4f projection;
             exeng::math::Matrix4f modelView;
-            
             exeng::math::Rectf viewPort;
-            
-            DisplayMode displayMode;
-            bool fullScreen;
             
             VertexBuffer* vertexBuffer;
             IndexBuffer* indexBuffer;
-            Material material;
+            Material* material;
+            Screen* screen;
         };
     }
 }
 
-#endif  //__EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
+#endif  //exeng_graphics_graphicsdriverbase_hpp

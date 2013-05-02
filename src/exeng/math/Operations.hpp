@@ -14,12 +14,12 @@
 #ifndef __EXENG_MATH_OPERATIONS_HPP__
 #define __EXENG_MATH_OPERATIONS_HPP__
 
-#define EXENG_DECLARE_BIN_OP(Name, Op)	\
-template<typename Type>					\
-struct Name {                           \
-	static Type eval(Type v1, Type v2) { \
-		return v1 Op v2;                \
-	}                                   \
+#define EXENG_DECLARE_BIN_OP(Name, Op)      \
+template<typename Type>                     \
+struct Name {                               \
+	static Type eval(Type v1, Type v2) {    \
+		return v1 Op v2;                    \
+	}                                       \
 }
 
 
@@ -28,7 +28,7 @@ template<typename Type>							\
 struct Name {									\
 	static Type& eval(Type &v1, Type v2) {		\
 		return v1 Op v2;						\
-	}									\
+	}                                           \
 }
 
 
@@ -56,8 +56,7 @@ namespace exeng {
 
 		
 		template<typename SequenceType>
-		struct SequenceTypeTraits {
-        };
+		struct SequenceTypeTraits {};
         
         
 		/**

@@ -19,7 +19,6 @@
 #include <string>
 
 #include "Config.hpp"
-#include "DataTypes.hpp"
 #include "TypeInfo.hpp"
 
 namespace exeng {

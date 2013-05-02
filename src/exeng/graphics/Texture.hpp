@@ -1,9 +1,19 @@
 /**
- * @brief
+ * @file 
+ * @brief 
  */
 
-#ifndef __EXENG_GRAPHICS_TEXTURE_HPP__
-#define __EXENG_GRAPHICS_TEXTURE_HPP__
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
+
+#ifndef exeng_graphics_texture_hpp
+#define exeng_graphics_texture_hpp
 
 #include "../Object.hpp"
 #include "../math/TVector.hpp"
@@ -25,7 +35,6 @@ namespace exeng {
         /**
          * @brief
          */
-        
         enum class TextureCubeMapFace {
             PositiveX, NegativeX,
             PositiveY, NegativeY,
@@ -34,10 +43,9 @@ namespace exeng {
         
         
         /**
-         * @brief
+         * @brief 
          */
-        class EXENGAPI Texture : public Object
-        {
+        class EXENGAPI Texture : public Object {
         public:
             virtual ~Texture() {}
 

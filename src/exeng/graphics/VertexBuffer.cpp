@@ -19,23 +19,17 @@
 #include <cassert>
 
 namespace exeng {
-    namespace scenegraph {
+    namespace graphics {
         
         struct VertexBuffer::Private {
-            HeapBuffer buffer;
-            
-            /**
-             * @brief Numero de vertices que almacena este buffer
-             */
-            int count;
-            
-            /**
-             * @brief Tamaño, en bytes, de cada vertice, dentro del buffer de vertices
-             */
-            int size;
-            
+        public:
             Private() : count(0), size(0) {}
             ~Private() { }
+
+        public:
+            HeapBuffer buffer;  //! The buffer storing the data.
+            int count;          //! Number of vertices 
+            int size;           //! Size in bytes, of each vertex.    
         };
         
         

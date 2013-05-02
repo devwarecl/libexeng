@@ -16,6 +16,10 @@
 #include <boost/checked_delete.hpp>
 
 using exeng::graphics::Material;
+using exeng::graphics::VertexBuffer;
+using exeng::graphics::VertexArray;
+using exeng::graphics::Vertex;
+using exeng::graphics::IndexBuffer;
 using exeng::math::Boxf;
 
 namespace exeng {

@@ -19,7 +19,7 @@
 #include <cassert>
 
 namespace exeng {
-    namespace scenegraph {
+    namespace graphics {
         
         struct IndexBuffer::Private {
             HeapBuffer buffer;

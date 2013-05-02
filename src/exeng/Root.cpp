@@ -12,18 +12,22 @@
 #include "Root.hpp"
 #include "system/PluginManager.hpp"
 
+using exeng::system::PluginManager;
+
 namespace exeng {
     
     struct Root::Private {
+    public:
         Private(Root *root) : root(nullptr), pluginManager(nullptr) {
             this->root = root;
-            this->pluginManager = new system::PluginManager(*root);
+            this->pluginManager = new PluginManager(root);
         }
         
         ~Private() {
             boost::checked_delete(this->pluginManager);
         }    
         
+    public:
         Root *root;
         system::PluginManager *pluginManager;
     };
@@ -39,8 +43,14 @@ namespace exeng {
 	}
 
 
-	system::PluginManager& Root::getPluginManagerRef() {
+	PluginManager* Root::getPluginManager() {
 		assert(this->impl != nullptr);
-		return *this->impl->pluginManager;
+		return this->impl->pluginManager;
+	}
+    
+    
+    const PluginManager* Root::getPluginManager() const {
+		assert(this->impl != nullptr);
+		return this->impl->pluginManager;
 	}
 }

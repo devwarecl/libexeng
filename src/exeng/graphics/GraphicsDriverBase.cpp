@@ -13,15 +13,13 @@
 
 
 #include "GraphicsDriverBase.hpp"
+#include "Material.hpp"
 
 #include <cassert>
 
-namespace exeng
-{
-    namespace graphics
-    {
-        GraphicsDriverBase::GraphicsDriverBase()
-        {
+namespace exeng {
+    namespace graphics {
+        GraphicsDriverBase::GraphicsDriverBase() {
             this->model.identity();
             this->view.identity();
             this->projection.identity();
@@ -31,30 +29,26 @@ namespace exeng
             
             this->fullScreen = false;
             
-            this->vertexBuffer = NULL;
-            this->indexBuffer = NULL;
+            this->vertexBuffer = nullptr;
+            this->indexBuffer = nullptr;
         }
         
         
-        GraphicsDriverBase::~GraphicsDriverBase()
-        {
+        GraphicsDriverBase::~GraphicsDriverBase() {
         }
         
         
-        DisplayMode GraphicsDriverBase::getDisplayMode() const
-        {
+        DisplayMode GraphicsDriverBase::getDisplayMode() const {
             return this->displayMode;
         }
         
         
-        exeng::math::Matrix4f GraphicsDriverBase::getTransform(Transform::Type transform)
-        {
+        exeng::math::Matrix4f GraphicsDriverBase::getTransform(Transform transform) {
             assert( transform == Transform::World || 
                     transform == Transform::View || 
                     transform == Transform::Projection);
             
-            switch (transform)
-            {
+            switch (transform) {
                 case Transform::World:      return this->model;
                 case Transform::View:       return this->view;
                 case Transform::Projection: return this->projection;
@@ -64,20 +58,17 @@ namespace exeng
         }
         
         
-        bool GraphicsDriverBase::getFullScreenStatus() const
-        {
+        bool GraphicsDriverBase::getFullScreenStatus() const {
             return this->fullScreen;
         }
         
         
-        Material GraphicsDriverBase::getMaterial() const
-        {
-            return this->material;
+        Material GraphicsDriverBase::getMaterial() const {
+            return *this->material;
         }
         
         
-        math::Rectf GraphicsDriverBase::getViewport() const
-        {
+        exeng::math::Rectf GraphicsDriverBase::getViewport() const {
             return this->viewPort;
         }
     }

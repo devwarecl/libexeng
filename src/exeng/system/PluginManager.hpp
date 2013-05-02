@@ -57,7 +57,7 @@ namespace exeng {
             struct Private;
             Private* impl;
 
-            PluginManager(Root& root);
+            PluginManager(Root* root);
             PluginManager(const PluginManager &other);
             PluginManager& operator= (const PluginManager& other); 
         };
