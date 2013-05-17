@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file Screen.hpp
+ * @brief Define the Screen abstract class, and the DisplayMode structucture.
  */
 
 
@@ -11,10 +11,12 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef exeng_graphics_canvas_hpp
-#define exeng_graphics_canvas_hpp
+
+#ifndef __EXENG_GRAPHICS_CANVAS_HPP__
+#define __EXENG_GRAPHICS_CANVAS_HPP__
 
 #include <vector>
+#include <functional>
 
 #include "../Object.hpp"
 #include "../math/TSize.hpp"
@@ -36,8 +38,8 @@ namespace exeng {
                 this->fullscreen = false;
             }
             
-            exeng::math::Size2i size;   //! Width and height
-            PixelFormat format;         //! Color format
+            exeng::math::Size2i size;   //! Width and height, in pixels.
+            PixelFormat format;         //! Framebuffer format
             int frequency;              //! Frequency
             bool fullscreen;            //! Fullscreen
         };
@@ -50,15 +52,14 @@ namespace exeng {
         
         
         /**
-         * @brief Abstract canvas.
+         * @brief Abstract drawing canvas.
          */
         class EXENGAPI Screen : public Object {
         public:
             virtual ~Screen() {}
             
             /**
-             * @brief enumDisplayModes
-             * @return 
+             * @brief Get the available displaymodes for the screen.
              */
             virtual DisplayModeArray enumDisplayModes() const = 0;
             
@@ -70,10 +71,24 @@ namespace exeng {
             /**
              * @brief Get the current display mode.
              */
-            virtual DisplayMode  getDisplayMode() const = 0;
+            virtual DisplayMode getDisplayMode() const = 0;
             
+            /**
+             * @brief Raise events
+             */
+            virtual void pollEvents() = 0;
+            
+            /**
+             * @brief Set the event handler for keyboard callbacks
+             */
+            virtual void setKeyboardCallback(const std::function<void()> &eventHandler) = 0;
+            
+            /**
+             * @brief Get the current event handler for the key events
+             */
+            virtual std::function<void()> getKeyPressCallback() const = 0;
         };
     }
 }
 
-#endif // exeng_graphics_canvas_hpp
+#endif // __EXENG_GRAPHICS_CANVAS_HPP__

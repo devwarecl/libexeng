@@ -148,14 +148,14 @@ namespace exeng {
         
         template<typename Type, int Dimension>
         bool TBoundary<Type, Dimension>::isInside(const TVector<Type, Dimension>& point) const {
-            Type Value;
+            Type value;
             
             for(int i=0; i<Dimension; ++i) { 
-                Value = point[i];
+                value = point[i];
                 
-                if ( Value < this->edges[Min][i] ) {
+                if ( value < this->edges[Min][i] ) {
                     return false;
-				} else if ( Value > this->edges[Max][i] ) {
+				} else if ( value > this->edges[Max][i] ) {
                     return false;
 				}
             }
@@ -168,6 +168,13 @@ namespace exeng {
         void TBoundary<Type, Dimension>::expand(const TVector<Type, Dimension>& point) {
             this->edges[Min] = this->edges[Min].minimize(point);
             this->edges[Max] = this->edges[Max].maximize(point);
+        }
+        
+        
+        template<typename Type, int Dimension>
+        void TBoundary<Type, Dimension>::expand(const TBoundary<Type, Dimension>& boundary) {
+            this->expand(boundary.edges[0]);
+            this->expand(boundary.edges[1]);
         }
         
         

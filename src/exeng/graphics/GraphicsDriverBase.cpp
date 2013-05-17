@@ -17,8 +17,13 @@
 
 #include <cassert>
 
+using namespace exeng;
+using namespace exeng::graphics;
+using namespace exeng::math;
+
 namespace exeng {
     namespace graphics {
+        
         GraphicsDriverBase::GraphicsDriverBase() {
             this->model.identity();
             this->view.identity();
@@ -26,8 +31,6 @@ namespace exeng {
             this->modelView.identity();
             
             this->viewPort.set(0.0f);
-            
-            this->fullScreen = false;
             
             this->vertexBuffer = nullptr;
             this->indexBuffer = nullptr;
@@ -39,11 +42,13 @@ namespace exeng {
         
         
         DisplayMode GraphicsDriverBase::getDisplayMode() const {
-            return this->displayMode;
+            //return this->displayMode;
+            
+            return DisplayMode();
         }
         
         
-        exeng::math::Matrix4f GraphicsDriverBase::getTransform(Transform transform) {
+        Matrix4f GraphicsDriverBase::getTransform(Transform transform) {
             assert( transform == Transform::World || 
                     transform == Transform::View || 
                     transform == Transform::Projection);
@@ -54,21 +59,16 @@ namespace exeng {
                 case Transform::Projection: return this->projection;
             }
 
-			return math::Matrix4f();
+			return Matrix4f();
         }
         
         
-        bool GraphicsDriverBase::getFullScreenStatus() const {
-            return this->fullScreen;
+        const Material* GraphicsDriverBase::getMaterial() const {
+            return this->material;
         }
         
         
-        Material GraphicsDriverBase::getMaterial() const {
-            return *this->material;
-        }
-        
-        
-        exeng::math::Rectf GraphicsDriverBase::getViewport() const {
+        Rectf GraphicsDriverBase::getViewport() const {
             return this->viewPort;
         }
     }

@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file Object.hpp
+ * @brief exeng base blass.
  */
 
 
@@ -12,7 +12,6 @@
  */
 
 
-
 #ifndef __EXENG_OBJECT_HPP__
 #define __EXENG_OBJECT_HPP__
 
@@ -22,10 +21,10 @@
 #include "TypeInfo.hpp"
 
 namespace exeng {
+    
 	/**
 	 * @brief Base class of the class hierarchy of the multimedia engine. 
 	 */
-	
 	class EXENGAPI Object {
 	public:
 		virtual ~Object() = 0;

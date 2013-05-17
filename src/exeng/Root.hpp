@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file Root.hpp
+ * @brief Define the main class of the Engine.
  */
 
 
@@ -11,8 +11,9 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef exeng_root_hpp
-#define exeng_root_hpp
+
+#ifndef __EXENG_ROOT_HPP__
+#define __EXENG_ROOT_HPP__
 
 #include "Config.hpp"
 
@@ -21,6 +22,11 @@ namespace exeng {
 		class EXENGAPI PluginManager;
 	}
 
+    namespace scenegraph {
+        class EXENGAPI MeshManager;
+    }
+    
+    
     /**
      * @brief The root class of the multimedia engine. 
      *
@@ -29,9 +35,8 @@ namespace exeng {
 	class EXENGAPI Root {
 	public:
 		Root();
-        
 		~Root();
-
+        
         /**
          * @brief Get the current plugin manager.
          */
@@ -41,7 +46,17 @@ namespace exeng {
          * @brief Get the current plugin manager.
          */
 		const exeng::system::PluginManager* getPluginManager() const;
-
+        
+        /**
+         * @brief Get the current mesh manager.
+         */
+        exeng::scenegraph::MeshManager* getMeshManager();
+        
+        /**
+         * @brief Get the current mesh manager.
+         */
+        const exeng::scenegraph::MeshManager* getMeshManager() const;
+        
         
 	private:
 		struct Private;

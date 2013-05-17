@@ -13,10 +13,18 @@
 
 #include "Light.hpp"
 
+#include <cassert>
+#include <boost/checked_delete.hpp>
+
+using namespace exeng;
+using namespace exeng::math;
+using namespace exeng::scenegraph;
+
+
 struct exeng::scenegraph::Light::Private {
-    exeng::math::Vector3f position;
-    exeng::math::Vector3f target;
-    exeng::scenegraph::LightType::Enum lightType;
+    Vector3f position;
+    Vector3f target;
+    LightType lightType;
     float range;
     
     Private() {
@@ -27,47 +35,54 @@ struct exeng::scenegraph::Light::Private {
 
 namespace exeng{
     namespace scenegraph {
-        Light::Light() {
-            this->impl = new Light::Private();
+        Light::Light() : impl(new Light::Private()) {
         }
         
         
         Light::~Light() {
-            delete this->impl;
+            boost::checked_delete(this->impl);
         }
         
         
-        auto Light::getLightType() -> LightType::Enum  {
+        LightType Light::getLightType() const {
+            assert(this->impl != nullptr);
             return this->impl->lightType;
         }
         
         
-        auto Light::setLightType(LightType::Enum lightType) -> void  {
+        void Light::setLightType(LightType lightType) {
+            assert(this->impl != nullptr);
             this->impl->lightType = lightType;
         }
         
         
-        auto Light::setPosition(const Vector3f &pos) -> void  {
+        void Light::setPosition(const Vector3f &pos){
+            assert(this->impl != nullptr);
             this->impl->position = pos;
         }
         
         
-        auto Light::getPosition() const -> Vector3f {
+        Vector3f Light::getPosition() const {
+            assert(this->impl != nullptr);
             return this->impl->position;
         }
         
         
-        auto Light::setTarget(const Vector3f &target) -> void {
+        void Light::setTarget(const Vector3f &target) {
+            assert(this->impl != nullptr);
             this->impl->target = target;
         }
         
         
-        auto Light::getTarget() -> Vector3f  {
+        Vector3f Light::getTarget() const {
+            assert(this->impl != nullptr);
             return this->impl->target;
         }
         
         
-        auto Light::setRange(float range) -> void {
+        void Light::setRange(float range) {
+            assert(this->impl != nullptr);
+            
             if (range < 0.0f) {
                 range = 0.0;
             }
@@ -76,7 +91,8 @@ namespace exeng{
         }
         
         
-        auto Light::getRange() const -> float {
+        float Light::getRange() const {
+            assert(this->impl != nullptr);
             return this->impl->range;
         }
     }

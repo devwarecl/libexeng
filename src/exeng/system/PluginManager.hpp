@@ -28,13 +28,16 @@ namespace exeng {
         class EXENGAPI PluginManager {
             friend class exeng::Root;
 
+        private:
+            PluginManager(Root* root);
+            
         public:
             ~PluginManager();
             
             /**
              * @brief Devuelve una referencia al objeto central 
              */
-            Root& getRoot();
+            Root* getRoot();
 
             /**
              * @brief Carga el plugin que tenga el nombre indicado. 
@@ -57,7 +60,9 @@ namespace exeng {
             struct Private;
             Private* impl;
 
-            PluginManager(Root* root);
+            
+            // Not implemented methods
+        private:
             PluginManager(const PluginManager &other);
             PluginManager& operator= (const PluginManager& other); 
         };

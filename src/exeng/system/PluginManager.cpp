@@ -77,7 +77,7 @@ namespace exeng {
             }
 
             
-            virtual void initialize(Root &root) {
+            virtual void initialize(Root *root) {
                 this->pluginPtr->initialize(root);
             }
 

@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file IntersectInfo.hpp
+ * @brief IntersectInfo structure interface definition.
  */
 
 
@@ -20,50 +20,30 @@
 
 namespace exeng {
     namespace scenegraph {
+    
         /**
-         * @brief Almacena informacion general sobre la interseccion de un rayo 
-		 * y un objeto determinado
+         * @brief Store information about the intersection between a ray and a object.
          */
-        struct IntersectInfo {
-            /**
-             * @brief Existio interseccion?
-             */
-            bool intersect;
+        struct EXENGAPI IntersectInfo {
+        public:
+            //! Intersection state. If false, the other attributes are on a unspecified state.
+            bool intersect;                                 
             
-            /**
-             * @brief Coordenadas parametricas de los puntos de interseccion
-             */
-            float distance;
+            //! Distance from the ray starting point to the point of intersection.
+            float distance;                                 
+            
+            //! Surface normal at the intersection point.
+			exeng::math::Vector3f normal;                   
+            
+            //! Ray - surface intersection point.
+            exeng::math::Vector3f point;                    
+            
+            //! Surface material.
+			const exeng::graphics::Material* materialPtr;   
 
-			/**
-			 * @brief Normal de la superficie
-			 */
-			exeng::math::Vector3f normal;
-            
-            
-            /**
-             * @brief El punto en la superficie donde se produjo la interseccion
-             */
-            exeng::math::Vector3f point;
-            
-            
-			/**
-			 * @brief Material de la superficie en el punto de interseccion
-			 */
-			const exeng::graphics::Material* materialPtr;
-
-
+        public:
 			IntersectInfo();
         };
-
-        
-		inline IntersectInfo::IntersectInfo() {
-			this->intersect = false;
-			this->distance = 0.0f;
-			this->normal = exeng::math::Vector3f(0.0f);
-            this->point = exeng::math::Vector3f(0.0f);
-			this->materialPtr = nullptr;
-		} 
     }
 }
 

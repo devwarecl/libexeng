@@ -29,10 +29,10 @@ namespace exeng {
             const Material *material;
             VertexBuffer *vertexBuffer;
             IndexBuffer *indexBuffer;
-            PrimitiveType primitiveType;
+            exeng::graphics::Primitive::Enum primitiveType;
             
             Private() : material(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr) {
-                this->primitiveType = PrimitiveType::TriangleList;
+                this->primitiveType = exeng::graphics::Primitive::Enum::TriangleList;
             }
         };
         
@@ -47,12 +47,12 @@ namespace exeng {
         }
         
         
-        PrimitiveType MeshPart::getPrimitiveType() const {
+        exeng::graphics::Primitive::Enum MeshPart::getPrimitiveType() const {
             return this->impl->primitiveType;
         }
         
         
-        void MeshPart::setPrimitiveType(PrimitiveType primitiveType) {
+        void MeshPart::setPrimitiveType(exeng::graphics::Primitive::Enum primitiveType) {
             this->impl->primitiveType = primitiveType;
         }
         

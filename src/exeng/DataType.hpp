@@ -20,6 +20,71 @@
 #include <cstdint>
 
 namespace exeng {
+
+    /**
+     * @brief
+     */
+    enum class DataTypeEnum {
+        UInt8,  UInt16,     UInt32,     UInt64,
+        Int8,   Int16,      Int32,      Int64,
+                Float16,    Float32,    Float64
+    };
+
+    /**
+     * @brief
+     */
+    template<typename Type> struct DataTypeTraits;
+    
+    template<> struct DataTypeTraits<uint8_t> {
+        typedef uint8_t Type;
+        enum { Enum= static_cast<int>(DataTypeEnum::UInt8) };
+    };
+    
+    template<> struct DataTypeTraits<uint16_t> {
+        typedef uint16_t Type;
+        enum { Enum=static_cast<int>(DataTypeEnum::UInt16) };
+    };
+
+    template<> struct DataTypeTraits<uint32_t> {
+        typedef uint32_t Type;
+        enum { Enum=static_cast<int>(DataTypeEnum::UInt32) };
+    };
+    
+    template<> struct DataTypeTraits<uint64_t> {
+        typedef uint64_t Type;
+        enum { Enum=static_cast<int>(DataTypeEnum::UInt64) };
+    };
+    
+    template<> struct DataTypeTraits<int8_t> {
+        typedef int8_t Type;
+        enum { Enum=static_cast<int>(DataTypeEnum::Int8) };
+    };
+    
+    template<> struct DataTypeTraits<int16_t> {
+        typedef int16_t Type;
+        enum { Enum=static_cast<int>(DataTypeEnum::Int16) };
+    };
+
+    template<> struct DataTypeTraits<int32_t> {
+        typedef int32_t Type;
+        enum { Enum=static_cast<int>(DataTypeEnum::Int32) };
+    };
+    
+    template<> struct DataTypeTraits<int64_t> {
+        typedef int64_t Type;
+        enum { Enum=static_cast<int>(DataTypeEnum::Int64) };
+    };
+    
+    template<> struct DataTypeTraits<float> {
+        typedef float Type;
+        enum { Enum=static_cast<int>(DataTypeEnum::Float32) };
+    };
+    
+    template<> struct DataTypeTraits<double> {
+        typedef double Type;
+        enum { Enum=static_cast<int>(DataTypeEnum::Float64) };
+    };
+    
     /**
      * @brief Encode a datatype description on a 16-bit value. Used for generic representation
      * of data, and serialization of those data.
@@ -75,7 +140,6 @@ namespace exeng {
         static DataType makeDataType() {
             return DataType(typeSign, typeKind, typeSize);
         }
-        
         
         /**
          * @brief Implicit conversion to a 16-bit value.
@@ -164,6 +228,13 @@ namespace exeng {
         this->setSize(size);
         this->setSign(sign);
         this->setKind(kind);
+        
+        /*
+        std::cout << "before: " << this->value << std::endl;
+        std::cout << sign << ", " << kind << ", " << size << std::endl;
+        std::cout << "after: " << this->value << std::endl;
+        std::cout << std::endl;
+        */
     }
     
     

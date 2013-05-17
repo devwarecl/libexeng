@@ -1,6 +1,6 @@
 include_directories( ${PROJECT_SOURCE_DIR}/src )
 
-add_library(exeng 
+add_library(exeng SHARED
 ./Exeng.hpp ./DetectEnv.hpp ./Config.hpp ./DataType.hpp
 
 ./Object.hpp ./Object.cpp 
@@ -23,6 +23,12 @@ add_library(exeng
 ./graphics/IndexBuffer.hpp ./graphics/IndexBuffer.cpp
 ./graphics/Color.hpp ./graphics/Color.inl
 ./graphics/Texture.hpp
+./graphics/Primitive.hpp
+
+./ui/Widget.hpp ./ui/Widget.cpp 
+./ui/Window.hpp ./ui/Window.cpp 
+
+./input/IEventRaiser.hpp
 
 ./scenegraph/SceneNode.hpp ./scenegraph/SceneNode.cpp ./scenegraph/Scene.hpp ./scenegraph/Scene.cpp
 ./scenegraph/Camera.hpp ./scenegraph/Camera.cpp ./scenegraph/Light.hpp ./scenegraph/Light.cpp
@@ -34,11 +40,13 @@ add_library(exeng
 ./scenegraph/Sphere.hpp ./scenegraph/Sphere.inl
 ./scenegraph/Mesh.hpp ./scenegraph/Mesh.cpp
 ./scenegraph/MeshPart.hpp ./scenegraph/MeshPart.cpp
+./scenegraph/MeshManager.hpp ./scenegraph/MeshManager.cpp
+./scenegraph/IMeshLoader.hpp ./scenegraph/IMeshLoader.cpp
 
 ./system/Library.hpp ./system/Library.cpp 
 ./system/Plugin.hpp ./system/Plugin.cpp 
 ./system/PluginManager.hpp ./system/PluginManager.cpp 
-./system/LibraryPrivate.hpp
+./system/LibraryPrivate.hpp ./system/LibraryPrivatePosix.cpp ./system/LibraryPrivateWin32.cpp
 
 ./math/Operations.hpp ./math/Operations.inl
 ./math/Common.hpp ./math/Common.inl 
@@ -47,3 +55,5 @@ add_library(exeng
 ./math/TSize.hpp ./math/TSize.inl 
 ./math/TVector.hpp ./math/TVector.inl 
 )
+
+target_link_libraries(exeng dl)

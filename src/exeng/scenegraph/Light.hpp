@@ -18,29 +18,21 @@
 #include "../math/TVector.hpp"
 #include "SceneNodeData.hpp"
 
-namespace exeng
-{
-    namespace scenegraph
-    {
-        namespace LightType
-        {
-            enum Enum
-            {
-                Directional,
-                Point,
-                Spot
-            };
-        }
-        
+namespace exeng {
+    namespace scenegraph {
+        /**
+         * @brief Available instanciable light types.
+         */
+        enum class LightType {
+            Directional,
+            Point,
+            Spot
+        };
         
         /**
          * @brief Documentacion pendiente
          */
-        class EXENGAPI Light : public SceneNodeData
-        {
-        public:
-            typedef exeng::math::Vector3f Vector3f;
-            
+        class EXENGAPI Light : public SceneNodeData {
         public:
             Light();
             
@@ -50,39 +42,39 @@ namespace exeng
              * @brief Devuelve el tipo de luz actual de esta luz.
              * @return Miembro de la enumeracion Exeng::SceneGraph::LightType::Enum
              */
-            auto getLightType() -> LightType::Enum;
+            LightType getLightType() const;
             
             /**
              * @brief Establece el tipo de luz actual de la luz.
              * @param lightType El tipo de luz a actual, miembro de la enumeracion Exeng::SceneGraph::LightType::Enum
              */
-            auto setLightType( LightType::Enum lightType) -> void;
+            void setLightType(LightType lightType);
             
             /**
              * @brief Establece la posicion en coordenadas locales de la luz.
              * @param pos La posicion de la luz, en coordenadas locales, como un Vector3f
              */
-            auto setPosition(const Vector3f& pos) -> void;
+            void setPosition(const exeng::math::Vector3f& pos);
             
             /**
              * @brief Devuelve la posicion actual de la luz.
              * @return La posicion actual de la luz, en coordenadas locales, sin ningun tipo 
              * de transformacion
              */
-            auto getPosition() const -> Vector3f;
+            exeng::math::Vector3f getPosition() const;
             
             /**
              * @brief Establece el punto hacia el cual la luz apunta. Aplicacble solo si la luz es de tipo SpotLight.
              * @param El punto hacia el cual la luz apunta, en coordenadas locales
              */
-            auto setTarget(const Vector3f& target) -> void;
+            void setTarget(const exeng::math::Vector3f& target);
             
             /**
              * @brief Devuelve el punto hacia el cual la luz apunta. Por defecto es la posicion (0.0, -1.0, 0.0)
              * Solo aplicable si la luz es de tipo SpotLight.
              * @return El punto hacia el cual la luz apunta, como un objeto de tipo Vector3f
              */
-            auto getTarget() -> Vector3f;
+            exeng::math::Vector3f getTarget() const;
             
             /**
              * @brief Establece el rango de la luz
@@ -90,13 +82,13 @@ namespace exeng
              * la luz desde su posicion en la escena. Objetos que esten fuera del rango no se veran afectados por 
              * la luz
              */
-            auto setRange(float range) -> void;
+            void setRange(float range);
             
             /**
              * @brief Devuelve el rango de la luz actual. Solo aplicable para luces puntuales.
              * @return El rango actual de la luz, en unidades del Mundo.
              */
-            auto getRange() const -> float;
+            float getRange() const;
             
         private:
             struct Private;

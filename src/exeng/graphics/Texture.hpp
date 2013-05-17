@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file Texture.hpp
+ * @brief Define the Texture abstract class, and his companion structures.
  */
 
 
@@ -12,8 +12,8 @@
  */
 
 
-#ifndef exeng_graphics_texture_hpp
-#define exeng_graphics_texture_hpp
+#ifndef __EXENG_GRAPHICS_TEXTURE_HPP__
+#define __EXENG_GRAPHICS_TEXTURE_HPP__
 
 #include "../Object.hpp"
 #include "../math/TVector.hpp"
@@ -23,7 +23,7 @@ namespace exeng {
     namespace graphics {
         
         /**
-         * @brief
+         * @brief Type of texture.
          */
         enum class TextureType {
             Tex1D,
@@ -31,16 +31,15 @@ namespace exeng {
             Tex3D,
             TexCubeMap
         };
-                
+        
         /**
-         * @brief
+         * @brief 
          */
         enum class TextureCubeMapFace {
             PositiveX, NegativeX,
             PositiveY, NegativeY,
             PositiveZ, NegativeZ
         };
-        
         
         /**
          * @brief 
@@ -87,4 +86,4 @@ namespace exeng {
     }
 }
 
-#endif
+#endif  // __EXENG_GRAPHICS_TEXTURE_HPP__

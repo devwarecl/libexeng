@@ -1,5 +1,5 @@
 /**
- * @file 
+ * @file TFlags.hpp
  * @brief 
  */
 
@@ -17,18 +17,13 @@
 #include <cstdint>
 
 namespace exeng {
+    
 	/**
-	 * @brief Clase de plantilla para el manejo de Flags.
-	 *
-	 * Permite la consulta de flags de manera facil e intuitiva
+	 * @brief class template for flags management.
 	 */
-	template
-	<
-		//! El tipo especifico de enumeracion
-		typename _EnumType,	
-
-		//! El tipo de datos usado para el almacenamiento
-		typename _StorageType = std::uint32_t
+	template <
+		typename _EnumType,                     //! El tipo especifico de enumeracion
+		typename _StorageType = std::uint32_t   //! El tipo de datos usado para el almacenamiento
 	>
 	class TFlags {
 	public:
@@ -53,6 +48,8 @@ namespace exeng {
 		TFlags(const TFlagsType& Other);
 
 		TFlags(EnumType FlagDetail);
+        
+        TFlags(int value);
 
 		TFlags<EnumType>& operator= (EnumType enumType);
 
@@ -85,6 +82,8 @@ namespace exeng {
          * @brief Establece el valor actual en el contenedor de flags.
 		 */
 		void setValue(EnumType Value);
+        
+        operator EnumType() const;
 	};
 }
 

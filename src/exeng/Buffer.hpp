@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file Buffer.hpp
+ * @brief Define the Buffer abstract class.
  */
 
 
@@ -11,8 +11,9 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef exeng_buffer_hpp
-#define exeng_buffer_hpp
+
+#ifndef __EXENG_BUFFER_HPP__
+#define __EXENG_BUFFER_HPP__
 
 #include "Object.hpp"
 

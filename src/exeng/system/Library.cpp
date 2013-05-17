@@ -15,23 +15,22 @@
 #include <stdexcept>
 #include "Library.hpp"
 #include "LibraryPrivate.hpp"
+#include <boost/checked_delete.hpp>
 
 namespace exeng {
 	namespace system {
-		Library::Library() : impl(nullptr) {
-			this->impl = new Library::Private();
+		Library::Library() : impl(new Library::Private()) {
 		}
 
 
-		Library::Library(const std::string &LibraryFileName) : impl(nullptr) {
-			this->impl = new Library::Private();
+		Library::Library(const std::string &LibraryFileName) : impl(new Library::Private()) {
 			this->load(LibraryFileName);
 		}
 
 
 		Library::~Library() {
 			this->unload();
-			delete this->impl;
+            boost::checked_delete(this->impl);
 		}
 
 
@@ -39,10 +38,6 @@ namespace exeng {
 			assert(this->impl != nullptr);
 
 			this->impl->load(filename);
-
-            if (this->impl->handle == nullptr) {
-				throw std::runtime_error("");
-            }
 		}
 
 		
@@ -75,8 +70,7 @@ namespace exeng {
 
             if (this->isValid() == true) {
 				return this->getName();
-            }
-            else {
+            } else {
 				return "<empty library object>";
             }
 		}

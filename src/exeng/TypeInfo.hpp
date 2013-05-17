@@ -42,7 +42,6 @@ namespace exeng {
 
 		bool isEmpty() const;
 
-
 		template<typename Type>
 		static TypeInfo get() {
 			TypeInfo info;
@@ -55,8 +54,6 @@ namespace exeng {
 	private:
 		std::type_info *typeInfo;
 	};
-
-
 }
 
 #endif

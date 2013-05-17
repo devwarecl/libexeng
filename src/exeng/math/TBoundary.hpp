@@ -145,12 +145,11 @@ namespace exeng {
 
             /**
              * @brief Expande las proporciones de la frontera, de tal forma que el punto indicado se encuentre dentro de ella. 
-             * @param point El punto que 
              */
             void expand(const Vector& point);
 
             /**
-             * @brief Expande las proporciones de la frontera, de tal forma que la frontera indicada
+             * @brief Expande las proporciones de la frontera.
              */
             void expand(const Boundary& other);
             

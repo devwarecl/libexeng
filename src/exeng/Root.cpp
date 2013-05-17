@@ -11,32 +11,32 @@
 
 #include "Root.hpp"
 #include "system/PluginManager.hpp"
+#include "scenegraph/MeshManager.hpp"
 
-using exeng::system::PluginManager;
+using namespace exeng;
+using namespace exeng::system;
+using namespace exeng::scenegraph;
 
 namespace exeng {
-    
     struct Root::Private {
     public:
-        Private(Root *root) : root(nullptr), pluginManager(nullptr) {
-            this->root = root;
-            this->pluginManager = new PluginManager(root);
-        }
+        Private() : pluginManager(nullptr), meshManager(nullptr) {}
         
         ~Private() {
             boost::checked_delete(this->pluginManager);
         }    
         
     public:
-        Root *root;
-        system::PluginManager *pluginManager;
+        PluginManager *pluginManager;
+        MeshManager *meshManager;
     };
-
     
-	Root::Root() : impl(nullptr) {
-		this->impl = new Root::Private(this);
+    
+	Root::Root() : impl(new Root::Private()) {
+        this->impl->meshManager = new MeshManager();
+        this->impl->pluginManager = new PluginManager(this);
 	}
-
+    
 
 	Root::~Root() {
 		boost::checked_delete(this->impl);
@@ -53,4 +53,16 @@ namespace exeng {
 		assert(this->impl != nullptr);
 		return this->impl->pluginManager;
 	}
+    
+    
+    MeshManager* Root::getMeshManager() {
+        assert(this->impl != nullptr);
+        return this->impl->meshManager;
+    }
+    
+    
+    const MeshManager* Root::getMeshManager() const {
+        assert(this->impl != nullptr);
+        return this->impl->meshManager;
+    }
 }

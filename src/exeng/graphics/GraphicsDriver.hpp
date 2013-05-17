@@ -18,38 +18,21 @@
 #include <vector>
 
 #include "../Object.hpp"
+#include "../TFlags.hpp"
 #include "../math/TBoundary.hpp"
 #include "../math/TMatrix.hpp"
+
+#include "Color.hpp"
 #include "PixelFormat.hpp"
 #include "VertexFormat.hpp"
 #include "IndexBuffer.hpp"
 #include "Texture.hpp"
 #include "Screen.hpp"
+#include "Primitive.hpp"
 
 namespace exeng {
     namespace graphics {
-        
-        /**
-         * @brief Fundamental rendering primitives
-         */
-        enum class Primitive {
-            PointList       = 0x00001001,   //! Point lists
-            
-            LineList        = 0x00002001,   //! Line lists.
-            LineStrip       = 0x00002002,   //! Line strip.
-            LineLoop        = 0x00002003,   //! Line loop
-            
-            TriangleList    = 0x00004001,   //! Triangle lists
-            TriangleStrip   = 0x00004002,   //! Triangle strips
-            TriangleFan     = 0x00004003,   //! Triangle fans
-            
-            // Group markers. Used for check if a given primitive 
-            // is a point, line or triangle.
-            Point           = 0x00001000,
-            Line            = 0x00002000,
-            Triangle        = 0x00004000
-        };
-        
+
         /**
          * @brief Transformation types
          */
@@ -62,11 +45,15 @@ namespace exeng {
         /**
          * @brief 
          */
-        enum class ClearFlags {
-            Color = 0x00000001,
-            Depth = 0x00000002,
-            Stencil  = 0x00000004
-        };
+        namespace ClearFlags {
+            enum _Enum {
+                Color = 0x00000001,
+                Depth = 0x00000002,
+                Stencil  = 0x00000004
+            };
+            
+            typedef TFlags<_Enum> Enum;
+        }
         
         class EXENGAPI Texture;
         class EXENGAPI VertexBuffer;
@@ -83,7 +70,7 @@ namespace exeng {
             /**
              * @brief Start the rendering of a new frame, clearing the previous one
              */
-            virtual void beginScene(const Color &color, ClearFlags flags = ClearFlags::Color|ClearFlags::Depth) = 0;
+            virtual void beginScene(const Color &color, ClearFlags::Enum flags = ClearFlags::Color | ClearFlags::Depth) = 0;
             
             /**
              * @brief Flip the backbuffer and the front buffer
@@ -103,12 +90,12 @@ namespace exeng {
             /**
              * @brief Get the vertex buffer currently used for rendering operations.
              */
-            virtual VertexBuffer* getVertexBuffer() const = 0;
+            virtual const VertexBuffer* getVertexBuffer() const = 0;
             
             /**
              * @brief Get the currently used index buffer.
              */
-            virtual IndexBuffer* getIndexBuffer() const = 0;
+            virtual const IndexBuffer* getIndexBuffer() const = 0;
             
             /**
              * @brief Set the currently used material
@@ -159,7 +146,7 @@ namespace exeng {
              * @brief Render, using the specified primitive and the currently setted material, 
              * vertex and index buffers, if any. 
              */
-            virtual void render(Primitive primitiveType, int vertexCount) = 0;
+            virtual void render(exeng::graphics::Primitive::Enum primitiveType, int vertexCount) = 0;
             
             /**
              * @brief Get the current rendering screen.

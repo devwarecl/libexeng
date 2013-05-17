@@ -21,16 +21,10 @@
 #include <boost/checked_delete.hpp>
 #include <map>
 
-using exeng::math::Vector3f;
-using exeng::math::Boxf;
-using exeng::scenegraph::Ray;
-using exeng::scenegraph::IntersectInfo;
-using exeng::scenegraph::MeshPart;
-
-using exeng::graphics::Vertex;
-using exeng::graphics::VertexArray;
-using exeng::graphics::VertexBuffer;
-using exeng::graphics::IndexBuffer;
+using namespace exeng;
+using namespace exeng::math;
+using namespace exeng::scenegraph;
+using namespace exeng::graphics;
 
 typedef boost::ptr_vector<MeshPart> MeshPartVector;
 typedef MeshPartVector::iterator MeshPartVectorIt;
@@ -165,52 +159,27 @@ namespace exeng {
         /**
          * @brief Construye un arreglo de triangulos apropiado segun el tipo de primitiva
          */
-        inline TriangleArray* getTriangleArray(VertexBuffer *vb, IndexBuffer *ib, PrimitiveType type) {
+        inline TriangleArray* getTriangleArray(VertexBuffer *vb, IndexBuffer *ib, Primitive::Enum type) {
             TriangleArray* result = nullptr;
             
             switch(type) {
-                case PrimitiveType::TriangleList:   result = new TriangleListArray(vb); break;
-                case PrimitiveType::TriangleStrip:  result = new TriangleStripArray(vb);break;
-                case PrimitiveType::TriangleFan:    result = new TriangleFanArray(vb);  break;
-                default: throw std::runtime_error("Tipo de primitiva inesperado."); break;
+                case Primitive::Enum::TriangleList:   result = new TriangleListArray(vb); break;
+                case Primitive::Enum::TriangleStrip:  result = new TriangleStripArray(vb);break;
+                case Primitive::Enum::TriangleFan:    result = new TriangleFanArray(vb);  break;
+                default: throw std::runtime_error("Unexpected primitive type"); break;
             }
             
             return result;
         }
         
         
-        /**
-         * @brief Comprueba si el tipo de primitiva indicado corresponde con un triangulo.
-         */
-        inline bool isTrianglePrimitive(PrimitiveType primitive) {
-            switch (primitive) {
-                case PrimitiveType::TriangleFan:
-                case PrimitiveType::TriangleList:
-                case PrimitiveType::TriangleStrip:
-                    return true;
-                
-                default:
-                    return false;
-            }
-        }
-        
-        
         struct Mesh::Private {
-            
-            /**
-             * @brief Las partes que componen a un modelo tridimensional
-             */
-            MeshPartVector  parts;
-            
-            /**
-             * @brief La caja colision general del modelo.
-             */
-            Boxf box;
+            MeshPartVector  parts;  //! Las partes que componen a un modelo tridimensional
+            Boxf box;               //! La caja colision general del modelo.
         };
         
         
         Mesh::Mesh(int partCount) {
-            
             // Hacer espacio para las partes
             this->impl = new Mesh::Private();
             this->impl->parts.reserve(partCount);
@@ -239,12 +208,6 @@ namespace exeng {
             for(auto &part : parts) {
                 box.expand(part.getBox() );
             }
-        
-            /*
-            for (int i=0; i<parts.size(); ++i) {
-                box.expand(parts[i]);
-            }
-            */
             
             return box;
         }
@@ -254,18 +217,14 @@ namespace exeng {
          * @brief Detecta si existe interseccion entre la parte y el rayo indicado.
          */
         bool meshSubsetHit(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectInfo=nullptr) {
-            
-            bool isTriangle = isTrianglePrimitive(meshPart.getPrimitiveType());
-            
-            if (isTriangle == false)  {
+            if (meshPart.getPrimitiveType() & Primitive::Enum::Triangle) {
                 return false;
             }
             
             std::unique_ptr<TriangleArray> triangleArray;
-            PrimitiveType type = meshPart.getPrimitiveType();
+            Primitive::Enum type = meshPart.getPrimitiveType();
             VertexBuffer *vertexBuffer = meshPart.getVertexBuffer();
             IndexBuffer *indexBuffer = meshPart.getIndexBuffer();
-            
             
             IntersectInfo lastInfo;
             IntersectInfo info;
@@ -303,9 +262,11 @@ namespace exeng {
                     w = pq.triple(pb, pa);
                     
                     // Detectar si existe colision, sin importar como esten ordenados los triangulos
-                    if ((u > 0.0f && v > 0.0f && w > 0.0f) || (u < 0.0f && v < 0.0f && w < 0.0f)) {
+                    bool isBackSide = (u > 0.0f && v > 0.0f && w > 0.0f);
+                    bool isFrontSide = (u < 0.0f && v < 0.0f && w < 0.0f);
+                    
+                    if (isBackSide == true || isFrontSide == true) {
                         if (intersectInfo != nullptr){
-                            
                             intersectInfo->intersect = true;
                             intersectInfo->distance = info.distance;
                             intersectInfo->materialPtr = meshPart.getMaterial();
@@ -319,8 +280,7 @@ namespace exeng {
                         }
                         
                         return true;
-                    }
-                    else {
+                    } else {
                         //! TODO: Comprobar mediante un epsilon
                         return false;
                     }
@@ -345,6 +305,10 @@ namespace exeng {
                         bestInfo = info;
                     }
                 }
+            }
+            
+            if (intersectInfo != nullptr) {
+                *intersectInfo = bestInfo;
             }
             
             return bestInfo.intersect;

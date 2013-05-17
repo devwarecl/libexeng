@@ -17,7 +17,14 @@
 #include <cassert>
 #include <stdexcept>
 
+#include <boost/range/numeric.hpp>
+
 namespace exeng  {
-    namespace graphics {
+    namespace graphics {   
+        inline int VertexFormat::getSize() const {
+            return boost::accumulate(fields, 0, [](int prev, const VertexField &field) {
+                return prev + field.dataType.getSize();
+            });
+        }
     }
 }

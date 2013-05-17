@@ -24,12 +24,11 @@
 
 #include "../graphics/IndexBuffer.hpp"
 #include "../graphics/VertexBuffer.hpp"
+#include "../graphics/Primitive.hpp"
 
 namespace exeng {
-    namespace graphics {
+    namespace scenegraph {
 
-        
-        
         /**
          * @brief Seccion de un modelo tridimensional. Referencia a un material
          * 
@@ -45,12 +44,12 @@ namespace exeng {
             /**
              *  @brief Devuelve el tipo de primitiva
              */
-            PrimitiveType getPrimitiveType() const;
+            exeng::graphics::Primitive::Enum getPrimitiveType() const;
             
             /**
              *  @brief Establece el tipo de primitiva
              */
-            void setPrimitiveType(PrimitiveType primitiveType);
+            void setPrimitiveType(exeng::graphics::Primitive::Enum primitiveType);
             
             /**
              *  @brief Devuelve el material actual de renderizacion

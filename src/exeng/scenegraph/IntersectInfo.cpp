@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file IntersectInfo.cpp
+ * @brief IntersectInfo class implementation.
  */
 
 
@@ -11,16 +11,16 @@
  * found in the file LICENSE in this distribution.
  */
 
-/*
 #include "IntersectInfo.hpp"
 
-namespace exeng
-{
-    namespace scenegraph
-    {
-        IntersectInfo::IntersectInfo() : intersect(false)
-        {
-        }
+namespace exeng {
+    namespace scenegraph {
+        IntersectInfo::IntersectInfo() {
+			this->intersect = false;
+			this->distance = 0.0f;
+			this->normal = exeng::math::Vector3f(0.0f);
+            this->point = exeng::math::Vector3f(0.0f);
+			this->materialPtr = nullptr;
+		} 
     }
 }
-*/

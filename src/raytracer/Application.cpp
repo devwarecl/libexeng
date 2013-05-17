@@ -3,10 +3,16 @@
 #include <stdexcept>
 #include <iostream>
 
+#include <exeng/DataType.hpp>
+#include <memory>
+
 namespace raytracer {
     int Application::run(const StringVector& cmdLine) {
+        
+        std::unique_ptr<Application> app;
+        
         try {
-            Application *app = Application::instance;
+            app.reset(Application::instance);
             int exitCode = 0;
             double seconds = 0.0;
             
@@ -23,11 +29,7 @@ namespace raytracer {
             app->terminate();
             
             exitCode = app->getExitCode();
-            
-            // No olvidar limpiar el puntero
-            delete app;
-            Application::instance = nullptr;
-            
+
             return exitCode;
         }
         catch(const std::exception &exp) {
@@ -38,7 +40,7 @@ namespace raytracer {
 
 
     bool Application::set(Application *app)  {
-        if (Application::instance != NULL) {
+        if (Application::instance != nullptr) {
             delete Application::instance;
             Application::instance = nullptr;
         }
@@ -47,8 +49,7 @@ namespace raytracer {
 		
         return true;
     }
-
-
+    
     Application *Application::instance = nullptr;
 }
 
@@ -65,7 +66,7 @@ int main(int argc, char** argv) {
     for(int i=0; i<argc; ++i) {
         cmdLine[i] = std::string(argv[i]);
     }
-
+    
     // Ejecutar la aplicacion
     return raytracer::Application::run(cmdLine);
 }

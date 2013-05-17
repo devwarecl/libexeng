@@ -1,5 +1,5 @@
 /**
- * @file 
+ * @file Plugin.hpp
  * @brief 
  */
 
@@ -31,7 +31,7 @@ namespace exeng {
          */
         class EXENGAPI Plugin : public Object {
         public:
-            virtual ~Plugin();
+            virtual ~Plugin() = 0;
             
             
             /**
@@ -39,7 +39,7 @@ namespace exeng {
              * sin espacios, que lo identifica del resto.
              * @return 
              */
-            virtual std::string getName() const = 0;
+            virtual std::string getName() const;
 
             
             /**
@@ -47,14 +47,14 @@ namespace exeng {
              * leer los desarrolladores del cliente del engine.
              * @return 
              */
-            virtual std::string getDescription() const = 0;
+            virtual std::string getDescription() const;
             
             
             /**
              * @brief Devuelve el numero de version del plugin.
              * @return 
              */
-            virtual Version getVersion() const = 0;
+            virtual Version getVersion() const;
 
             
             /**
@@ -62,7 +62,7 @@ namespace exeng {
              * disponibles en el objeto Root.
              * @param root
              */
-            virtual void initialize(Root &root) = 0;
+            virtual void initialize(Root *root);
             
             
             /**
@@ -70,7 +70,7 @@ namespace exeng {
              * remueve todas las interfaces que implementó, dejando al engine en la misma situacion
              * en la que estaba antes de la operacion.
              */
-            virtual void terminate() = 0;
+            virtual void terminate();
         };
         
         
@@ -99,7 +99,7 @@ namespace exeng {
  * el objeto devuelto no volvera a ser valido.
  */
 #define EXENG_EXPORT_PLUGIN(PluginImpl)                                                         \
-    extern "C"  Exeng::System::Plugin* EXENG_CALLCONV EXENG_GET_PLUGIN_OBJECT_NAME() EXENGAPI { \
+    extern "C"  exeng::system::Plugin* EXENG_CALLCONV EXENG_GET_PLUGIN_OBJECT_NAME() EXENGAPI { \
         static PluginImpl *plugin = nullptr;                                                    \
                                                                                                 \
         if (plugin == nullptr) {                                                                \

@@ -14,15 +14,20 @@
 namespace exeng {
 	template< typename _EnumType, typename _StorageType>
 	TFlags<_EnumType, _StorageType>::TFlags() : value(StorageType()) { }
-		
-
+	
+    
 	template< typename _EnumType, typename _StorageType>
 	TFlags<_EnumType, _StorageType>::TFlags(const TFlagsType& Other) : value(Other.value) { }
 
-
+    
 	template< typename _EnumType, typename _StorageType>
 	TFlags<_EnumType, _StorageType>::TFlags(_EnumType FlagDetail) : value(FlagDetail) { }
-		
+	
+    template< typename _EnumType, typename _StorageType>
+    TFlags<_EnumType, _StorageType>::TFlags(int value) {
+        this->value = value;
+    }
+    
 
 	template< typename _EnumType, typename _StorageType>
 	TFlags<_EnumType>& TFlags<_EnumType, _StorageType>::operator= (_EnumType enumType) {
@@ -71,4 +76,9 @@ namespace exeng {
 	void TFlags<_EnumType, _StorageType>::setValue(_EnumType Value) {
 		this->value = Value;
 	}
+    
+    template< typename _EnumType, typename _StorageType>
+    TFlags<_EnumType, _StorageType>::operator EnumType() const {
+        return static_cast<EnumType>(this->value);
+    }
 }

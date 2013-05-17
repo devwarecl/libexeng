@@ -34,9 +34,7 @@ namespace exeng {
             
             virtual exeng::math::Matrix4f getTransform(Transform transform);
             
-            virtual bool getFullScreenStatus() const;
-            
-            virtual Material getMaterial() const;
+            virtual const Material* getMaterial() const;
             
             virtual exeng::math::Rectf getViewport() const;
             

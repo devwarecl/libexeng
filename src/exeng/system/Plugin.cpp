@@ -12,10 +12,35 @@
  */
 
 #include "Plugin.hpp"
+#include <stdexcept>
+
 
 namespace exeng {
     namespace system  {
         Plugin::~Plugin() {
         }
+        
+        
+        std::string Plugin::getName() const {
+            throw std::logic_error("Plugin::getName not implemented");
+        }
+
+        std::string Plugin::getDescription() const  {
+            throw std::logic_error("Plugin::getDescription not implemented");
+        }
+        
+        Version Plugin::getVersion() const {
+            throw std::logic_error("Plugin::getVersion not implemented");
+        }
+
+        void Plugin::initialize(Root *root) {
+            throw std::logic_error("Plugin::initialize not implemented");
+        }
+        
+        
+        void Plugin::terminate() {
+            throw std::logic_error("Plugin::terminate not implemented");
+        }
+        
     }
 }

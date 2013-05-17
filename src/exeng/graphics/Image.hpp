@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file Image.hpp
+ * @brief Define the engine's basic data types. Also, define fixed-size, elemental platform-independent.
  */
 
 
@@ -11,9 +11,6 @@
  * found in the file LICENSE in this distribution.
  */
 
-/**
- * @brief Define the engine's basic data types. Also, define fixed-size, elemental platform-independent.
- */
 
 #ifndef __EXENG_GRAPHICS_IMAGE_HPP__
 #define __EXENG_GRAPHICS_IMAGE_HPP__
@@ -31,7 +28,7 @@ namespace exeng {
         class EXENGAPI Image {
         public:
             Image();
-            Image(const math::Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
+            Image(const exeng::math::Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
             
             virtual ~Image();
             

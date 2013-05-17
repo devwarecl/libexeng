@@ -1,3 +1,15 @@
+/**
+ * @file 
+ * @brief 
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
 
 #include "LibraryPrivate.hpp"
 #include "../DetectEnv.hpp"
@@ -6,31 +18,25 @@
 
 #include <Windows.h>
 
-namespace exeng
-{
-    namespace system
-    {
-        Library::Private::Private()
-        {
+namespace exeng {
+    namespace system {
+        Library::Private::Private() {
             this->handle = NULL;
         }
 
 
-        void Library::Private::load(const std::string &name)
-        {
+        void Library::Private::load(const std::string &name) {
             this->handle = ::LoadLibraryA(name.c_str());
         }
 
 
-        void Library::Private::unload()
-        {
+        void Library::Private::unload() {
             ::HMODULE handle = static_cast<::HMODULE>(this->handle);
             ::FreeLibrary(handle);
         }
 
 
-        FunctionPtr Library::Private::getFunctionPtr(const std::string &name)
-        {
+        FunctionPtr Library::Private::getFunctionPtr(const std::string &name) {
             HMODULE handle = NULL;
             FunctionPtr ret = NULL;
             FARPROC procAddress = NULL;

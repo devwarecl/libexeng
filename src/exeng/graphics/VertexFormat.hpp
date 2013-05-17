@@ -45,28 +45,19 @@ namespace exeng {
          * @brief Dynamic array of VertexField.
          */
         typedef std::vector<VertexField> VertexFieldVector;
-        
-        /**
-         * @brief Iterator for the VertexFieldVector.
-         */
-        typedef VertexFieldVector::iterator VertexFieldVectorIt;
-        
-        
+         
         /**
          * @brief Describe the format of a vertex. Used in the VertexBuffer class.
          */
         struct VertexFormat {
             VertexFieldVector fields;
             
+            /**
+             * @brief Get the size, in bytes, for each vertex of this format.
+             * @return 
+             */
             int getSize() const;
         };
-        
-        
-        inline int VertexFormat::getSize() const {
-            return std::accumulate(fields.begin(), fields.end(), 0, [](int prev, const VertexField &in) {
-                return prev + in.dataType.getSize();
-            });
-        }
     }
 }
 
