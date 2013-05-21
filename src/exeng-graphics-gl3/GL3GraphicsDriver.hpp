@@ -61,7 +61,7 @@ namespace exeng {
                 struct Private;
                 std::unique_ptr<Private> impl;
             };
-        }    
+        }
     }
 }
 
