@@ -2,7 +2,7 @@
 #define __EXENG_GRAPHICS_COLOR_HPP__
 
 #include <cstdint>
-#include "../math/Operations.hpp"
+#include <exeng/math/Operations.hpp>
 
 namespace exeng {
     namespace graphics {

@@ -14,7 +14,7 @@
 #ifndef exeng_heapbuffer_hpp
 #define exeng_heapbuffer_hpp
 
-#include "Buffer.hpp"
+#include <exeng/Buffer.hpp>
 
 namespace exeng {
     /**

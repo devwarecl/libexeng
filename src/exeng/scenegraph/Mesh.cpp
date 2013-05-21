@@ -11,10 +11,10 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "../math/TVector.hpp"
-#include "Mesh.hpp"
-#include "MeshPart.hpp"
-#include "Plane.hpp"
+#include <exeng/math/TVector.hpp>
+#include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/scenegraph/MeshPart.hpp>
+#include <exeng/scenegraph/Plane.hpp>
 
 #include <cassert>
 #include <boost/ptr_container/ptr_vector.hpp>

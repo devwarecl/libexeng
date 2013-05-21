@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-#include "../Config.hpp"
+#include <exeng/Config.hpp>
 
 namespace exeng {
     namespace scenegraph {

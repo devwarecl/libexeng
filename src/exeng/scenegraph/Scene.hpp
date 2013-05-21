@@ -14,11 +14,10 @@
 #ifndef __EXENG_SCENEGRAPH_SCENE_HPP__
 #define __EXENG_SCENEGRAPH_SCENE_HPP__
 
-#include "../Object.hpp"
-#include "../math/TVector.hpp"
-#include "../graphics/Color.hpp"
-
 #include <vector>
+#include <exeng/Object.hpp>
+#include <exeng/math/TVector.hpp>
+#include <exeng/graphics/Color.hpp>
 
 namespace exeng {
     namespace scenegraph {
@@ -40,35 +39,30 @@ namespace exeng {
             /**
              * @brief Devuelve el nodo raiz de la escena
              */
-            auto getRootNodePtr() -> SceneNode*;
-            
+            SceneNode* getRootNodePtr();
             
             /**
              * @brief Agrega la camera indicada al grafo de escena
              */
-            auto addCamera(Camera *camera) -> SceneNode*;
-            
+            SceneNode* addCamera(Camera *camera);
             
             /**
              * @brief Agrega la luz indicada al grafo de escena
              */
-            auto addLight(Light *light) -> SceneNode*;
-            
+            SceneNode* addLight(Light *light);
             
             /**
              * @brief Establece el color de fondo de la escena
              * @param color Un color como vector de cuatro componentes en punto flotante, 
              * representado como RGBA
              */
-            auto setBackgroundColor(const exeng::graphics::Color &color) -> void;
-            
+            void setBackgroundColor(const exeng::graphics::Color &color);
             
             /**
              * @brief Devuelve el color de fondo de la escena
              * @return Color RGBA, punto flotante, encapsulado en un objeto exeng::graphics::Color
              */
-            auto getBackgroundColor() const -> exeng::graphics::Color;
-
+            exeng::graphics::Color getBackgroundColor() const;
 
         private:
             struct Private;
@@ -77,4 +71,4 @@ namespace exeng {
     }
 }
 
-#endif // SCENE_HPP
+#endif

@@ -12,8 +12,8 @@
  */
 
 
-#include "GraphicsDriverBase.hpp"
-#include "Material.hpp"
+#include <exeng/graphics/GraphicsDriverBase.hpp>
+#include <exeng/graphics/Material.hpp>
 
 #include <cassert>
 

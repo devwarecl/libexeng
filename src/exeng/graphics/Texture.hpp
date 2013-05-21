@@ -15,9 +15,9 @@
 #ifndef __EXENG_GRAPHICS_TEXTURE_HPP__
 #define __EXENG_GRAPHICS_TEXTURE_HPP__
 
-#include "../Object.hpp"
-#include "../math/TVector.hpp"
-#include "PixelFormat.hpp"
+#include <exeng/Object.hpp>
+#include <exeng/math/TVector.hpp>
+#include <exeng/graphics/PixelFormat.hpp>
 
 namespace exeng {
     namespace graphics {

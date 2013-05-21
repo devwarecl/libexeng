@@ -17,14 +17,13 @@
 #include <cstdint>
 #include <vector>
 
-#include "../math/TVector.hpp"
-#include "../math/TBoundary.hpp"
-#include "../Object.hpp"
-#include "../graphics/Material.hpp"
-
-#include "../graphics/IndexBuffer.hpp"
-#include "../graphics/VertexBuffer.hpp"
-#include "../graphics/Primitive.hpp"
+#include <exeng/Object.hpp>
+#include <exeng/math/TVector.hpp>
+#include <exeng/math/TBoundary.hpp>
+#include <exeng/graphics/Material.hpp>
+#include <exeng/graphics/IndexBuffer.hpp>
+#include <exeng/graphics/VertexBuffer.hpp>
+#include <exeng/graphics/Primitive.hpp>
 
 namespace exeng {
     namespace scenegraph {

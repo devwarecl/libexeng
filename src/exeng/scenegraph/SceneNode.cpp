@@ -16,77 +16,56 @@
 #include <stdexcept>
 #include <boost/checked_delete.hpp>
 
-#include "SceneNode.hpp"
+#include <exeng/scenegraph/SceneNode.hpp>
 
-/**
- * @brief Atributos privados de la clase exeng::scenegraph::SceneNode::Private
- */
-struct exeng::scenegraph::SceneNode::Private {
-    /**
-     * @brief El nombre del nodo. Debe ser unico
-     */
-    std::string name;
-    
-    /**
-     * @brief La transformacion del nodo y de los nodos hijos
-     */
-    exeng::math::Matrix4f transform;
-    
-    /**
-     * @brief Un puntero al nodo padre
-     */
-    exeng::scenegraph::SceneNode* parentPtr;
-    
-    /**
-     * @brief Mapa a los nodos hijos del nodo
-     */
-    exeng::scenegraph::SceneNodeVector childVector;
-    
-    /**
-     * @brief Los datos privados del nodo de escena.
-     */
-    exeng::scenegraph::SceneNodeData *data;
+using namespace exeng;
+using namespace exeng::math;
+using namespace exeng::scenegraph;
 
-    
-    /**
-     * @brief Constructor por defecto
-     */
-    Private() {   
-        this->data = nullptr;
-        this->parentPtr = nullptr;
-        this->transform.identity();
-    }
-    
-    
-    /**
-     * @brief Destructor
-     */
-    ~Private()  { }
-    
-    /**
-     * @brief Busca el nodo hijo con el nombre indicado, y devuelve un iterador.
-     * En caso de que no exista, se devuelve el fin de la secuencia
-     * @param name
-     * @return 
-     */
-    auto getChild(const std::string &name) -> SceneNodeVectorIterator {
-        SceneNode *child = NULL; 
-
-        auto &childs = this->childVector;
-
-        for (auto it=std::begin(childs); it!=std::end(childs); ++it)
-        {
-            child = *it;
+namespace exeng {
+    namespace scenegraph {
+        
+        //! SceneNode private data
+        struct SceneNode::Private {
+            std::string name;               //! Node name
+            Matrix4f transform;             //! Node transformation
+            SceneNode* parentPtr;           //! 
+            SceneNodeVector childVector;    //! Node childs
+            SceneNodeData *data;            //! Private data
             
-            if ( child->impl->name == name )
-                return it;
-        }
-
-        // No encontrado
-        return childs.end();
+            Private() {   
+                this->data = nullptr;
+                this->parentPtr = nullptr;
+                this->transform.identity();
+            }
+            
+            ~Private()  { }
+            
+            /**
+             * @brief Busca el nodo hijo con el nombre indicado, y devuelve un iterador.
+             * En caso de que no exista, se devuelve el fin de la secuencia
+             * @param name
+             * @return 
+             */
+            SceneNodeVectorIt getChild(const std::string &name) {
+                SceneNode *child = nullptr; 
+        
+                auto &childs = this->childVector;
+        
+                for (auto it=std::begin(childs); it!=std::end(childs); ++it) {
+                    child = *it;
+                    
+                    if ( child->impl->name == name ) {
+                        return it;
+                    }
+                }
+        
+                // No encontrado
+                return childs.end();
+            }
+        };
     }
-};
-
+}
 
 namespace exeng {
     namespace scenegraph {
@@ -111,28 +90,24 @@ namespace exeng {
 
 
         std::string SceneNode::toString() const {
-            assert(this->impl != NULL);
+            assert(this->impl != nullptr);
 
-            // Construye una especie de ruta que indica la jerarquia a la que pertenece este nodo de escena
             if (this->hasParent() == false) {
                 return "";
-            }
-            else {
+            } else {
                 return this->getParentPtr()->toString() + "\\" + this->getName();
             }
         }
 
 
-        math::Matrix4f SceneNode::getTransform() const {
+        Matrix4f SceneNode::getTransform() const {
             assert(this->impl != NULL);
-
             return this->impl->transform;
         }
 
 
         void SceneNode::setTransform(const math::Matrix4f& transform) {
             assert(this->impl != NULL);
-
             this->impl->transform = transform;
         }
 
@@ -259,13 +234,11 @@ namespace exeng {
             // Debemos considerar que este metodo debe modificar los padres directamente, 
             // ya que en la implementacion actual, otros metodos relacionados con la modificacion
             // de la jerarquia del grafo de escena son depedientes de este.
-
             if (childPtr->hasParent() == true) {
                 // Desvincular al nodo padre 
                 childPtr->getParentPtr()->removeChildPtr(childPtr);
             }
-
-
+            
             childPtr->impl->parentPtr = this;
             this->impl->childVector.push_back(childPtr);
 
@@ -277,7 +250,7 @@ namespace exeng {
             assert(this->impl != NULL);
 
             // Implementacion rapida y sucia
-            SceneNodeVectorIterator it = this->impl->getChild(name);
+            SceneNodeVectorIt it = this->impl->getChild(name);
             SceneNode* child = *it;
 
             return this->removeChildPtr(child);
@@ -307,8 +280,7 @@ namespace exeng {
                 childPtr->impl->parentPtr = NULL;
 
                 return childPtr;
-            }
-            else {
+            } else {
                 std::string msg;
 
                 msg += "El nodo '" + 

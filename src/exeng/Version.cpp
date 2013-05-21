@@ -11,7 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "Version.hpp"
+#include <exeng/Version.hpp>
 
 namespace exeng {
     void Version::setup(int Major, int Minor, int Revision, int Build) {

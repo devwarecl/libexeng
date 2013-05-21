@@ -12,10 +12,10 @@
  */
 
 
-#ifndef exeng_datatype_hpp
-#define exeng_datatype_hpp
+#ifndef __EXENG_DATATYPE_HPP__
+#define __EXENG_DATATYPE_HPP__
 
-#include "Config.hpp"
+#include <exeng/Config.hpp>
 #include <iostream>
 #include <cstdint>
 

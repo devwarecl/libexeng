@@ -12,15 +12,12 @@
  */
 
 
-#include "MeshPart.hpp"
+#include <exeng/scenegraph/MeshPart.hpp>
 #include <boost/checked_delete.hpp>
 
-using exeng::graphics::Material;
-using exeng::graphics::VertexBuffer;
-using exeng::graphics::VertexArray;
-using exeng::graphics::Vertex;
-using exeng::graphics::IndexBuffer;
-using exeng::math::Boxf;
+using namespace exeng;
+using namespace exeng::graphics;
+using namespace exeng::math;
 
 namespace exeng {
     namespace scenegraph {

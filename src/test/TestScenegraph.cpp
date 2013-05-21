@@ -75,9 +75,9 @@ SUITE(ScenegraphTestSuite) {
 		Ray ray1, ray2, ray3;
 		IntersectInfo info;
 
-		ray1.setAttributes(Vector3f(0.0, 0.0, -10.0), Vector3f(0.0, 0.0, 1.0));
-		ray2.setAttributes(Vector3f(10.0, 0.0, -10.0), Vector3f(0.0, 0.0, 1.0));
-		ray3.setAttributes(Vector3f(10.0, 0.0, -10.0), Vector3f(0.0, 0.0, 1.0));
+		ray1.set(Vector3f(0.0, 0.0, -10.0), Vector3f(0.0, 0.0, 1.0));
+		ray2.set(Vector3f(10.0, 0.0, -10.0), Vector3f(0.0, 0.0, 1.0));
+		ray3.set(Vector3f(10.0, 0.0, -10.0), Vector3f(0.0, 0.0, 1.0));
 		
 		CHECK_EQUAL(s1.intersect(ray1, &info), true);
 		CHECK_EQUAL(s1.intersect(ray2, nullptr), false);
@@ -103,7 +103,7 @@ SUITE(ScenegraphTestSuite) {
 		CHECK_EQUAL( ray2.getDirection(), Vector3f(0.0f, 1.0f, 0.0f) );
 
 		// Comprobar setter de atributos
-		ray3.setAttributes( Vector3f(1.0f, 0.0f, 0.0f), Vector3f(-1.0f, 0.0f, 0.0f) );
+		ray3.set( Vector3f(1.0f, 0.0f, 0.0f), Vector3f(-1.0f, 0.0f, 0.0f) );
 		CHECK_EQUAL( ray3.getPoint(), Vector3f(1.0f, 0.0f, 0.0f) );
 		CHECK_EQUAL( ray3.getDirection(), Vector3f(-1.0f, 0.0f, 0.0f) );
 

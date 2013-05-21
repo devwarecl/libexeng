@@ -70,7 +70,7 @@ namespace exeng {
         }
         
         
-        inline bool Plane::intersect(const Ray& ray, IntersectInfo* intersectInfo) {
+        inline bool Plane::intersect(const Ray& ray, IntersectInfo* intersectInfo) const {
             using namespace exeng::math;
             
             auto p = this->point;

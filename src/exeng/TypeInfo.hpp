@@ -15,7 +15,7 @@
 #define __EXENG_TYPEINFO_HPP__
 
 #include <typeinfo>
-#include "Config.hpp"
+#include <exeng/Config.hpp>
 
 namespace exeng {
 	/**

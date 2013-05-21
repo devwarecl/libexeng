@@ -21,9 +21,9 @@ namespace raytracer {
             while (app->getStatus() != ApplicationStatus::Stopped) {
                 seconds = app->getFrameTime();
                 
-                app->processInput();
+                app->pollEvents();
                 app->update(seconds);
-                app->present();
+                app->render();
             }
             
             app->terminate();

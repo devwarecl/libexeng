@@ -24,17 +24,10 @@
 typedef std::list<exeng::scenegraph::SceneNode*> SceneNodeList;
 typedef SceneNodeList::iterator SceneNodeListIt;
 
-using exeng::TypeInfo;
-using exeng::math::Vector2f;
-using exeng::math::Vector3f;
-using exeng::math::Vector4f;
-using exeng::math::Vector2i;
-using exeng::graphics::Color;
-using exeng::scenegraph::Geometry;
-using exeng::scenegraph::Scene;
-using exeng::scenegraph::SceneNode;
-using exeng::scenegraph::IntersectInfo;
-using exeng::scenegraph::Ray;
+using namespace exeng;
+using namespace exeng::math;
+using namespace exeng::scenegraph;
+using namespace exeng::graphics;
 
 namespace raytracer {
     

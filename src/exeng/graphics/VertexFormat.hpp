@@ -11,14 +11,16 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef exeng_graphics_vertexformat
-#define exeng_graphics_vertexformat
 
-#include "../Config.hpp"
-#include "../DataType.hpp"
+#ifndef __EXENG_GRAPHICS_VERTEXFORMAT_HPP__
+#define __EXENG_GRAPHICS_VERTEXFORMAT_HPP__
+
 #include <cstdint>
 #include <vector>
 #include <numeric>
+
+#include <exeng/Config.hpp>
+#include <exeng/DataType.hpp>
 
 namespace exeng {
     namespace graphics {

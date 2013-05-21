@@ -14,7 +14,7 @@
 #ifndef __EXENG_VERSION_HPP__
 #define __EXENG_VERSION_HPP__
 
-#include "Config.hpp"
+#include <exeng/Config.hpp>
 
 namespace exeng {
 	/**

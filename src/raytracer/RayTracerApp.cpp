@@ -9,38 +9,7 @@
 #include <boost/timer/timer.hpp>
 
 namespace raytracer {
-     
-   /*
-    class BackbufferHandler {  
-    public:
-        BackbufferHandler() : backbuffer(nullptr) {
-        }
-        
-        explicit BackbufferHandler(SDL_Surface *backbuffer) {
-            this->backbuffer = backbuffer;
-        }
-        
-        
-        void lock() {
-        }
-        
-        
-        void unlock() {   
-            
-        }
-        
-        
-        void putPixel() {
-        }
-        
-        
-    private:
-        SDL_Surface *backbuffer;
-    };
-    */
-    
-    
-    
+
     RayTracerApp::RayTracerApp() {
 		this->impl.reset(new RayTracerApp::Private());
     }
@@ -71,7 +40,7 @@ namespace raytracer {
     }
 
 
-    void RayTracerApp::processInput() {
+    void RayTracerApp::pollEvents() {
         while (SDL_PollEvent(&this->impl->event)) {
             switch (this->impl->event.type) {
                 case SDL_QUIT:
@@ -95,7 +64,7 @@ namespace raytracer {
     }
 
 
-    void RayTracerApp::present() {
+    void RayTracerApp::render() {
         boost::timer::auto_cpu_timer autoTimer;
         
         auto screenSize = this->impl->cameraView.size;

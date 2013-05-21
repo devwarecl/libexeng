@@ -15,8 +15,8 @@
 #ifndef __EXENG_SCENEGRAPH_LIGHT_HPP__
 #define __EXENG_SCENEGRAPH_LIGHT_HPP__
 
-#include "../math/TVector.hpp"
-#include "SceneNodeData.hpp"
+#include <exeng/math/TVector.hpp>
+#include <exeng/scenegraph/SceneNodeData.hpp>
 
 namespace exeng {
     namespace scenegraph {

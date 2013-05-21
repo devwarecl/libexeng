@@ -19,13 +19,13 @@ namespace raytracer {
 
         virtual double getFrameTime() const;
         
-        virtual void processInput();
+        virtual void pollEvents();
         
         virtual ApplicationStatus::Enum getStatus();
         
         virtual void update(double seconds);
         
-        virtual void present();
+        virtual void render();
         
         virtual int getExitCode() const;
         

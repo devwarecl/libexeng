@@ -15,7 +15,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "TypeInfo.hpp"
+#include <exeng/TypeInfo.hpp>
 
 namespace exeng {
 	const std::string invalidTypePtr = "TypeInfo: Debe asignar primero un objeto std::type_info";

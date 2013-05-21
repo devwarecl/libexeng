@@ -12,8 +12,8 @@
  */
 
 
-#include "Ray.hpp"
-#include "IntersectInfo.hpp"
+#include <exeng/scenegraph/Ray.hpp>
+#include <exeng/scenegraph/IntersectInfo.hpp>
 
 namespace exeng {
     namespace scenegraph {
@@ -32,7 +32,7 @@ namespace exeng {
         }
         
         
-        inline auto Sphere::setAttributes(float radius, const exeng::math::Vector3f &center) -> void {
+        inline void Sphere::setAttributes(float radius, const exeng::math::Vector3f &center){
             this->setRadius(radius);
             this->setCenter(center);
         }
@@ -47,17 +47,17 @@ namespace exeng {
         }
         
         
-        inline auto Sphere::setCenter(const exeng::math::Vector3f &center) -> void {
+        inline void Sphere::setCenter(const exeng::math::Vector3f &center) {
             this->center = center;
         }
         
         
-        inline auto Sphere::getRadius() const -> float {
+        inline float Sphere::getRadius() const {
             return this->radius;
         }
         
         
-        inline auto Sphere::getCenter() const -> exeng::math::Vector3f {
+        inline exeng::math::Vector3f Sphere::getCenter() const{
             return this->center;
         }
         

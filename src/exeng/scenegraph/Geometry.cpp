@@ -11,7 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "Geometry.hpp"
+#include <exeng/scenegraph/Geometry.hpp>
 
 namespace exeng {
     namespace scenegraph {

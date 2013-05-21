@@ -42,7 +42,7 @@ namespace raytracer {
         /**
          * @brief Procesa la entrada del usuario, actualizando adecuadamente los estados internos de la escena.
          */
-        virtual void processInput() = 0;
+        virtual void pollEvents() = 0;
         
         /**
          * @brief Devuelve el estado actual general de la aplicacion
@@ -57,7 +57,7 @@ namespace raytracer {
         /**
          *  @brief Presenta los resultados de la renderizacion al usuario
          */
-        virtual void present() = 0;
+        virtual void render() = 0;
         
         /**
          * @brief Devuelve el codigo de salida de la aplicacion.

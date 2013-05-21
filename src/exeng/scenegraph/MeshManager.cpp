@@ -12,13 +12,14 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "MeshManager.hpp"
+
 
 #include <map>
 #include <boost/ptr_container/ptr_list.hpp>
 #include <boost/range/algorithm/find_if.hpp>
 
-#include "IMeshLoader.hpp"
+#include <exeng/scenegraph/IMeshLoader.hpp>
+#include <exeng/scenegraph/MeshManager.hpp>
 
 namespace exeng {
     namespace scenegraph {

@@ -11,8 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
-
-#include "HeapBuffer.hpp"
+#include <exeng/HeapBuffer.hpp>
 
 namespace exeng {
     const char errLockedBuffer[] = "The buffer is locked";

@@ -17,18 +17,18 @@
 #include <string>
 #include <vector>
 
-#include "../Object.hpp"
-#include "../TFlags.hpp"
-#include "../math/TBoundary.hpp"
-#include "../math/TMatrix.hpp"
+#include <exeng/Object.hpp>
+#include <exeng/TFlags.hpp>
+#include <exeng/math/TBoundary.hpp>
+#include <exeng/math/TMatrix.hpp>
 
-#include "Color.hpp"
-#include "PixelFormat.hpp"
-#include "VertexFormat.hpp"
-#include "IndexBuffer.hpp"
-#include "Texture.hpp"
-#include "Screen.hpp"
-#include "Primitive.hpp"
+#include <exeng/graphics/Color.hpp>
+#include <exeng/graphics/PixelFormat.hpp>
+#include <exeng/graphics/VertexFormat.hpp>
+#include <exeng/graphics/IndexBuffer.hpp>
+#include <exeng/graphics/Texture.hpp>
+#include <exeng/graphics/Screen.hpp>
+#include <exeng/graphics/Primitive.hpp>
 
 namespace exeng {
     namespace graphics {

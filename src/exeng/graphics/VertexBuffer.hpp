@@ -12,19 +12,18 @@
  */
 
 
-#ifndef exeng_graphics_vertexbuffer_hpp
-#define exeng_graphics_vertexbuffer_hpp
+#ifndef __EXENG_GRAPHICS_VERTEXBUFFER_HPP__
+#define __EXENG_GRAPHICS_VERTEXBUFFER_HPP__
 
 #include <stdexcept>
-#include "../Object.hpp"
-#include "../math/TVector.hpp"
 
-#include "VertexFormat.hpp"
+#include <exeng/Object.hpp>
+#include <exeng/math/TVector.hpp>
+#include <exeng/graphics/VertexFormat.hpp>
 
 namespace exeng {
     namespace graphics {
         
-    
         /**
          *  @brief Simple vertex structure
          */
@@ -84,7 +83,6 @@ namespace exeng {
              * @brief Desbloquea al buffer, en caso de que ya este bloqueado.
              */
             void unlock();
-            
             
             /**
              * @brief Devuelve la cantidad de vertices del buffer.

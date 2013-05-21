@@ -11,11 +11,10 @@
  * found in the file LICENSE in this distribution.
  */
 
-
-#include "PixelFormat.hpp"
-
 #include <cassert>
 #include <stdexcept>
+
+#include <exeng/graphics/PixelFormat.hpp>
 
 /*
 namespace exeng

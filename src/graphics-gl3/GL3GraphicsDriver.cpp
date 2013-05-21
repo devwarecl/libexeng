@@ -1,6 +1,4 @@
 
-
-
 #include "GL3GraphicsDriver.hpp"
 
 #include <map>

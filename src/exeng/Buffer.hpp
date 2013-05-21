@@ -3,7 +3,6 @@
  * @brief Define the Buffer abstract class.
  */
 
-
 /*
  * Copyright (c) 2013 Felipe Apablaza.
  *
@@ -11,11 +10,10 @@
  * found in the file LICENSE in this distribution.
  */
 
-
 #ifndef __EXENG_BUFFER_HPP__
 #define __EXENG_BUFFER_HPP__
 
-#include "Object.hpp"
+#include <exeng/Object.hpp>
 
 namespace exeng {
     /**

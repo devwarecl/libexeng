@@ -1,11 +1,21 @@
 /**
- * @brief Define the Primitive enumeration.
+ * @file Primitive.hpp
+ * @brief Primitive::Enum enumeration
  */
 
-#ifndef exeng_graphics_primitivetype_hpp
-#define exeng_graphics_primitivetype_hpp
 
-#include "../TFlags.hpp"
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
+
+#ifndef __EXENG_GRAPHICS_PRIMITIVETYPE_HPP__
+#define __EXENG_GRAPHICS_PRIMITIVETYPE_HPP__
+
+#include <exeng/TFlags.hpp>
 
 namespace exeng {
     namespace graphics {
@@ -32,7 +42,17 @@ namespace exeng {
                 Triangle        = 0x00004000
             };
             
-            typedef TFlags<Enum> Flags;
+            inline bool isTriangle(Enum e) {
+                return e & Triangle;
+            }
+            
+            inline bool isLine(Enum e) {
+                return e & Line;
+            }
+            
+            inline bool isPoint(Enum e) {
+                return e & Point;
+            }
         }
     }
 }

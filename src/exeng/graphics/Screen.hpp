@@ -18,9 +18,9 @@
 #include <vector>
 #include <functional>
 
-#include "../Object.hpp"
-#include "../math/TSize.hpp"
-#include "PixelFormat.hpp"
+#include <exeng/Object.hpp>
+#include <exeng/math/TSize.hpp>
+#include <exeng/graphics/PixelFormat.hpp>
 
 namespace exeng {
     namespace graphics {

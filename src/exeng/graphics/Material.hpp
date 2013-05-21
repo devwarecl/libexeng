@@ -14,9 +14,9 @@
 #ifndef __EXENG_GRAPHICS_MATERIAL_HPP__
 #define __EXENG_GRAPHICS_MATERIAL_HPP__
 
-#include "../Object.hpp"
-#include "../math/TVector.hpp"
-#include "Color.hpp"
+#include <exeng/Object.hpp>
+#include <exeng/math/TVector.hpp>
+#include <exeng/graphics/Color.hpp>
 
 namespace exeng {
 	namespace graphics {
@@ -27,15 +27,7 @@ namespace exeng {
          */
         class EXENGAPI MaterialLayer {
         public:
-            
-            /**
-             *  @brief
-             */
             MaterialLayer();
-            
-            /**
-             *  @brief
-             */
             ~MaterialLayer();
             
             /**
@@ -84,9 +76,6 @@ namespace exeng {
          */
 	    class EXENGAPI Material : public Object {
         public:
-            /**
-             *  @brief 
-             */
             Material();
             
             /**

@@ -11,8 +11,9 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "../HeapBuffer.hpp"
-#include "IndexBuffer.hpp"
+#include <exeng/HeapBuffer.hpp>
+#include <exeng/graphics/IndexBuffer.hpp>
+
 #include <boost/checked_delete.hpp>
 #include <cstdlib>
 #include <stdexcept>

@@ -11,11 +11,10 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "LibraryPrivate.hpp"
-#include "../DetectEnv.hpp"
+#include <exeng/DetectEnv.hpp>
+#include <exeng/system/LibraryPrivate.hpp>
 
 #ifdef EXENG_WINDOWS
-
 #include <Windows.h>
 
 namespace exeng {

@@ -11,7 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "Buffer.hpp"
+#include <exeng/Buffer.hpp>
 
 namespace exeng {
     Buffer::~Buffer() {

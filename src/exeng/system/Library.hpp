@@ -14,7 +14,7 @@
 #ifndef __EXENG_SYSTEM_LIBRARY_HPP__
 #define __EXENG_SYSTEM_LIBRARY_HPP__
 
-#include "../Object.hpp"
+#include <exeng/Object.hpp>
 #include <string>
 
 namespace exeng {
@@ -24,9 +24,9 @@ namespace exeng {
         class EXENGAPI Library : public Object {
         public:
             Library();
-
+            
             explicit Library(const std::string &libraryName);
-
+            
             virtual ~Library();
             
             /**
@@ -36,12 +36,10 @@ namespace exeng {
              */
             void load(const std::string &libraryName);
             
-            
             /**
              * @brief Descarga la biblioteca dinamica de la memoria.
              */
             void unload();
-            
             
             /**
              * @brief Comprueba si la biblioteca dinamica ya esta cargada.
@@ -49,20 +47,17 @@ namespace exeng {
              */
             bool isValid() const;
             
-            
             /**
              * @brief Devuelve la ruta completa del archivo de la biblioteca que fue cargada.
              * @return 
              */
             std::string getFileName() const;
 
-            
             /**
              * @brief Devuelve el nombre de la libreria.
              * @return 
              */
             std::string getName() const;
-            
             
             /**
              * @brief Devuelve un puntero con la direccion de memoria hacia la funcion con el nombre indicado.
@@ -70,7 +65,6 @@ namespace exeng {
              * @return 
              */
             FunctionPtr getFunctionPtr(const std::string& name);
-            
             
             /**
              * @brief Devuelve la representacion en cadena de la biblioteca en tiempo de ejecucion.

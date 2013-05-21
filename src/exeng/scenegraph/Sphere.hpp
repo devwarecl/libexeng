@@ -14,7 +14,7 @@
 #ifndef __EXENG_SCENEGRAPH_SPHERE_HPP__
 #define __EXENG_SCENEGRAPH_SPHERE_HPP__
 
-#include "../math/TVector.hpp"
+#include <exeng/math/TVector.hpp>
 
 namespace exeng {
     namespace scenegraph {
@@ -26,10 +26,6 @@ namespace exeng {
          */
         class Sphere {
         public:
-            
-            /**
-             * @brief Inicializa una esfera en el origen y con radio unitario.
-             */ 
             Sphere();
             
             /**
@@ -74,18 +70,15 @@ namespace exeng {
              */
             auto intersect(const Ray& ray, IntersectInfo *intersectInfo=NULL) -> bool;
             
-            
             /**
              * @brief Comprueba si dos esferas son iguales.
              */
             bool operator== (const Sphere &sphere) const;
             
-            
             /**
              * @brief Comprueba si dos esferas son distintas.
              */
             bool operator!= (const Sphere &sphere) const;
-            
             
         private:
             exeng::math::Vector3f center;

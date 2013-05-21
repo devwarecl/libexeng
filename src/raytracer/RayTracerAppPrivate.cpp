@@ -62,12 +62,12 @@ namespace raytracer {
         Ray ray;
         
         // Trazar un rayo
-        ray.setPointX(pixelSize * ( pixel.x - halfSize.x + 0.5f));
-        ray.setPointY(pixelSize * ( pixel.y - halfSize.y + 0.5f));
-        ray.setPointZ(-50.0f);
+        float x = pixelSize * ( pixel.x - halfSize.x + 0.5f);
+        float y = pixelSize * ( pixel.y - halfSize.y + 0.5f);
+        float z = -50.0f;
         
-        // Hacia adelante
-        ray.setDirection( 0.0f, 0.0f, 1.0f );
+        ray.setPoint(Vector3f(x, y, z));
+        ray.setDirection(Vector3f(0.0f, 0.0f, 1.0f));
 
         return ray;
     }
@@ -80,12 +80,13 @@ namespace raytracer {
         Ray ray;
         
         // Trazar un rayo
-        ray.setPointX(pixelSize * ( pixel.x - halfSize.x + 0.5f + sample.x));
-        ray.setPointY(pixelSize * ( pixel.y - halfSize.y + 0.5f + sample.y));
-        ray.setPointZ(-50.0f);
+        float x = pixelSize * ( pixel.x - halfSize.x + 0.5f + sample.x);
+        float y = pixelSize * ( pixel.y - halfSize.y + 0.5f + sample.y);
+        float z = -50.0f;
         
         // Hacia adelante
-        ray.setDirection( 0.0f, 0.0f, 1.0f );
+        ray.setPoint( Vector3f(x, y, z) );
+        ray.setDirection( Vector3f(0.0f, 0.0f, 1.0f) );
 
         return ray;
     }
@@ -196,5 +197,4 @@ namespace raytracer {
         rootNode->addChildPtr("sphereGeometry")->setDataPtr(sphereGeometry);
         rootNode->addChildPtr("sphereGeometry2")->setDataPtr(sphereGeometry2);
     }
-    
 }

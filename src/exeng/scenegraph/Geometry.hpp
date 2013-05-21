@@ -14,8 +14,8 @@
 #ifndef __EXENG_SCENEGRAPH_GEOMETRY_HPP__
 #define __EXENG_SCENEGRAPH_GEOMETRY_HPP__
 
-#include "../math/TBoundary.hpp"
-#include "SceneNodeData.hpp"
+#include <exeng/math/TBoundary.hpp>
+#include <exeng/scenegraph/SceneNodeData.hpp>
 
 namespace exeng {
     namespace scenegraph {

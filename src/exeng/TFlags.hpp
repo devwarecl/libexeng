@@ -87,6 +87,6 @@ namespace exeng {
 	};
 }
 
-#include "TFlags.inl"
+#include <exeng/TFlags.inl>
 
 #endif	//__EXENG_TFLAGS_HPP__

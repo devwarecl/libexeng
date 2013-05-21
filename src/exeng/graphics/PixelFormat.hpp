@@ -14,7 +14,7 @@
 #ifndef __EXENG_GRAPHICS_PIXELFORMAT_HPP__
 #define __EXENG_GRAPHICS_PIXELFORMAT_HPP__
 
-#include "../Config.hpp"
+#include <exeng/Config.hpp>
 
 namespace exeng {
     namespace graphics {

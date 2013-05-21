@@ -16,9 +16,9 @@
 #define __EXENG_GRAPHICS_IMAGE_HPP__
 
 #include <cstdint>
-#include "../math/TVector.hpp"
-#include "PixelFormat.hpp"
-#include "PixelType.hpp"
+#include <exeng/math/TVector.hpp>
+#include <exeng/graphics/PixelFormat.hpp>
+#include <exeng/graphics/PixelType.hpp>
 
 namespace exeng {
     namespace graphics {
@@ -28,7 +28,9 @@ namespace exeng {
         class EXENGAPI Image {
         public:
             Image();
-            Image(const exeng::math::Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
+            Image(const exeng::math::Vector3i& size, 
+                  ColorFormat format, 
+                  PixelType type=PixelType::Integer);
             
             virtual ~Image();
             

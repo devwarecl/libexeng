@@ -14,8 +14,8 @@
 #ifndef __EXENG_SYSTEM_PLUGIN_HPP__
 #define __EXENG_SYSTEM_PLUGIN_HPP__
 
-#include "../Object.hpp"
-#include "../Version.hpp"
+#include <exeng/Object.hpp>
+#include <exeng/Version.hpp>
 
 namespace exeng {
     class EXENGAPI Root;
@@ -24,66 +24,53 @@ namespace exeng {
         class EXENGAPI Library;
         
         /**
-         * @brief Clase abstracta de plugins. Esta clase debe ser implementada por cada
-         * plugin que desee extender ciertas interfaces del engine. Con esto, 
-         * es posible tener un engine con un minimo de dependencias y dejar al usuario
-         * decidir como quiere "extenderlo".
+         * @brief Plugin abstract class. All plugin-compliant modules must implement its methods
          */
         class EXENGAPI Plugin : public Object {
         public:
             virtual ~Plugin() = 0;
             
-            
             /**
-             * @brief Devuelve el nombre caracteristico del plugin. Es una cadena de caracteres, 
-             * sin espacios, que lo identifica del resto.
-             * @return 
+             * @brief Get the name of the plugin. The plugin name must be unique.
              */
             virtual std::string getName() const;
 
-            
             /**
-             * @brief Devuelve la descripcion del plugin. Debe ser una descripcion diseniada para que la puedan
-             * leer los desarrolladores del cliente del engine.
-             * @return 
+             * @brief Get the description of the plugin.
              */
             virtual std::string getDescription() const;
             
-            
             /**
-             * @brief Devuelve el numero de version del plugin.
-             * @return 
+             * @brief Get the plugin version
              */
             virtual Version getVersion() const;
 
-            
             /**
-             * @brief Inicializa el plugin, extendiendo un cierto conjunto de interfaces
-             * disponibles en el objeto Root.
-             * @param root
+             * @brief Initializes the plugin, extending and implementing interfaces already present
+             * in the specified root object.
+             * @param root Root instance to extend.
              */
             virtual void initialize(Root *root);
             
             
             /**
-             * @brief Termina la ejecucion del plugin. Durante la operacion, el plugin
-             * remueve todas las interfaces que implementó, dejando al engine en la misma situacion
-             * en la que estaba antes de la operacion.
+             * @brief Terminate the plugin, removing its intefaces, and deallocating all created objects 
+             * by any of its instances.
              */
             virtual void terminate();
         };
         
-        
         /**
-         * @brief La firma que debe poseer la funcion que aplique como un plugin.
+         * @brief Module level function signature. 
+         *
+         * All plugins must at least export a function with this signature.
          */
         typedef Plugin* (* ExengGetPluginObjectProc)(); 
     }
 }
 
-
 /**
- * @brief El nombre de la funcion que debe exportar
+ * @brief The name of the function to export in the dynamic module.
  */
 #define EXENG_STR(value)  #value
 
@@ -91,12 +78,7 @@ namespace exeng {
 #define EXENG_GET_PLUGIN_OBJECT_NAME_STR EXENG_STR(EXENG_GET_PLUGIN_OBJECT_NAME)
 
 /**
- * @brief Macro usada para facilitar la implementacion de plugins
- * 
- * Macro usada para facilitar la implementacion de plugins.
- * El engine se hace responsable por el tiempo de vida del objeto devuelto, 
- * el cual siempre sera el mismo. En caso de que el objeto sea destruido, 
- * el objeto devuelto no volvera a ser valido.
+ * @brief Aids in implementing plugins.
  */
 #define EXENG_EXPORT_PLUGIN(PluginImpl)                                                         \
     extern "C"  exeng::system::Plugin* EXENG_CALLCONV EXENG_GET_PLUGIN_OBJECT_NAME() EXENGAPI { \

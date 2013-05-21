@@ -15,7 +15,7 @@
 #ifndef __EXENG_ROOT_HPP__
 #define __EXENG_ROOT_HPP__
 
-#include "Config.hpp"
+#include <exeng/Config.hpp>
 
 namespace exeng {
 	namespace system {

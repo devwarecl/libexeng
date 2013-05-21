@@ -11,14 +11,11 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "SceneNodeData.hpp"
+#include <exeng/scenegraph/SceneNodeData.hpp>
 
-namespace exeng
-{
-    namespace scenegraph
-    {
-        SceneNodeData::~SceneNodeData() 
-        { 
+namespace exeng {
+    namespace scenegraph {
+        SceneNodeData::~SceneNodeData()  { 
         }
     }
 }

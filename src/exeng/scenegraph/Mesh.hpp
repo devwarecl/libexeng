@@ -14,7 +14,7 @@
 #ifndef __EXENG_SCENEGRAPH_MESH_HPP__
 #define __EXENG_SCENEGRAPH_MESH_HPP__
 
-#include "Geometry.hpp"
+#include <exeng/scenegraph/Geometry.hpp>
 
 namespace exeng {
     namespace scenegraph {

@@ -16,8 +16,8 @@
 
 #include <iosfwd>
 
-#include "../math/TVector.hpp"
-#include "../Config.hpp"
+#include <exeng/Config.hpp>
+#include <exeng/math/TVector.hpp>
 
 namespace exeng {
     namespace scenegraph {   
@@ -37,105 +37,32 @@ namespace exeng {
 			/**
 			 * @brief Inicializa el rayo, usando un punto de base y una direccion arbitrarias
 			 */
-			Ray(const exeng::math::Vector3f& point, const exeng::math::Vector3f& direction);
+			Ray(const exeng::math::Vector3f& point, 
+                const exeng::math::Vector3f& direction);
 
             /**
              * @brief Establece el punto tomado como base del rayo.
              * @param point
              */
-            auto setPoint(const exeng::math::Vector3f& point) -> void;
-
-			/**
-             * @brief Establece las coordenadas del punto base del rayo
-             * @param x La coordenada X del rayo.
-			 * @param y La coordenada Y del rayo.
-			 * @param z La coordenada Z del rayo.
-             */
-			auto setPoint(float x, float y, float z) -> void;
-
-			/**
-             * @brief Establece la coordenada X del rayo
-             * @param value La coordenada X del rayo.
-			 */
-			auto setPointX(float value) -> void;
-
-			/**
-             * @brief Establece la coordenada Y del rayo
-             * @param value La coordenada Y del rayo.
-			 */
-			auto setPointY(float value) -> void;
-
-			/**
-             * @brief Establece la coordenada Z del rayo
-             * @param value La coordenada X del rayo.
-			 */
-			auto setPointZ(float value) -> void;
+            void setPoint(const exeng::math::Vector3f& point);
 
             /**
              * @brief Devuelve el punto base del rayo.
              * @return 
              */
-            auto getPoint() const -> exeng::math::Vector3f;
+            exeng::math::Vector3f getPoint() const;
             
-			/**
-             * @brief Devuelve la coordenada X del punto base del rayo.
-			 */
-			auto getPointX() const -> float;
-
-			/**
-             * @brief Devuelve la coordenada Y del punto base del rayo.
-			 */
-			auto getPointY() const -> float;
-
-			/**
-             * @brief Devuelve la coordenada Z del punto base del rayo.
-			 */
-			auto getPointZ() const -> float;
-
             /**
              * @brief Establece la direccion del rayo.
              * @param direction
              */
-            auto setDirection(const exeng::math::Vector3f& direction) -> void;
+            void setDirection(const exeng::math::Vector3f& direction);
             
-			/**
-             * @brief Establece la direccion del rayo.
-             */
-            auto setDirection(float x, float y, float z) -> void;
-
-			/**
-             * @brief Establece la coordenada X de la direccion del rayo
-             
-            auto setDirectionX(float value) -> void;
-
-             * @brief Establece la coordenada Y de la direccion del rayo
-             
-            auto setDirectionY(float value) -> void;
-
-             * @brief Establece la coordenada Z de la direccion del rayo
-             */
-            auto setDirectionZ(float value) -> void;
-
-			/**
-             * @brief Devuelve la coordenada X de la direccion del rayo
-             */
-            auto getDirectionX() const -> float;
-
-			/**
-             * @brief Devuelve la coordenada Y de la direccion del rayo
-             */
-            auto getDirectionY() const -> float;
-
-			/**
-             * @brief Devuelve la coordenada Z de la direccion del rayo
-             */
-            auto getDirectionZ() const -> float;
-
             /**
              * @brief Devuelve la direccion del rayo.
              * @return 
              */
-            auto getDirection() const -> exeng::math::Vector3f;
+            exeng::math::Vector3f getDirection() const;
 
             /**
              * @brief Calcula el punto que se encuentra a 't' unidades. 
@@ -147,25 +74,19 @@ namespace exeng {
              * @param t
              * @return 
              */
-            auto getPointAt(float t) const -> exeng::math::Vector3f;
+            exeng::math::Vector3f getPointAt(float t) const;
             
             /**
              * @brief Establece los atributos del rayo.
              * @param point El punto base del rayo.
              * @param direction La direccion del rayo. 
              */
-            auto setAttributes(const exeng::math::Vector3f& point, const exeng::math::Vector3f& direction) -> void;
+            void set(const exeng::math::Vector3f& point, 
+                     const exeng::math::Vector3f& direction);
             
         private:
-            /**
-             * @brief Punto base. No tiene restricciones en los valores que puede contener 
-             */
-            exeng::math::Vector3f point;	
-            
-            /**
-             * @brief Direccion. Siempre debe ser siempre un vector unitario.
-             */
-            exeng::math::Vector3f direction;	
+            exeng::math::Vector3f point;        //! Ray start point
+            exeng::math::Vector3f direction;	//! Ray direction
         };
     }
 }

@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <boost/checked_delete.hpp>
 
-#include "Camera.hpp"
+#include <exeng/scenegraph/Camera.hpp>
 
 using exeng::math::Vector3f;
 using exeng::math::Size2f;

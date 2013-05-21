@@ -11,107 +11,37 @@
  * found in the file LICENSE in this distribution.
  */
 
-
-#include "PluginManager.hpp"
-
-#include "../Root.hpp"
-#include "Library.hpp"
-#include "Plugin.hpp"
-
-#include <boost/make_shared.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <stdexcept>
 #include <map>
 #include <cassert>
 
+#include <boost/ptr_container/ptr_map.hpp>
+#include <boost/make_shared.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+
+#include <exeng/Root.hpp>
+#include <exeng/system/Library.hpp>
+#include <exeng/system/Plugin.hpp>
+#include <exeng/system/PluginLibrary.hpp>
+#include <exeng/system/PluginManager.hpp>
+
 namespace exeng {
     namespace system {
-        typedef boost::shared_ptr<Plugin> PluginSharedPtr;
-        typedef boost::scoped_ptr<Plugin> PluginScopedPtr;
-        typedef boost::shared_ptr<Library> LibraryPtr;
 
-
-        /**
-         * @brief External library plugin object.
-         * 
-         * Object oriented interface to the functions exported by the dynamic library.
-         */
-        class PluginLibrary : public Plugin {
-        public:
-            
-            PluginLibrary(LibraryPtr libraryPtr) {
-                FunctionPtr functionPtr;
-                ExengGetPluginObjectProc getPluginObjectProc;
-
-                // Validate non null
-                if (!libraryPtr) {
-                    throw std::invalid_argument("");
-                }
-
-                // Store the function pointer to the plugin getter
-                functionPtr = libraryPtr->getFunctionPtr(EXENG_GET_PLUGIN_OBJECT_NAME_STR);
-                getPluginObjectProc = (ExengGetPluginObjectProc) functionPtr;
-
-                // Store the plugin getter object.
-                this->libraryPtr = libraryPtr;
-                this->pluginPtr.reset(getPluginObjectProc());
-            }
-
-
-            virtual ~PluginLibrary() { }
-
-
-            virtual std::string getName() const {
-                return this->pluginPtr->getName();
-            }
-
-                
-            virtual std::string getDescription() const {
-                return this->pluginPtr->getDescription();
-            }
-
-
-            virtual Version getVersion() const {
-                return this->pluginPtr->getVersion();
-            }
-
-            
-            virtual void initialize(Root *root) {
-                this->pluginPtr->initialize(root);
-            }
-
-
-            virtual void terminate() {
-                this->pluginPtr->terminate();
-            }
-
-
-        private:
-            LibraryPtr libraryPtr;
-            PluginScopedPtr pluginPtr;
-        };
-        
-
-        /**
-         * @brief Plugin map of smart pointers
-         * @todo Consider the use of the boost map pointer class.
-         */
-        typedef std::map<std::string, PluginSharedPtr> PluginMap;   
-        typedef PluginMap::iterator PluginMapIt;
-
-        
         /**
          * @brief Private attributes of the plugin manager.
          */
         struct PluginManager::Private {
         public:
-            Private() : root(nullptr) {
-            }
+            Private() : root(nullptr) {}
             
         public:
-            PluginMap plugins;  //! The currently loaded plugins.
-            Root* root;         //! The root object
+            //! Currently loaded plugins.
+            boost::ptr_map< std::string, Plugin> plugins;
+            
+            //! Root object
+            Root* root;         
         };
 
         
@@ -133,18 +63,25 @@ namespace exeng {
         
         void PluginManager::load(const std::string &name) {
             assert(this->impl != nullptr);
-
-            std::string libraryName;    // The library filename.
-            libraryName = name;         // TODO: Get the library filename
-
+            // The library filename.
+            std::string libraryName;    
+            
+#if defined(EXENG_WINDOWS)
+            libraryName = name + std::string(".dll");
+#elif defined(EXENG_UNIX)
+            libraryName = std::string("lib") + name + std::string(".so");
+#else
+#  warning Unsupported platform. This can cause platform dependent code in client side.
+            libraryName = name
+#endif
+            
             // check if the library is loaded previously
-            if (this->impl->plugins.find(name) == this->impl->plugins.end()) {
-                LibraryPtr libraryPtr = boost::make_shared<Library>();
-                libraryPtr->load(libraryName);
+            if (this->impl->plugins.find(name) == this->impl->plugins.end()) {    
+                Library *library = new  Library();
+                library->load(libraryName);
                 
-                PluginSharedPtr pluginPtr = boost::make_shared<PluginLibrary>(libraryPtr);
-
-                this->impl->plugins[name] = pluginPtr;
+                std::string keyName = name;
+                this->impl->plugins.insert(keyName, new PluginLibrary(library));
             }
         }
 
@@ -152,11 +89,13 @@ namespace exeng {
         void PluginManager::unload(const std::string &name) {
             assert(this->impl != nullptr);
             
-            auto it = this->impl->plugins.find(name);
-
+            auto &plugins = this->impl->plugins;
+            
             // simplemente busca y elimina el elemento indicado
-            if (it != this->impl->plugins.end()) {
-                this->impl->plugins.erase(name);
+            auto it = plugins.find(name);
+            
+            if (it != plugins.end()) {
+                plugins.erase(name);
             }
         }
     }

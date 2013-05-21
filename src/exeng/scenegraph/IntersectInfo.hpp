@@ -15,8 +15,8 @@
 #ifndef __EXENG_SCENEGRAPH_INTERSECTINFO_HPP__
 #define __EXENG_SCENEGRAPH_INTERSECTINFO_HPP__
 
-#include "../math/TVector.hpp"
-#include "../graphics/Material.hpp"
+#include <exeng/math/TVector.hpp>
+#include <exeng/graphics/Material.hpp>
 
 namespace exeng {
     namespace scenegraph {

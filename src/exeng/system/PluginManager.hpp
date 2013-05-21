@@ -15,8 +15,7 @@
 #define __EXENG_SYSTEM_PLUGINMANAGER_HPP__
 
 #include <string>
-
-#include "../Object.hpp"
+#include <exeng/Object.hpp>
 
 namespace exeng {
     class EXENGAPI Root;
@@ -38,21 +37,20 @@ namespace exeng {
              * @brief Devuelve una referencia al objeto central 
              */
             Root* getRoot();
-
+            
             /**
-             * @brief Carga el plugin que tenga el nombre indicado. 
-             * 
-             * En caso de que no exista, se lanza una excepcion del tipo std::runtime_error. 
-             * Si el plugin es cargado exitosamente, implementa ciertas interfaces del objeto raiz indicado.
-             * 
+             * @brief Load a plugin from a dynamic module (SO/DLL)
+             * @param name The name of the plugin. Under UNIX platforms, is the name of the filename,
+             * without prefix and filename extension. Undex Windows platforms, is the name of the DLL name,
+             * again, without the extension.
              */
             void load(const std::string &name);
             
             /**
-             * @brief Descarga el plugin, liberando todos los recursos inicializados por este.
-             * 
-             * Durante la descarga, se remueven todos las implementaciones de interfaces puestas por el plugin
-             * en el engine.
+             * @brief Unload a plugin from the current list of loaded plugins.
+             * @param name The name of the plugin. Under UNIX platforms, is the name of the filename,
+             * without prefix and filename extension. Undex Windows platforms, is the name of the DLL name,
+             * again, without the extension.
              */
             void unload(const std::string &name);
 

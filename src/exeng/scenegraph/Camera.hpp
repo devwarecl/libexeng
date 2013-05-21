@@ -14,11 +14,11 @@
 #ifndef __EXENG_SCENEGRAPH_CAMERA_HPP__
 #define __EXENG_SCENEGRAPH_CAMERA_HPP__
 
-#include "../Object.hpp"
-#include "../math/TVector.hpp"
-#include "../math/TSize.hpp"
-#include "../math/TBoundary.hpp"
-#include "../scenegraph/SceneNodeData.hpp"
+#include <exeng/Object.hpp>
+#include <exeng/math/TVector.hpp>
+#include <exeng/math/TSize.hpp>
+#include <exeng/math/TBoundary.hpp>
+#include <exeng/scenegraph/SceneNodeData.hpp>
 
 namespace exeng {
     namespace scenegraph {

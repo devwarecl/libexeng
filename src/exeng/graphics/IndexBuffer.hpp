@@ -14,7 +14,7 @@
 #ifndef __EXENG_SCENEGRAPH_INDEXBUFFER_HPP__
 #define __EXENG_SCENEGRAPH_INDEXBUFFER_HPP__
 
-#include "../Object.hpp"
+#include <exeng/Object.hpp>
 #include <stdexcept>
 
 namespace exeng {
@@ -27,7 +27,6 @@ namespace exeng {
             Index16=16,
             Index32=32
         };
-        
         
         /**
          * @brief Area de memoria dedicada a almacenar informacion sobre indices a un VertexBuffer

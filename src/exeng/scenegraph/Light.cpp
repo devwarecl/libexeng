@@ -11,7 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "Light.hpp"
+#include <exeng/scenegraph/Light.hpp>
 
 #include <cassert>
 #include <boost/checked_delete.hpp>

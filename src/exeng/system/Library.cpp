@@ -13,9 +13,10 @@
 
 #include <cassert>
 #include <stdexcept>
-#include "Library.hpp"
-#include "LibraryPrivate.hpp"
 #include <boost/checked_delete.hpp>
+
+#include <exeng/system/Library.hpp>
+#include <exeng/system/LibraryPrivate.hpp>
 
 namespace exeng {
 	namespace system {

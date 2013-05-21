@@ -16,9 +16,9 @@
 
 #include <vector>
 
-#include "../Object.hpp"
-#include "../Version.hpp"
-#include "GraphicsDriver.hpp"
+#include <exeng/Object.hpp>
+#include <exeng/Version.hpp>
+#include <exeng/graphics/GraphicsDriver.hpp>
 
 namespace exeng {
     

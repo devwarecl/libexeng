@@ -11,12 +11,13 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "../HeapBuffer.hpp"
-#include "VertexBuffer.hpp"
-#include <boost/checked_delete.hpp>
 #include <cstdlib>
 #include <stdexcept>
 #include <cassert>
+#include <boost/checked_delete.hpp>
+
+#include <exeng/HeapBuffer.hpp>
+#include <exeng/graphics/VertexBuffer.hpp>
 
 namespace exeng {
     namespace graphics {

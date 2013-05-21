@@ -29,6 +29,7 @@ add_library(exeng SHARED
 ./ui/Window.hpp ./ui/Window.cpp 
 
 ./input/IEventRaiser.hpp
+./input/InputData.hpp ./input/InputData.cpp 
 
 ./scenegraph/SceneNode.hpp ./scenegraph/SceneNode.cpp ./scenegraph/Scene.hpp ./scenegraph/Scene.cpp
 ./scenegraph/Camera.hpp ./scenegraph/Camera.cpp ./scenegraph/Light.hpp ./scenegraph/Light.cpp
@@ -45,6 +46,7 @@ add_library(exeng SHARED
 
 ./system/Library.hpp ./system/Library.cpp 
 ./system/Plugin.hpp ./system/Plugin.cpp 
+./system/PluginLibrary.hpp ./system/PluginLibrary.inl
 ./system/PluginManager.hpp ./system/PluginManager.cpp 
 ./system/LibraryPrivate.hpp ./system/LibraryPrivatePosix.cpp ./system/LibraryPrivateWin32.cpp
 

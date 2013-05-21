@@ -11,8 +11,8 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "../DetectEnv.hpp"
-#include "LibraryPrivate.hpp"
+#include <exeng/DetectEnv.hpp>
+#include <exeng/system/LibraryPrivate.hpp>
 
 #if defined(EXENG_LINUX) || defined(EXENG_UNIX)
 

@@ -11,17 +11,15 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "Material.hpp"
-#include "Texture.hpp"
-
 #include <cassert>
 #include <stdexcept>
 #include <cstring>
 #include <boost/shared_ptr.hpp>
 #include <boost/checked_delete.hpp>
 
+#include <exeng/graphics/Material.hpp>
+#include <exeng/graphics/Texture.hpp>
 
-// Implementacion del MaterialLayer
 namespace exeng {
     namespace graphics {
         struct MaterialLayer::Private {
@@ -33,7 +31,7 @@ namespace exeng {
         };
         
         
-        MaterialLayer::MaterialLayer() : impl(NULL) {
+        MaterialLayer::MaterialLayer() : impl(nullptr) {
             this->impl = new MaterialLayer::Private();
         }
         
@@ -44,37 +42,37 @@ namespace exeng {
         
         
         const Texture* MaterialLayer::getTexture() const {
-            assert(this->impl != NULL);
+            assert(this->impl != nullptr);
             return this->impl->textureMap;
         }
         
         
         Texture* MaterialLayer::getTexture() {
-            assert(this->impl != NULL);
+            assert(this->impl != nullptr);
             return this->impl->textureMap;
         }
         
         
         void MaterialLayer::setTexture(Texture* tex) {
-            assert(this->impl != NULL);
+            assert(this->impl != nullptr);
             this->impl->textureMap = tex;
         }
 
 
         bool MaterialLayer::operator== (const MaterialLayer& other) const {
-            assert(this->impl != NULL);
+            assert(this->impl != nullptr);
             return this->impl->textureMap == other.impl->textureMap;
         }
 
         
         bool MaterialLayer::operator!= (const MaterialLayer& other) const {
-            assert(this->impl != NULL);
+            assert(this->impl != nullptr);
             return ! (*this == other);
         }
 
 
         MaterialLayer& MaterialLayer::operator= (const MaterialLayer& other) {
-            assert(this->impl != NULL);
+            assert(this->impl != nullptr);
             this->impl->textureMap = other.impl->textureMap;
             return *this;
         }

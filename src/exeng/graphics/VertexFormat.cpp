@@ -11,13 +11,12 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "VertexFormat.hpp"
-
 #include <cstring>
 #include <cassert>
 #include <stdexcept>
-
 #include <boost/range/numeric.hpp>
+
+#include <exeng/graphics/VertexFormat.hpp>
 
 namespace exeng  {
     namespace graphics {   

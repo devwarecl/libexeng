@@ -11,14 +11,16 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "../math/TVector.hpp"
-#include "Scene.hpp"
-#include "SceneNode.hpp"
-#include "Camera.hpp"
-#include "Light.hpp"
+#include <exeng/math/TVector.hpp>
+#include <exeng/scenegraph/Scene.hpp>
+#include <exeng/scenegraph/SceneNode.hpp>
+#include <exeng/scenegraph/Camera.hpp>
+#include <exeng/scenegraph/Light.hpp>
 
-using exeng::graphics::Color;
-using exeng::scenegraph::SceneNode;
+using namespace exeng;
+using namespace exeng::graphics;
+using namespace exeng::scenegraph;
+using namespace exeng::math;
 
 struct exeng::scenegraph::Scene::Private {
     SceneNode *rootNode;
@@ -42,12 +44,12 @@ namespace exeng {
         }
         
         
-        auto Scene::getRootNodePtr() -> SceneNode* {
+        SceneNode* Scene::getRootNodePtr() {
             return this->impl->rootNode;
         }
         
         
-        auto Scene::addCamera(Camera *camera) -> SceneNode* {
+        SceneNode* Scene::addCamera(Camera *camera) {
             SceneNode *cameraNode = nullptr;
             
             cameraNode = this->getRootNodePtr()->addChildPtr("");
@@ -57,7 +59,7 @@ namespace exeng {
         }
         
         
-        auto Scene::addLight(Light *light)  -> SceneNode* {
+        SceneNode* Scene::addLight(Light *light) {
             SceneNode *lightNode = nullptr;
             
             lightNode = this->getRootNodePtr()->addChildPtr("");
@@ -67,12 +69,12 @@ namespace exeng {
         }
         
         
-        auto Scene::setBackgroundColor(const Color &color) -> void  {
+        void Scene::setBackgroundColor(const Color &color){
             this->impl->backColor = color;
         }
         
         
-        auto Scene::getBackgroundColor() const -> Color  {
+        Color Scene::getBackgroundColor() const{
             return this->impl->backColor;
         }
     }

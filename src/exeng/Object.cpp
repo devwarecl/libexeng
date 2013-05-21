@@ -12,13 +12,12 @@
  */
 
 
-
 #include <cassert>
 #include <typeinfo>
 #include <sstream>
 #include <stdexcept>
 
-#include "Object.hpp"
+#include <exeng/Object.hpp>
 
 namespace exeng {
 	Object::~Object()  { }

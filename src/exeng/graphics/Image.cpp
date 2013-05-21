@@ -15,17 +15,25 @@
 #include <cstdint>
 #include <boost/shared_array.hpp>
 
-#include "Image.hpp"
+#include <exeng/graphics/Image.hpp>
 
-struct exeng::graphics::Image::Private {
-    exeng::math::Vector3i size;
-    exeng::graphics::ColorFormat format;
-    exeng::graphics::PixelType type;
-    boost::shared_array<std::uint8_t> data;
-            
-    Private() : size(0, 0, 0), format(ColorFormat::Unknown), type(PixelType::Unknown) {
+using namespace exeng;
+using namespace exeng::math;
+using namespace exeng::graphics;
+
+namespace exeng {
+    namespace graphics {
+        struct Image::Private {
+            Vector3i size;
+            ColorFormat format;
+            PixelType type;
+            boost::shared_array<std::uint8_t> data;
+                    
+            Private() : size(0, 0, 0), format(ColorFormat::Unknown), type(PixelType::Unknown) {
+            }
+        };
     }
-};
+}
 
 
 namespace exeng {

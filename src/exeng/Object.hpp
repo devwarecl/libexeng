@@ -16,9 +16,8 @@
 #define __EXENG_OBJECT_HPP__
 
 #include <string>
-
-#include "Config.hpp"
-#include "TypeInfo.hpp"
+#include <exeng/Config.hpp>
+#include <exeng/TypeInfo.hpp>
 
 namespace exeng {
     

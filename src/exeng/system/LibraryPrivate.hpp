@@ -14,7 +14,7 @@
 #ifndef __EXENG_SYSTEM_LIBRARYPRIVATE_HPP__
 #define __EXENG_SYSTEM_LIBRARYPRIVATE_HPP__
 
-#include "Library.hpp"
+#include <exeng/system/Library.hpp>
 
 namespace exeng {
     namespace system {

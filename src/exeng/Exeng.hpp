@@ -1,8 +1,7 @@
 /**
- * @file 
- * @brief 
+ * @file Exeng.hpp
+ * @brief Main include file. Includes the *most* used stuff.
  */
-
 
 /*
  * Copyright (c) 2013 Felipe Apablaza.
@@ -14,18 +13,44 @@
 #ifndef __EXENG_HPP__
 #define __EXENG_HPP__
 
-#include "DetectEnv.hpp"
-#include "Config.hpp"
-#include "TFlags.hpp"
-#include "Object.hpp"
-#include "Version.hpp"
-#include "Root.hpp"
+#include <exeng/DetectEnv.hpp>
+#include <exeng/Config.hpp>
+#include <exeng/TFlags.hpp>
+#include <exeng/Object.hpp>
+#include <exeng/Version.hpp>
+#include <exeng/Root.hpp>
+#include <exeng/Buffer.hpp>
+#include <exeng/HeapBuffer.hpp>
+#include <exeng/TypeInfo.hpp>
 
-#include "math/Common.hpp"
-#include "math/TSize.hpp"
-#include "math/TVector.hpp"
-#include "math/TMatrix.hpp"
-#include "math/TBoundary.hpp"
+#include <exeng/graphics/Color.hpp>
+#include <exeng/graphics/GraphicsDriver.hpp>
+#include <exeng/graphics/IndexBuffer.hpp>
+#include <exeng/graphics/VertexBuffer.hpp>
+#include <exeng/graphics/VertexFormat.hpp>
+#include <exeng/graphics/Texture.hpp>
+#include <exeng/graphics/Material.hpp>
+#include <exeng/graphics/Primitive.hpp>
+#include <exeng/graphics/Image.hpp>
+#include <exeng/graphics/Screen.hpp>
+
+#include <exeng/scenegraph/Camera.hpp>
+#include <exeng/scenegraph/Geometry.hpp>
+#include <exeng/scenegraph/IMeshLoader.hpp>
+#include <exeng/scenegraph/MeshManager.hpp>
+#include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/scenegraph/MeshPart.hpp>
+#include <exeng/scenegraph/IntersectInfo.hpp>
+#include <exeng/scenegraph/Light.hpp>
+#include <exeng/scenegraph/Ray.hpp>
+#include <exeng/scenegraph/Sphere.hpp>
+#include <exeng/scenegraph/Plane.hpp>
+
+#include <exeng/math/Common.hpp>
+#include <exeng/math/TSize.hpp>
+#include <exeng/math/TVector.hpp>
+#include <exeng/math/TMatrix.hpp>
+#include <exeng/math/TBoundary.hpp>
 
 /**
  * @brief The common namespace for the engine.

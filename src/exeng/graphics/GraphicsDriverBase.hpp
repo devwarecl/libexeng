@@ -11,11 +11,10 @@
  * found in the file LICENSE in this distribution.
  */
 
+#ifndef __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
+#define __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
 
-#ifndef exeng_graphics_graphicsdriverbase_hpp
-#define exeng_graphics_graphicsdriverbase_hpp
-
-#include "GraphicsDriver.hpp"
+#include <exeng/graphics/GraphicsDriver.hpp>
 #include <list>
 
 namespace exeng {

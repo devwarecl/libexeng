@@ -11,15 +11,13 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "Plugin.hpp"
+#include <exeng/system/Plugin.hpp>
 #include <stdexcept>
-
 
 namespace exeng {
     namespace system  {
         Plugin::~Plugin() {
         }
-        
         
         std::string Plugin::getName() const {
             throw std::logic_error("Plugin::getName not implemented");
@@ -36,7 +34,6 @@ namespace exeng {
         void Plugin::initialize(Root *root) {
             throw std::logic_error("Plugin::initialize not implemented");
         }
-        
         
         void Plugin::terminate() {
             throw std::logic_error("Plugin::terminate not implemented");

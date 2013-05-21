@@ -11,7 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "IntersectInfo.hpp"
+#include <exeng/scenegraph/IntersectInfo.hpp>
 
 namespace exeng {
     namespace scenegraph {

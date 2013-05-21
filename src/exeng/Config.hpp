@@ -14,7 +14,7 @@
 #ifndef __EXENG_CONFIG_HPP__
 #define __EXENG_CONFIG_HPP__
 
-#include "DetectEnv.hpp"
+#include <exeng/DetectEnv.hpp>
 
 #ifdef EXENG_WINDOWS
 #  define EXENG_CALLCONV __stdcall
