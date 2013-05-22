@@ -41,7 +41,7 @@ namespace exeng {
             }
             
             
-            void GL3GraphicsDriver::beginScene(const Color &color, ClearFlags::Enum flags) {
+            void GL3GraphicsDriver::beginFrame(const Color &color, ClearFlags::Flags flags) {
                 // Clears the opengl framebuffer
                 GLenum clearFlags = 0L;
                 
@@ -49,7 +49,7 @@ namespace exeng {
                 clearFlags |= flags.getFlag(ClearFlags::Depth) ? GL_DEPTH_BUFFER_BIT : 0;
                 
                 if (!clearFlags) {
-                    throw std::invalid_argument("beginScene: Flags must be non 0.");
+                    throw std::invalid_argument("GL3GraphicsDriver::beginScene: Flags must be non 0.");
                 }
                 
                 ::glClearColor(color.red, color.green, color.blue, color.alpha);
@@ -57,14 +57,13 @@ namespace exeng {
             }
             
             
-            void GL3GraphicsDriver::endScene() {
+            void GL3GraphicsDriver::endFrame() {
                 ::glFlush();
             }
             
             
             void GL3GraphicsDriver::setVertexBuffer(const VertexBuffer* vertexBuffer) {
                 this->impl->vertexBuffer = vertexBuffer;
-                
                 //! TODO: Bind buffer data.
             }
             

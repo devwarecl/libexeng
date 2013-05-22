@@ -24,12 +24,14 @@ namespace exeng {
         virtual ~Buffer();
         
         /**
-         * @brief Lock the buffer, and gets a pointer to the buffer data, in read-write usage mode.
+         * @brief Lock the buffer, and gets a pointer to the buffer data, 
+         * in read-write usage mode.
          */
         virtual void* lock() = 0;
         
         /**
-         * @brief Lock the buffer, and gets a pointer to the buffer data, in read-only usage mode.
+         * @brief Lock the buffer, and gets a pointer to the buffer data, 
+         * in read-only usage mode.
          */
         virtual const void* lock() const = 0;
         
@@ -39,7 +41,8 @@ namespace exeng {
         virtual void unlock() = 0;
         
         /**
-         * @brief Unlocks the buffer, enabling the data to be modified again. Used in constant instances.
+         * @brief Unlocks the buffer, enabling the data to be modified again. 
+         * Used in constant instances.
          */
         virtual void unlock() const = 0;
         

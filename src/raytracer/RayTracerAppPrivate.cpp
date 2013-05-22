@@ -7,6 +7,11 @@
 
 #include <boost/timer/timer.hpp>
 
+using namespace exeng;
+using namespace exeng::scenegraph;
+using namespace raytracer;
+using namespace raytracer::samplers;
+
 namespace raytracer {
     
     RayTracerApp::Private::Private() {
@@ -15,12 +20,12 @@ namespace raytracer {
         this->running = false;
         this->cameraView.size.set(320, 200);
         
-        this->sampler.reset(new raytracer::samplers::JitteredSampler(25));
-        this->scene.reset(new exeng::scenegraph::Scene());
+        this->sampler.reset(new JitteredSampler(25));
+        this->scene.reset(new Scene());
     }
     
     
-    std::uint32_t RayTracerApp::Private::pointToOffset(const Vector2i &point) const {
+    uint32_t RayTracerApp::Private::pointToOffset(const Vector2i &point) const {
 #ifdef EXENG_DEBUG
         if (point.x >= this->cameraView.size.x) {
             throw std::invalid_argument("");
@@ -35,7 +40,7 @@ namespace raytracer {
     }
     
     
-    void RayTracerApp::Private::putPixel(const Vector2i &point, std::uint32_t color) {
+    void RayTracerApp::Private::putPixel(const Vector2i &point, uint32_t color) {
         auto offset = this->pointToOffset(point);
         auto data = static_cast<uint32_t*>(this->backbuffer->pixels);
         
@@ -181,7 +186,6 @@ namespace raytracer {
     
     
     void RayTracerApp::Private::loadScene() {
-        
         // Crear una escena de juguete, con una esfera al centro de la escena.
         // TODO: Cargar esta escena desde un archivo XML, o similar
         auto rootNode = this->scene->getRootNodePtr();

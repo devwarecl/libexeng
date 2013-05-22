@@ -9,6 +9,7 @@
 #include <memory>
 
 #include <SDL/SDL.h>
+
 #include <exeng/graphics/Color.hpp>
 #include <exeng/math/TVector.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
@@ -19,7 +20,7 @@
 #include "RayTracerApp.hpp"
 #include "SphereGeometry.hpp"
 #include "RayTracerApp.hpp"
-#include "./samplers/Sampler.hpp"
+#include "samplers/Sampler.hpp"
 
 typedef std::list<exeng::scenegraph::SceneNode*> SceneNodeList;
 typedef SceneNodeList::iterator SceneNodeListIt;
@@ -35,37 +36,13 @@ namespace raytracer {
      *  @brief Define la forma en que se generara la imagen trazada
      */
     struct CameraView {
-    public:
-        /**
-         *  @brief Define los atributos por defecto.
-         */
-        CameraView() {
-            this->size = Vector2i(320, 200);
-            this->pixelSize = 1.0f;
-            this->gamma = 0.0f;
-            this->invGamma = 0.0f;
-        }
+        CameraView() :  size(320, 200), pixelSize(1.0f), 
+                        gamma(0.0f), invGamma(0.0) {}
         
-    public:
-        /**
-         *  @brief Porte de la pantalla
-         */
-        Vector2i size;              
-        
-        /**
-         *  @brief El tamaño de cada pixel
-         */
-        float pixelSize;            
-        
-        /**
-         *  @brief El factor gamma
-         */
-        float gamma;
-        
-        /**
-         *  @brief El inverso del factor gamma
-         */
-        float invGamma;             
+        Vector2i size;      //! Tamaño de la pantalla
+        float pixelSize;    //! Tamaño de cada pixel
+        float gamma;        //! Factor gamma
+        float invGamma;     //! Inverso del factor gamma
     };
     
     
@@ -74,7 +51,6 @@ namespace raytracer {
      */
     struct RayTracerApp::Private {        
     public:
-        
         /**
          *  @brief Asigna valores por defecto a la aplicacion
          */
@@ -100,7 +76,6 @@ namespace raytracer {
          */
         Ray castRay(const exeng::math::Vector2f &pixel) const;
         
-        
         /**
          * @brief Crea un rayo a partir de las coordenadas de pantalla indicadas, con el punto
          * de muestra indicado
@@ -119,12 +94,10 @@ namespace raytracer {
          */
         IntersectInfo intersectRay(const SceneNodeList &nodes, const Ray &ray) const;
         
-        
         /**
          *  @brief Calcula el color del pixel indicado
          */
         Color traceRay(const SceneNodeList &nodeList, const exeng::math::Vector2i &pixel) const;
-        
         
         /**
          *  @brief Limpia el backbuffer
@@ -136,49 +109,32 @@ namespace raytracer {
          */
         void present();
         
-        
         /**
          *  @brief Carga la escena
          */
         void loadScene();
         
-        
     public:
+        //! El color por defecto a usar en caso de que ningun rayo colisione con la escena
+        std::uint32_t defaultColor; 
         
-        /**
-         *  @brief El color por defecto en caso de que ningun rayo colisione con la escena
-         */
-        std::uint32_t defaultColor;
+        //! El backbuffer SDL
+        SDL_Surface *backbuffer;    
         
-        /**
-         *  @brief El backbuffer SDL. Guarda el resultado del render.
-         */
-        SDL_Surface *backbuffer;
+        //! Evento de SDL
+        SDL_Event event;            
         
-        /**
-         *  @brief Estado intermedio de un evento de SDL
-         */
-        SDL_Event event;
+        //! Estado de ejecucion de la aplicacion
+        bool running;               
         
-        /**
-         *  @brief Estado de ejecucion de la aplicacion.
-         */
-        bool running;
+        //! La forma en que la escena se proyecta en la pantalla.
+        CameraView cameraView;      
         
-        /**
-         *  @brief La forma en que la escena se proyecta en la pantalla.
-         */
-        CameraView cameraView;
+        //! La escena actual de la aplicacion. 
+        std::unique_ptr<Scene> scene;   
         
-        /**
-         *  @brief La escena actual de la aplicacion. 
-         */
-        std::unique_ptr<Scene> scene;
-        
-        /**
-         *  @brief Implementa el antialias de nuestra escena
-         */
-        std::unique_ptr<raytracer::samplers::Sampler> sampler;
+        //! Implementa el antialias de nuestra escena
+        std::unique_ptr<raytracer::samplers::Sampler> sampler;  
     };
 }
 

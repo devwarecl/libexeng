@@ -21,7 +21,7 @@ namespace raytracer {
         
         virtual void pollEvents();
         
-        virtual ApplicationStatus::Enum getStatus();
+        virtual ApplicationStatus getStatus() const;
         
         virtual void update(double seconds);
         

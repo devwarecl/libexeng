@@ -1,5 +1,5 @@
 /**
- * @file 
+ * @file Library.cpp
  * @brief 
  */
 
@@ -52,19 +52,19 @@ namespace exeng {
 			assert(this->impl != nullptr);
 			return this->impl->handle != nullptr;
 		}
-
+        
 		
 		std::string Library::getFileName() const {
 			assert(this->impl != nullptr);
 			return this->impl->name;
 		}
-
+        
 		
 		std::string Library::getName() const {
 			assert(this->impl != nullptr);
 			return this->impl->name;
 		}
-
+        
 		
 		std::string Library::toString() const {
 			assert(this->impl != nullptr);
@@ -72,10 +72,10 @@ namespace exeng {
             if (this->isValid() == true) {
 				return this->getName();
             } else {
-				return "<empty library object>";
+				return Object::toString();
             }
 		}
-
+        
 		
 		FunctionPtr Library::getFunctionPtr(const std::string& FunctionName) {
 			assert(this->impl != nullptr);

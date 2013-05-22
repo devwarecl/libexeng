@@ -82,4 +82,9 @@ namespace exeng {
         assert(this->impl != nullptr);
         return this->impl->meshManager;
     }
+    
+    
+    Version Root::getVersion() const {
+        return Version(0, 0, 1);
+    }
 }

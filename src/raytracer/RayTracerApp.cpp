@@ -9,8 +9,7 @@
 #include <boost/timer/timer.hpp>
 
 namespace raytracer {
-
-    RayTracerApp::RayTracerApp() {
+    RayTracerApp::RayTracerApp() : impl(nullptr) {
 		this->impl.reset(new RayTracerApp::Private());
     }
 
@@ -51,7 +50,7 @@ namespace raytracer {
     }
 
 
-    ApplicationStatus::Enum RayTracerApp::getStatus() {
+    ApplicationStatus RayTracerApp::getStatus() const {
         if (this->impl->running == true) {
             return ApplicationStatus::Running;
 		} else {

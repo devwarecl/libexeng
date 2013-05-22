@@ -19,7 +19,7 @@
 
 namespace exeng {
 	/**
-     *  @brief Wrapper para objetos std::type_info.
+     *  @brief std::type_info wrapper.
      */
 	class EXENGAPI TypeInfo {
 	public:

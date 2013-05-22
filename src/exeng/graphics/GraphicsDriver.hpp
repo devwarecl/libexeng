@@ -11,8 +11,8 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef exeng_graphics_graphicsdriver_hpp
-#define exeng_graphics_graphicsdriver_hpp
+#ifndef __EXENG_GRAPHICS_GRAPHICSDRIVER_HPP__
+#define __EXENG_GRAPHICS_GRAPHICSDRIVER_HPP__
 
 #include <string>
 #include <vector>
@@ -43,16 +43,16 @@ namespace exeng {
         };
         
         /**
-         * @brief 
+         * @brief Framebuffer clearing flags
          */
         namespace ClearFlags {
-            enum _Enum {
+            enum Enum {
                 Color = 0x00000001,
                 Depth = 0x00000002,
                 Stencil  = 0x00000004
             };
             
-            typedef TFlags<_Enum> Enum;
+            typedef TFlags<Enum> Flags;
         }
         
         class EXENGAPI Texture;
@@ -70,12 +70,13 @@ namespace exeng {
             /**
              * @brief Start the rendering of a new frame, clearing the previous one
              */
-            virtual void beginScene(const Color &color, ClearFlags::Enum flags = ClearFlags::Color | ClearFlags::Depth) = 0;
+            virtual void beginFrame(const Color &color, 
+                                    ClearFlags::Flags flags = ClearFlags::Color | ClearFlags::Depth) = 0;
             
             /**
              * @brief Flip the backbuffer and the front buffer
              */
-            virtual void endScene() = 0;
+            virtual void endFrame() = 0;
             
             /**
              * @brief Set the currently used vertex buffer
@@ -115,7 +116,7 @@ namespace exeng {
             /**
              * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
              */
-            virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount  ) = 0;
+            virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount) = 0;
             
             /**
              * @brief Create a new texture object.
@@ -145,8 +146,10 @@ namespace exeng {
             /**
              * @brief Render, using the specified primitive and the currently setted material, 
              * vertex and index buffers, if any. 
+             * @param primitive The primitive type.
+             * @param count The vertex count to utilize.
              */
-            virtual void render(exeng::graphics::Primitive::Enum primitiveType, int vertexCount) = 0;
+            virtual void render(exeng::graphics::Primitive::Enum primitive, int count) = 0;
             
             /**
              * @brief Get the current rendering screen.

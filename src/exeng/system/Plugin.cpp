@@ -38,6 +38,5 @@ namespace exeng {
         void Plugin::terminate() {
             throw std::logic_error("Plugin::terminate not implemented");
         }
-        
     }
 }

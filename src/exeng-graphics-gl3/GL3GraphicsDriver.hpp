@@ -2,7 +2,6 @@
 #ifndef __GL3_GRAPHICSDRIVER_HPP__
 #define __GL3_GRAPHICSDRIVER_HPP__
 
-
 #include <memory>
 #include <exeng/graphics/GraphicsDriver.hpp>
 
@@ -23,9 +22,9 @@ namespace exeng {
                 
                 virtual ~GL3GraphicsDriver();
                 
-                virtual void beginScene(const Color &color, ClearFlags::Enum flags = ClearFlags::Color | ClearFlags::Depth) ;
+                virtual void beginFrame(const Color &color, ClearFlags::Flags flags = ClearFlags::Color | ClearFlags::Depth) ;
                 
-                virtual void endScene() ;
+                virtual void endFrame();
                 
                 virtual void setVertexBuffer(const VertexBuffer* vertexBuffer) ;
                 

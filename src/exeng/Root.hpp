@@ -16,6 +16,7 @@
 #define __EXENG_ROOT_HPP__
 
 #include <exeng/Config.hpp>
+#include <exeng/Version.hpp>
 
 namespace exeng {
 	namespace system {
@@ -25,7 +26,6 @@ namespace exeng {
     namespace scenegraph {
         class EXENGAPI MeshManager;
     }
-    
     
     /**
      * @brief The root class of the multimedia engine. 
@@ -57,6 +57,10 @@ namespace exeng {
          */
         const exeng::scenegraph::MeshManager* getMeshManager() const;
         
+        /**
+         * @brief getVersion
+         */
+        Version getVersion() const;
         
 	private:
 		struct Private;

@@ -14,8 +14,8 @@
 #ifndef __EXENG_SYSTEM_LIBRARY_HPP__
 #define __EXENG_SYSTEM_LIBRARY_HPP__
 
-#include <exeng/Object.hpp>
 #include <string>
+#include <exeng/Object.hpp>
 
 namespace exeng {
     namespace system  {

@@ -20,7 +20,6 @@
 
 namespace exeng {
     namespace scenegraph {
-    
         /**
          * @brief Store information about the intersection between a ray and a object.
          */

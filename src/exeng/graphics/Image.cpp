@@ -29,7 +29,7 @@ namespace exeng {
             PixelType type;
             boost::shared_array<std::uint8_t> data;
                     
-            Private() : size(0, 0, 0), format(ColorFormat::Unknown), type(PixelType::Unknown) {
+            Private() : size(0, 0, 0), type(PixelType::Unknown) {
             }
         };
     }
@@ -89,9 +89,11 @@ namespace exeng {
             std::uint32_t imageSize;
             
             //Validar el formato y el tipo de datos
+            /*
             if (format == ColorFormat::Unknown) {
                 throw std::invalid_argument("'format' argument has an invalid value");
             }
+            */
             
             if (type != PixelType::Integer ) {
                 throw std::invalid_argument("Only integer image types supported by now");

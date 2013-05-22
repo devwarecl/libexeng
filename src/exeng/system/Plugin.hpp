@@ -52,7 +52,6 @@ namespace exeng {
              */
             virtual void initialize(Root *root);
             
-            
             /**
              * @brief Terminate the plugin, removing its intefaces, and deallocating all created objects 
              * by any of its instances.
@@ -90,4 +89,4 @@ namespace exeng {
         return plugin;                                                                          \
     }
 
-#endif //__EXENG_SYSTEM_PLUGIN_HPP____
+#endif //__EXENG_SYSTEM_PLUGIN_HPP__

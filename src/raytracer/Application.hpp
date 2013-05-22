@@ -9,16 +9,14 @@ namespace raytracer {
     typedef std::vector<std::string> StringVector;
 
     /**
-     * @brief Describe los posibles estados en los que se puede encontrar una aplicacion de renderizacion determinada.
+     * @brief Describe los posibles estados en los que se puede 
+     * encontrar una aplicacion de renderizacion determinada.
      */
-    namespace ApplicationStatus {
-        enum Enum {
-            Running,
-            Stopped
-        };
-    }
-
-
+    enum class ApplicationStatus {
+        Running,
+        Stopped
+    };
+    
     /**
      * @brief Interfaz a una aplicacion grafica de tiempo real.
      */
@@ -35,22 +33,24 @@ namespace raytracer {
         virtual void initialize(const StringVector& cmdLine) = 0;
 
         /**
-         * @brief Devuelve el tiempo, en segundos, que tardo en completarse el ultimo cuadro.
+         * @brief Devuelve el tiempo, en segundos, que tardo en 
+         * completarse el ultimo cuadro.
          */
         virtual double getFrameTime() const = 0;
         
         /**
-         * @brief Procesa la entrada del usuario, actualizando adecuadamente los estados internos de la escena.
+         * @brief Procesa la entrada del usuario, actualizando 
+         * adecuadamente los estados internos de la escena.
          */
         virtual void pollEvents() = 0;
         
         /**
          * @brief Devuelve el estado actual general de la aplicacion
          */
-        virtual ApplicationStatus::Enum getStatus() = 0;
+        virtual ApplicationStatus getStatus() const = 0;
         
         /**
-         * @brief Actualiza, en base a los estados internos, los
+         * @brief Actualiza, en base a los estados internos.
          */
         virtual void update(double seconds) = 0;
         
@@ -62,7 +62,8 @@ namespace raytracer {
         /**
          * @brief Devuelve el codigo de salida de la aplicacion.
          * 
-         * El valor es valido siempre que el estado actual de la aplicacion sea ApplicationStatus::Stopped
+         * El valor es valido siempre que el estado actual de 
+         * la aplicacion sea ApplicationStatus::Stopped
          */
         virtual int getExitCode() const = 0;
         
@@ -82,7 +83,6 @@ namespace raytracer {
         static bool set(Application *app);
         
     private:
-        
         /**
          * @brief La instancia actual de la aplicacion
          */

@@ -17,7 +17,9 @@
 
 #include <exeng/Object.hpp>
 #include <exeng/math/TVector.hpp>
+
 #include <exeng/graphics/PixelFormat.hpp>
+#include <exeng/graphics/ColorFormat.hpp>
 
 namespace exeng {
     namespace graphics {
