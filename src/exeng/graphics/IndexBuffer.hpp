@@ -21,7 +21,7 @@ namespace exeng {
     namespace graphics {
         
         /**
-         *  @brief Formatos para un buffer de indices
+         *  @brief Valid formats for a IndexBuffer
          */
         enum class IndexFormat {
             Index16=16,
@@ -29,21 +29,10 @@ namespace exeng {
         };
         
         /**
-         * @brief Area de memoria dedicada a almacenar informacion sobre indices a un VertexBuffer
+         * @brief Memory area dedicated for IndexData
          */
-        class IndexBuffer : public Object {
+        class EXENGAPI IndexBuffer : public Object {
         public:
-            
-            /**
-             * @brief 
-             */
-            IndexBuffer();
-            
-            /**
-             * @brief 
-             */
-            IndexBuffer(IndexFormat indexFormat, int indexCount);
-            
             /**
              * @brief 
              */
@@ -52,95 +41,43 @@ namespace exeng {
             /**
              * @brief 
              */
-            void allocate(IndexFormat indexFormat, int indexCount);
+            virtual void allocate(IndexFormat indexFormat, int indexCount) = 0;
             
             /**
              * @brief 
              */
-            void release();
+            virtual void release() = 0;
             
             /**
-             * @brief Comprueba si el buffer ya esta bloqueado.
+             * @brief 
              */
-            bool isEmpty() const;
+            virtual bool isEmpty() const = 0;
             
             /**
-             * @brief Bloquea al buffer de indices
+             * @brief 
              */
-            void* lock();
+            virtual void* lock() = 0;
             
             /**
-             * @brief Comprueba si es posible bloquear al buffer.
+             * @brief 
              */
-            bool isLocked() const;
+            virtual bool isLocked() const = 0;
             
             /**
-             * @brief Desbloquea al buffer, en caso de que ya este bloqueado.
+             * @brief 
              */
-            void unlock();
+            virtual void unlock() = 0;
             
             
             /**
-             * @brief Devuelve la cantidad de vertices del buffer.
+             * @brief 
              */
-            int getCount() const;
+            virtual int getCount() const = 0;
             
             /**
-             * @brief Devuelve el tamaño en bytes, de cada vertice almacenado.
+             * @brief 
              */
-            IndexFormat getFormat() const;
-            
-        private:
-            struct Private;
-            Private *impl;
-        };
-        
-        
-        /**
-         * @brief Ayuda a inicializar buffers de vertices, a travez de una interfaz similar a la de un 
-         * arreglo.
-         */
-        template<typename IndexType>
-        class IndexArray {
-        public:
-            
-            IndexArray(IndexBuffer *buffer) {
-                this->bufferData = static_cast<IndexType*>(buffer->lock());
-                this->buffer = buffer;
-            }
-            
-            
-            ~IndexArray() {
-                this->buffer->unlock();
-            }
-            
-            
-            IndexType& operator[] (int index) {
-                if (index >= this->buffer->getCount()) {
-                    throw std::out_of_range();
-                }
-                
-                return this->bufferData[index];
-            }
-            
-            
-            const IndexType& operator[] (int index) const {
-                if (index >= this->buffer->getCount()) {
-                    throw std::out_of_range();
-                }
-                
-                return this->bufferData[index];
-            }
-            
-            
-            int size() const {
-                return this->buffer->getCount();
-            }
-            
-            
-        private:
-            IndexBuffer *buffer;
-            IndexType *bufferData;
+            virtual IndexFormat getFormat() const = 0;
         };
     }
 }

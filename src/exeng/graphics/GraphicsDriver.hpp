@@ -22,6 +22,8 @@
 #include <exeng/math/TBoundary.hpp>
 #include <exeng/math/TMatrix.hpp>
 
+#include <exeng/input/IEventRaiser.hpp>
+
 #include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
@@ -60,12 +62,98 @@ namespace exeng {
         class EXENGAPI IndexBuffer;
         class EXENGAPI Material;
         
+        enum class DisplayStatus {
+            Window, Fullscreen
+        };
+        
         /**
-         * @brief Rasterizer rendering facility
+         * @brief Encapsulate a display mode.
          */
-        class EXENGAPI GraphicsDriver : public Object {
+        struct DisplayMode {
+            exeng::math::Size2i size;                       //! Width and height, in pixels.
+            int redBits, greenBits, blueBits, alphaBits;    //! Frame buffer colors.
+            int depthBits, stencilBits;                     //! Frame buffer support
+            DisplayStatus status;                           //! Fullscreen or window?
+            
+            inline DisplayMode() : size(800, 600) {
+                this->redBits = this->greenBits = this->blueBits = this->alphaBits = 0;
+                this->depthBits = this->stencilBits = 0;
+                this->status = DisplayStatus::Window;
+            }
+            
+            
+            inline DisplayMode(exeng::math::Size2i size, 
+                               int redBits, int greenBits, int blueBits, int alphaBits) {
+                
+                this->size = size;
+                this->redBits = redBits;
+                this->greenBits = greenBits;
+                this->blueBits = blueBits;
+                this->alphaBits = alphaBits;
+                this->depthBits = 0;
+                this->stencilBits = 0;
+                this->status = DisplayStatus::Window;
+            }
+            
+            
+            inline DisplayMode(exeng::math::Size2i size, 
+                               int redBits, int greenBits, int blueBits, int alphaBits,
+                               int depthBits, int stencilBits, DisplayStatus status) {
+                
+                this->size = size;
+                this->redBits = redBits;
+                this->greenBits = greenBits;
+                this->blueBits = blueBits;
+                this->alphaBits = alphaBits;
+                this->depthBits = depthBits;
+                this->stencilBits = stencilBits;
+                this->status = status;
+            }
+        };
+        
+        
+        /**
+         * @brief Software interface to graphics hardware (Ha!)
+         */
+        class EXENGAPI GraphicsDriver : public Object, public exeng::input::IEventRaiser {
         public:
-            virtual ~GraphicsDriver() {}
+            virtual ~GraphicsDriver();
+            
+            /**
+             * @brief Initializes the graphics driver, with the settings included. 
+             * Throws exception if the graphics drives can't be initialized with the
+             * supplied settings.
+             * @param displayMode The settings requested.
+             */
+            virtual void initialize(const DisplayMode &displayMode) = 0;
+            
+            /**
+             * @brief Terminate the use of the graphics drivers, killing all resources 
+             * created.
+             */
+            virtual void terminate() = 0;
+            
+            /**
+             * @brief Checks if the GraphicsDriver has been initialized.
+             * @return true if the graphics drivers has been correctly initialized, 
+             * and false in other case.
+             */
+            virtual bool isInitialized() const = 0;
+            
+            /**
+             * @brief Set the current display mode
+             */
+            virtual void setDisplayMode(const DisplayMode &displayMode) = 0;
+            
+            /**
+             * @brief Get the current display mode.
+             */
+            virtual DisplayMode getDisplayMode() const = 0;
+            
+            /**
+             * @brief Restore the current display mode to the original one.
+             */
+            virtual void restoreDisplayMode() = 0;
             
             /**
              * @brief Start the rendering of a new frame, clearing the previous one
@@ -92,11 +180,13 @@ namespace exeng {
              * @brief Get the vertex buffer currently used for rendering operations.
              */
             virtual const VertexBuffer* getVertexBuffer() const = 0;
+            virtual VertexBuffer* getVertexBuffer() = 0;
             
             /**
              * @brief Get the currently used index buffer.
              */
             virtual const IndexBuffer* getIndexBuffer() const = 0;
+            virtual IndexBuffer* getIndexBuffer() = 0;
             
             /**
              * @brief Set the currently used material
@@ -147,14 +237,9 @@ namespace exeng {
              * @brief Render, using the specified primitive and the currently setted material, 
              * vertex and index buffers, if any. 
              * @param primitive The primitive type.
-             * @param count The vertex count to utilize.
+             * @param count The vertex count to utilize from the currently setted buffers.
              */
             virtual void render(exeng::graphics::Primitive::Enum primitive, int count) = 0;
-            
-            /**
-             * @brief Get the current rendering screen.
-             */
-            Screen* getScreen() const;
         };
     }
 }

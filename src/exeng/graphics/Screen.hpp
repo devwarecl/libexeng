@@ -12,7 +12,7 @@
  */
 
 
-#ifndef __EXENG_GRAPHICS_CANVAS_HPP__
+#ifdef __EXENG_GRAPHICS_CANVAS_HPP__
 #define __EXENG_GRAPHICS_CANVAS_HPP__
 
 #include <vector>
@@ -20,30 +20,9 @@
 
 #include <exeng/Object.hpp>
 #include <exeng/math/TSize.hpp>
-#include <exeng/graphics/PixelFormat.hpp>
 
 namespace exeng {
     namespace graphics {
-        
-        /**
-         * @brief Encapsulate a display mode.
-         */
-        struct DisplayMode {
-            DisplayMode() {}
-            
-            DisplayMode(const exeng::math::Size2i &size, PixelFormat format) {
-                this->size = size;
-                this->format = format;
-                this->frequency = 0;
-                this->fullscreen = false;
-            }
-            
-            exeng::math::Size2i size;   //! Width and height, in pixels.
-            PixelFormat format;         //! Framebuffer format
-            int frequency;              //! Frequency
-            bool fullscreen;            //! Fullscreen
-        };
-        
         
         /**
          * @brief Array of display modes.

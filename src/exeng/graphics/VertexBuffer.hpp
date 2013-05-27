@@ -23,9 +23,8 @@
 
 namespace exeng {
     namespace graphics {
-        
         /**
-         *  @brief Simple vertex structure
+         *  @brief Simple vertex structure. 
          */
         struct Vertex {
             exeng::math::Vector3f coord;
@@ -35,119 +34,57 @@ namespace exeng {
         
         
         /**
-         * @brief Area de memoria dedicada a almacenar informacion sobre vertices, del formato estandar.
+         * @brief Buffer that stores vertex data, directly in VideoRAM.
          */
         class VertexBuffer : public Object {
         public:
-            /**
-             * @brief 
-             */
-            VertexBuffer();
-            
-            /**
-             * @brief 
-             */
-            VertexBuffer(int vertexSize, int vertexCount);
-            
-            /**
-             * @brief 
-             */
             virtual ~VertexBuffer();
             
             /**
-             * @brief 
+             * @brief Allocate memory to store a set of vertices.
              */
-            void allocate(int vertexSize, int vertexCount);
+            virtual void allocate(const VertexFormat &format, int count) = 0;
             
             /**
-             * @brief 
+             * @brief Frees the memory allocated by the vertex buffer, 
+             * making it empty.
              */
-            void release();
+            virtual void release() = 0;
             
             /**
-             * @brief Comprueba si el buffer ya esta bloqueado.
+             * @brief Check if the buffer is empty.
              */
-            bool isEmpty() const;
+            virtual bool isEmpty() const = 0;
             
             /**
-             * @brief Bloquea al buffer.
+             * @brief Locks the buffer. Throws exception if already locked.
              */
-            void* lock();
+            virtual void* lock() = 0;
             
             /**
-             * @brief Comprueba si es posible bloquear al buffer.
+             * @brief Check if the vertex buffer is locked.
              */
-            bool isLocked() const;
+            virtual bool isLocked() const = 0;
             
             /**
-             * @brief Desbloquea al buffer, en caso de que ya este bloqueado.
+             * @brief Unlocks the vertex buffer.
              */
-            void unlock();
+            virtual void unlock() = 0;
             
             /**
-             * @brief Devuelve la cantidad de vertices del buffer.
+             * @brief Get the count of vertices stored in the vertex buffer.
              */
-            int getCount() const;
+            virtual int getCount() const = 0;
             
             /**
-             * @brief Devuelve el tamaño en bytes, de cada vertice almacenado.
+             * @brief Get the total allocated size for the vertex buffer
              */
-            int getSize() const;
+            virtual int getSize() const = 0;
             
-        private:
-            struct Private;
-            Private *impl;
-        };
-        
-        
-        /**
-         * @brief Ayuda a inicializar buffers de vertices, a travez de una interfaz similar a la de un 
-         * arreglo.
-         */
-        template<typename VertexType>
-        class VertexArray {
-        public:
-            
-            VertexArray(VertexBuffer *buffer) {
-                this->bufferData = static_cast<VertexType*>(buffer->lock());
-                this->buffer = buffer;
-            }
-            
-            
-            ~VertexArray() {
-                this->buffer->unlock();
-            }
-            
-            
-            VertexType& operator[] (int index) {          
-#ifdef EXENG_DEBUG
-                if (index >= this->buffer->getCount()) {
-                    throw std::out_of_range("");
-                }
-#endif
-                
-                return this->bufferData[index];
-            }
-            
-            
-            const VertexType& operator[] (int index) const {
-#ifdef EXENG_DEBUG
-                if (index >= this->buffer->getCount()) {
-                    throw std::out_of_range("");
-                }
-#endif                
-                return this->bufferData[index];
-            }
-            
-            
-            int size() const {
-                return this->buffer->getCount();
-            }
-            
-            
-        private:
-            VertexBuffer *buffer;
-            VertexType *bufferData;
+            /**
+             * @brief Get the current vertex format
+             */
+            virtual const VertexFormat& getFormat() const = 0;
         };
     }
 }

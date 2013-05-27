@@ -12,7 +12,7 @@ add_library(exeng SHARED
 ./HeapBuffer.hpp ./HeapBuffer.cpp 
 
 ./graphics/Screen.hpp 
-./graphics/GraphicsDriver.hpp 
+./graphics/GraphicsDriver.hpp ./graphics/GraphicsDriver.cpp 
 ./graphics/GraphicsDriverBase.hpp ./graphics/GraphicsDriverBase.cpp 
 ./graphics/GraphicsManager.hpp ./graphics/GraphicsManager.cpp 
 ./graphics/Image.hpp ./graphics/Image.cpp 
@@ -20,15 +20,25 @@ add_library(exeng SHARED
 ./graphics/PixelFormat.hpp ./graphics/PixelFormat.cpp 
 ./graphics/VertexFormat.hpp ./graphics/VertexFormat.cpp
 ./graphics/VertexBuffer.hpp ./graphics/VertexBuffer.cpp 
+./graphics/HeapVertexBuffer.hpp ./graphics/HeapVertexBuffer.cpp 
+./graphics/HeapIndexBuffer.hpp ./graphics/HeapIndexBuffer.cpp 
 ./graphics/IndexBuffer.hpp ./graphics/IndexBuffer.cpp
 ./graphics/Color.hpp ./graphics/Color.inl
 ./graphics/Texture.hpp
 ./graphics/Primitive.hpp
+./graphics/ColorFormat.hpp ./graphics/ColorFormat.cpp
+./graphics/IndexArray.hpp ./graphics/VertexArray.hpp
+
+./graphics/rasterization/Rasterizer.hpp ./graphics/rasterization/Rasterizer.cpp
+
+./graphics/raytracing/Tracer.hpp ./graphics/raytracing/Tracer.cpp 
+./graphics/raytracing/ISampler.hpp ./graphics/raytracing/ISampler.cpp 
 
 ./ui/Widget.hpp ./ui/Widget.cpp 
 ./ui/Window.hpp ./ui/Window.cpp 
 
-./input/IEventRaiser.hpp
+./input/IEventRaiser.hpp ./input/IEventRaiser.cpp
+./input/IEventHandler.hpp ./input/IEventHandler.cpp
 ./input/InputData.hpp ./input/InputData.cpp 
 
 ./scenegraph/SceneNode.hpp ./scenegraph/SceneNode.cpp ./scenegraph/Scene.hpp ./scenegraph/Scene.cpp
@@ -43,6 +53,8 @@ add_library(exeng SHARED
 ./scenegraph/MeshPart.hpp ./scenegraph/MeshPart.cpp
 ./scenegraph/MeshManager.hpp ./scenegraph/MeshManager.cpp
 ./scenegraph/IMeshLoader.hpp ./scenegraph/IMeshLoader.cpp
+./scenegraph/SceneManager.hpp ./scenegraph/SceneManager.cpp
+./scenegraph/ISceneRenderer.hpp ./scenegraph/ISceneRenderer.cpp
 
 ./system/Library.hpp ./system/Library.cpp 
 ./system/Plugin.hpp ./system/Plugin.cpp 

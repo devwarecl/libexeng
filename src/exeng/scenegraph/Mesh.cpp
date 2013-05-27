@@ -15,6 +15,8 @@
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/scenegraph/MeshPart.hpp>
 #include <exeng/scenegraph/Plane.hpp>
+#include <exeng/graphics/VertexArray.hpp>
+
 
 #include <cassert>
 #include <boost/ptr_container/ptr_vector.hpp>

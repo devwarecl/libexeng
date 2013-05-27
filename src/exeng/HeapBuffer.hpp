@@ -44,7 +44,6 @@ namespace exeng {
         
         /**
          * @brief Change the size of the buffer.
-         *
          * @param size The new size of the current buffer, in bytes.
          */
         void allocate(int size);
@@ -53,6 +52,13 @@ namespace exeng {
          * @brief Free the allocated memory.
          */
         void release();
+        
+        /**
+         * @brief Get a pointer to the buffer data
+         */
+        void* getPtr();
+        const void* getPtr() const;
+        
         
     private:
         void* data;				//! The buffer raw data.

@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file IEventHandler.cpp
+ * @brief Default destructor implementation.
  */
 
 /*
@@ -10,9 +10,11 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "InputData.hpp"
+#include <exeng/input/IEventHandler.hpp>
 
 namespace exeng {
     namespace input {
+        IEventHandler::~IEventHandler(){
+        }
     }
 }

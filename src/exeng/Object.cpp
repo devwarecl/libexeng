@@ -20,8 +20,17 @@
 #include <exeng/Object.hpp>
 
 namespace exeng {
-	Object::~Object()  { }
+    Object::Object() : creator(nullptr) {
+    }
+    
+    
+	Object::~Object() {
+        if (!creator) {
+            creator->notifyDestruction(this);
+        }
+    }
 
+    
 	std::string	Object::toString() const {
         // By default, convert the direction address to a string
 		std::stringstream ss;
@@ -90,5 +99,19 @@ namespace exeng {
 
 	TypeInfo Object::getTypeInfo() const {
         return TypeInfo::get<Object>();
-	}
+    }
+    
+    
+    const Object* Object::getCreator() const {
+        return this->creator;
+    }
+    
+    
+    Object* Object::getCreator() {
+        return this->creator;
+    }
+    
+    
+    void Object::notifyDestruction(Object *object) {
+    }
 }

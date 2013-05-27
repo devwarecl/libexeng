@@ -85,6 +85,6 @@ namespace exeng {
     
     
     Version Root::getVersion() const {
-        return Version(0, 0, 1);
+        return Version(0, 0, 1, 1);
     }
 }

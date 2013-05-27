@@ -19,7 +19,7 @@
 namespace exeng {
     
 	/**
-	 * @brief class template for flags management.
+	 * @brief Flags management
 	 */
 	template <
 		typename _EnumType,                     //! El tipo especifico de enumeracion

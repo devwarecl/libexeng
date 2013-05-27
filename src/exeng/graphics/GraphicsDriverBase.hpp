@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file GraphicsDriverBase.hpp
+ * @brief Defines the GraphicsDriverBase abstract class.
  */
 
 
@@ -15,13 +15,15 @@
 #define __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
 
 #include <exeng/graphics/GraphicsDriver.hpp>
-#include <list>
+#include <boost/ptr_container/ptr_list.hpp>
+
 
 namespace exeng {
     namespace graphics {
         
         /**
-         * @brief Base common functionality for easing the process of implementing graphics drivers
+         * @brief Base common functionality for easing the process 
+         * of implementing graphics drivers
          */
         class GraphicsDriverBase : public GraphicsDriver {
         public:
@@ -29,27 +31,29 @@ namespace exeng {
             
             virtual ~GraphicsDriverBase();
             
-            virtual DisplayMode getDisplayMode() const;
+            virtual exeng::math::Matrix4f getTransform( Transform transform );
             
-            virtual exeng::math::Matrix4f getTransform(Transform transform);
+            virtual exeng::math::Rectf getViewport( ) const;
             
-            virtual const Material* getMaterial() const;
+            virtual const exeng::graphics::Material* getMaterial( ) const;
             
-            virtual exeng::math::Rectf getViewport() const;
+            virtual VertexBuffer* createVertexBuffer( const VertexFormat &vertexFormat, int vertexCount );
+            
+            virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount );
+            
+            virtual void notifyDestruction(Object *object);
             
         protected:
+            const exeng::graphics::Material* material;
+            boost::ptr_list<Object> objects;
+            
             exeng::math::Matrix4f model;
             exeng::math::Matrix4f view;
             exeng::math::Matrix4f projection;
             exeng::math::Matrix4f modelView;
-            exeng::math::Rectf viewPort;
-            
-            VertexBuffer* vertexBuffer;
-            IndexBuffer* indexBuffer;
-            Material* material;
-            Screen* screen;
+            exeng::math::Rectf viewport;
         };
     }
 }
 
-#endif  //exeng_graphics_graphicsdriverbase_hpp
+#endif  // __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__

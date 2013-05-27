@@ -123,4 +123,14 @@ namespace exeng {
     int HeapBuffer::getSize() const {
         return this->size;
     }
+    
+    
+    void* HeapBuffer::getPtr() {
+        return this->data;
+    }
+    
+    
+    const void* HeapBuffer::getPtr() const {
+        return this->data;
+    }
 }

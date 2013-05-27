@@ -1,39 +1,35 @@
+/**
+ * @file GL3GraphicsDriver.cpp
+ * @brief Definition of the GL3 Graphics Driver class.
+ */
+
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
 
 #include "GL3GraphicsDriver.hpp"
+#include "GL3Debug.hpp"
 
 #include <map>
-#include <boost/ptr_container/ptr_list.hpp>
-
-#define GLCOREARB_PROTOTYPES
 #include <GL/glcorearb.h>
+#include <GL/glfw.h>
 
 using namespace exeng;
 using namespace exeng::math;
+using namespace exeng::graphics;
 
 namespace exeng {
     namespace graphics {
         namespace gl3 {
-            
-            struct GL3GraphicsDriver::Private {
-                boost::ptr_list<Object> objects;
-                
-                const VertexBuffer *vertexBuffer;
-                const IndexBuffer *indexBuffer;
-                const Material *material;
-                
-                std::map<Transform, Matrix4f> transforms;
-                
-                Private() {
-                    this->vertexBuffer = nullptr;
-                    this->indexBuffer = nullptr;
-                    this->material = nullptr;
-                    
-                    this->transforms[Transform::World].identity();
-                }
-            };
-            
-            
-            GL3GraphicsDriver::GL3GraphicsDriver() : impl(new GL3GraphicsDriver::Private()) {
+
+            GL3GraphicsDriver::GL3GraphicsDriver() {
+                this->vertexBuffer = nullptr;
+                this->initialized = false;
             }
             
             
@@ -41,7 +37,62 @@ namespace exeng {
             }
             
             
-            void GL3GraphicsDriver::beginFrame(const Color &color, ClearFlags::Flags flags) {
+            void 
+            GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
+                // NOTE: The use of the GLFW library to implement the initialization of the
+                // OpenGL 3 Driver is only temporal.
+                int mode = 0;
+                int result = 0;
+                
+                if (!(result = ::glfwInit())) {
+                    throw std::runtime_error("GL3GraphicsDriver::initialize: "
+                                             "GLFW initialization error.");
+                }
+                
+                // Configure and create the context
+                switch (displayMode.status) {
+                    case DisplayStatus::Window: mode |= GLFW_WINDOW; break;
+                    case DisplayStatus::Fullscreen: mode |= GLFW_FULLSCREEN; break;
+                }
+                
+                ::glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
+                ::glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
+                ::glfwOpenWindowHint(GLFW_OPENGL_CORE_PROFILE, GL_TRUE);
+                result = ::glfwOpenWindow(displayMode.size.width, displayMode.size.height,
+                                          displayMode.redBits, displayMode.greenBits, 
+                                          displayMode.blueBits, displayMode.alphaBits,
+                                          displayMode.depthBits, displayMode.stencilBits, 
+                                          mode);
+                
+                if (!result) {
+                    throw std::runtime_error("GL3GraphicsDriver::initialize: "
+                                             "GLFW open window error.");
+                }
+                
+                this->initialized = true;
+            }
+            
+            
+            void 
+            GL3GraphicsDriver::terminate() {
+                if (this->initialized == true) {
+                    //! TODO: Destroy all created objects
+                    ::glfwCloseWindow();
+                    ::glfwTerminate();
+                    
+                    this->initialized = false;
+                }
+            }
+            
+            
+            bool 
+            GL3GraphicsDriver::isInitialized() const {
+                return this->initialized;
+            }
+            
+            
+            void 
+            GL3GraphicsDriver::beginFrame(const Color &color, ClearFlags::Flags flags) {
                 // Clears the opengl framebuffer
                 GLenum clearFlags = 0L;
                 
@@ -49,7 +100,8 @@ namespace exeng {
                 clearFlags |= flags.getFlag(ClearFlags::Depth) ? GL_DEPTH_BUFFER_BIT : 0;
                 
                 if (!clearFlags) {
-                    throw std::invalid_argument("GL3GraphicsDriver::beginScene: Flags must be non 0.");
+                    throw std::invalid_argument("GL3GraphicsDriver::beginScene: "
+                                                "Flags must be non 0.");
                 }
                 
                 ::glClearColor(color.red, color.green, color.blue, color.alpha);
@@ -57,83 +109,84 @@ namespace exeng {
             }
             
             
-            void GL3GraphicsDriver::endFrame() {
+            void 
+            GL3GraphicsDriver::endFrame() {
                 ::glFlush();
             }
             
             
-            void GL3GraphicsDriver::setVertexBuffer(const VertexBuffer* vertexBuffer) {
-                this->impl->vertexBuffer = vertexBuffer;
-                //! TODO: Bind buffer data.
-            }
-            
-            
-            void GL3GraphicsDriver::setIndexBuffer(const IndexBuffer* indexBuffer) {
-                this->impl->indexBuffer = indexBuffer;
-            }
-            
-            
-            const VertexBuffer* GL3GraphicsDriver::getVertexBuffer() const {
-                return this->impl->vertexBuffer;
-            }
-            
-            
-            const IndexBuffer* GL3GraphicsDriver::getIndexBuffer() const {
-                return this->impl->indexBuffer;
-            }
-            
-            
-            void GL3GraphicsDriver::setMaterial(const Material* material) {
-                this->impl->material = material;
-            }
-            
-            
-            const Material* GL3GraphicsDriver::getMaterial() const {
-                return this->impl->material;
-            }
-            
-            
-            VertexBuffer* GL3GraphicsDriver::createVertexBuffer(const VertexFormat &vertexFormat, int vertexCount) {
-                return nullptr;
-            }
-            
-            
-            IndexBuffer* GL3GraphicsDriver::createIndexBuffer( IndexFormat IndexFormat, int IndexCount  ) {
-                return nullptr;
-            }
-            
-            
-            Texture* GL3GraphicsDriver::createTexture(TextureType TextureType, const Vector3f& TextureSize) {
-                return nullptr;
-            }
-            
-            
-            void GL3GraphicsDriver::setTransform(Transform transform, const Matrix4f& matrix) {
+            void 
+            GL3GraphicsDriver::setVertexBuffer(const VertexBuffer* vertexBuffer) {
                 
+                if (this->vertexBuffer == vertexBuffer) {
+                    return;
+                }
+                
+                if (vertexBuffer->getCreator() != this) {
+                    throw std::invalid_argument("Invalid vertex buffer");
+                }
+                
+                if (vertexBuffer->isEmpty() == true) {
+                    throw std::invalid_argument("Vertex buffer can't be empty");
+                }
+                
+                this->vertexBuffer = static_cast<const GL3VertexBuffer*>(vertexBuffer);
+                
+                
+                GLuint name = this->vertexBuffer->getName();
+                ::glBindBuffer(GL_ARRAY_BUFFER, name);
             }
             
             
-            Matrix4f GL3GraphicsDriver::getTransform(Transform transform) {
-                return Matrix4f();
+            void 
+            GL3GraphicsDriver::setIndexBuffer(const IndexBuffer* indexBuffer) {
+            }
+            
+            
+            void 
+            GL3GraphicsDriver::setMaterial(const Material* material) {
+                this->material = material;
+            }
+            
+            
+            VertexBuffer* 
+            GL3GraphicsDriver::createVertexBuffer(const VertexFormat &format, 
+                                                  int count) {
+                auto* vbuffer = new GL3VertexBuffer(this, format, count);
+                
+                this->objects.push_back(vbuffer);
+                
+                return vbuffer;
+            }
+            
+            
+            IndexBuffer* 
+            GL3GraphicsDriver::createIndexBuffer( IndexFormat format, 
+                                                  int count ) {
+                return nullptr;
+            }
+            
+            
+            Texture* 
+            GL3GraphicsDriver::createTexture(TextureType type,
+                                             const Vector3f& size) {
+                return nullptr;
+            }
+            
+            
+            void 
+            GL3GraphicsDriver::setTransform(Transform transform, 
+                                            const Matrix4f& matrix) {
             }
             
             
             void GL3GraphicsDriver::setViewport(const Rectf& viewport) {
-                
-            }
-            
-            Rectf GL3GraphicsDriver::getViewport() const {
-                return Rectf();
             }
             
             
-            void GL3GraphicsDriver::render(exeng::graphics::Primitive::Enum primitiveType, int vertexCount) {
-                
-            }
-            
-            
-            Screen* GL3GraphicsDriver::getScreen() const {
-                return nullptr;
+            void 
+            GL3GraphicsDriver::render(Primitive::Enum primitiveType, 
+                                      int vertexCount) {
             }
         }
     }

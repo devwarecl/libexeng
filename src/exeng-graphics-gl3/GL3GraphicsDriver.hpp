@@ -1,67 +1,78 @@
+/**
+ * @file GL3GraphicsDriver.hpp
+ * @brief Definition of the GL3 Graphics Driver class.
+ */
 
-#ifndef __GL3_GRAPHICSDRIVER_HPP__
-#define __GL3_GRAPHICSDRIVER_HPP__
+
+/*
+ * Copyright (c) 2013 Felipe Apablaza.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+
+
+#ifndef __EXENG_GRAPHICS_GL3_GRAPHICSDRIVER_HPP__
+#define __EXENG_GRAPHICS_GL3_GRAPHICSDRIVER_HPP__
 
 #include <memory>
-#include <exeng/graphics/GraphicsDriver.hpp>
+
+#include <exeng/graphics/GraphicsDriverBase.hpp>
+#include <exeng/graphics/VertexFormat.hpp>
 
 #include "GL3Texture.hpp"
 #include "GL3VertexBuffer.hpp"
 #include "GL3IndexBuffer.hpp"
-#include "GL3Screen.hpp"
 
 namespace exeng {
     namespace graphics {
         namespace gl3 {
+            
             /**
              * @brief GraphicsDriver implemented using OpenGL 3.x
              */
-            class GL3GraphicsDriver : public GraphicsDriver {
+            class GL3GraphicsDriver : public GraphicsDriverBase {
             public:  
                 GL3GraphicsDriver();
                 
                 virtual ~GL3GraphicsDriver();
                 
-                virtual void beginFrame(const Color &color, ClearFlags::Flags flags = ClearFlags::Color | ClearFlags::Depth) ;
+                virtual void initialize(const DisplayMode &displayMode);
+                
+                virtual void terminate();
+                
+                virtual bool isInitialized() const;
+                
+                virtual void beginFrame(const Color &color, ClearFlags::Flags flags) ;
                 
                 virtual void endFrame();
                 
-                virtual void setVertexBuffer(const VertexBuffer* vertexBuffer) ;
+                virtual void setVertexBuffer(const VertexBuffer* vertexBuffer);
                 
-                virtual void setIndexBuffer(const IndexBuffer* indexBuffer) ;
+                virtual void setIndexBuffer(const IndexBuffer* indexBuffer);
                 
-                virtual const VertexBuffer* getVertexBuffer() const ;
+                virtual void setMaterial(const Material* material);
                 
-                virtual const IndexBuffer* getIndexBuffer() const ;
+                virtual VertexBuffer* createVertexBuffer(const VertexFormat &vertexFormat, int vertexCount);
                 
-                virtual void setMaterial(const Material* Mat) ;
+                virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount  );
                 
-                virtual const Material* getMaterial() const ;
+                virtual Texture* createTexture(TextureType TextureType, const exeng::math::Vector3f& TextureSize);
                 
-                virtual VertexBuffer* createVertexBuffer(const VertexFormat &vertexFormat, int vertexCount) ;
+                virtual void setTransform(Transform transform, const exeng::math::Matrix4f& matrix);
                 
-                virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount  ) ;
+                virtual void setViewport(const exeng::math::Rectf& viewport);
                 
-                virtual Texture* createTexture(TextureType TextureType, const exeng::math::Vector3f& TextureSize) ;
+                virtual exeng::math::Rectf getViewport() const;
                 
-                virtual void setTransform(Transform transform, const exeng::math::Matrix4f& matrix) ;
-                
-                virtual exeng::math::Matrix4f getTransform(Transform transform) ;
-                
-                virtual void setViewport(const exeng::math::Rectf& viewport) ;
-                
-                virtual exeng::math::Rectf getViewport() const ;
-                
-                virtual void render(exeng::graphics::Primitive::Enum primitiveType, int vertexCount) ;
-                
-                Screen* getScreen() const;
+                virtual void render(exeng::graphics::Primitive::Enum primitiveType, int vertexCount);
                 
             private:
-                struct Private;
-                std::unique_ptr<Private> impl;
+                const GL3VertexBuffer *vertexBuffer;
+                bool initialized;
             };
         }
     }
 }
 
-#endif
+#endif  // __EXENG_GRAPHICS_GL3_GRAPHICSDRIVER_HPP__

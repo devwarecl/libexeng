@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file GraphicsDriver.cpp
+ * @brief Stub implementation of the graphics driver abstract class.
  */
 
 
@@ -11,11 +11,12 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include <exeng/graphics/IndexBuffer.hpp>
+
+#include <exeng/graphics/GraphicsDriver.hpp>
 
 namespace exeng {
     namespace graphics {
-        IndexBuffer::~IndexBuffer() {   
+        GraphicsDriver::~GraphicsDriver() {
         }
     }
 }

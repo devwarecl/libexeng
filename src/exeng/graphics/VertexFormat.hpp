@@ -56,10 +56,20 @@ namespace exeng {
             
             /**
              * @brief Get the size, in bytes, for each vertex of this format.
-             * @return 
              */
             int getSize() const;
         };
+        
+        
+        inline int VertexFormat::getSize() const {
+            int size = 0;
+            
+            for (auto &field : this->fields) {
+                size += field.dataType.getSize();
+            }
+            
+            return size;
+        }
     }
 }
 

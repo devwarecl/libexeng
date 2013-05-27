@@ -12,6 +12,8 @@
  */
 
 
+#include <exeng/graphics/VertexBuffer.hpp>
+#include <exeng/graphics/VertexArray.hpp>
 #include <exeng/scenegraph/MeshPart.hpp>
 #include <boost/checked_delete.hpp>
 

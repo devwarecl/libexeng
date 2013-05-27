@@ -1,6 +1,7 @@
+
 /**
- * @file 
- * @brief 
+ * @file IEventRaiser.cpp
+ * @brief Implementation of the destructor of the IEvtRaiser interface.
  */
 
 /*
@@ -10,9 +11,12 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "InputData.hpp"
+
+#include <exeng/input/IEventRaiser.hpp>
 
 namespace exeng {
     namespace input {
+        IEventRaiser::~IEventRaiser() {
+        }
     }
 }

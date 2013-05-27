@@ -32,7 +32,6 @@
 #include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/Primitive.hpp>
 #include <exeng/graphics/Image.hpp>
-#include <exeng/graphics/Screen.hpp>
 
 #include <exeng/scenegraph/Camera.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
