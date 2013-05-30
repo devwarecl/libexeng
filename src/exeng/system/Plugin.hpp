@@ -57,6 +57,8 @@ namespace exeng {
              * by any of its instances.
              */
             virtual void terminate();
+            
+            virtual std::string toString() const;
         };
         
         /**
@@ -71,22 +73,21 @@ namespace exeng {
 /**
  * @brief The name of the function to export in the dynamic module.
  */
-#define EXENG_STR(value)  #value
-
-#define EXENG_GET_PLUGIN_OBJECT_NAME ExengGetPluginObject
-#define EXENG_GET_PLUGIN_OBJECT_NAME_STR EXENG_STR(EXENG_GET_PLUGIN_OBJECT_NAME)
+#define EXENG_STR(value)                    #value
+#define EXENG_GET_PLUGIN_OBJECT_NAME        ExengGetPluginObject
+#define EXENG_GET_PLUGIN_OBJECT_NAME_STR    EXENG_STR(ExengGetPluginObject)
 
 /**
  * @brief Aids in implementing plugins.
  */
-#define EXENG_EXPORT_PLUGIN(PluginImpl)                                                         \
-    extern "C"  exeng::system::Plugin* EXENG_CALLCONV EXENG_GET_PLUGIN_OBJECT_NAME() EXENGAPI { \
-        static PluginImpl *plugin = nullptr;                                                    \
-                                                                                                \
-        if (plugin == nullptr) {                                                                \
-            plugin = new PluginImpl();                                                          \
-        }                                                                                       \
-        return plugin;                                                                          \
+#define EXENG_EXPORT_PLUGIN(PluginImpl)                             \
+    extern "C"  exeng::system::Plugin*                              \
+        EXENG_CALLCONV EXENG_GET_PLUGIN_OBJECT_NAME() EXENGAPI {    \
+        static PluginImpl *plugin = nullptr;                        \
+        if (plugin == nullptr) {                                    \
+            plugin = new PluginImpl();                              \
+        }                                                           \
+        return plugin;                                              \
     }
 
 #endif //__EXENG_SYSTEM_PLUGIN_HPP__

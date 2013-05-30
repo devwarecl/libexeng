@@ -27,6 +27,10 @@ namespace exeng {
         class EXENGAPI MeshManager;
     }
     
+    namespace graphics {
+        class EXENGAPI GraphicsManager;
+    }
+    
     /**
      * @brief The root class of the multimedia engine. 
      *
@@ -56,6 +60,10 @@ namespace exeng {
          * @brief Get the current mesh manager.
          */
         const exeng::scenegraph::MeshManager* getMeshManager() const;
+        
+        
+        exeng::graphics::GraphicsManager* getGraphicsManager();
+        const exeng::graphics::GraphicsManager* getGraphicsManager() const;
         
         /**
          * @brief getVersion

@@ -11,14 +11,14 @@
  * found in the file LICENSE in this distribution.
  */
 
-
 #ifndef __EXENG_GRAPHICS_GL3_GRAPHICSDRIVER_HPP__
 #define __EXENG_GRAPHICS_GL3_GRAPHICSDRIVER_HPP__
 
-#include <memory>
+#include <list>
 
 #include <exeng/graphics/GraphicsDriverBase.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
+// #include <exeng/input/IEventHandler.hpp>
 
 #include "GL3Texture.hpp"
 #include "GL3VertexBuffer.hpp"
@@ -31,7 +31,7 @@ namespace exeng {
             /**
              * @brief GraphicsDriver implemented using OpenGL 3.x
              */
-            class GL3GraphicsDriver : public GraphicsDriverBase {
+            class GL3GraphicsDriver : public GraphicsDriverBase {    
             public:  
                 GL3GraphicsDriver();
                 
@@ -63,13 +63,31 @@ namespace exeng {
                 
                 virtual void setViewport(const exeng::math::Rectf& viewport);
                 
-                virtual exeng::math::Rectf getViewport() const;
-                
                 virtual void render(exeng::graphics::Primitive::Enum primitiveType, int vertexCount);
                 
+                virtual void pollEvents();
+                
+                virtual void addEventHandler(exeng::input::IEventHandler *handler);
+                
+                virtual void removeEventHandler(exeng::input::IEventHandler *handler);
+                
+                virtual void setDisplayMode(const DisplayMode &displayMode);
+                
+                virtual DisplayMode getDisplayMode() const;
+                
+                virtual void restoreDisplayMode();
+                
+                virtual const VertexBuffer* getVertexBuffer() const;
+                
+                virtual const IndexBuffer* getIndexBuffer() const;
+                
             private:
+                std::list<exeng::input::IEventHandler*> eventHandlers;
                 const GL3VertexBuffer *vertexBuffer;
                 bool initialized;
+                
+            private:
+                static int initializedCount;
             };
         }
     }

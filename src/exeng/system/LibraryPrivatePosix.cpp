@@ -19,6 +19,7 @@
 #include <dlfcn.h>
 #include <stdexcept>
 #include <cassert>
+#include <sstream>
 
 namespace exeng {
     namespace system {
@@ -38,13 +39,24 @@ namespace exeng {
             
             // Report the error as a Exception
             if (handle == NULL) {
-                std::string strError = std::string("POSIX specific error: ") + ::dlerror();
-                throw std::runtime_error(strError);
+                std::string libname = std::string("./") + name;
+                handle = ::dlopen(libname.c_str(), RTLD_NOW | RTLD_LOCAL);
+                
+                if (handle == NULL) {
+                    std::stringstream ss;
+                    
+                    ss << "Library::Private::load(";
+                    ss << libname << "): POSIX specific : ";
+                    ss << ::dlerror();
+                    
+                    throw std::runtime_error(ss.str());
+                }
             }
             
+            this->name = name;
             this->handle = handle;
         }
-
+        
         
         void Library::Private::unload() {
             if (this->handle != nullptr) {

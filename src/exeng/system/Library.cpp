@@ -13,6 +13,7 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <iostream>
 #include <boost/checked_delete.hpp>
 
 #include <exeng/system/Library.hpp>
@@ -24,12 +25,13 @@ namespace exeng {
 		}
 
 
-		Library::Library(const std::string &LibraryFileName) : impl(new Library::Private()) {
-			this->load(LibraryFileName);
+		Library::Library(const std::string &filename) : impl(new Library::Private()) {
+			this->load(filename);
 		}
 
 
 		Library::~Library() {
+            std::cout << this->toString() << std::endl;
 			this->unload();
             boost::checked_delete(this->impl);
 		}

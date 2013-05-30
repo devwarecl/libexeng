@@ -38,5 +38,10 @@ namespace exeng {
         void Plugin::terminate() {
             throw std::logic_error("Plugin::terminate not implemented");
         }
+        
+        
+        std::string Plugin::toString() const {
+            return this->getName() + "\n" + this->getDescription() + "\n";
+        }
     }
 }

@@ -20,70 +20,6 @@
 #include <cstdint>
 
 namespace exeng {
-
-    /**
-     * @brief
-     */
-    enum class DataTypeEnum {
-        UInt8,  UInt16,     UInt32,     UInt64,
-        Int8,   Int16,      Int32,      Int64,
-                Float16,    Float32,    Float64
-    };
-
-    /**
-     * @brief
-     */
-    template<typename Type> struct DataTypeTraits;
-    
-    template<> struct DataTypeTraits<uint8_t> {
-        typedef uint8_t Type;
-        enum { Enum= static_cast<int>(DataTypeEnum::UInt8) };
-    };
-    
-    template<> struct DataTypeTraits<uint16_t> {
-        typedef uint16_t Type;
-        enum { Enum=static_cast<int>(DataTypeEnum::UInt16) };
-    };
-
-    template<> struct DataTypeTraits<uint32_t> {
-        typedef uint32_t Type;
-        enum { Enum=static_cast<int>(DataTypeEnum::UInt32) };
-    };
-    
-    template<> struct DataTypeTraits<uint64_t> {
-        typedef uint64_t Type;
-        enum { Enum=static_cast<int>(DataTypeEnum::UInt64) };
-    };
-    
-    template<> struct DataTypeTraits<int8_t> {
-        typedef int8_t Type;
-        enum { Enum=static_cast<int>(DataTypeEnum::Int8) };
-    };
-    
-    template<> struct DataTypeTraits<int16_t> {
-        typedef int16_t Type;
-        enum { Enum=static_cast<int>(DataTypeEnum::Int16) };
-    };
-
-    template<> struct DataTypeTraits<int32_t> {
-        typedef int32_t Type;
-        enum { Enum=static_cast<int>(DataTypeEnum::Int32) };
-    };
-    
-    template<> struct DataTypeTraits<int64_t> {
-        typedef int64_t Type;
-        enum { Enum=static_cast<int>(DataTypeEnum::Int64) };
-    };
-    
-    template<> struct DataTypeTraits<float> {
-        typedef float Type;
-        enum { Enum=static_cast<int>(DataTypeEnum::Float32) };
-    };
-    
-    template<> struct DataTypeTraits<double> {
-        typedef double Type;
-        enum { Enum=static_cast<int>(DataTypeEnum::Float64) };
-    };
     
     /**
      * @brief Encode a datatype description on a 16-bit value. Used for generic representation
@@ -95,20 +31,21 @@ namespace exeng {
             Int, Float
         };
         
-    public:
-        static DataType UInt8()  { return DataType::makeDataType<false, DataType::Int, 1>(); }
-        static DataType UInt16() { return DataType::makeDataType<false, DataType::Int, 2>(); }
-        static DataType UInt32() { return DataType::makeDataType<false, DataType::Int, 4>(); }
-        static DataType UInt64() { return DataType::makeDataType<false, DataType::Int, 8>(); }
-        
-        static DataType Int8()  { return DataType::makeDataType<true, DataType::Int, 1>(); }
-        static DataType Int16() { return DataType::makeDataType<true, DataType::Int, 2>(); }
-        static DataType Int32() { return DataType::makeDataType<true, DataType::Int, 4>(); }
-        static DataType Int64() { return DataType::makeDataType<true, DataType::Int, 8>(); }
-        
-        static DataType Float16() { return DataType::makeDataType<true, DataType::Float, 2>(); }
-        static DataType Float32() { return DataType::makeDataType<true, DataType::Float, 4>(); }
-        static DataType Float64() { return DataType::makeDataType<true, DataType::Float, 8>(); }
+        enum Enum {
+            UInt8 = 0x0004,
+            UInt16 = 0x0008,
+            UInt32 = 0x000C,
+            UInt64 = 0x0010,
+            
+            Int8 = 0x0005,
+            Int16 = 0x0009,
+            Int32 = 0x000D,
+            Int64 = 0x0011,
+            
+            Float16 = 0x0049,
+            Float32 = 0x004D,
+            Float64 = 0x0051
+        }; 
         
     public:
         /**
@@ -123,12 +60,10 @@ namespace exeng {
          */
         DataType(uint16_t value);
         
-        
         /**
          * @brief Construct a DataType from the specified attributes.
          */
         DataType(bool sign, DataType::Kind kind, int size);
-        
         
         /**
          * @brief Templated default constructor.
@@ -142,15 +77,9 @@ namespace exeng {
         }
         
         /**
-         * @brief Implicit conversion to a 16-bit value.
-         */
-        operator uint16_t () const;
-        
-        /**
          * @brief Get the current kind of the datatype. 
          *
          * For now, only float and integer kinds are considered.
-         * @return 
          */
         DataType::Kind getKind() const;
         
@@ -186,17 +115,22 @@ namespace exeng {
          */
         bool isValid() const;
         
-        bool operator== (const DataType &other) const;
-        
+        bool operator== (const DataType &other) const;        
         bool operator!= (const DataType &other) const;
-        
         bool operator> (const DataType &other) const;
-        
         bool operator< (const DataType &other) const;
-        
         bool operator>= (const DataType &other) const;
-        
         bool operator<= (const DataType &other) const;
+        
+        /**
+         * @brief Get the raw value of the data type.
+         */
+        uint16_t getValue() const;
+        
+        /**
+         * @brief Set the raw value of the data type.
+         */
+        void setValue(uint16_t value);
         
     private:
         union {
@@ -213,129 +147,12 @@ namespace exeng {
     };
     
     
-    inline DataType::DataType() {
-        this->value = 0;
-    }
-    
-    
-    inline DataType::DataType(uint16_t value) {
-        this->value = value;
-    }
-    
-    
-    inline DataType::DataType(bool sign, DataType::Kind kind, int size) {
-        this->value = 0;
-        this->setSize(size);
-        this->setSign(sign);
-        this->setKind(kind);
-        
-        /*
-        std::cout << "before: " << this->value << std::endl;
-        std::cout << sign << ", " << kind << ", " << size << std::endl;
-        std::cout << "after: " << this->value << std::endl;
-        std::cout << std::endl;
-        */
-    }
-    
-    
-    inline DataType::operator uint16_t () const {
-        return this->value;
-    }
-    
-    
-    inline DataType::Kind DataType::getKind() const {
-        return static_cast<DataType::Kind>(this->kind);
-    }
-    
-    
-    inline void DataType::setKind(DataType::Kind kind) {
-        this->kind = static_cast<int>(kind);
-    }
-
-    
-    inline bool DataType::getSign() const {
-        return this->value == 1;
-    }
-    
-    
-    inline void DataType::setSign(bool value) {
-        if (value == true) {
-            this->sign = 1;
-        } else {
-            this->sign = 0;
-        }
-    }
-    
-    
-    inline int DataType::getSize() const {
-        //! FIXME: Reimplement this based on bit operations instead.
-        int size = 0;
-        
-        switch(this->size) {
-            case 1: size = 1; break;
-            case 2: size = 2; break;
-            case 3: size = 4; break;
-            case 4: size = 8; break;
-            default: size = 0; break;
-        }
-        
-        return size;
-    }
-    
-    
-    inline void DataType::setSize(int size) {
-        //! FIXME: Reimplement this based on bit operations instead.
-        int binSize = 0;
-        
-        switch(size) {
-            case 1: binSize = 1; break;
-            case 2: binSize = 2; break;
-            case 4: binSize = 3; break;
-            case 8: binSize = 4; break;
-            default: binSize = 0; break;
-        }
-        
-        this->size = binSize;
-    }
-    
-    
-    inline bool DataType::isValid() const {
-        bool validReserved = this->__unused0 == 0 && this->__unused1 == 0;
-        bool validSize = this->size != 0;
-        bool validFloat = (this->sign == true && this->getKind() == DataType::Float);
-        bool validInt = (this->getKind() == DataType::Int);
-        
-        return validReserved && validSize && (validFloat || validInt);
-    }
-    
-    
-    inline bool DataType::operator== (const DataType &other) const {
-        return this->value == other.value;
-    }
-    
-    
-    inline bool DataType::operator!= (const DataType &other) const {
-        return this->value != other.value;
-    }
-    
-    
-    inline bool DataType::operator> (const DataType &other) const {
-        return this->size > other.size;
-    }
-    
-    
-    inline bool DataType::operator< (const DataType &other) const {
-        return this->size < other.size;
-    }
-    
-    
-    inline bool DataType::operator>= (const DataType &other) const {
-        return (*this == other) || (*this > other);
-    }
-    
-    
-    inline bool DataType::operator<= (const DataType &other) const {
-        return (*this == other) || (*this < other);
-    }
+    /**
+     * @brief
+     */
+    template<typename Type> struct DataTypeTraits;
 }
+
+#include "DataType.inl"
+
 #endif

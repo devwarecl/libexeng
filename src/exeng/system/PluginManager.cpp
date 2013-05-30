@@ -61,40 +61,61 @@ namespace exeng {
         }
         
         
-        void PluginManager::load(const std::string &name) {
+        Root* PluginManager::getRoot() {
             assert(this->impl != nullptr);
-            // The library filename.
-            std::string libraryName;    
+            assert(this->impl->root != nullptr);
+            return this->impl->root;
+        }
+        
+        
+        const Root* PluginManager::getRoot() const {
+            assert(this->impl != nullptr);
+            assert(this->impl->root != nullptr);
+            return this->impl->root;
+        }
+        
+        
+        void PluginManager::load(const std::string &name, const std::string &path) {
+            assert(this->impl != nullptr);
+            
+            std::string libname;    // The library filename.
+            std::cout << "PluginManager: Loading module '" << name << "'" << std::endl;
             
 #if defined(EXENG_WINDOWS)
-            libraryName = name + std::string(".dll");
+            libname = name + std::string(".dll");
 #elif defined(EXENG_UNIX)
-            libraryName = std::string("lib") + name + std::string(".so");
+            libname = std::string("lib") + name + std::string(".so");
 #else
 #  warning Unsupported platform. This can cause platform dependent code in client side.
-            libraryName = name
+            libname = name;
 #endif
+            if (path.empty() == false) {
+                libname = path + libname;
+            }
             
             // check if the library is loaded previously
-            if (this->impl->plugins.find(name) == this->impl->plugins.end()) {    
-                Library *library = new  Library();
-                library->load(libraryName);
+            auto &plugins = this->impl->plugins;
+            
+            if (plugins.find(name) == plugins.end()) {
+                auto *library = new Library(libname);
+                auto *plugin = new PluginLibrary(library);
                 
                 std::string keyName = name;
-                this->impl->plugins.insert(keyName, new PluginLibrary(library));
+                plugins.insert(keyName, plugin);
+                
+                plugin->initialize(this->getRoot());
             }
         }
-
-
+        
+        
         void PluginManager::unload(const std::string &name) {
             assert(this->impl != nullptr);
             
             auto &plugins = this->impl->plugins;
-            
-            // simplemente busca y elimina el elemento indicado
             auto it = plugins.find(name);
             
             if (it != plugins.end()) {
+                it->second->terminate();
                 plugins.erase(name);
             }
         }

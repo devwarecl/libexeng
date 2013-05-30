@@ -11,8 +11,8 @@
  */
 
 
-#ifndef __EXENG_GRAPHICS_COLOR_FORMAT_HPP__
-#define __EXENG_GRAPHICS_COLOR_FORMAT_HPP__
+#ifndef __EXENG_GRAPHICS_COLORFORMAT_HPP__
+#define __EXENG_GRAPHICS_COLORFORMAT_HPP__
 
 #include <cstdint>
 #include <exeng/Config.hpp>

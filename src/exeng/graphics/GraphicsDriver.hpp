@@ -180,13 +180,11 @@ namespace exeng {
              * @brief Get the vertex buffer currently used for rendering operations.
              */
             virtual const VertexBuffer* getVertexBuffer() const = 0;
-            virtual VertexBuffer* getVertexBuffer() = 0;
             
             /**
              * @brief Get the currently used index buffer.
              */
             virtual const IndexBuffer* getIndexBuffer() const = 0;
-            virtual IndexBuffer* getIndexBuffer() = 0;
             
             /**
              * @brief Set the currently used material

@@ -27,47 +27,58 @@ namespace exeng {
     namespace graphics {
         
         /**
-         *  @brief Contiene informacion sobre las capacidades que posee un controlador de graficos
+         * @brief 
          */
-        class EXENGAPI GraphicsDriverInfo : public Object {
-        public:
-            GraphicsDriverInfo();
-
-            virtual ~GraphicsDriverInfo();
-
-            /**
-             * @brief Devuelve el nombre del driver
-             */
-            std::string getName() const;
- 
-            /**
-             * @brief Devuelve true si la implementacion del driver grafico es 
-             * una implementacion de hardware
-             */
-            bool isHardwareAccelerated() const;
+        struct GraphicsDriverInfo {
+            std::string name;
+            Version version;
+            bool hardware;
+            bool supportsVertexShaders;
+            bool supportsPixelShader;
+            bool supportGeometryShaders;
             
-            virtual std::string toString() const;
-
-        private:
-            struct Private;
-            Private* impl;
-
-        private:
-            GraphicsDriverInfo& operator= (const GraphicsDriverInfo& other);
-            GraphicsDriverInfo (const GraphicsDriverInfo&);
+            inline GraphicsDriverInfo() {
+                this->name = "";
+                this->version = Version(1, 0, 0, 0);
+                this->hardware = false;
+                this->supportsVertexShaders = false;
+                this->supportsPixelShader = false;
+                this->supportGeometryShaders = false;
+            }
+            
+            
+            inline bool operator== (const GraphicsDriverInfo &other) const {
+                if (this->name != other.name) {
+                    return false;
+                }
+                
+                if (this->version != other.version) {
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            
+            inline bool operator!= (const GraphicsDriverInfo &other) const {
+                return !(*this == other);
+            }
+            
+            
+            inline bool operator< (const GraphicsDriverInfo &other) const {
+                return this->name < other.name && this->version < other.version;
+            }
         };
-
-
+        
         /**
-         *  @brief Instancia un tipo unico de controlador grafico
+         * @brief Instancia un tipo unico de controlador grafico
          */        
         class EXENGAPI IGraphicsDriverFactory {
         public:
             virtual ~IGraphicsDriverFactory() {}
-            virtual GraphicsDriverInfo& getDriverInfo() const = 0;
+            virtual GraphicsDriverInfo getDriverInfo() const = 0;
             virtual GraphicsDriver* create() = 0;
         };
-        
         
         /**
          * @brief Clase "manager" del subsistema de graficos.
@@ -76,6 +87,8 @@ namespace exeng {
             friend class exeng::Root;
 
         public:
+            GraphicsManager();
+            
             ~GraphicsManager();
 
             /**
@@ -89,23 +102,18 @@ namespace exeng {
             void removeDriverFactory(IGraphicsDriverFactory* factory);
             
             /**
-             * @brief Crea el mejor controlador grafico disponible, para la 
+             * @brief Create the best available graphics driver, from the current 
+             * registered ones.
              */
             GraphicsDriver* createDriver();
             
             /**
-             * @brief Devuelve la cantidad total de fabricas registradas en el administrador
+             * @brief Create the graphics driver corresponding with the
+             * supplied driver desc.
              */
-            int getDriverFactoryCount() const;
-
-            /**
-             * @brief Devuelve la informacion del driver que podria crear la fabrica indicada
-             */
-            GraphicsDriverInfo& getDriverInfo( int factoryIndex ) const;
-
+            GraphicsDriver* createDriver(const GraphicsDriverInfo &info);
+            
         private:
-            GraphicsManager();
-
             struct Private;
             Private *impl;
         };

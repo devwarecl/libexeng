@@ -19,6 +19,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <exeng/Config.hpp>
+#include <exeng/graphics/VertexBuffer.hpp>
 
 namespace exeng {
     namespace graphics {

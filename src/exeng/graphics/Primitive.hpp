@@ -12,8 +12,8 @@
  */
 
 
-#ifndef __EXENG_GRAPHICS_PRIMITIVETYPE_HPP__
-#define __EXENG_GRAPHICS_PRIMITIVETYPE_HPP__
+#ifndef __EXENG_GRAPHICS_PRIMITIVE_HPP__
+#define __EXENG_GRAPHICS_PRIMITIVE_HPP__
 
 #include <exeng/TFlags.hpp>
 

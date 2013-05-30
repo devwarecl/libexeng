@@ -28,7 +28,7 @@ using namespace exeng::math;
 namespace exeng {
     namespace graphics {
         
-        GraphicsDriverBase::GraphicsDriverBase() {
+        inline GraphicsDriverBase::GraphicsDriverBase() {
             this->model.identity();
             this->view.identity();
             this->projection.identity();
@@ -39,11 +39,11 @@ namespace exeng {
         }
         
         
-        GraphicsDriverBase::~GraphicsDriverBase() {
+        inline GraphicsDriverBase::~GraphicsDriverBase() {
         }
         
         
-        Matrix4f GraphicsDriverBase::getTransform(Transform transform) {
+        inline Matrix4f GraphicsDriverBase::getTransform(Transform transform) {
             switch (transform) {
                 case Transform::World:      return this->model;
                 case Transform::View:       return this->view;
@@ -54,18 +54,18 @@ namespace exeng {
         }
         
         
-        const Material* GraphicsDriverBase::getMaterial() const {
+        inline const Material* GraphicsDriverBase::getMaterial() const {
             return this->material;
         }
         
         
-        Rectf GraphicsDriverBase::getViewport() const {
+        inline Rectf GraphicsDriverBase::getViewport() const {
             return this->viewport;
         }
         
         
-        VertexBuffer* GraphicsDriverBase::createVertexBuffer( const VertexFormat &format, 
-                                                              int count ) {
+        inline VertexBuffer* GraphicsDriverBase::createVertexBuffer( const VertexFormat &format, 
+                                                                     int count ) {
             auto *vbuffer = new HeapVertexBuffer(format, count);
             this->objects.push_back(vbuffer);
             
@@ -73,8 +73,8 @@ namespace exeng {
         }
         
         
-        IndexBuffer* GraphicsDriverBase::createIndexBuffer( IndexFormat indexFormat, 
-                                                            int indexCount ) {
+        inline IndexBuffer* GraphicsDriverBase::createIndexBuffer( IndexFormat indexFormat, 
+                                                                   int indexCount ) {
             auto *indexBuffer = new HeapIndexBuffer();
             indexBuffer->allocate(indexFormat, indexCount);
             
@@ -84,7 +84,7 @@ namespace exeng {
         }
         
         
-        void GraphicsDriverBase::notifyDestruction(Object *object) {
+        inline void GraphicsDriverBase::notifyDestruction(Object *object) {
             assert (object->getCreator() == this);
             
             auto &objects = this->objects;

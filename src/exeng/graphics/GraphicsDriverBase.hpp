@@ -56,4 +56,6 @@ namespace exeng {
     }
 }
 
+#include "GraphicsDriverBase.inl"
+
 #endif  // __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__

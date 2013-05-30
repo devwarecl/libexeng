@@ -21,8 +21,6 @@ namespace exeng {
             
             /**
              * @brief Check the OpenGL global error value.
-             * @param file
-             * @param line
              */
             void checkGLError(const char *file, int line);
         }

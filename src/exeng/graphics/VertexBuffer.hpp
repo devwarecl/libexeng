@@ -36,7 +36,7 @@ namespace exeng {
         /**
          * @brief Buffer that stores vertex data, directly in VideoRAM.
          */
-        class VertexBuffer : public Object {
+        class EXENGAPI VertexBuffer : public Object {
         public:
             virtual ~VertexBuffer();
             
@@ -89,4 +89,4 @@ namespace exeng {
     }
 }
 
-#endif  //exeng_graphics_vertexbuffer_hpp
+#endif  //__EXENG_GRAPHICS_VERTEXBUFFER_HPP__

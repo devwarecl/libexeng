@@ -153,6 +153,18 @@ namespace exeng {
              */
             void expand(const Boundary& other);
             
+            /**
+             * @brief Get the min limit of the boundary.
+             * @return 
+             */
+            Vector getMin() const;
+            
+            /**
+             * @brief Get the max limit of the boundary.
+             * @return 
+             */
+            Vector getMax() const;
+            
         private:
             bool doIntersect(const Boundary& other) const;
             

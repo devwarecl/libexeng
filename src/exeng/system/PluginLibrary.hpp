@@ -16,7 +16,6 @@
 #define __EXENG_SYSTEM_PLUGINLIBRARY_HPP__
 
 #include <stdexcept>
-#include <boost/scoped_ptr.hpp>
 #include <exeng/system/Plugin.hpp>
 #include <exeng/system/Library.hpp>
 
@@ -37,8 +36,8 @@ namespace exeng {
             virtual void terminate();
             
         private:
-            boost::scoped_ptr<Plugin> plugin;
-            boost::scoped_ptr<Library> library;
+            Plugin* plugin;
+            Library* library;
         };
     }
 }

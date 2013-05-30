@@ -13,6 +13,7 @@
 #ifndef __EXENG_HPP__
 #define __EXENG_HPP__
 
+#include <exeng/New.hpp>
 #include <exeng/DetectEnv.hpp>
 #include <exeng/Config.hpp>
 #include <exeng/TFlags.hpp>
@@ -23,9 +24,13 @@
 #include <exeng/HeapBuffer.hpp>
 #include <exeng/TypeInfo.hpp>
 
+#include <exeng/system/PluginManager.hpp>
+
+#include <exeng/graphics/GraphicsManager.hpp>
 #include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
 #include <exeng/graphics/IndexBuffer.hpp>
+#include <exeng/graphics/VertexArray.hpp>
 #include <exeng/graphics/VertexBuffer.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/graphics/Texture.hpp>
@@ -33,6 +38,7 @@
 #include <exeng/graphics/Primitive.hpp>
 #include <exeng/graphics/Image.hpp>
 
+#include <exeng/scenegraph/MeshManager.hpp>
 #include <exeng/scenegraph/Camera.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
 #include <exeng/scenegraph/IMeshLoader.hpp>

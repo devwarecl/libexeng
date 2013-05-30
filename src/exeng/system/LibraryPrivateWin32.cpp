@@ -14,7 +14,7 @@
 #include <exeng/DetectEnv.hpp>
 #include <exeng/system/LibraryPrivate.hpp>
 
-#ifdef EXENG_WINDOWS
+#if defined (EXENG_WINDOWS)
 #include <Windows.h>
 
 namespace exeng {

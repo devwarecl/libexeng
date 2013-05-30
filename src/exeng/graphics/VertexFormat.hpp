@@ -27,7 +27,7 @@ namespace exeng {
         /**
          * @brief VertexField enumeration
          */
-        enum class VertexAttribute {
+        enum class VertexAttrib {
             Position,
             Color,
             Normal,
@@ -38,9 +38,18 @@ namespace exeng {
          * @brief The VertexField struct
          */
         struct VertexField {
-            VertexAttribute attribute;  //! The attribute
+            VertexAttrib attribute;  //! The attribute
             int count;                  //! The dimension
             DataType dataType;          //! The data type for the vertex field.
+            
+            inline VertexField() {
+            }
+            
+            inline VertexField(VertexAttrib attrib, int count, DataType dataType) {
+                this->attribute = attrib;
+                this->count = 0;
+                this->dataType = dataType;
+            }
         };
         
         /**

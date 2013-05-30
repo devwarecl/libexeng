@@ -16,17 +16,18 @@
 #include <typeinfo>
 #include <sstream>
 #include <stdexcept>
-
 #include <exeng/Object.hpp>
 
+
 namespace exeng {
-    Object::Object() : creator(nullptr) {
+    Object::Object() {
+        this->creator = nullptr;
     }
     
     
 	Object::~Object() {
-        if (!creator) {
-            creator->notifyDestruction(this);
+        if (this->creator != nullptr) {
+            this->creator->notifyDestruction(this);
         }
     }
 
@@ -34,7 +35,6 @@ namespace exeng {
 	std::string	Object::toString() const {
         // By default, convert the direction address to a string
 		std::stringstream ss;
-
 		ss << "Object " << typeid(*this).name() << " at " << this;
 
 		return ss.str();

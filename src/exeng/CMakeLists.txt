@@ -1,8 +1,9 @@
 include_directories( ${PROJECT_SOURCE_DIR}/src )
 
 add_library(exeng SHARED
-./Exeng.hpp ./DetectEnv.hpp ./Config.hpp ./DataType.hpp
+./Exeng.hpp ./DetectEnv.hpp ./Config.hpp 
 
+./DataType.hpp ./DataType.inl
 ./Object.hpp ./Object.cpp 
 ./Version.hpp ./Version.cpp 
 ./Root.hpp ./Root.cpp
@@ -11,9 +12,8 @@ add_library(exeng SHARED
 ./Buffer.hpp ./Buffer.cpp 
 ./HeapBuffer.hpp ./HeapBuffer.cpp 
 
-./graphics/Screen.hpp 
 ./graphics/GraphicsDriver.hpp ./graphics/GraphicsDriver.cpp 
-./graphics/GraphicsDriverBase.hpp ./graphics/GraphicsDriverBase.cpp 
+./graphics/GraphicsDriverBase.hpp ./graphics/GraphicsDriverBase.inl 
 ./graphics/GraphicsManager.hpp ./graphics/GraphicsManager.cpp 
 ./graphics/Image.hpp ./graphics/Image.cpp 
 ./graphics/Material.hpp ./graphics/Material.cpp 

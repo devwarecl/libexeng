@@ -11,8 +11,8 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_SCENEGRAPH_INDEXBUFFER_HPP__
-#define __EXENG_SCENEGRAPH_INDEXBUFFER_HPP__
+#ifndef __EXENG_GRAPHICS_INDEXBUFFER_HPP__
+#define __EXENG_GRAPHICS_INDEXBUFFER_HPP__
 
 #include <exeng/Object.hpp>
 #include <stdexcept>
@@ -82,5 +82,4 @@ namespace exeng {
     }
 }
 
-
-#endif
+#endif  // __EXENG_GRAPHICS_INDEXBUFFER_HPP__

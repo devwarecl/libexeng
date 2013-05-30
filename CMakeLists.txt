@@ -1,6 +1,6 @@
 project (test)
 project (raytracer)
-project (graphics-gl3)
+project (exeng-graphics-gl3)
 project (exeng)
 
 cmake_minimum_required(VERSION 2.6)

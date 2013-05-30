@@ -180,9 +180,19 @@ namespace exeng {
         
         template<typename Type, int Dimension>
         std::ostream& operator<< (std::ostream &os, const TBoundary<Type, Dimension>& Boundary) {
-            os << Boundary.GetEdge(0) << ", " << Boundary.GetEdge(TBoundary<Type, Dimension>::PointCount - 1);
+            os << Boundary.getMin() << ", " << Boundary.getMax();
             
             return os;
+        }
+        
+        template<typename Type, int Dimension>
+        inline TVector<Type, Dimension> TBoundary<Type, Dimension>::getMin() const {
+            return this->edges[0];
+        }
+        
+        template<typename Type, int Dimension>
+        inline TVector<Type, Dimension> TBoundary<Type, Dimension>::getMax() const {
+            return this->edges[1];
         }
     }
 }
