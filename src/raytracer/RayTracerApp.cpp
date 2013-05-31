@@ -102,7 +102,9 @@ namespace raytracer {
 
 
 // Registrar la aplicacion de trazado de rayos
+/*
 namespace {
     using namespace raytracer;
     static const bool b = Application::set( new RayTracerApp() );
 }
+*/

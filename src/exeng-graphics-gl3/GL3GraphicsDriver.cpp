@@ -14,6 +14,7 @@
 
 #include "GL3GraphicsDriver.hpp"
 #include "GL3Debug.hpp"
+#include "GL3Shader.hpp"
 
 #include <exeng/DataType.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
@@ -57,6 +58,7 @@ namespace gl3 {
     
     GL3GraphicsDriver::GL3GraphicsDriver() {
         this->vertexBuffer = nullptr;
+        this->shaderProgram = nullptr;
         this->initialized = false;
     }
     
@@ -178,6 +180,7 @@ namespace gl3 {
                                         "Vertex buffer can't be empty");
         }
         
+        /*
         // Remove render state from previous vertex buffer
         if (this->vertexBuffer != nullptr) {
             ::glBindBuffer(GL_ARRAY_BUFFER, this->vertexBuffer->getName());
@@ -188,9 +191,11 @@ namespace gl3 {
             
             GL3_CHECK();
         }
+        */
         
         // Apply new render state
         if (vertexBuffer == nullptr) {
+            this->vertexBuffer = nullptr;
             return;
         }
         
@@ -201,6 +206,7 @@ namespace gl3 {
         int offset = 0;
         DataType::Enum dataTypeKey;
         
+        ::glBindVertexArray( this->vertexBuffer->getVertexArrayId() );
         ::glBindBuffer( GL_ARRAY_BUFFER, this->vertexBuffer->getName() );
         
         for (const VertexField& field : format.fields) {
@@ -212,11 +218,22 @@ namespace gl3 {
                                     dataType, GL_FALSE, format.getSize(), 
                                     reinterpret_cast<const void*>(offset));
             
+            /*
+            std::cout << baseAttrib << std::endl;
+            std::cout << field.count  << std::endl;
+            std::cout << dataType  << std::endl;
+            std::cout << GL_FALSE  << std::endl;
+            std::cout << format.getSize()  << std::endl;
+            std::cout << reinterpret_cast<const void*>(offset) << std::endl;
+            std::cout << std::endl;
+            */
+            
             offset += field.count * field.dataType.getSize();
             ++baseAttrib;
         }
         
         GL3_CHECK();
+        
     }
     
     
@@ -375,6 +392,45 @@ namespace gl3 {
     
     const IndexBuffer* GL3GraphicsDriver::getIndexBuffer() const {
         throw std::runtime_error("GL3GraphicsDriver::getIndexBuffer: Not implemented.");
+    }
+    
+    
+    Shader* GL3GraphicsDriver::createShader( ShaderType type ) {
+        //! TODO: Append the shader object to the pool
+        return new GL3Shader(type);
+    }
+    
+    
+    ShaderProgram* GL3GraphicsDriver::createShaderProgram( ) {
+        //! TODO: Append the shader program to the pool
+        return new GL3ShaderProgram();
+    }
+    
+    
+    void GL3GraphicsDriver::setShaderProgram(const ShaderProgram *program) {
+        if (program == nullptr) {
+            throw std::invalid_argument("GL3GraphicsDriver::setShaderProgram: "
+                                        "Expected a non-null shader program");
+        }
+        
+        if ( program->getTypeInfo() != TypeInfo::get<GL3ShaderProgram>() ) {
+            throw std::invalid_argument("GL3GraphicsDriver::setShaderProgram: "
+                                        "Expected a shader program of type GL3ShaderProgram");
+        }
+        
+        if ( program->isLinked() == false ) {
+            throw std::runtime_error("GL3GraphicsDriver::setShaderProgram: "
+                                     "The shader program must be linked by client code.");
+        }
+        
+        //! TODO: Check for an empty shader program
+        
+        auto *shaderProgram = static_cast<const GL3ShaderProgram *>(program);
+        ::glUseProgram(shaderProgram->getProgramId());
+        
+        this->shaderProgram = shaderProgram;
+        
+        GL3_CHECK();
     }
 }
 }

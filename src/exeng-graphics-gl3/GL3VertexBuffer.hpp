@@ -51,7 +51,13 @@ namespace exeng {
                     return this->name;
                 }
                 
+                inline int getVertexArrayId() const {
+                    return this->vertexArrayId;
+                }
+                
+                
             private:
+                ::GLuint vertexArrayId;
                 ::GLuint name;
                 bool locked;
                 int count;

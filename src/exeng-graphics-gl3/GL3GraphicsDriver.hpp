@@ -18,11 +18,11 @@
 
 #include <exeng/graphics/GraphicsDriverBase.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
-// #include <exeng/input/IEventHandler.hpp>
 
 #include "GL3Texture.hpp"
 #include "GL3VertexBuffer.hpp"
 #include "GL3IndexBuffer.hpp"
+#include "GL3ShaderProgram.hpp"
 
 namespace exeng {
     namespace graphics {
@@ -81,9 +81,18 @@ namespace exeng {
                 
                 virtual const IndexBuffer* getIndexBuffer() const;
                 
+                virtual Shader* createShader( ShaderType type );
+                
+                virtual ShaderProgram* createShaderProgram( );
+                
+                virtual void setShaderProgram(const ShaderProgram *program);
+                
             private:
                 std::list<exeng::input::IEventHandler*> eventHandlers;
+                
                 const GL3VertexBuffer *vertexBuffer;
+                const GL3ShaderProgram *shaderProgram;
+                
                 bool initialized;
                 
             private:

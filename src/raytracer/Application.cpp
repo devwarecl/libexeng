@@ -55,7 +55,6 @@ namespace raytracer {
 }
 
 
-/*
 int main(int argc, char** argv) {
     using namespace raytracer;
 
@@ -72,49 +71,150 @@ int main(int argc, char** argv) {
     // Ejecutar la aplicacion
     return raytracer::Application::run(cmdLine);
 }
-*/
+
 
 using namespace exeng;
 using namespace exeng::math;
 using namespace exeng::graphics;
 
+namespace raytracer {
+class OpenGLApplication : public raytracer::Application {
+public:
+    OpenGLApplication() {
+        this->root = nullptr;
+        this->driver = nullptr;
+        this->vbuffer = nullptr;
+        this->vertexShader = nullptr;
+        this->fragmentShader = nullptr;
+        this->program = nullptr;
+    }
+    
+    
+    virtual ~OpenGLApplication () {
+    }
+    
+    
+    virtual void initialize(const StringVector& cmdLine) {
+        
+        // Initialize the exeng root class and plugins.
+        this->root = new Root();
+        this->root->getPluginManager()->load("exeng-graphics-gl3", "../exeng-graphics-gl3/");
+        
+        // initialize the gl3 driver, in windoed mode
+        this->driver = this->root->getGraphicsManager()->createDriver();
+        
+        DisplayMode mode;
+        mode.size = Size2i(640, 480);
+        mode.redBits = 8;
+        mode.greenBits = 8;
+        mode.blueBits = 8;
+        mode.alphaBits = 8;
+        mode.status = DisplayStatus::Window;
+        mode.depthBits = 16;
+        mode.stencilBits = 0;
+        
+        this->driver->initialize(mode);
+        
+        // create the geometry (a single triangle)
+        VertexFormat format;
+        VertexField field(VertexAttrib::Position, 3, DataType::Float32);
+        format.fields.push_back(field);
+        
+        this->vbuffer = this->driver->createVertexBuffer(format, 3);
+        
+        {
+            VertexArray<Vector3f> array(this->vbuffer);
+            
+            array[0] = Vector3f(0.0f, 1.0f, 0.0f);
+            array[1] = Vector3f(1.0f, 0.0f, 0.0f);
+            array[2] = Vector3f(-1.0f, 0.0f, 0.0f);
+        }
+        
+        // create the shaders
+        this->vertexShader = this->driver->createShader(ShaderType::Vertex);
+        this->vertexShader->setSourceCode(
+                    "#version 330 \n"
+                    "layout(location=0) in vec4 position; \n"
+                    "void main() { \n"
+                    "    gl_Position = position; \n"
+                    "}"
+        );
+        this->vertexShader->compile();
+        
+        this->fragmentShader = this->driver->createShader(ShaderType::Fragment);
+        this->fragmentShader->setSourceCode(
+                    "#version 330 \n"
+                    "out vec4 outputColor; \n"
+                    "void main() { \n"
+                    "    outputColor = vec4(1.0, 1.0, 1.0, 1.0); \n"
+                    "}\n"
+        );
+        this->fragmentShader->compile();
+        
+        this->program = this->driver->createShaderProgram();
+        this->program->addShader(this->vertexShader);
+        this->program->addShader(this->fragmentShader);
+        this->program->link();
+    }
 
-int main(int argc, char** argv) {
     
-    // Load the opengl 3 driver
-    auto root = boost::make_shared<Root>();
-    root->getPluginManager()->load("exeng-graphics-gl3", "../exeng-graphics-gl3/");
-    
-    GraphicsDriver *driver = root->getGraphicsManager()->createDriver();
-    
-    DisplayMode mode = DisplayMode(Size2i(640, 480), 8, 8, 8, 8);
-    mode.status = DisplayStatus::Window;
-    mode.depthBits = 16;
-    
-    driver->initialize(mode);
-    
-    VertexFormat format;
-    format.fields.push_back( VertexField(VertexAttrib::Position, 3, DataType::Float32) );
-    VertexBuffer *buffer = driver->createVertexBuffer(format, 3);    
-    {
-        VertexArray<Vector3f> array( buffer );
+    virtual void terminate() {
+        this->program->removeShader(this->fragmentShader);
+        this->program->removeShader(this->vertexShader);
         
-        array[0] = Vector3f(0.0f, 1.0f, 0.0f);
-        array[1] = Vector3f(1.0f, 0.0f, 0.0f);
-        array[2] = Vector3f(-1.0f, 0.0f, 0.0f);
+        delete this->program;
+        delete this->vbuffer;
+        delete this->driver;
+        delete this->root;
     }
     
-    while(driver->isInitialized() == true) {
-        driver->beginFrame(Color(0.2f, 0.2f, 0.8f, 1.0f), ClearFlags::Color);
-        
-        driver->setVertexBuffer(buffer);
-        driver->render(Primitive::TriangleStrip, 3);
-        
-        driver->endFrame();
+    
+    virtual double getFrameTime() const {
+        return 0.0;
     }
     
-    driver->terminate();
-    delete driver;
     
-    return 0;
+    virtual void pollEvents() {
+        this->driver->pollEvents();
+    }
+    
+    
+    virtual ApplicationStatus getStatus() const {
+        return ApplicationStatus::Running;
+    }
+    
+    
+    virtual void update(double seconds) {
+    }
+    
+    
+    virtual void render() {
+        Color clearColor(0.2f, 0.2f, 0.8f, 1.0f);
+        this->driver->beginFrame(clearColor, ClearFlags::Color);
+        this->driver->setShaderProgram(this->program);
+        this->driver->setVertexBuffer(this->vbuffer);
+        this->driver->render(Primitive::TriangleStrip, 3);
+        this->driver->endFrame();
+        
+    }
+    
+    virtual int getExitCode() const {
+        return 0;
+    }
+    
+    
+private:
+    Root *root;
+    GraphicsDriver *driver;
+    VertexBuffer *vbuffer;
+    Shader *vertexShader;
+    Shader *fragmentShader;
+    ShaderProgram *program;    
+};
+}
+
+
+namespace {
+    using namespace raytracer;
+    static const bool b = Application::set( new OpenGLApplication() );
 }

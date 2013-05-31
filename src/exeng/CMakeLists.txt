@@ -28,6 +28,8 @@ add_library(exeng SHARED
 ./graphics/Primitive.hpp
 ./graphics/ColorFormat.hpp ./graphics/ColorFormat.cpp
 ./graphics/IndexArray.hpp ./graphics/VertexArray.hpp
+./graphics/Shader.hpp ./graphics/Shader.cpp
+./graphics/ShaderProgram.hpp ./graphics/ShaderProgram.cpp
 
 ./graphics/rasterization/Rasterizer.hpp ./graphics/rasterization/Rasterizer.cpp
 

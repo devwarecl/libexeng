@@ -13,7 +13,6 @@
 #ifndef __EXENG_HPP__
 #define __EXENG_HPP__
 
-#include <exeng/New.hpp>
 #include <exeng/DetectEnv.hpp>
 #include <exeng/Config.hpp>
 #include <exeng/TFlags.hpp>
@@ -28,6 +27,8 @@
 
 #include <exeng/graphics/GraphicsManager.hpp>
 #include <exeng/graphics/Color.hpp>
+#include <exeng/graphics/Shader.hpp>
+#include <exeng/graphics/ShaderProgram.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
 #include <exeng/graphics/IndexBuffer.hpp>
 #include <exeng/graphics/VertexArray.hpp>

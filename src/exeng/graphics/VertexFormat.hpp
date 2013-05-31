@@ -47,8 +47,12 @@ namespace exeng {
             
             inline VertexField(VertexAttrib attrib, int count, DataType dataType) {
                 this->attribute = attrib;
-                this->count = 0;
+                this->count = count;
                 this->dataType = dataType;
+            }
+            
+            inline int getSize() const {
+                return this->count * this->dataType.getSize();
             }
         };
         
@@ -74,7 +78,7 @@ namespace exeng {
             int size = 0;
             
             for (auto &field : this->fields) {
-                size += field.dataType.getSize();
+                size += field.getSize();
             }
             
             return size;

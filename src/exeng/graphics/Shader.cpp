@@ -1,6 +1,6 @@
 /**
- * @file GraphicsDriver.cpp
- * @brief Stub implementation of the graphics driver abstract class.
+ * @file Shader.cpp
+ * @brief Shader class implementation.
  */
 
 
@@ -12,11 +12,13 @@
  */
 
 
-#include <exeng/graphics/GraphicsDriver.hpp>
+#include <exeng/graphics/Shader.hpp>
+
 
 namespace exeng {
 namespace graphics {
-GraphicsDriver::~GraphicsDriver() {
+Shader::~Shader()
+{
 }
 }
 }

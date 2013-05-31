@@ -25,6 +25,7 @@ namespace exeng {
             GL3VertexBuffer::GL3VertexBuffer(GL3GraphicsDriver *owner, 
                                              const VertexFormat &format, 
                                              int count) {
+                this->vertexArrayId = 0;
                 this->name = 0;
                 this->locked = false;
                 this->creator = owner;
@@ -57,9 +58,14 @@ namespace exeng {
                     {
                         BufferStatus<GL_ARRAY_BUFFER> status;
                         
+                        ::glGenVertexArrays(1, &this->vertexArrayId);
+                        ::glBindVertexArray(this->vertexArrayId);
+                        
                         ::glGenBuffers(1, &this->name); 
                         ::glBindBuffer(GL_ARRAY_BUFFER, this->name); 
                         ::glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STATIC_DRAW);
+                        
+                        ::glBindVertexArray(0);
                         
                         GL3_CHECK();
                     }
