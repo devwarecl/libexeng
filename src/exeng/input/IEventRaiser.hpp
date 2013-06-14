@@ -24,7 +24,7 @@ namespace exeng {
          * notifying all the connected event handlers.
          * @todo Must better design this module in the future.
          */
-        class IEventRaiser {
+        class EXENGAPI IEventRaiser {
         public:
             virtual ~IEventRaiser();
             

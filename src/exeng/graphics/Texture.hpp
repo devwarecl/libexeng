@@ -18,22 +18,13 @@
 #include <exeng/Object.hpp>
 #include <exeng/math/TVector.hpp>
 
+#include <exeng/graphics/TextureType.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/ColorFormat.hpp>
 
 namespace exeng {
     namespace graphics {
-        
-        /**
-         * @brief Type of texture.
-         */
-        enum class TextureType {
-            Tex1D,
-            Tex2D,
-            Tex3D,
-            TexCubeMap
-        };
-        
+
         /**
          * @brief 
          */
@@ -44,46 +35,41 @@ namespace exeng {
         };
         
         /**
-         * @brief 
+         * @brief Visual specific appearance for materials.
          */
         class EXENGAPI Texture : public Object {
         public:
-            virtual ~Texture() {}
+            virtual ~Texture();
 
             /**
-             * @brief
+             * @brief Locks the texture
              */
             virtual void* lock() = 0;
             
             /**
-             * @brief
+             * @brief Locks the texture
              */
             virtual void* lock(TextureCubeMapFace Face) = 0;
             
             /**
-             * @brief
+             * @brief Unlocks the texture.
              */
             virtual void unlock() = 0;
             
             /**
-             * @brief
+             * @brief Get the current type of texture
              */
-            virtual TextureType getTextureType() const = 0;
+            virtual TextureType getType() const = 0;
             
             /**
-             * @brief
+             * @brief Get the color format of the texture
              */
             virtual ColorFormat getColorFormat() const = 0;
             
             /**
-             * @brief
+             * @brief Get the size, in texels, of the texture.
              */
             virtual exeng::math::Vector3i getSize() const = 0;
-            
-            /**
-             * @brief
-             */
-            virtual void buildMipmaps() = 0;
         };
     }
 }

@@ -12,6 +12,14 @@ add_library(exeng SHARED
 ./Buffer.hpp ./Buffer.cpp 
 ./HeapBuffer.hpp ./HeapBuffer.cpp 
 
+./audio/AudioBuffer.hpp ./audio/AudioBuffer.cpp
+./audio/Listener.hpp ./audio/Listener.cpp
+./audio/Source.hpp ./audio/Source.cpp
+
+./framework/Application.hpp ./framework/Application.cpp 
+./framework/Main.hpp ./framework/Main.inl
+
+./graphics/ShaderType.hpp ./graphics/TextureType.hpp 
 ./graphics/GraphicsDriver.hpp ./graphics/GraphicsDriver.cpp 
 ./graphics/GraphicsDriverBase.hpp ./graphics/GraphicsDriverBase.inl 
 ./graphics/GraphicsManager.hpp ./graphics/GraphicsManager.cpp 
@@ -24,17 +32,12 @@ add_library(exeng SHARED
 ./graphics/HeapIndexBuffer.hpp ./graphics/HeapIndexBuffer.cpp 
 ./graphics/IndexBuffer.hpp ./graphics/IndexBuffer.cpp
 ./graphics/Color.hpp ./graphics/Color.inl
-./graphics/Texture.hpp
+./graphics/Texture.hpp ./graphics/Texture.cpp
 ./graphics/Primitive.hpp
 ./graphics/ColorFormat.hpp ./graphics/ColorFormat.cpp
 ./graphics/IndexArray.hpp ./graphics/VertexArray.hpp
 ./graphics/Shader.hpp ./graphics/Shader.cpp
 ./graphics/ShaderProgram.hpp ./graphics/ShaderProgram.cpp
-
-./graphics/rasterization/Rasterizer.hpp ./graphics/rasterization/Rasterizer.cpp
-
-./graphics/raytracing/Tracer.hpp ./graphics/raytracing/Tracer.cpp 
-./graphics/raytracing/ISampler.hpp ./graphics/raytracing/ISampler.cpp 
 
 ./ui/Widget.hpp ./ui/Widget.cpp 
 ./ui/Window.hpp ./ui/Window.cpp 
@@ -43,13 +46,15 @@ add_library(exeng SHARED
 ./input/IEventHandler.hpp ./input/IEventHandler.cpp
 ./input/InputData.hpp ./input/InputData.cpp 
 
-./scenegraph/SceneNode.hpp ./scenegraph/SceneNode.cpp ./scenegraph/Scene.hpp ./scenegraph/Scene.cpp
-./scenegraph/Camera.hpp ./scenegraph/Camera.cpp ./scenegraph/Light.hpp ./scenegraph/Light.cpp
+./scenegraph/SceneNode.hpp ./scenegraph/SceneNode.cpp 
+./scenegraph/Scene.hpp ./scenegraph/Scene.cpp
+./scenegraph/Camera.hpp ./scenegraph/Camera.cpp 
+./scenegraph/Light.hpp ./scenegraph/Light.cpp
 ./scenegraph/SceneNodeData.hpp ./scenegraph/SceneNodeData.cpp 
 ./scenegraph/Geometry.hpp ./scenegraph/Geometry.cpp
 ./scenegraph/Ray.hpp ./scenegraph/Ray.inl
 ./scenegraph/Plane.hpp ./scenegraph/Plane.inl
-./scenegraph/IntersectInfo.hpp ./scenegraph/IntersectInfo.cpp
+./scenegraph/IntersectInfo.hpp ./scenegraph/IntersectInfo.inl
 ./scenegraph/Sphere.hpp ./scenegraph/Sphere.inl
 ./scenegraph/Mesh.hpp ./scenegraph/Mesh.cpp
 ./scenegraph/MeshPart.hpp ./scenegraph/MeshPart.cpp

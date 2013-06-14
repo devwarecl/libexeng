@@ -11,6 +11,9 @@
  * found in the file LICENSE in this distribution.
  */
 
+#include "GL3.hpp"
+#include "GL3Utils.hpp"
+#include <GL/glfw.h>
 
 #include "GL3GraphicsDriver.hpp"
 #include "GL3Debug.hpp"
@@ -20,8 +23,6 @@
 #include <exeng/graphics/VertexFormat.hpp>
 
 #include <map>
-#include <GL/glcorearb.h>
-#include <GL/glfw.h>
 
 using namespace exeng;
 using namespace exeng::math;
@@ -31,28 +32,6 @@ using namespace exeng::input;
 namespace exeng {
 namespace graphics {
 namespace gl3 {
-    
-    std::map<Primitive::Enum, GLenum> convPrimitive = {
-        {Primitive::PointList, GL_POINTS},
-        {Primitive::LineList, GL_LINES},
-        {Primitive::LineLoop, GL_LINE_LOOP},
-        {Primitive::LineStrip, GL_LINE_STRIP},
-        {Primitive::TriangleList, GL_TRIANGLES},
-        {Primitive::TriangleStrip, GL_TRIANGLE_STRIP},
-        {Primitive::TriangleFan, GL_TRIANGLE_FAN}
-    };
-    
-    
-    std::map<DataType::Enum, GLenum> convDataType = {
-        {DataType::UInt8, GL_UNSIGNED_BYTE},
-        {DataType::UInt16, GL_UNSIGNED_SHORT},
-        {DataType::UInt32, GL_UNSIGNED_INT},
-        {DataType::Int8, GL_BYTE},
-        {DataType::Int16, GL_SHORT},
-        {DataType::Int32, GL_INT},
-        {DataType::Float32, GL_FLOAT},
-        {DataType::Float64, GL_DOUBLE}
-    };
     
     int GL3GraphicsDriver::initializedCount = 0;
     
@@ -107,6 +86,9 @@ namespace gl3 {
         }
         
         ::glfwDisable(GLFW_AUTO_POLL_EVENTS);
+        
+        // Initialize the OpenGL 3 core functions
+        ::ogl_LoadFunctions();
         
         this->initialized = true;
         ++GL3GraphicsDriver::initializedCount;
@@ -211,22 +193,12 @@ namespace gl3 {
         
         for (const VertexField& field : format.fields) {
             dataTypeKey = static_cast<DataType::Enum>(field.dataType.getValue());
-            GLenum dataType = convDataType[dataTypeKey];
+            GLenum dataType = convDataType(dataTypeKey);
             
             ::glEnableVertexAttribArray(baseAttrib);
             ::glVertexAttribPointer(baseAttrib, field.count, 
                                     dataType, GL_FALSE, format.getSize(), 
                                     reinterpret_cast<const void*>(offset));
-            
-            /*
-            std::cout << baseAttrib << std::endl;
-            std::cout << field.count  << std::endl;
-            std::cout << dataType  << std::endl;
-            std::cout << GL_FALSE  << std::endl;
-            std::cout << format.getSize()  << std::endl;
-            std::cout << reinterpret_cast<const void*>(offset) << std::endl;
-            std::cout << std::endl;
-            */
             
             offset += field.count * field.dataType.getSize();
             ++baseAttrib;
@@ -276,41 +248,50 @@ namespace gl3 {
     void 
     GL3GraphicsDriver::setTransform(Transform transform, 
                                     const Matrix4f& transformMatrix) {
-        //! TODO: Optimize this method.
+		
+		throw std::runtime_error("GL3GraphicsDriver::setTransform is not implemented");
+
         bool updateModelView = false;
         
         // 
         switch (transform) {
             case Transform::View: {
-                this->view = transformMatrix;
-                updateModelView = true;
-                break;
+            this->view = transformMatrix; 
+            updateModelView = true; 
+            break;
             }
             
             case Transform::World: {
-                this->model = transformMatrix;
-                updateModelView = true;
-                break;
+            this->model = transformMatrix;
+            updateModelView = true; 
+            break;
             }
             
-            case Transform::Projection: {
-                this->projection = transformMatrix;
-                break;
+        case Transform::Projection: {
+            this->projection = transformMatrix; 
+            break;
             }
         }
         
+        /*
         // Update the current OpenGL transformation matrix
         if (updateModelView == true) {
             this->modelView = this->model * this->view;
             
             ::glMatrixMode(GL_MODELVIEW);
+            GL3_CHECK();
+            
             ::glLoadMatrixf(this->modelView.getPtr());
+            GL3_CHECK();
         } else {
             ::glMatrixMode(GL_PROJECTION);
+            GL3_CHECK();
             ::glLoadMatrixf(this->projection.getPtr());
+            GL3_CHECK();
         }
         
         GL3_CHECK();
+        */
     }
     
     
@@ -348,7 +329,7 @@ namespace gl3 {
         assert( name == this->vertexBuffer->getName() );
         
         //! TODO: Implement rendering path with the index buffer in the future.
-        GLenum primitive = convPrimitive[ptype];
+        GLenum primitive = convPrimitive(ptype);
         ::glDrawArrays(primitive, 0, count);
         
         GL3_CHECK();
@@ -358,9 +339,7 @@ namespace gl3 {
     void GL3GraphicsDriver::pollEvents() {
         ::glfwPollEvents();
         
-        // Notificar a los manejadores de eventos
-        // for (IEventHandler *handler : this->eventHandlers) {
-        // }
+        //! TODO: notify the event handlers for events
     }
     
     
@@ -424,8 +403,8 @@ namespace gl3 {
         }
         
         //! TODO: Check for an empty shader program
-        
         auto *shaderProgram = static_cast<const GL3ShaderProgram *>(program);
+		assert( shaderProgram->getProgramId() != 0 );
         ::glUseProgram(shaderProgram->getProgramId());
         
         this->shaderProgram = shaderProgram;

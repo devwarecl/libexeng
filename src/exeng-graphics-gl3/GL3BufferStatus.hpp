@@ -12,10 +12,10 @@
  */
 
 
-#ifndef __EXENG_GRAPHICS_GL3_HPP__
-#define __EXENG_GRAPHICS_GL3_HPP__
+#ifndef __EXENG_GRAPHICS_GL3_BUFFERSTATUS_HPP__
+#define __EXENG_GRAPHICS_GL3_BUFFERSTATUS_HPP__
 
-#include <GL/glcorearb.h>
+#include "GL3.hpp"
 
 namespace exeng {
     namespace graphics {

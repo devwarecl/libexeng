@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>;$(IncludePath)</IncludePath>
+    <IncludePath>../../src/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -53,14 +53,14 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>./Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>exeng.lib;SDL.lib;boost_random-vc110-mt-1_53.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>exeng.lib;SDL.lib;boost_random-vc110-mt-gd-1_53.lib;boost_system-vc110-mt-gd-1_53.lib;boost_timer-vc110-mt-gd-1_53.lib;boost_locale-vc110-mt-gd-1_53.lib;boost_chrono-vc110-mt-gd-1_53.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -84,7 +84,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\raytracer\Application.cpp" />
+    <ClCompile Include="..\..\src\raytracer\Main.cpp" />
+    <ClCompile Include="..\..\src\raytracer\OpenGLApp.cpp" />
     <ClCompile Include="..\..\src\raytracer\RayTracerApp.cpp" />
     <ClCompile Include="..\..\src\raytracer\RayTracerAppPrivate.cpp" />
     <ClCompile Include="..\..\src\raytracer\samplers\JitteredSampler.cpp" />
@@ -93,7 +94,7 @@
     <ClCompile Include="..\..\src\raytracer\SphereGeometry.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\raytracer\Application.hpp" />
+    <ClInclude Include="..\..\src\raytracer\OpenGLApp.hpp" />
     <ClInclude Include="..\..\src\raytracer\RayTracerApp.hpp" />
     <ClInclude Include="..\..\src\raytracer\RayTracerAppPrivate.hpp" />
     <ClInclude Include="..\..\src\raytracer\samplers\JitteredSampler.hpp" />

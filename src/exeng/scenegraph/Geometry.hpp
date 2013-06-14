@@ -20,8 +20,8 @@
 namespace exeng {
     namespace scenegraph {
         
-		class EXENGAPI Ray;
-		struct EXENGAPI IntersectInfo;
+		class Ray;
+		struct IntersectInfo;
 		
         /**
          * @brief Geometria abstracta.

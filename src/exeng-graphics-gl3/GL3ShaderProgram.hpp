@@ -18,14 +18,14 @@
 
 #include <exeng/graphics/ShaderProgram.hpp>
 #include <list>
-#include <GL/glcorearb.h>
+#include "GL3.hpp"
 
 namespace exeng {
 namespace graphics {
 namespace gl3 {
 
-class EXENGAPI GL3Shader;
-class EXENGAPI GL3ShaderProgram : public ShaderProgram {
+class GL3Shader;
+class GL3ShaderProgram : public ShaderProgram {
 public:
     GL3ShaderProgram();
     

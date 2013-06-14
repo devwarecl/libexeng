@@ -201,10 +201,10 @@ namespace exeng {
         MaterialLayer& Material::getLayerRef(int index) {
             assert(this->impl != NULL);
 
-    #ifdef __EXENG_DEBUG__
+#ifdef EXENG_DEBUG
             if (index >= LayerCount)
                 throw std::out_of_range("");
-    #endif
+#endif
 
             return this->impl->layers[index];
         }
@@ -213,10 +213,11 @@ namespace exeng {
         const MaterialLayer& Material::getLayerRef(int index) const {
             assert(this->impl != NULL);
 
-    #ifdef __EXENG_DEBUG__
-            if (index >= LayerCount)
+#ifdef EXENG_DEBUG
+            if (index >= LayerCount) {
                 throw std::out_of_range("");
-    #endif
+			}
+#endif
 
             return this->impl->layers[index];
         }

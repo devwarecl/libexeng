@@ -41,8 +41,8 @@ namespace raytracer {
     
     
     void RayTracerApp::Private::putPixel(const Vector2i &point, uint32_t color) {
-        auto offset = this->pointToOffset(point);
-        auto data = static_cast<uint32_t*>(this->backbuffer->pixels);
+        uint32_t offset = this->pointToOffset(point);
+        uint32_t *data = static_cast<uint32_t*>(this->backbuffer->pixels);
         
         data += offset;
         

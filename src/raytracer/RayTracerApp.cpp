@@ -8,6 +8,9 @@
 #include "RayTracerAppPrivate.hpp"
 #include <boost/timer/timer.hpp>
 
+using namespace exeng;
+using namespace exeng::framework;
+
 namespace raytracer {
     RayTracerApp::RayTracerApp() : impl(nullptr) {
 		this->impl.reset(new RayTracerApp::Private());
@@ -54,7 +57,7 @@ namespace raytracer {
         if (this->impl->running == true) {
             return ApplicationStatus::Running;
 		} else {
-            return ApplicationStatus::Stopped;
+            return ApplicationStatus::Terminated;
 		}
     }
 
@@ -99,12 +102,3 @@ namespace raytracer {
         SDL_Quit();
     }
 }
-
-
-// Registrar la aplicacion de trazado de rayos
-/*
-namespace {
-    using namespace raytracer;
-    static const bool b = Application::set( new RayTracerApp() );
-}
-*/

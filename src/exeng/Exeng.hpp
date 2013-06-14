@@ -25,6 +25,9 @@
 
 #include <exeng/system/PluginManager.hpp>
 
+#include <exeng/framework/Application.hpp>
+#include <exeng/framework/Main.hpp>
+
 #include <exeng/graphics/GraphicsManager.hpp>
 #include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/Shader.hpp>

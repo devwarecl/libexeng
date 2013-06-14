@@ -1,9 +1,9 @@
 
 
-#define EXENG_DATA_TYPE_TRAITS(KeyEnum, BasicType)              \
-    template<> struct DataTypeTraits<BasicType> {               \
-        typedef BasicType Type;                                 \
-        enum { Enum=static_cast<int>(DataType::KeyEnum) };      \
+#define EXENG_DATA_TYPE_TRAITS(KeyEnum, BasicType)  \
+    template<> struct DataTypeTraits<BasicType> {   \
+        typedef BasicType Type;                     \
+        enum { Enum=static_cast<int>(KeyEnum) };	\
     }
 
 namespace exeng {

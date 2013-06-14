@@ -43,9 +43,6 @@
     <ClInclude Include="..\..\src\exeng\graphics\VertexBuffer.hpp">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\exeng\graphics\VertexBufferFormat.hpp">
-      <Filter>graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\exeng\math\Common.hpp">
       <Filter>math</Filter>
     </ClInclude>
@@ -114,15 +111,88 @@
     </ClInclude>
     <ClInclude Include="..\..\src\exeng\Buffer.hpp" />
     <ClInclude Include="..\..\src\exeng\HeapBuffer.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\ColorFormat.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\graphics\HeapIndexBuffer.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\graphics\HeapVertexBuffer.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\graphics\IndexArray.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\graphics\Primitive.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\graphics\Shader.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\graphics\ShaderProgram.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\graphics\VertexArray.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\graphics\VertexFormat.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\DataType.hpp" />
+    <ClInclude Include="..\..\src\exeng\framework\Application.hpp">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\framework\Main.hpp">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\input\IEventHandler.hpp">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\input\IEventRaiser.hpp">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\input\InputData.hpp">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\graphics\Screen.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\scenegraph\IMeshLoader.hpp">
+      <Filter>scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\scenegraph\ISceneRenderer.hpp">
+      <Filter>scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\scenegraph\Mesh.hpp">
+      <Filter>scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\scenegraph\MeshManager.hpp">
+      <Filter>scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\scenegraph\MeshPart.hpp">
+      <Filter>scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\scenegraph\SceneManager.hpp">
+      <Filter>scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\audio\Listener.hpp">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\audio\Manager.hpp">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\audio\Source.hpp">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeng\audio\AudioBuffer.hpp">
+      <Filter>audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\exeng\Object.cpp" />
     <ClCompile Include="..\..\src\exeng\Root.cpp" />
     <ClCompile Include="..\..\src\exeng\TypeInfo.cpp" />
     <ClCompile Include="..\..\src\exeng\Version.cpp" />
-    <ClCompile Include="..\..\src\exeng\graphics\GraphicsDriverBase.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\exeng\graphics\GraphicsManager.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -135,16 +205,10 @@
     <ClCompile Include="..\..\src\exeng\graphics\PixelFormat.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\exeng\graphics\VertexBufferFormat.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\exeng\scenegraph\Camera.cpp">
       <Filter>scenegraph</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\exeng\scenegraph\Geometry.cpp">
-      <Filter>scenegraph</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\exeng\scenegraph\IntersectInfo.cpp">
       <Filter>scenegraph</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\exeng\scenegraph\Light.cpp">
@@ -185,6 +249,81 @@
     </ClCompile>
     <ClCompile Include="..\..\src\exeng\Buffer.cpp" />
     <ClCompile Include="..\..\src\exeng\HeapBuffer.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\ColorFormat.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\graphics\GraphicsDriver.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\graphics\HeapIndexBuffer.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\graphics\HeapVertexBuffer.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\graphics\IndexBuffer.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\graphics\Shader.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\graphics\ShaderProgram.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\graphics\Texture.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\graphics\VertexBuffer.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\graphics\VertexFormat.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\framework\Application.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\input\IEventHandler.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\input\IEventRaiser.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\input\InputData.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\scenegraph\IMeshLoader.cpp">
+      <Filter>scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\scenegraph\ISceneRenderer.cpp">
+      <Filter>scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\scenegraph\Mesh.cpp">
+      <Filter>scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\scenegraph\MeshManager.cpp">
+      <Filter>scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\scenegraph\MeshPart.cpp">
+      <Filter>scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\scenegraph\SceneManager.cpp">
+      <Filter>scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\scenegraph\IntersectInfo.inl">
+      <Filter>scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\audio\Listener.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\audio\Manager.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\audio\Source.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\audio\AudioBuffer.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\exeng\TFlags.inl" />
@@ -209,6 +348,13 @@
     <None Include="..\..\src\exeng\graphics\Color.inl">
       <Filter>graphics</Filter>
     </None>
+    <None Include="..\..\src\exeng\graphics\GraphicsDriverBase.inl">
+      <Filter>graphics</Filter>
+    </None>
+    <None Include="..\..\src\exeng\DataType.inl" />
+    <None Include="..\..\src\exeng\framework\Main.inl">
+      <Filter>framework</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="graphics">
@@ -222,6 +368,15 @@
     </Filter>
     <Filter Include="system">
       <UniqueIdentifier>{cdf82578-2f39-4db0-95b9-a1badf7bcda3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework">
+      <UniqueIdentifier>{1af486be-b9b8-4d0d-be27-05b4f66e24f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="input">
+      <UniqueIdentifier>{8caf3c00-c9a7-4deb-b5ec-c188d4de7d12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="audio">
+      <UniqueIdentifier>{4d60a41e-8f85-4283-90c4-228546457724}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

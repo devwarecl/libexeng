@@ -92,4 +92,23 @@ namespace gl3 {
 }
 }
 
-EXENG_EXPORT_PLUGIN(exeng::graphics::gl3::GL3Plugin)
+// EXENG_EXPORT_PLUGIN(exeng::graphics::gl3::GL3Plugin)
+
+extern "C" { 
+	exeng::system::Plugin*                             
+	EXENG_CALLCONV ExengGetPluginObject() {
+		static exeng::graphics::gl3::GL3Plugin *plugin = nullptr;
+		if (plugin == nullptr) {
+			plugin = new exeng::graphics::gl3::GL3Plugin();
+		}
+		return plugin;
+	}
+}
+
+#if defined (EXENG_WINDOWS)
+#  if defined (EXENG_32)
+#    pragma comment (linker, "/export:ExengGetPluginObject=_ExengGetPluginObject")
+#  elif defined (EXENG_64)
+#    pragma comment (linker, "/export:ExengGetPluginObject")
+#  endif
+#endif 

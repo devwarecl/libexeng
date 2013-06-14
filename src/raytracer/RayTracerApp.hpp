@@ -4,24 +4,23 @@
 
 #include <vector>
 #include <boost/scoped_ptr.hpp>
-
-#include "Application.hpp"
+#include <exeng/framework/Application.hpp>
 
 namespace raytracer {
     
-    class RayTracerApp : public Application {
+    class RayTracerApp : public exeng::framework::Application {
     public:
         RayTracerApp();
         
         virtual ~RayTracerApp();
         
-        virtual void initialize(const StringVector& cmdLine);
+        virtual void initialize(const exeng::framework::StringVector& cmdLine);
 
         virtual double getFrameTime() const;
         
         virtual void pollEvents();
         
-        virtual ApplicationStatus getStatus() const;
+        virtual exeng::framework::ApplicationStatus getStatus() const;
         
         virtual void update(double seconds);
         

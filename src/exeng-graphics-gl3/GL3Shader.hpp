@@ -15,7 +15,7 @@
 #define __EXENG_GRAPHICS_GL3_GL3SHADER_HPP__
 
 #include <exeng/graphics/Shader.hpp>
-#include <GL/glcorearb.h>
+#include "GL3.hpp"
 
 namespace exeng {
 namespace graphics {
@@ -24,7 +24,7 @@ namespace gl3 {
 /**
  * @brief OpenGL 3 shader.
  */
-class EXENGAPI GL3Shader : public Shader {
+class GL3Shader : public Shader {
 public:
     GL3Shader(ShaderType type);
     

@@ -43,15 +43,15 @@ namespace exeng {
             };
             
             inline bool isTriangle(Enum e) {
-                return e & Triangle;
+                return e & Triangle?true:false;
             }
             
             inline bool isLine(Enum e) {
-                return e & Line;
+                return e & Line?true:false;
             }
             
             inline bool isPoint(Enum e) {
-                return e & Point;
+                return e & Point?true:false;
             }
         }
     }

@@ -16,18 +16,10 @@
 #define __EXENG_GRAPHICS_SHADER_HPP__
 
 #include <exeng/Object.hpp>
+#include <exeng/graphics/ShaderType.hpp>
 
 namespace exeng {
 namespace graphics {
-
-/**
- * @brief The type of shader
- */
-enum class ShaderType {
-    Vertex,
-    Fragment,
-    Geometry
-};
 
 /**
  * @brief A shader subprogram, with source code included.

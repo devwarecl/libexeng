@@ -11,18 +11,13 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include <exeng/scenegraph/IntersectInfo.hpp>
-
-using namespace exeng;
-using namespace exeng::math;
-
 namespace exeng {
     namespace scenegraph {
-        IntersectInfo::IntersectInfo() {
+        inline IntersectInfo::IntersectInfo() {
 			this->intersect = false;
 			this->distance = 0.0f;
-			this->normal = Vector3f(0.0f);
-            this->point = Vector3f(0.0f);
+			this->normal = exeng::math::Vector3f(0.0f);
+            this->point = exeng::math::Vector3f(0.0f);
 			this->materialPtr = nullptr;
 		} 
     }

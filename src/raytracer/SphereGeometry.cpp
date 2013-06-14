@@ -2,11 +2,9 @@
 #include "SphereGeometry.hpp"
 #include <algorithm>
 
-using exeng::scenegraph::Ray;
-using exeng::scenegraph::IntersectInfo;
-using exeng::math::Vector3f;
-using exeng::math::Boxf;
-
+using namespace exeng;
+using namespace exeng::scenegraph;
+using namespace exeng::math;
 
 namespace raytracer {
 	SphereGeometry::SphereGeometry() {}

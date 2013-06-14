@@ -17,10 +17,27 @@ namespace exeng {
     namespace graphics {
         
         ColorFormat::ColorFormat() : size(0) {
+            this->channels[0] = ColorChannel(ColorComponent::None, 0);
+        }
+
+        
+        ColorFormat::ColorFormat(uint16_t size, const ColorChannel &c1, const ColorChannel &c2, 
+                                 const ColorChannel &c3, const ColorChannel &c4) {
+            this->size = size;
+            this->channels[0] = c1;
+            this->channels[1] = c2;
+            this->channels[2] = c3;
+            this->channels[3] = c4;
         }
         
+        
         bool ColorFormat::isValid() const {
-            // Check sum
+            // check size
+            if (this->size <= 0) {
+                return 0;
+            }
+            
+            // check sum
             uint32_t sum = 0;
             
             for(auto channel : this->channels) {
@@ -33,13 +50,13 @@ namespace exeng {
                 return false;
             }
             
-            // Check ordering
+            // check ordering
             bool noneFound = false;
             
             for(auto channel : this->channels) {
                 bool nonNone = channel.component != ColorComponent::None;
                 
-                if (noneFound == true and nonNone == true) {
+                if (noneFound == true && nonNone == true) {
                     return false;
                 }
                 
@@ -50,5 +67,41 @@ namespace exeng {
             
             return true;
         }
+        
+        
+        bool ColorFormat::operator== (const ColorFormat &other) const {
+            if (this->size != other.size) {
+                return false;
+            }
+            
+            for (int i=0; i<ColorFormat::ChannelCount; ++i) {
+                if (this->channels[i] != other.channels[i]) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        
+        bool ColorFormat::operator!= (const ColorFormat &other) const {
+            return ! (*this == other);
+        }
+        
+        
+        bool ColorFormat::operator< (const ColorFormat &other) const {
+            if (this->size >= other.size) {
+                return false;
+            }
+            
+            for (int i=0; i<ColorFormat::ChannelCount; ++i) {
+                if ( this->channels[i] >= other.channels[i] ) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
     }
 }

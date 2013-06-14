@@ -12,11 +12,12 @@
  */
 
 
+
 #include "GL3Debug.hpp"
+#include "GL3.hpp"
 
 #include <map>
 #include <iostream>
-#include <GL/glcorearb.h>
 
 namespace exeng {
     namespace graphics {

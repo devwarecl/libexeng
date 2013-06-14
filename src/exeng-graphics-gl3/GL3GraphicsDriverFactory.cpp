@@ -15,33 +15,33 @@
 #include "GL3GraphicsDriver.hpp"
 
 namespace exeng {
-    namespace graphics {
-        namespace gl3 {
-            GL3GraphicsDriverFactory::GL3GraphicsDriverFactory() {
-            }
-            
-            
-            GL3GraphicsDriverFactory::~GL3GraphicsDriverFactory() {
-            }
-            
-            
-            GraphicsDriverInfo GL3GraphicsDriverFactory::getDriverInfo() const {
-                GraphicsDriverInfo info;
-                
-                info.name = "OpenGL 3 core profile graphics driver";
-                info.version = Version(0, 0, 0, 1);
-                info.hardware = true;
-                info.supportsVertexShaders = true;
-                info.supportsPixelShader = true;
-                info.supportGeometryShaders = true;
-                
-                return info;
-            }
-            
-            
-            GraphicsDriver* GL3GraphicsDriverFactory::create() {
-                return new GL3GraphicsDriver();
-            }
-        }
-    }
+namespace graphics {
+namespace gl3 {
+GL3GraphicsDriverFactory::GL3GraphicsDriverFactory() {
+}
+
+
+GL3GraphicsDriverFactory::~GL3GraphicsDriverFactory() {
+}
+
+
+GraphicsDriverInfo GL3GraphicsDriverFactory::getDriverInfo() const {
+    GraphicsDriverInfo info;
+    
+    info.name = "OpenGL 3 core profile graphics driver";
+    info.version = Version(0, 0, 0, 1);
+    info.hardware = true;
+    info.supportsVertexShaders = true;
+    info.supportsPixelShader = true;
+    info.supportGeometryShaders = true;
+    
+    return info;
+}
+
+
+GraphicsDriver* GL3GraphicsDriverFactory::create() {
+    return new GL3GraphicsDriver();
+}
+}
+}
 }

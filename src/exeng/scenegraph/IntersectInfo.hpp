@@ -23,7 +23,7 @@ namespace exeng {
         /**
          * @brief Store information about the intersection between a ray and a object.
          */
-        struct EXENGAPI IntersectInfo {
+        struct IntersectInfo {
         public:
             //! Intersection state. If false, the other attributes are on a unspecified state.
             bool intersect;                                 
@@ -45,5 +45,7 @@ namespace exeng {
         };
     }
 }
+
+#include "IntersectInfo.inl"
 
 #endif  //__EXENG_SCENEGRAPH_INTERSECTINFO_HPP__

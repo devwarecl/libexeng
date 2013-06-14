@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\..\src\raytracer\Application.cpp" />
     <ClCompile Include="..\..\src\raytracer\RayTracerApp.cpp" />
     <ClCompile Include="..\..\src\raytracer\RayTracerAppPrivate.cpp" />
     <ClCompile Include="..\..\src\raytracer\SphereGeometry.cpp" />
@@ -14,9 +13,10 @@
     <ClCompile Include="..\..\src\raytracer\samplers\Sampler.cpp">
       <Filter>samplers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\raytracer\Main.cpp" />
+    <ClCompile Include="..\..\src\raytracer\OpenGLApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\raytracer\Application.hpp" />
     <ClInclude Include="..\..\src\raytracer\RayTracerApp.hpp" />
     <ClInclude Include="..\..\src\raytracer\RayTracerAppPrivate.hpp" />
     <ClInclude Include="..\..\src\raytracer\SphereGeometry.hpp" />
@@ -29,6 +29,7 @@
     <ClInclude Include="..\..\src\raytracer\samplers\Sampler.hpp">
       <Filter>samplers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\OpenGLApp.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\src\raytracer\CMakeLists.txt" />

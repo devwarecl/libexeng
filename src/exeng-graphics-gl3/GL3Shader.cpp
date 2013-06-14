@@ -12,6 +12,8 @@
  */
 
 
+#include "GL3.hpp"
+#include "GL3Utils.hpp"
 #include "GL3Shader.hpp"
 #include "GL3Debug.hpp"
 
@@ -23,26 +25,13 @@ namespace exeng  {
 namespace graphics {
 namespace gl3 {
 
-std::map<ShaderType, GLenum> convShaderType =  {
-    {ShaderType::Vertex, GL_VERTEX_SHADER},
-    {ShaderType::Fragment, GL_FRAGMENT_SHADER},
-    {ShaderType::Geometry, GL_GEOMETRY_SHADER}
-};
-
-
-std::map<ShaderType, std::string> shaderTypeStrMap = {
-    {ShaderType::Vertex, "vertex"},
-    {ShaderType::Fragment, "fragment"},
-    {ShaderType::Geometry, "geometry"}
-};
-
 
 GL3Shader::GL3Shader(ShaderType type) {
     this->name = 0;
     this->modified = false;
     this->compiled = false;
     this->type = type;
-    this->name = ::glCreateShader(convShaderType[type]);
+    this->name = ::glCreateShader(convShaderType(type));
     
     GL3_CHECK();
 }
@@ -105,7 +94,7 @@ void GL3Shader::compile() {
             ::glGetShaderInfoLog(this->name, infoLogLength, NULL, (GLchar*) infoLog.c_str());
             
             throw std::runtime_error("GL3Shader::compile: Compile failure in " + 
-                                     shaderTypeStrMap[this->type] + " shader: \n" + infoLog);
+                                     shaderTypeStr(this->type) + " shader: \n" + infoLog);
         }
         
         GL3_CHECK();

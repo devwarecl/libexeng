@@ -32,7 +32,7 @@ namespace exeng {
         /**
          * @brief The ColorChannel struct
          */
-        struct ColorChannel {
+        struct EXENGAPI ColorChannel {
             ColorComponent component;   //! The color channel
             uint16_t size;              //! The size in bits, of the color channel
             
@@ -40,9 +40,42 @@ namespace exeng {
                 component(ColorComponent::None), size(0) {
             }
             
+            
             inline ColorChannel(ColorComponent c, uint16_t s) : 
                 component(c), size(s) {
             }
+            
+            
+            inline bool operator== (const ColorChannel &other) const {
+                if (this->component != other.component) {
+                    return false;
+                }
+                
+                if (this->size != other.size) {
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            
+            inline bool operator!= (const ColorChannel &other) const {
+                return ! (*this == other);
+            }
+            
+            
+            inline bool operator< (const ColorChannel &other) const {
+                if (this->size >= other.size) {
+                    return false;
+                }
+                
+                return this->component < other.component;
+            }
+
+
+			inline bool operator>= (const ColorChannel &other) const {
+				return ! (*this < other);
+			}
         };
         
         /**
@@ -63,9 +96,15 @@ namespace exeng {
             /**
              * @brief Initializes the color format to a default state.
              *
-             * The default state consists only on a empty color format.
+             * The default state consists only on a empty color format, 
+             * and it's not valid.
              */
             ColorFormat();
+            ColorFormat(uint16_t size, 
+                        const ColorChannel &c1 = ColorChannel(ColorComponent::None, 0), 
+                        const ColorChannel &c2 = ColorChannel(ColorComponent::None, 0), 
+                        const ColorChannel &c3 = ColorChannel(ColorComponent::None, 0), 
+                        const ColorChannel &c4 = ColorChannel(ColorComponent::None, 0));
             
             /**
              * @brief Check if the color format is valid
@@ -79,6 +118,11 @@ namespace exeng {
              * in the contrary case.
              */
             bool isValid() const;
+            
+            bool operator== (const ColorFormat &other) const;
+            bool operator!= (const ColorFormat &other) const;
+            
+            bool operator< (const ColorFormat &other) const;
         };
     }
 }

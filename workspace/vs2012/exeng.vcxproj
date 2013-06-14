@@ -41,9 +41,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>../../src/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>../../src/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -87,24 +89,43 @@
     <Text Include="..\..\src\exeng\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\exeng\audio\AudioBuffer.hpp" />
+    <ClInclude Include="..\..\src\exeng\audio\Listener.hpp" />
+    <ClInclude Include="..\..\src\exeng\audio\Manager.hpp" />
+    <ClInclude Include="..\..\src\exeng\audio\Source.hpp" />
     <ClInclude Include="..\..\src\exeng\Buffer.hpp" />
     <ClInclude Include="..\..\src\exeng\Config.hpp" />
+    <ClInclude Include="..\..\src\exeng\DataType.hpp" />
     <ClInclude Include="..\..\src\exeng\DataTypes.hpp" />
     <ClInclude Include="..\..\src\exeng\DetectEnv.hpp" />
     <ClInclude Include="..\..\src\exeng\Exeng.hpp" />
+    <ClInclude Include="..\..\src\exeng\framework\Application.hpp" />
+    <ClInclude Include="..\..\src\exeng\framework\Main.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\ColorFormat.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\GraphicsDriver.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\GraphicsDriverBase.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\GraphicsManager.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\HeapIndexBuffer.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\HeapVertexBuffer.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\Image.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\IndexArray.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\IndexBuffer.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\Material.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\PixelFormat.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\PixelType.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\Color.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\Primitive.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\Screen.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\Shader.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\ShaderProgram.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\Texture.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\VertexArray.hpp" />
     <ClInclude Include="..\..\src\exeng\graphics\VertexBuffer.hpp" />
-    <ClInclude Include="..\..\src\exeng\graphics\VertexBufferFormat.hpp" />
+    <ClInclude Include="..\..\src\exeng\graphics\VertexFormat.hpp" />
     <ClInclude Include="..\..\src\exeng\HeapBuffer.hpp" />
+    <ClInclude Include="..\..\src\exeng\input\IEventHandler.hpp" />
+    <ClInclude Include="..\..\src\exeng\input\IEventRaiser.hpp" />
+    <ClInclude Include="..\..\src\exeng\input\InputData.hpp" />
     <ClInclude Include="..\..\src\exeng\math\Common.hpp" />
     <ClInclude Include="..\..\src\exeng\math\Operations.hpp" />
     <ClInclude Include="..\..\src\exeng\math\TBoundary.hpp" />
@@ -116,11 +137,17 @@
     <ClInclude Include="..\..\src\exeng\Root.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\Camera.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\Geometry.hpp" />
+    <ClInclude Include="..\..\src\exeng\scenegraph\IMeshLoader.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\IntersectInfo.hpp" />
+    <ClInclude Include="..\..\src\exeng\scenegraph\ISceneRenderer.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\Light.hpp" />
+    <ClInclude Include="..\..\src\exeng\scenegraph\Mesh.hpp" />
+    <ClInclude Include="..\..\src\exeng\scenegraph\MeshManager.hpp" />
+    <ClInclude Include="..\..\src\exeng\scenegraph\MeshPart.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\Plane.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\Ray.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\Scene.hpp" />
+    <ClInclude Include="..\..\src\exeng\scenegraph\SceneManager.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\SceneNode.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\SceneNodeData.hpp" />
     <ClInclude Include="..\..\src\exeng\scenegraph\Sphere.hpp" />
@@ -133,20 +160,44 @@
     <ClInclude Include="..\..\src\exeng\Version.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\exeng\audio\AudioBuffer.cpp" />
+    <ClCompile Include="..\..\src\exeng\audio\Listener.cpp" />
+    <ClCompile Include="..\..\src\exeng\audio\Manager.cpp" />
+    <ClCompile Include="..\..\src\exeng\audio\Source.cpp" />
     <ClCompile Include="..\..\src\exeng\Buffer.cpp" />
-    <ClCompile Include="..\..\src\exeng\graphics\GraphicsDriverBase.cpp" />
+    <ClCompile Include="..\..\src\exeng\framework\Application.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\ColorFormat.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\GraphicsDriver.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\GraphicsManager.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\HeapIndexBuffer.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\HeapVertexBuffer.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\Image.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\IndexBuffer.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\Material.cpp" />
     <ClCompile Include="..\..\src\exeng\graphics\PixelFormat.cpp" />
-    <ClCompile Include="..\..\src\exeng\graphics\VertexBufferFormat.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\Shader.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\ShaderProgram.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\Texture.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\VertexBuffer.cpp" />
+    <ClCompile Include="..\..\src\exeng\graphics\VertexFormat.cpp" />
     <ClCompile Include="..\..\src\exeng\HeapBuffer.cpp" />
+    <ClCompile Include="..\..\src\exeng\input\IEventHandler.cpp" />
+    <ClCompile Include="..\..\src\exeng\input\IEventRaiser.cpp" />
+    <ClCompile Include="..\..\src\exeng\input\InputData.cpp" />
     <ClCompile Include="..\..\src\exeng\Object.cpp" />
     <ClCompile Include="..\..\src\exeng\Root.cpp" />
     <ClCompile Include="..\..\src\exeng\scenegraph\Camera.cpp" />
     <ClCompile Include="..\..\src\exeng\scenegraph\Geometry.cpp" />
-    <ClCompile Include="..\..\src\exeng\scenegraph\IntersectInfo.cpp" />
+    <ClCompile Include="..\..\src\exeng\scenegraph\IMeshLoader.cpp" />
+    <ClCompile Include="..\..\src\exeng\scenegraph\IntersectInfo.inl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeng\scenegraph\ISceneRenderer.cpp" />
     <ClCompile Include="..\..\src\exeng\scenegraph\Light.cpp" />
+    <ClCompile Include="..\..\src\exeng\scenegraph\Mesh.cpp" />
+    <ClCompile Include="..\..\src\exeng\scenegraph\MeshManager.cpp" />
+    <ClCompile Include="..\..\src\exeng\scenegraph\MeshPart.cpp" />
     <ClCompile Include="..\..\src\exeng\scenegraph\Plane.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -156,6 +207,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\src\exeng\scenegraph\Scene.cpp" />
+    <ClCompile Include="..\..\src\exeng\scenegraph\SceneManager.cpp" />
     <ClCompile Include="..\..\src\exeng\scenegraph\SceneNode.cpp" />
     <ClCompile Include="..\..\src\exeng\scenegraph\SceneNodeData.cpp" />
     <ClCompile Include="..\..\src\exeng\scenegraph\Sphere.inl">
@@ -171,7 +223,10 @@
     <ClCompile Include="..\..\src\exeng\Version.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\src\exeng\DataType.inl" />
+    <None Include="..\..\src\exeng\framework\Main.inl" />
     <None Include="..\..\src\exeng\graphics\Color.inl" />
+    <None Include="..\..\src\exeng\graphics\GraphicsDriverBase.inl" />
     <None Include="..\..\src\exeng\math\Common.inl" />
     <None Include="..\..\src\exeng\math\Operations.inl" />
     <None Include="..\..\src\exeng\math\TBoundary.inl" />

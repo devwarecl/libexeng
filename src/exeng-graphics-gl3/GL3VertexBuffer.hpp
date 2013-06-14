@@ -16,7 +16,7 @@
 
 #include <exeng/graphics/VertexBuffer.hpp>
 #include <exeng/HeapBuffer.hpp>
-#include <GL/glcorearb.h>
+#include "GL3.hpp"
 
 namespace exeng {
     namespace graphics {

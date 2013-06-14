@@ -50,7 +50,7 @@ namespace exeng {
 		
 	template< typename _EnumType, typename _StorageType>
 	bool TFlags<_EnumType, _StorageType>::getFlag(_EnumType Flag) const {
-		return static_cast<bool>(this->value & Flag);
+		return this->value&Flag ? true : false;
 	}
 
 		
