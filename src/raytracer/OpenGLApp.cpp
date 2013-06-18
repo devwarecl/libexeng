@@ -28,7 +28,16 @@ void OpenGLApp::initialize(const StringVector& cmdLine) {
     
     // Initialize the exeng root class and plugins.
     this->root = new Root();
-    this->root->getPluginManager()->load("exeng-graphics-gl3", "../exeng-graphics-gl3/");
+
+    std::string path;
+
+#if defined (EXENG_WINDOWS)
+    path = "./x64/Debug/";
+#else
+    path = "../exeng-graphics-gl3/";
+#endif
+
+    this->root->getPluginManager()->load("exeng-graphics-gl3", path);
     
     // initialize the gl3 driver, in windoed mode
     this->driver = this->root->getGraphicsManager()->createDriver();

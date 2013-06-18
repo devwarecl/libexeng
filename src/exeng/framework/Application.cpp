@@ -43,7 +43,8 @@ int Application::run(Application *theApp, const StringVector& cmdLine) {
         return exitCode;
         
     } catch(const std::exception &exp) {
-        std::cout << "Unhandled exception :" << exp.what() << std::endl;
+        std::cout << "Unhandled exception:" << std::endl ;
+        std::cout << exp.what() << std::endl;
         return -1;
     }
 }

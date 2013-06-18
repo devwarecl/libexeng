@@ -87,6 +87,18 @@ namespace exeng {
                 
                 virtual void setShaderProgram(const ShaderProgram *program);
                 
+                /**
+                 * @brief preRenderMaterial
+                 * @param Apply the render states of the material
+                 */
+                void preRenderMaterial(const Material &material);
+                
+                /**
+                 * @brief postRenderMaterial
+                 * @param Restore render state to originals
+                 */
+                void postRenderMaterial(const Material &material);
+                
             private:
                 std::list<exeng::input::IEventHandler*> eventHandlers;
                 

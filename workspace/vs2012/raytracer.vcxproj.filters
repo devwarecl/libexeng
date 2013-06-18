@@ -13,8 +13,8 @@
     <ClCompile Include="..\..\src\raytracer\samplers\Sampler.cpp">
       <Filter>samplers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\raytracer\Main.cpp" />
     <ClCompile Include="..\..\src\raytracer\OpenGLApp.cpp" />
+    <ClCompile Include="..\..\src\raytracer\RayTracerMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\raytracer\RayTracerApp.hpp" />

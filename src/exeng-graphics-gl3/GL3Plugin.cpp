@@ -23,7 +23,7 @@ namespace exeng {
 namespace graphics {
 namespace gl3 {
 
-    GL3Plugin::GL3Plugin() : factory(nullptr) {
+    GL3Plugin::GL3Plugin() : factory(nullptr), root(nullptr) {
         std::cout << "GL3Plugin::GL3Plugin()" << std::endl;
         this->factory = new GL3GraphicsDriverFactory();
         this->creator = nullptr;

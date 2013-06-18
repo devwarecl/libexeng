@@ -319,7 +319,7 @@ namespace exeng {
         
         int Mesh::getPartCount() const {
             assert(this->impl != nullptr);
-            return this->impl->parts.size();
+            return static_cast<int>(this->impl->parts.size());
         }
         
     

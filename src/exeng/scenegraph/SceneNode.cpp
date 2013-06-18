@@ -135,7 +135,7 @@ namespace exeng {
 
         int SceneNode::getChildCount() const {
             assert(this->impl != NULL);
-            return this->impl->childVector.size();
+            return static_cast<int>(this->impl->childVector.size());
         }
 
 

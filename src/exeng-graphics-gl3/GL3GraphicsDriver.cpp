@@ -411,6 +411,16 @@ namespace gl3 {
         
         GL3_CHECK();
     }
+    
+    
+    void GL3GraphicsDriver::preRenderMaterial(const Material &material) {
+        
+    }
+    
+    
+    void GL3GraphicsDriver::postRenderMaterial(const Material &material) {
+        
+    }
 }
 }
 }
