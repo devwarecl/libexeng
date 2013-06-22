@@ -157,10 +157,13 @@ namespace raytracer {
             if (info.intersect == true)  {
                 // Determinar el color
                 auto factor = info.normal.dot(ray.getDirection());
-                color += info.materialPtr->getDiffuse() * factor;
-            } /*else {
+                
+                auto vcolor = info.materialPtr->getPropertyValueVector4f("diffuse");
+                
+                color += Color(vcolor) * factor;
+            } else {
                 color += this->scene->getBackgroundColor();
-            } */
+            }
         }
         
         auto sampleCountf = static_cast<float>(this->sampler->getSampleCount());
@@ -193,10 +196,10 @@ namespace raytracer {
         auto sphereGeometry2 = new SphereGeometry();
         
         sphereGeometry->sphere.setAttributes(75.0, Vector3f(-100.0f, 0.0f, 0.0f));
-        sphereGeometry->material.setDiffuse(Color(1.0f, 0.5f, 0.25f, 1.0f));
+        sphereGeometry->material.setPropertyValue("diffuse", Vector4f(1.0f, 0.5f, 0.25f, 1.0f));
         
         sphereGeometry2->sphere.setAttributes(150.0, Vector3f(150.0f, 0.0f, 0.0f));
-        sphereGeometry2->material.setDiffuse(Color(0.0f, 0.0f, 1.0f, 1.0f));
+        sphereGeometry2->material.setPropertyValue("diffuse", Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
         
         rootNode->addChildPtr("sphereGeometry")->setDataPtr(sphereGeometry);
         rootNode->addChildPtr("sphereGeometry2")->setDataPtr(sphereGeometry2);

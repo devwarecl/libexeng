@@ -42,8 +42,8 @@ PluginLibrary::~PluginLibrary() {
     The plugin object depends on the library object, because 
     we get the plugin object from a routine from the library, AND
     that library is responsible of the lifetime of the plugin object.
-    So, to avoid hard-to-find segmentation faults, first terminate the plugin,
-    and later, destroy the library object.
+    So, to avoid hard-to-find segmentation faults, first we must 
+    terminate the plugin, and later, destroy the library object.
     */
             
     assert(this->library != nullptr);

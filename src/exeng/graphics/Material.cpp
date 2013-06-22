@@ -14,285 +14,245 @@
 #include <cassert>
 #include <stdexcept>
 #include <cstring>
+#include <map>
 #include <boost/shared_ptr.hpp>
 #include <boost/checked_delete.hpp>
 
 #include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/Texture.hpp>
 
+using namespace exeng;
+using namespace exeng::math;
+
 namespace exeng {
-    namespace graphics {
-        struct MaterialLayer::Private {
-            Texture* textureMap;
-            
-            Private() {
-                this->textureMap = nullptr;
-            }
-        };
-        
-        
-        MaterialLayer::MaterialLayer() : impl(nullptr) {
-            this->impl = new MaterialLayer::Private();
-        }
-        
-            
-        MaterialLayer::~MaterialLayer() {
-            boost::checked_delete(this->impl);
-        }
-        
-        
-        const Texture* MaterialLayer::getTexture() const {
-            assert(this->impl != nullptr);
-            return this->impl->textureMap;
-        }
-        
-        
-        Texture* MaterialLayer::getTexture() {
-            assert(this->impl != nullptr);
-            return this->impl->textureMap;
-        }
-        
-        
-        void MaterialLayer::setTexture(Texture* tex) {
-            assert(this->impl != nullptr);
-            this->impl->textureMap = tex;
-        }
-
-
-        bool MaterialLayer::operator== (const MaterialLayer& other) const {
-            assert(this->impl != nullptr);
-            return this->impl->textureMap == other.impl->textureMap;
-        }
-
-        
-        bool MaterialLayer::operator!= (const MaterialLayer& other) const {
-            assert(this->impl != nullptr);
-            return ! (*this == other);
-        }
-
-
-        MaterialLayer& MaterialLayer::operator= (const MaterialLayer& other) {
-            assert(this->impl != nullptr);
-            this->impl->textureMap = other.impl->textureMap;
-            return *this;
-        }
+namespace graphics {
+struct MaterialLayer::Private {
+    Texture* texture;
+    
+    Private() : texture(nullptr) {
     }
+};
+
+
+MaterialLayer::MaterialLayer() : impl( new MaterialLayer::Private() ) {
+}
+
+    
+MaterialLayer::~MaterialLayer() {
+    boost::checked_delete(this->impl);
 }
 
 
-// Implementacion del material
+const Texture* MaterialLayer::getTexture() const {
+    assert(this->impl != nullptr);
+    return this->impl->texture;
+}
+
+
+Texture* MaterialLayer::getTexture() {
+    assert(this->impl != nullptr);
+    return this->impl->texture;
+}
+
+
+void MaterialLayer::setTexture(Texture* texture) {
+    assert(this->impl != nullptr);
+    this->impl->texture = texture;
+}
+
+}
+}
+
+// Material implementation
 namespace exeng {
-    namespace graphics {
-        using namespace exeng::math;
-        
-        /**
-         *  @brief La cantidad maxima de capas de textura soportadas por un material
-         */
-        static const int LayerCount = 8;
-        
-        /**
-         *  @brief Atributos y funciones privadas del material
-         */
-        struct Material::Private {
-            std::string name;
-            Color ambient, diffuse, specular, emissive;
-            float shininess;
-            MaterialLayer layers[LayerCount];
-            
-            Private() {
-                this->ambient.set(0.8f, 0.8f, 0.8f, 1.0f);
-                this->diffuse.set(0.2f, 0.2f, 0.2f, 1.0f);
-                this->specular.set(0.0f, 0.0f, 0.0f, 1.0f);
-                this->emissive.set(0.0f, 0.0f, 0.0f, 1.0f);
-                this->shininess = 0.0;
-            }
-        };
-        
-        
-        Material::Material()  {
-            this->impl = new Material::Private();
-        }
+namespace graphics {
+using namespace exeng::math;
 
-        
-        Material::Material(const Material& Other) {
-            assert(this->impl != NULL);
+static const int LayerCount = 4;
 
-            *this = Other;
-        }
-        
-        
-        Material::~Material() {
-            boost::checked_delete(this->impl);
-        }
-
-        
-        void Material::setAmbient( const Color &color ) {
-            assert(this->impl != NULL);
-            this->impl->ambient = color;
-        }
-        
-        
-        void Material::setDiffuse( const Color &color ) {
-            assert(this->impl != NULL);
-            this->impl->diffuse = color;
-        }
-        
-        
-        void Material::setSpecular( const Color &color) {
-            assert(this->impl != NULL);
-            this->impl->specular = color;
-        }
-        
-        
-        void Material::setEmissive( const Color &color ) {
-            assert(this->impl != NULL);
-            this->impl->emissive = color;
-        }
-        
-        
-        void Material::setShininess( float Value) {
-            assert(this->impl != NULL);
-            this->impl->shininess = Value;
-        }
-        
-
-        Color Material::getAmbient() const {
-            assert(this->impl != NULL);
-            return this->impl->ambient;
-        }
-        
-        
-        Color Material::getDiffuse() const {
-            assert(this->impl != NULL);
-            return this->impl->diffuse;
-        }
-        
-        
-        Color Material::getSpecular() const {
-            assert(this->impl != NULL);
-            return this->impl->specular;
-        }
-        
-        
-        Color Material::getEmissive() const {
-            assert(this->impl != NULL);
-            return this->impl->emissive;
-        }
-        
-        
-        float Material::getShininess() const {
-            assert(this->impl != NULL);
-            return this->impl->shininess;
-        }
-        
-        
-        std::string Material::getName() const {
-            assert(this->impl != NULL);
-            return this->impl->name;
-        }
-
-        
-        void Material::setName(const std::string& name) {
-            assert(this->impl != NULL);
-            this->impl->name = name;
-        }
-            
-        
-        MaterialLayer& Material::getLayerRef(int index) {
-            assert(this->impl != NULL);
-
-#ifdef EXENG_DEBUG
-            if (index >= LayerCount)
-                throw std::out_of_range("");
-#endif
-
-            return this->impl->layers[index];
-        }
-
-
-        const MaterialLayer& Material::getLayerRef(int index) const {
-            assert(this->impl != NULL);
-
-#ifdef EXENG_DEBUG
-            if (index >= LayerCount) {
-                throw std::out_of_range("");
-			}
-#endif
-
-            return this->impl->layers[index];
-        }
-
-
-        Material* Material::clone() const {
-            Material* result = new Material();
-            result->assign(*this);
-            return result;
-        }
-
-
-        bool Material::equals(const Object &other) const {
-            if (this->getTypeInfo() != other.getTypeInfo()) {
-                return false;
-            }
-
-            auto &otherMaterial = static_cast<const Material&>(other);
-
-            if (this != &otherMaterial) {
-                Material::Private *impl = NULL, *otherImpl = NULL;
-
-                // Sacar los objetos de implementacion
-                // Asi nos ahorramos una indireccion, y mayor eficiencia en entornos
-                // de depuracion
-                impl = this->impl;
-                otherImpl = otherMaterial.impl;
-
-                // Comparar las componetes de color
-                if (impl->ambient != otherImpl->ambient) return false;
-                if (impl->diffuse != otherImpl->diffuse) return false;
-                if (impl->specular != otherImpl->specular) return false;
-                if (impl->emissive != otherImpl->emissive) return false;
-                if (impl->shininess != otherImpl->shininess) return false;
-
-                // Comparar las capas de textura
-                for (int i=0; i<exeng::graphics::LayerCount; ++i) {
-                    if ( impl->layers[i] != otherImpl->layers[i])
-                        return false;
-                }
-            }
-
-            return true;
-        }
-
-        
-        bool Material::lesserThan(const Object& other) const {
-            if (other.getTypeInfo() != this->getTypeInfo()) {
-                throw std::bad_cast();
-            }
-
-            auto &otherMaterial = static_cast<const Material&>(other);
-
-            return (this->getName().compare(otherMaterial.getName()) < 0);
-        }
-
-        
-        void Material::assign(const Object& other) {
-            if (other.getTypeInfo() != this->getTypeInfo()) {   
-                throw std::bad_cast();
-            }
-
-            auto &otherMaterial = static_cast<const Material&>(other);
-
-            *this->impl = *otherMaterial.impl;
-        }
-        
-
-        TypeInfo Material::getTypeInfo() const {
-            return TypeInfo(typeid(Material));
-        }
-
-
-        const int Material::getLayerCount() {
-            return LayerCount;
-        }
+// Holds the raw value for a property
+struct PropertyValue {    
+    // Big enough to hold a four dimensional vector of doubles
+    uint8_t rawData[32];    
+    
+    // Used for error checking
+    TypeInfo typeInfo;
+    
+    inline PropertyValue() : typeInfo( TypeInfo::get<void>() ) {
     }
+    
+    
+    inline PropertyValue(const TypeInfo &info) : typeInfo(info) {
+        ::memset(rawData, sizeof(rawData), 0);
+    }
+    
+    
+    template<typename ValueType>
+    inline bool checkType() const {
+        return typeInfo != TypeInfo::get<ValueType>();
+    }
+    
+    
+    template<typename ValueType>
+    inline void setValue( const ValueType &value ) {
+#if defined(EXENG_DEBUG)
+        if (this->checkType<ValueType>() == false)
+            throw std::runtime_error("PropertyMap::setValue: The types doesn't coincides.");
+        }
+#endif
+        *reinterpret_cast<ValueType*>(this->rawData) = value;
+    }
+    
+    
+    template<typename ValueType>
+    inline ValueType getValue() const {
+#if defined(EXENG_DEBUG)
+        if (this->checkType<ValueType>() == false)
+            throw std::runtime_error("PropertyMap::setValue: The types doesn't coincides.");
+        }
+#endif
+        return *reinterpret_cast<const ValueType*>(this->rawData);
+    }
+};
+
+
+template<typename ValueType>
+inline PropertyValue makePropertyValue(const ValueType &value) {
+    PropertyValue propertyValue( TypeInfo::get<ValueType>() );
+    
+    propertyValue.setValue(value);
+    
+    return propertyValue;
+}
+
+
+typedef std::map<std::string, PropertyValue> PropertyMap;
+typedef PropertyMap::iterator PropertyMapIt;
+
+struct Material::Private {
+    std::string name;
+    PropertyMap properties;
+    MaterialLayer layers[LayerCount];
+    
+    Private() {
+    }    
+    
+    template<typename ValueType>
+    void setPropertyValue(const std::string &name, const ValueType &value) {
+    }
+};
+
+
+Material::Material() : impl(nullptr) {
+    this->impl = new Material::Private();
+}
+
+
+Material::~Material() {
+    boost::checked_delete(this->impl);
+}
+
+
+void Material::setPropertyValue(const std::string &name, float value) {
+    assert( this->impl != nullptr );
+    this->impl->properties[name] = makePropertyValue(value);
+}
+
+
+void Material::setPropertyValue(const std::string &name, const Vector2f &value) {
+    assert( this->impl != nullptr );
+    this->impl->properties[name] = makePropertyValue(value);
+}
+
+
+void Material::setPropertyValue(const std::string &name, const Vector3f &value) {
+    assert( this->impl != nullptr );
+    this->impl->properties[name] = makePropertyValue(value);
+}
+
+
+void Material::setPropertyValue(const std::string &name, const Vector4f &value) {
+    assert( this->impl != nullptr );
+    
+    this->impl->properties[name] = makePropertyValue(value);
+}
+
+
+float Material::getPropertyValueFloat(const std::string &name) const {
+    assert( this->impl != nullptr );
+    
+    return this->impl->properties[name].getValue<float>();
+}
+
+
+Vector2f Material::getPropertyValueVector2f(const std::string &name) const {
+    assert( this->impl != nullptr );
+    
+    return this->impl->properties[name].getValue<Vector2f>();
+}
+
+
+Vector3f Material::getPropertyValueVector3f(const std::string &name) const {
+    assert( this->impl != nullptr );
+    
+    return this->impl->properties[name].getValue<Vector3f>();
+}
+
+
+Vector4f Material::getPropertyValueVector4f(const std::string &name) const {
+    assert( this->impl != nullptr );
+    
+    return this->impl->properties[name].getValue<Vector4f>();
+}
+
+
+std::string Material::getName() const {
+    assert(this->impl != nullptr);
+    return this->impl->name;
+}
+
+
+void Material::setName(const std::string& name) {
+    assert(this->impl != nullptr);
+    this->impl->name = name;
+}
+    
+
+MaterialLayer* Material::getLayer(int index) {
+    assert(this->impl != nullptr);
+
+#ifdef EXENG_DEBUG
+    if (index < 0 || index >= LayerCount) {
+        throw std::out_of_range("Material::getLayer: Index out of range.");
+    }
+#endif
+
+    return &this->impl->layers[index];
+}
+
+
+const MaterialLayer* Material::getLayer(int index) const {
+    assert(this->impl != nullptr);
+
+#ifdef EXENG_DEBUG
+    if (index < 0 || index >= LayerCount) {
+        throw std::out_of_range("Material::getLayer: Index out of range.");
+    }
+#endif
+
+    return &this->impl->layers[index];
+}
+
+
+TypeInfo Material::getTypeInfo() const {
+    return TypeInfo(typeid(Material));
+}
+
+
+const int Material::getLayerCount() {
+    return LayerCount;
+}
+
+
+}
 }

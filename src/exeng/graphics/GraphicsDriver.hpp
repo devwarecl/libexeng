@@ -1,5 +1,5 @@
 /**
- * @file 
+ * @file GraphicsDriver.hpp
  * @brief GraphicsDriver class API and support structures and enumerations.
  */
 
@@ -191,7 +191,7 @@ public:
     /**
      * @brief Set the currently used material
      */
-    virtual void setMaterial(const Material* Mat) = 0;
+    virtual void setMaterial(const Material* material) = 0;
     
     /**
      * @brief Get the currently used material
@@ -206,12 +206,12 @@ public:
     /**
      * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
      */
-    virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount) = 0;
+    virtual IndexBuffer* createIndexBuffer( IndexFormat indexFormat, int indexCount) = 0;
     
     /**
      * @brief Create a new texture object.
      */
-    virtual Texture* createTexture(TextureType TextureType, const exeng::math::Vector3f& TextureSize) = 0;
+    virtual Texture* createTexture(TextureType textureType, const exeng::math::Vector3f& textureSize) = 0;
     
     /**
      * @brief Set the current transformation matrix
@@ -249,13 +249,14 @@ public:
     virtual Shader* createShader( ShaderType type ) = 0;
     
     /**
-     * @brief createShaderProgram
-     * @return 
+     * @brief Create a new shader program, specific to the current graphics driver.
+     * @return A new shader program, instance of an derived implementation class of the 
+     * ShaderProgram abstract class.
      */
     virtual ShaderProgram* createShaderProgram( ) = 0;
     
     /**
-     * @brief setShaderProgram
+     * @brief Set the currently used shader program used in rendering calls.
      * @param program
      */
     virtual void setShaderProgram(const ShaderProgram *program) = 0;

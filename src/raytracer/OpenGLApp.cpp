@@ -39,7 +39,7 @@ void OpenGLApp::initialize(const StringVector& cmdLine) {
 
     this->root->getPluginManager()->load("exeng-graphics-gl3", path);
     
-    // initialize the gl3 driver, in windoed mode
+    // initialize the gl3 driver, in windowed mode
     this->driver = this->root->getGraphicsManager()->createDriver();
     
     DisplayMode mode;
@@ -109,7 +109,7 @@ void OpenGLApp::initialize(const StringVector& cmdLine) {
     this->program->addShader(this->fragmentShader);
     this->program->link();
     
-    // Transformations
+    // transformations
     this->triangleTransform.identity();
 }
 
@@ -155,7 +155,6 @@ void OpenGLApp::render() {
     this->driver->render(Primitive::TriangleStrip, 4);
     
     this->driver->endFrame();
-    
 }
 
 int OpenGLApp::getExitCode() const {
