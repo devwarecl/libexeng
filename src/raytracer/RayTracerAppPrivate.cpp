@@ -18,7 +18,7 @@ namespace raytracer {
         this->defaultColor = 0xFF000000;
         this->backbuffer = nullptr;
         this->running = false;
-        this->cameraView.size.set(320, 200);
+        this->cameraView.size = Vector2i(320, 200);
         
         this->sampler.reset(new JitteredSampler(25));
         this->scene.reset(new Scene());
@@ -27,6 +27,10 @@ namespace raytracer {
     
     uint32_t RayTracerApp::Private::pointToOffset(const Vector2i &point) const {
 #ifdef EXENG_DEBUG
+        if (point.x < 0 || point.y < 0) {
+            throw std::invalid_argument("");
+        }
+        
         if (point.x >= this->cameraView.size.x) {
             throw std::invalid_argument("");
         }
@@ -158,7 +162,7 @@ namespace raytracer {
                 // Determinar el color
                 auto factor = info.normal.dot(ray.getDirection());
                 
-                auto vcolor = info.materialPtr->getPropertyValueVector4f("diffuse");
+                auto vcolor = info.materialPtr->getProperty4f("diffuse");
                 
                 color += Color(vcolor) * factor;
             } else {
@@ -196,10 +200,10 @@ namespace raytracer {
         auto sphereGeometry2 = new SphereGeometry();
         
         sphereGeometry->sphere.setAttributes(75.0, Vector3f(-100.0f, 0.0f, 0.0f));
-        sphereGeometry->material.setPropertyValue("diffuse", Vector4f(1.0f, 0.5f, 0.25f, 1.0f));
+        sphereGeometry->material.setProperty("diffuse", Vector4f(1.0f, 0.5f, 0.25f, 1.0f));
         
         sphereGeometry2->sphere.setAttributes(150.0, Vector3f(150.0f, 0.0f, 0.0f));
-        sphereGeometry2->material.setPropertyValue("diffuse", Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+        sphereGeometry2->material.setProperty("diffuse", Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
         
         rootNode->addChildPtr("sphereGeometry")->setDataPtr(sphereGeometry);
         rootNode->addChildPtr("sphereGeometry2")->setDataPtr(sphereGeometry2);

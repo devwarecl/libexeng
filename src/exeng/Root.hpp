@@ -31,43 +31,26 @@ namespace exeng {
         class EXENGAPI GraphicsManager;
     }
     
+    
     /**
      * @brief The root class of the multimedia engine. 
-     *
-     * Permits the creation of various objects of several modules.
+     * 
+     * Holds all the extensible interfaces of the engine.
      */
 	class EXENGAPI Root {
 	public:
 		Root();
 		~Root();
         
-        /**
-         * @brief Get the current plugin manager.
-         */
 		exeng::system::PluginManager* getPluginManager();
-        
-        /**
-         * @brief Get the current plugin manager.
-         */
 		const exeng::system::PluginManager* getPluginManager() const;
         
-        /**
-         * @brief Get the current mesh manager.
-         */
         exeng::scenegraph::MeshManager* getMeshManager();
-        
-        /**
-         * @brief Get the current mesh manager.
-         */
         const exeng::scenegraph::MeshManager* getMeshManager() const;
-        
         
         exeng::graphics::GraphicsManager* getGraphicsManager();
         const exeng::graphics::GraphicsManager* getGraphicsManager() const;
         
-        /**
-         * @brief getVersion
-         */
         Version getVersion() const;
         
 	private:

@@ -15,6 +15,7 @@
 #define __EXENG_MATH_TVECTOR_HPP__
 
 #include <iosfwd>
+#include <algorithm>
 #include "Common.hpp"
 
 namespace exeng {
@@ -281,24 +282,14 @@ namespace exeng {
              */
             template<typename OtherType, int OtherSize>
             operator TVector<OtherType, OtherSize>() const {
-                TVector<OtherType, OtherSize> Result;
-                int MinSize, MaxSize;
-
-                if (OtherSize > Size) {
-                    MaxSize = OtherSize;
-                    MinSize = Size;
-                } else {
-                    MaxSize = Size;
-                    MinSize = OtherSize;
-                }
-
-                Result.set(static_cast<OtherType>(0));
-
-				for(int i=0; i<MinSize; ++i) {
-                    Result[i] = static_cast<OtherType>( this->data[i] );
+                TVector<OtherType, OtherSize> result(static_cast<OtherType>(0));
+                int minSize = std::min(OtherSize, Size);
+                
+				for(int i=0; i<minSize; ++i) {
+                    result[i] = static_cast<OtherType>( this->data[i] );
 				}
                 
-                return Result;
+                return result;
             }
             
         public:

@@ -26,7 +26,7 @@ namespace exeng {
 namespace graphics {
 namespace gl3 {
 
-inline GLenum convType( TextureType type ) {
+inline GLenum convTextureType( TextureType type ) {
     switch ( type ) {
     case TextureType::Tex1D: return GL_TEXTURE_1D;
     case TextureType::Tex2D: return GL_TEXTURE_2D;

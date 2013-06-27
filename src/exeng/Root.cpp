@@ -105,7 +105,7 @@ namespace exeng {
         return this->impl->graphicsManager;
     }
     
-    
+
     Version Root::getVersion() const {
         return Version(0, 0, 1, 1);
     }

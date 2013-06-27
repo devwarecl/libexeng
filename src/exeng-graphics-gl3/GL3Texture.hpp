@@ -23,9 +23,12 @@ namespace exeng {
 namespace graphics {
 namespace gl3 {
 
-class GL3Texture : public Object {
+class GL3Texture : public Texture {
 public:
-    GL3Texture(exeng::math::Vector3i size, ColorFormat colorFormat, TextureType type);
+    GL3Texture(Object *parent, 
+               TextureType type, 
+               exeng::math::Vector3i size, 
+               const ColorFormat &colorFormat);
     
     virtual ~GL3Texture();
 
@@ -54,6 +57,8 @@ private:
     exeng::math::Vector3i size;
     HeapBuffer buffer;
     void* textureData;
+    GLenum textureTarget;
+    GLenum internalFormat;
 };
 
 }

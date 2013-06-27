@@ -29,8 +29,7 @@ namespace graphics {
 struct MaterialLayer::Private {
     Texture* texture;
     
-    Private() : texture(nullptr) {
-    }
+    Private() : texture(nullptr) {}
 };
 
 
@@ -73,12 +72,13 @@ static const int LayerCount = 4;
 // Holds the raw value for a property
 struct PropertyValue {    
     // Big enough to hold a four dimensional vector of doubles
-    uint8_t rawData[32];    
+    uint8_t rawData[32];
     
     // Used for error checking
     TypeInfo typeInfo;
     
     inline PropertyValue() : typeInfo( TypeInfo::get<void>() ) {
+        ::memset(rawData, sizeof(rawData), 0);
     }
     
     
@@ -96,7 +96,7 @@ struct PropertyValue {
     template<typename ValueType>
     inline void setValue( const ValueType &value ) {
 #if defined(EXENG_DEBUG)
-        if (this->checkType<ValueType>() == false)
+        if (this->checkType<ValueType>() == false) {
             throw std::runtime_error("PropertyMap::setValue: The types doesn't coincides.");
         }
 #endif
@@ -107,7 +107,7 @@ struct PropertyValue {
     template<typename ValueType>
     inline ValueType getValue() const {
 #if defined(EXENG_DEBUG)
-        if (this->checkType<ValueType>() == false)
+        if (this->checkType<ValueType>() == false) {
             throw std::runtime_error("PropertyMap::setValue: The types doesn't coincides.");
         }
 #endif
@@ -133,13 +133,10 @@ struct Material::Private {
     std::string name;
     PropertyMap properties;
     MaterialLayer layers[LayerCount];
+    const ShaderProgram *shaderProgram;
     
-    Private() {
+    Private() : shaderProgram(nullptr) {
     }    
-    
-    template<typename ValueType>
-    void setPropertyValue(const std::string &name, const ValueType &value) {
-    }
 };
 
 
@@ -153,53 +150,53 @@ Material::~Material() {
 }
 
 
-void Material::setPropertyValue(const std::string &name, float value) {
+void Material::setProperty(const std::string &name, float value) {
     assert( this->impl != nullptr );
     this->impl->properties[name] = makePropertyValue(value);
 }
 
 
-void Material::setPropertyValue(const std::string &name, const Vector2f &value) {
+void Material::setProperty(const std::string &name, const Vector2f &value) {
     assert( this->impl != nullptr );
     this->impl->properties[name] = makePropertyValue(value);
 }
 
 
-void Material::setPropertyValue(const std::string &name, const Vector3f &value) {
+void Material::setProperty(const std::string &name, const Vector3f &value) {
     assert( this->impl != nullptr );
     this->impl->properties[name] = makePropertyValue(value);
 }
 
 
-void Material::setPropertyValue(const std::string &name, const Vector4f &value) {
+void Material::setProperty(const std::string &name, const Vector4f &value) {
     assert( this->impl != nullptr );
     
     this->impl->properties[name] = makePropertyValue(value);
 }
 
 
-float Material::getPropertyValueFloat(const std::string &name) const {
+float Material::getPropertyf(const std::string &name) const {
     assert( this->impl != nullptr );
     
     return this->impl->properties[name].getValue<float>();
 }
 
 
-Vector2f Material::getPropertyValueVector2f(const std::string &name) const {
+Vector2f Material::getProperty2f(const std::string &name) const {
     assert( this->impl != nullptr );
     
     return this->impl->properties[name].getValue<Vector2f>();
 }
 
 
-Vector3f Material::getPropertyValueVector3f(const std::string &name) const {
+Vector3f Material::getProperty3f(const std::string &name) const {
     assert( this->impl != nullptr );
     
     return this->impl->properties[name].getValue<Vector3f>();
 }
 
 
-Vector4f Material::getPropertyValueVector4f(const std::string &name) const {
+Vector4f Material::getProperty4f(const std::string &name) const {
     assert( this->impl != nullptr );
     
     return this->impl->properties[name].getValue<Vector4f>();
@@ -253,6 +250,15 @@ const int Material::getLayerCount() {
     return LayerCount;
 }
 
+
+void Material::setShaderProgram(const ShaderProgram *shader) {
+    this->impl->shaderProgram = shader;
+}
+
+
+const ShaderProgram* Material::getShaderProgram() const {
+    return this->impl->shaderProgram;
+}
 
 }
 }

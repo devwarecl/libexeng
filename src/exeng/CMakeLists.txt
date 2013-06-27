@@ -19,6 +19,11 @@ add_library(exeng SHARED
 ./framework/Application.hpp ./framework/Application.cpp 
 ./framework/Main.hpp ./framework/Main.inl
 
+./compute/ComputeBuffer.cpp     ./compute/ComputeBuffer.hpp  
+./compute/ComputeDevice.cpp     ./compute/ComputeDevice.hpp  
+./compute/ComputeManager.cpp    ./compute/ComputeManager.hpp  
+./compute/Kernel.cpp            ./compute/Kernel.hpp                
+
 ./graphics/ShaderType.hpp ./graphics/TextureType.hpp 
 ./graphics/GraphicsDriver.hpp ./graphics/GraphicsDriver.cpp 
 ./graphics/GraphicsDriverBase.hpp ./graphics/GraphicsDriverBase.inl 

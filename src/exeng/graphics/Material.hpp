@@ -23,8 +23,11 @@ namespace exeng {
 	namespace graphics {
         class EXENGAPI Texture;
         
+        class EXENGAPI ShaderProgram;
+        
+        
         /**
-         * @brief Material Layer. Holds a texture, and associated 
+         * @brief Material Layer. Holds a texture, and associated state.
          */
         class EXENGAPI MaterialLayer {
         public:
@@ -66,19 +69,19 @@ namespace exeng {
             Material();
             virtual ~Material();
             
-            void setProperties(const std::vector< std::pair<std::string, TypeInfo> >  &properties);
+            void setProperty(const std::string &name, float value);
+            void setProperty(const std::string &name, const exeng::math::Vector2f &value);
+            void setProperty(const std::string &name, const exeng::math::Vector3f &value);
+            void setProperty(const std::string &name, const exeng::math::Vector4f &value);
             
-            std::vector<std::string> getProperties() const;
+            float getPropertyf(const std::string &name) const;
+            exeng::math::Vector2f getProperty2f(const std::string &name) const;
+            exeng::math::Vector3f getProperty3f(const std::string &name) const;
+            exeng::math::Vector4f getProperty4f(const std::string &name) const;
             
-            void setPropertyValue(const std::string &name, float value);
-            void setPropertyValue(const std::string &name, const exeng::math::Vector2f &value);
-            void setPropertyValue(const std::string &name, const exeng::math::Vector3f &value);
-            void setPropertyValue(const std::string &name, const exeng::math::Vector4f &value);
+            void setShaderProgram(const ShaderProgram *shader);
             
-            float getPropertyValueFloat(const std::string &name) const;
-            exeng::math::Vector2f getPropertyValueVector2f(const std::string &name) const;
-            exeng::math::Vector3f getPropertyValueVector3f(const std::string &name) const;
-            exeng::math::Vector4f getPropertyValueVector4f(const std::string &name) const;
+            const ShaderProgram* getShaderProgram() const;
             
             std::string getName() const;
             void setName(const std::string& name);

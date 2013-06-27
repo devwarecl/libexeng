@@ -211,7 +211,9 @@ public:
     /**
      * @brief Create a new texture object.
      */
-    virtual Texture* createTexture(TextureType textureType, const exeng::math::Vector3f& textureSize) = 0;
+    virtual Texture* createTexture(TextureType textureType, 
+                                   const exeng::math::Vector3f& textureSize,
+                                   const ColorFormat &format) = 0;
     
     /**
      * @brief Set the current transformation matrix

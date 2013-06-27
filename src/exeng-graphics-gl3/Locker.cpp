@@ -19,7 +19,7 @@ namespace graphics {
 namespace gl3 {
 
 Locker::Locker() : locked(false) {
-}    
+}
 
 
 void Locker::lock() {

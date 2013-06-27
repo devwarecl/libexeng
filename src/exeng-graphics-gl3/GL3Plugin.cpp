@@ -23,7 +23,7 @@ namespace exeng {
 namespace graphics {
 namespace gl3 {
 
-    GL3Plugin::GL3Plugin() : factory(nullptr), root(nullptr) {
+    GL3Plugin::GL3Plugin() : root(nullptr), factory(nullptr) {
         std::cout << "GL3Plugin::GL3Plugin()" << std::endl;
         this->factory = new GL3GraphicsDriverFactory();
         this->creator = nullptr;
@@ -57,11 +57,8 @@ namespace gl3 {
     
     
     void GL3Plugin::initialize(Root *root) {
-        
-        std::cout << "GL3Plugin::initialize: Initializing plugin... ";
-        
         if (this->root != nullptr) {
-            throw std::runtime_error("GL3Plugin::terminate: Can't "
+            throw std::runtime_error("GL3Plugin::initialize: Can't "
                                      "initialize the plugin if already been "
                                      "initialized.");
         } else {
@@ -74,9 +71,6 @@ namespace gl3 {
     
     
     void GL3Plugin::terminate() {
-        
-        std::cout << "GL3Plugin: Terminating plugin... ";
-        
         if (this->root == nullptr) {
             throw std::runtime_error("GL3Plugin::terminate: Can't "
                                      "terminate the plugin if has not been "

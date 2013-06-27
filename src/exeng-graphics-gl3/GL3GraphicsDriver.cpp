@@ -18,6 +18,7 @@
 #include "GL3GraphicsDriver.hpp"
 #include "GL3Debug.hpp"
 #include "GL3Shader.hpp"
+#include "GL3Texture.hpp"
 
 #include <exeng/DataType.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
@@ -216,7 +217,13 @@ namespace gl3 {
     
     void 
     GL3GraphicsDriver::setMaterial(const Material* material) {
+        if (this->material != nullptr && this->material != material) {
+            this->postRenderMaterial(this->material);
+        }
+        
         this->material = material;
+        
+        this->preRenderMaterial(material);
     }
     
     
@@ -240,8 +247,13 @@ namespace gl3 {
     
     Texture* 
     GL3GraphicsDriver::createTexture(TextureType type,
-                                     const Vector3f& size) {
-        return nullptr;
+                                     const Vector3f& size,
+                                     const ColorFormat &format) {
+        
+        auto *texture = new GL3Texture(this, type, size, format);
+        this->objects.push_back(texture);
+        
+        return texture;
     }
     
     
@@ -354,15 +366,15 @@ namespace gl3 {
     
     
     void GL3GraphicsDriver::setDisplayMode(const DisplayMode &displayMode) {
-        throw std::runtime_error("GL3GraphicsDriver::setDisplayMode: Not implemented.");
+        throw std::runtime_error("GL3GraphicsDriver::setDisplayMode: Not implemented yet.");
     }
     
     DisplayMode GL3GraphicsDriver::getDisplayMode() const {
-        throw std::runtime_error("GL3GraphicsDriver::getDisplayMode: Not implemented.");
+        throw std::runtime_error("GL3GraphicsDriver::getDisplayMode: Not implemented yet.");
     }
     
     void GL3GraphicsDriver::restoreDisplayMode() {
-        throw std::runtime_error("GL3GraphicsDriver::restoreDisplayMode: Not implemented.");
+        throw std::runtime_error("GL3GraphicsDriver::restoreDisplayMode: Not implemented yet.");
     }
     
     const VertexBuffer* GL3GraphicsDriver::getVertexBuffer() const {
@@ -413,12 +425,38 @@ namespace gl3 {
     }
     
     
-    void GL3GraphicsDriver::preRenderMaterial(const Material &material) {
+    void GL3GraphicsDriver::preRenderMaterial(const Material *material) {
+        assert(material != nullptr);
         
+        const GL3Texture *gl3texture = nullptr;
+        const Texture *texture = nullptr;
+        TypeInfo textureTypeInfo;
+        
+        // Set texture state
+        for(int i=0; i<material->getLayerCount(); ++i) {
+            ::glActiveTexture(GL_TEXTURE0 + i);
+            
+            if (material->getLayer(i)->hasTexture() == true) {
+                texture = material->getLayer(i)->getTexture();
+                textureTypeInfo = texture->getTypeInfo();
+                
+                if (textureTypeInfo != TypeInfo::get<GL3Texture>() ) {
+                    throw std::runtime_error("GL3GraphicsDriver::preRenderMaterial: "
+                                             "The supplied texture doesn't compatible.");
+                }
+                
+                gl3texture = static_cast<const GL3Texture*>(texture);
+                
+                ::glBindTexture( convTextureType(gl3texture->getType()), gl3texture->getTextureId() );
+            }
+        }
+        
+        // Set the shader program state
+        const ShaderProgram *shaderProgram = material->getShaderProgram();
     }
     
     
-    void GL3GraphicsDriver::postRenderMaterial(const Material &material) {
+    void GL3GraphicsDriver::postRenderMaterial(const Material *material) {
         
     }
 }

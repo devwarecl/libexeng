@@ -57,7 +57,9 @@ namespace exeng {
                 
                 virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount  );
                 
-                virtual Texture* createTexture(TextureType TextureType, const exeng::math::Vector3f& TextureSize);
+                virtual Texture* createTexture(TextureType TextureType, 
+                                               const exeng::math::Vector3f& TextureSize, 
+                                               const ColorFormat &format);
                 
                 virtual void setTransform(Transform transform, const exeng::math::Matrix4f& matrix);
                 
@@ -91,13 +93,14 @@ namespace exeng {
                  * @brief preRenderMaterial
                  * @param Apply the render states of the material
                  */
-                void preRenderMaterial(const Material &material);
+                void preRenderMaterial(const Material *material);
                 
                 /**
                  * @brief postRenderMaterial
                  * @param Restore render state to originals
                  */
-                void postRenderMaterial(const Material &material);
+                void postRenderMaterial(const Material *material);
+                
                 
             private:
                 std::list<exeng::input::IEventHandler*> eventHandlers;

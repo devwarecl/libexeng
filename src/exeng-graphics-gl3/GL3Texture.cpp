@@ -27,11 +27,14 @@ namespace exeng {
 namespace graphics {
 namespace gl3 {
 
-GL3Texture::GL3Texture(exeng::math::Vector3i size, ColorFormat colorFormat, TextureType type) {
+GL3Texture::GL3Texture(Object *parent, 
+                       TextureType type, 
+                       Vector3i size, 
+                       const ColorFormat &colorFormat) {
     GLuint textureId = 0;
     
-    // check the type
-    if (convType(type) == GL_FALSE) {
+    // check for a valid type
+    if (convTextureType(type) == GL_FALSE) {
         throw std::invalid_argument("GL3Texture::GL3Texture: Unsupported texture type");
     }
     
@@ -47,21 +50,20 @@ GL3Texture::GL3Texture(exeng::math::Vector3i size, ColorFormat colorFormat, Text
         }
     }
     
-    // get the corresponding OpenGL size
-    GLenum textureTarget = convType(type);
-    
-    // get the corresponding OpenGL internal format
+    // get the corresponding OpenGL states
+    GLenum textureTarget = convTextureType(type);
+    GLenum internalFormat = convFormat(colorFormat);
     
     // allocate size for the texture
     ::glGenTextures(1, &textureId);
     ::glBindTexture(textureTarget, textureId);
     
     if (textureTarget == GL_TEXTURE_1D) {
-        ::glTexImage1D(textureTarget, 0, 0, size.x, 0, 0, 0, nullptr);
+        ::glTexImage1D(textureTarget, 0, internalFormat, size.x, 0, 0, GL_UNSIGNED_BYTE, nullptr);
     } else if (textureTarget == GL_TEXTURE_2D) {
-        ::glTexImage2D(textureTarget, 0, 0, size.x, size.y, 0, 0, 0, nullptr);
+        ::glTexImage2D(textureTarget, 0, internalFormat, size.x, size.y, 0, 0, GL_UNSIGNED_BYTE, nullptr);
     } else if (textureTarget == GL_TEXTURE_3D) {
-        ::glTexImage3D(textureTarget, 0, 0, size.x, size.y, size.z, 0, 0, 0, nullptr);
+        ::glTexImage3D(textureTarget, 0, internalFormat, size.x, size.y, size.z, 0, 0, GL_UNSIGNED_BYTE, nullptr);
     } else {
         assert(false);
     }
@@ -77,6 +79,9 @@ GL3Texture::GL3Texture(exeng::math::Vector3i size, ColorFormat colorFormat, Text
     this->colorFormat = colorFormat;
     this->type = type;
     this->textureId = textureId;
+    this->textureTarget = textureTarget;
+    this->internalFormat = internalFormat;
+    this->creator = parent;
 }
 
 
@@ -89,33 +94,48 @@ GL3Texture::~GL3Texture() {
 
 
 void* GL3Texture::lock() {
+    assert(this->textureId != 0);
+    
     this->textureData = this->buffer.lock();
     return this->textureData;
 }
 
 
 void* GL3Texture::lock(TextureCubeMapFace face) {
-    throw std::runtime_error("GL3Texture::lock: Not implemented yet.");
+    assert(this->textureId != 0);
+    throw std::runtime_error("GL3Texture::lock(TextureCubeMapFace): Not yet implemented.");
 }
 
 
 void GL3Texture::unlock() {
+    assert(this->textureId != 0);
+    assert(this->textureTarget != 0);
+    assert(this->textureData != nullptr);
     
-    //! TODO: Fill all parameters of the glTexSubImageXD calls.
-    GLenum textureTarget = convType(this->type);
-    assert(textureTarget != 0);
+    ::glBindTexture(this->textureTarget, this->textureId);
     
-    ::glBindTexture(textureTarget, this->textureId);
-    
-    if (textureTarget == GL_TEXTURE_1D) {
-        ::glTexSubImage1D(textureTarget, 0, 0, this->size.x, 0, 0, this->textureData);
-    } else if (textureTarget == GL_TEXTURE_2D) {
-        // ::glTexSubImage2D(textureTarget, 0, 0, this->size.x, 0, 0, this->textureData);
-    } else if (textureTarget == GL_TEXTURE_3D) {
-        // ::glTexSubImage3D(textureTarget, 0, 0, this->size.x, 0, 0, this->textureData);
-    } else {
-        assert( false );
+    switch (this->textureTarget) {
+    case GL_TEXTURE_1D:
+        ::glTexSubImage1D(textureTarget, 0,  0, this->size.x, 
+                          GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
+        break;
+        
+    case GL_TEXTURE_2D:
+        ::glTexSubImage2D(textureTarget, 0,  0, 0, this->size.x, this->size.y, 
+                          GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
+        break;
+        
+    case GL_TEXTURE_3D:
+        ::glTexSubImage3D(textureTarget, 0,  0, 0, 0, this->size.x, this->size.y, this->size.z, 
+                          GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
+        break;
+        
+    default: assert(false); break;
     }
+    
+    ::glBindTexture(this->textureTarget, 0);
+    
+    GL3_CHECK();
     
     this->buffer.unlock();
 }
@@ -125,9 +145,11 @@ TextureType GL3Texture::getType() const {
     return this->type;
 }
 
+
 ColorFormat GL3Texture::getColorFormat() const {
     return this->colorFormat;
 }
+
 
 Vector3i GL3Texture::getSize() const {
     return this->size;
