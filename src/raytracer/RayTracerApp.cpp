@@ -10,6 +10,7 @@
 
 using namespace exeng;
 using namespace exeng::framework;
+using namespace exeng::input;
 
 namespace raytracer {
     RayTracerApp::RayTracerApp() : impl(nullptr) {
@@ -63,6 +64,7 @@ namespace raytracer {
 
 
     void RayTracerApp::update(double seconds) {
+        
     }
 
 

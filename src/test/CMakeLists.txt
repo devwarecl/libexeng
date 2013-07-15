@@ -7,4 +7,4 @@ add_executable(test
     TestScenegraph.cpp  
 )
 
-target_link_libraries(test exeng unittest++)
+# target_link_libraries(test exeng unittest++)

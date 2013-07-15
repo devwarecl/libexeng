@@ -17,8 +17,13 @@
 
 namespace exeng {
 namespace graphics {
+
+Shader::Shader(ResourceFactory *factory) : Resource(factory) {
+}
+
 Shader::~Shader()
 {
 }
+
 }
 }

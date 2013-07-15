@@ -5,6 +5,7 @@ using namespace exeng;
 using namespace exeng::math;
 using namespace exeng::graphics;
 using namespace exeng::framework;
+using namespace exeng::input;
 
 namespace raytracer {
 
@@ -16,6 +17,7 @@ OpenGLApp::OpenGLApp() {
     this->fragmentShader = nullptr;
     this->program = nullptr;
 	this->texture = nullptr;
+    this->applicationStatus = ApplicationStatus::Running;
 }
 
 
@@ -41,6 +43,8 @@ void OpenGLApp::initialize(const StringVector& cmdLine) {
     
     // initialize the gl3 driver, in windowed mode
     this->driver = this->root->getGraphicsManager()->createDriver();
+    
+    this->driver->addEventHandler(this);
     
     DisplayMode mode;
     mode.size = Size2i(640, 480);
@@ -110,7 +114,6 @@ void OpenGLApp::initialize(const StringVector& cmdLine) {
     this->program->link();
     
     // transformations
-    this->triangleTransform.identity();
 }
 
 
@@ -137,7 +140,7 @@ void OpenGLApp::pollEvents() {
 
 
 ApplicationStatus OpenGLApp::getStatus() const {
-    return ApplicationStatus::Running;
+    return this->applicationStatus;
 }
 
 
@@ -148,17 +151,22 @@ void OpenGLApp::update(double seconds) {
 void OpenGLApp::render() {
     Color clearColor(0.2f, 0.2f, 0.8f, 1.0f);
     this->driver->beginFrame(clearColor, ClearFlags::Color);
-    this->driver->setShaderProgram(this->program);
+    // this->driver->setShaderProgram(this->program);
     
-    // this->driver->setTransform(Transform::World, this->triangleTransform);
     this->driver->setVertexBuffer(this->squareVertexBuffer);
     this->driver->render(Primitive::TriangleStrip, 4);
     
     this->driver->endFrame();
 }
 
+
 int OpenGLApp::getExitCode() const {
     return 0;
+}
+
+
+void OpenGLApp::handleEvent(const EventData &data) {
+    this->applicationStatus = ApplicationStatus::Terminated;
 }
 
 }

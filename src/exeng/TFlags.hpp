@@ -17,13 +17,12 @@
 #include <cstdint>
 
 namespace exeng {
-    
 	/**
 	 * @brief Flags management
 	 */
 	template <
-		typename _EnumType,                     //! El tipo especifico de enumeracion
-		typename _StorageType = std::uint32_t   //! El tipo de datos usado para el almacenamiento
+		typename _EnumType,
+		typename _StorageType = int
 	>
 	class TFlags {
 	public:
@@ -66,12 +65,12 @@ namespace exeng {
 		/**
          * @brief Comprueba si los estados de dos contenedores de flags son exactamente los mismos
 		 */
-		bool operator == (const TFlags<EnumType>& Other) const;
+		bool operator== (const TFlags<EnumType>& Other) const;
         
 		/**
          * @brief Comprueba si los estados de dos contenedores de flags son distintos
 		 */
-		bool operator != (const TFlags<EnumType>& Other) const;
+		bool operator!= (const TFlags<EnumType>& Other) const;
 		
 		/**
          * @brief Devuelve el valor actual contenido

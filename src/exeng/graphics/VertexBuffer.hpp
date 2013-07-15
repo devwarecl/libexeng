@@ -17,7 +17,7 @@
 
 #include <stdexcept>
 
-#include <exeng/Object.hpp>
+#include <exeng/Resource.hpp>
 #include <exeng/math/TVector.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
 
@@ -36,8 +36,10 @@ namespace exeng {
         /**
          * @brief Buffer that stores vertex data, directly in VideoRAM.
          */
-        class EXENGAPI VertexBuffer : public Object {
+        class EXENGAPI VertexBuffer : public Resource {
         public:
+            VertexBuffer(ResourceFactory *resourceFactory);
+            
             virtual ~VertexBuffer();
             
             /**

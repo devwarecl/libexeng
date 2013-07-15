@@ -16,15 +16,15 @@
 #define __EXENG_GRAPHICS_GL3_DEBUG_HPP__
 
 namespace exeng {
-    namespace graphics {
-        namespace gl3 {
-            
-            /**
-             * @brief Check the OpenGL global error value.
-             */
-            void checkGLError(const char *file, int line);
-        }
-    }
+namespace graphics {
+namespace gl3 {
+
+/**
+ * @brief Check the OpenGL global error value.
+ */
+void checkGLError(const char *file, int line);
+}
+}
 }
 
 #define GL3_CHECK() exeng::graphics::gl3::checkGLError(__FILE__, __LINE__)

@@ -15,7 +15,7 @@
 #ifndef __EXENG_GRAPHICS_SHADERPROGRAM_HPP__
 #define __EXENG_GRAPHICS_SHADERPROGRAM_HPP__
 
-#include <exeng/Object.hpp>
+#include <exeng/Resource.hpp>
 
 namespace exeng {
 namespace graphics {
@@ -25,8 +25,10 @@ class EXENGAPI Shader;
 /**
  * @brief A shader program hold a collection of shader subprograms.
  */
-class EXENGAPI ShaderProgram : public Object {
+class EXENGAPI ShaderProgram : public Resource {
 public:
+    ShaderProgram(ResourceFactory *factory);
+    
     virtual ~ShaderProgram();
     
     /**

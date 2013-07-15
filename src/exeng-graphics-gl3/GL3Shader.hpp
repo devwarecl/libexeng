@@ -26,7 +26,7 @@ namespace gl3 {
  */
 class GL3Shader : public Shader {
 public:
-    GL3Shader(ShaderType type);
+    GL3Shader(ResourceFactory* factory, ShaderType type);
     
     virtual ~GL3Shader();
     
@@ -44,6 +44,8 @@ public:
     
     virtual ShaderType getType() const;
 
+    virtual void release();
+    
     /**
      * @brief Get the gl3 identifier of the shader.
      */    

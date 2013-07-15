@@ -1,4 +1,4 @@
-
+/*
 #include <unittest++/UnitTest++.h>
 
 #include <exeng/scenegraph/Sphere.hpp>
@@ -113,3 +113,4 @@ SUITE(ScenegraphTestSuite) {
 		CHECK_EQUAL( ray1.getPointAt(0.5f), ray1.getPoint() + 0.5f * ray1.getDirection() );
 	}
 }
+*/

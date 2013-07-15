@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include <exeng/Object.hpp>
+#include <exeng/ResourceFactory.hpp>
 #include <exeng/TFlags.hpp>
 #include <exeng/math/TBoundary.hpp>
 #include <exeng/math/TMatrix.hpp>
@@ -34,6 +34,8 @@
 #include <exeng/graphics/Shader.hpp>
 #include <exeng/graphics/ShaderProgram.hpp>
 
+#include <memory>
+
 namespace exeng {
 namespace graphics {
 
@@ -41,9 +43,9 @@ namespace graphics {
  * @brief Transformation types
  */
 enum class Transform {
-    View,
-    World,
-    Projection
+    View = 0,
+    World = 1,
+    Projection = 2
 };
 
 /**
@@ -113,11 +115,10 @@ struct DisplayMode {
     }
 };
 
-
 /**
  * @brief Software interface to graphics hardware (Ha!)
  */
-class EXENGAPI GraphicsDriver : public Object, public exeng::input::IEventRaiser {
+class EXENGAPI GraphicsDriver : public ResourceFactory, public exeng::input::IEventRaiser {
 public:
     virtual ~GraphicsDriver();
     
@@ -258,10 +259,14 @@ public:
     virtual ShaderProgram* createShaderProgram( ) = 0;
     
     /**
-     * @brief Set the currently used shader program used in rendering calls.
-     * @param program
+     * @brief Set the name of the specified transformation matrix in shaders.
      */
-    virtual void setShaderProgram(const ShaderProgram *program) = 0;
+    virtual void setTransformName(Transform transform, const std::string &name) = 0;
+    
+    /**
+     * @brief Get the name of the specified transformation matrix in shaders.
+     */
+    virtual std::string getTransformName(Transform transform) const = 0;
 };
 }
 }

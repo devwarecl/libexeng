@@ -13,6 +13,7 @@
 
 #include <exeng/DetectEnv.hpp>
 #include <exeng/system/LibraryPrivate.hpp>
+#include <stdexcept>
 
 #if defined (EXENG_WINDOWS)
 #include <Windows.h>
@@ -63,7 +64,7 @@ void Library::Private::load(const std::string &name) {
 
 void Library::Private::unload() {
     if (this->handle != NULL) {
-        ::HMODULE handle = static_cast<::HMODULE>(this->handle);
+        ::HMODULE handle = static_cast< ::HMODULE >(this->handle);
         ::FreeLibrary(handle);
 
         this->handle = NULL;
@@ -73,7 +74,6 @@ void Library::Private::unload() {
 
 FunctionPtr Library::Private::getFunctionPtr(const std::string &name) {
     HMODULE handle = NULL;
-    FunctionPtr ret = NULL;
     FARPROC procAddress = NULL;
 
     if (this->handle == NULL) {
@@ -96,7 +96,7 @@ FunctionPtr Library::Private::getFunctionPtr(const std::string &name) {
         throw std::runtime_error(msg);
     }
 
-    return static_cast<FunctionPtr>(procAddress);
+    return reinterpret_cast<FunctionPtr>(procAddress);
 }
 }
 }

@@ -1,8 +1,7 @@
 /**
- * @file 
+ * @file Enum.hpp
  * @brief 
  */
-
 
 /*
  * Copyright (c) 2013 Felipe Apablaza.
@@ -11,15 +10,18 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include <exeng/graphics/IndexBuffer.hpp>
+
+#ifndef __EXENG_ENUM_HPP__
+#define __EXENG_ENUM_HPP__
 
 namespace exeng {
-namespace graphics {
 
-IndexBuffer::IndexBuffer(ResourceFactory* factory) : Resource(factory) {
+/**
+ * @brief Base class for the exeng 'strogly typed'
+ */
+struct Enum {
+private: Enum();
+};
 }
 
-IndexBuffer::~IndexBuffer() {   
-}
-}
-}
+#endif // __EXENG_ENUM_HPP__

@@ -22,8 +22,8 @@
 namespace exeng {
     
     /**
-     * @brief Encode a datatype description on a 16-bit value. Used for generic representation
-     * of data, and serialization of those data.
+     * @brief Encode a datatype description on a 16-bit value. Used for representation, 
+     * and serialization of those data.
      */
     struct DataType {
     public:

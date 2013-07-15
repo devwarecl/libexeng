@@ -20,12 +20,13 @@
 #include <stdexcept>
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 namespace exeng {
 namespace graphics {
 namespace gl3 {
 
-GL3ShaderProgram::GL3ShaderProgram() {
+GL3ShaderProgram::GL3ShaderProgram(ResourceFactory *factory) : ShaderProgram(factory) {
     this->programId = 0;
     this->modified = false;
     this->linked = false;
@@ -190,6 +191,11 @@ bool GL3ShaderProgram::mustRelink() const {
 GLuint GL3ShaderProgram::getProgramId() const {
     assert (this->programId != 0);
     return this->programId;
+}
+
+
+void GL3ShaderProgram::release() {
+    std::cout << "GL3ShaderProgram::release: Not implemented." << std::endl;
 }
 
 }

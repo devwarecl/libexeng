@@ -25,75 +25,73 @@ using namespace exeng;
 using namespace exeng::graphics;
 using namespace exeng::math;
 
-namespace exeng {
-    namespace graphics {
-        
-        inline GraphicsDriverBase::GraphicsDriverBase() {
-            this->model.identity();
-            this->view.identity();
-            this->projection.identity();
-            this->modelView.identity();
-            
-            this->viewport.set(0.0f);
-            this->material = nullptr;
-        }
-        
-        
-        inline GraphicsDriverBase::~GraphicsDriverBase() {
-        }
-        
-        
-        inline Matrix4f GraphicsDriverBase::getTransform(Transform transform) {
-            switch (transform) {
-                case Transform::World:      return this->model;
-                case Transform::View:       return this->view;
-                case Transform::Projection: return this->projection;
-            }
-            
-            return Matrix4f();
-        }
-        
-        
-        inline const Material* GraphicsDriverBase::getMaterial() const {
-            return this->material;
-        }
-        
-        
-        inline Rectf GraphicsDriverBase::getViewport() const {
-            return this->viewport;
-        }
-        
-        
-        inline VertexBuffer* GraphicsDriverBase::createVertexBuffer( const VertexFormat &format, 
-                                                                     int count ) {
-            auto *vbuffer = new HeapVertexBuffer(format, count);
-            this->objects.push_back(vbuffer);
-            
-            return vbuffer;
-        }
-        
-        
-        inline IndexBuffer* GraphicsDriverBase::createIndexBuffer( IndexFormat indexFormat, 
-                                                                   int indexCount ) {
-            auto *indexBuffer = new HeapIndexBuffer();
-            indexBuffer->allocate(indexFormat, indexCount);
-            
-            this->objects.push_back(indexBuffer);
-            
-            return indexBuffer;
-        }
-        
-        
-        inline void GraphicsDriverBase::notifyDestruction(Object *object) {
-            assert (object->getCreator() == this);
-            
-            auto &objects = this->objects;
-            auto position = boost::range::find_if(objects, [object](Object &obj){
-               return &obj == object;
-            });
-            
-            assert (position != objects.end());
-            objects.erase(position);
-        }
-    }
+namespace exeng { namespace graphics {
+
+inline GraphicsDriverBase::GraphicsDriverBase() {
+    this->viewport.set(0.0f);
+    this->material = nullptr;
 }
+
+
+inline GraphicsDriverBase::~GraphicsDriverBase() {
+}
+
+
+inline Matrix4f GraphicsDriverBase::getTransform(Transform transform) {
+    return this->transforms[static_cast<const int>(transform)];
+}
+
+
+inline const Material* GraphicsDriverBase::getMaterial() const {
+    return this->material;
+}
+
+
+inline Rectf GraphicsDriverBase::getViewport() const {
+    return this->viewport;
+}
+
+
+inline VertexBuffer* GraphicsDriverBase::createVertexBuffer( const VertexFormat &format, 
+                                                             int count ) {
+    auto *vbuffer = new HeapVertexBuffer(this, format, count);
+    this->resources.push_back(vbuffer);
+    
+    return vbuffer;
+}
+
+
+inline IndexBuffer* GraphicsDriverBase::createIndexBuffer( IndexFormat indexFormat, 
+                                                           int indexCount ) {
+    auto *indexBuffer = new HeapIndexBuffer(this);
+    indexBuffer->allocate(indexFormat, indexCount);
+    
+    this->resources.push_back(indexBuffer);
+    
+    return indexBuffer;
+}
+
+
+inline void GraphicsDriverBase::onResourceDestruction(Resource *resource) {
+    assert (resource->getResourceFactory() == this);
+    
+    auto &resources = this->resources;
+    auto position = boost::range::find_if(resources, [resource](Resource &res){
+       return &res == resource;
+    });
+    
+    assert (position != resources.end());
+    resources.erase(position);
+}
+
+
+inline void GraphicsDriverBase::setTransformName(Transform transform, const std::string &name) {
+    this->transformNames[static_cast<int>(transform)] = name;
+}
+
+
+inline std::string GraphicsDriverBase::getTransformName(Transform transform) const {
+    return this->transformNames[static_cast<int>(transform)];
+}
+
+}}

@@ -26,7 +26,7 @@ namespace graphics {
 namespace gl3 {
 
 
-GL3Shader::GL3Shader(ShaderType type) {
+GL3Shader::GL3Shader(ResourceFactory* factory, ShaderType type) : Shader(factory) {
     this->name = 0;
     this->modified = false;
     this->compiled = false;
@@ -118,6 +118,12 @@ ShaderType GL3Shader::getType() const {
 GLuint GL3Shader::getName() const {
     return this->name;
 }
+
+
+void GL3Shader::release() {
+    std::cout << "GL3Shader::release: Not implemented." << std::endl;
+}
+
 
 }
 }

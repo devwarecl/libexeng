@@ -16,7 +16,6 @@
 #include "GL3Texture.hpp"
 #include "GL3Debug.hpp"
 
-#include <map>
 #include <stdexcept>
 #include <cassert>
 
@@ -27,10 +26,10 @@ namespace exeng {
 namespace graphics {
 namespace gl3 {
 
-GL3Texture::GL3Texture(Object *parent, 
+GL3Texture::GL3Texture(ResourceFactory *factory, 
                        TextureType type, 
                        Vector3i size, 
-                       const ColorFormat &colorFormat) {
+                       const ColorFormat &colorFormat) : Texture(factory) {
     GLuint textureId = 0;
     
     // check for a valid type
@@ -81,7 +80,6 @@ GL3Texture::GL3Texture(Object *parent,
     this->textureId = textureId;
     this->textureTarget = textureTarget;
     this->internalFormat = internalFormat;
-    this->creator = parent;
 }
 
 
@@ -158,6 +156,11 @@ Vector3i GL3Texture::getSize() const {
 
 TypeInfo GL3Texture::getTypeInfo() const {
     return TypeInfo::get<GL3Texture>();
+}
+
+
+void GL3Texture::release() {
+    std::cout << "GL3Texture::release: TODO: Not implemented." << std::endl;
 }
 
 }

@@ -16,33 +16,10 @@
 
 #include <exeng/Config.hpp>
 #include <exeng/TypeInfo.hpp>
+#include <exeng/input/EventData.hpp>
 
 namespace exeng {
     namespace input {
-        
-        /**
-         * @brief Holds specific data of a determined event type.
-         */
-        struct EventData {
-            /**
-             * @brief Specific event type info.
-             */
-            TypeInfo eventType;
-            
-            /**
-             * @brief If after a event is raised this attribute is true, then
-             * the event raiser stop notifying to other 
-             */
-            mutable bool handled;   
-            
-            inline EventData() : handled(false) {
-            }
-            
-            explicit inline EventData(TypeInfo e) : 
-                eventType(e), handled(false) {
-            }
-        };
-        
         /**
          * @brief Interface to a event handler. The event handler is the 
          * object responsible of do a action in response for a event.

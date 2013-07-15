@@ -17,6 +17,7 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 #include <boost/checked_delete.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/Texture.hpp>
@@ -57,6 +58,12 @@ Texture* MaterialLayer::getTexture() {
 void MaterialLayer::setTexture(Texture* texture) {
     assert(this->impl != nullptr);
     this->impl->texture = texture;
+}
+
+
+bool MaterialLayer::hasTexture() const {
+    assert(this->impl != nullptr);
+    return this->impl->texture != nullptr;
 }
 
 }
@@ -137,6 +144,23 @@ struct Material::Private {
     
     Private() : shaderProgram(nullptr) {
     }    
+    
+    
+    PropertyMap::const_iterator getPosition(int index) const {
+        PropertyMap::const_iterator it = this->properties.end();
+        
+        int i=0;
+        
+        for(it=this->properties.begin(); it!=this->properties.end(); ++it ) {
+            if (index == i) {
+                break;
+            }
+            ++i;
+        }
+        
+        return it;
+    }
+    
 };
 
 
@@ -242,6 +266,8 @@ const MaterialLayer* Material::getLayer(int index) const {
 
 
 TypeInfo Material::getTypeInfo() const {
+    assert(this->impl != nullptr);
+    
     return TypeInfo(typeid(Material));
 }
 
@@ -252,13 +278,88 @@ const int Material::getLayerCount() {
 
 
 void Material::setShaderProgram(const ShaderProgram *shader) {
+    assert(this->impl != nullptr);
+    
     this->impl->shaderProgram = shader;
 }
 
 
 const ShaderProgram* Material::getShaderProgram() const {
+    assert(this->impl != nullptr);
+    
     return this->impl->shaderProgram;
 }
+
+
+bool Material::checkTextureType(const TypeInfo &textureTypeInfo) const {
+    assert(this->impl != nullptr);
+    
+    const MaterialLayer *layer = nullptr;
+    
+    for (int i=0; i<this->getLayerCount(); ++i ) {
+        layer = this->getLayer(i);
+        
+        if (layer->hasTexture() == true) {
+            if (layer->getTexture()->getTypeInfo() != textureTypeInfo) {
+                return false;
+            }
+        }
+    }
+    
+    return true;
+}
+
+
+int Material::getPropertyNameCount() const {
+    assert(this->impl != nullptr);
+    
+    return this->impl->properties.size();
+}
+
+
+std::string Material::getPropertyName( int index ) const {
+    assert(this->impl != nullptr);
+    
+    if (index < 0 || index >= this->getPropertyNameCount()) {
+        std::string msg;
+        
+        msg += "Material::getPropertyName: ";
+        msg += "Index is at '" + boost::lexical_cast<std::string>(index) + "', ";
+        msg += "but should be in the range [0, ";
+        msg += boost::lexical_cast<std::string>(this->getPropertyNameCount() - 1);
+        msg += "].";
+        
+        throw std::runtime_error(msg);
+    }
+    
+    
+    return this->impl->getPosition( index )->first;
+}
+
+
+TypeInfo Material::getPropertyType(int index) const {
+    assert(this->impl != nullptr);
+    
+    return this->impl->getPosition(index)->second.typeInfo;
+}
+
+
+void Material::removeProperty(const std::string &name) {
+    assert(this->impl != nullptr);
+    
+    auto &properties = this->impl->properties;
+    
+    auto it = properties.find(name);
+    if (it == properties.end()) {
+        std::string msg;
+        
+        msg += "Material::removeProperty: ";
+        msg += "The property named '" + name + " doesn't not exist.";
+        
+        throw std::runtime_error(msg);
+    }
+}
+
 
 }
 }

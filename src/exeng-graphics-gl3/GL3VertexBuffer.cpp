@@ -11,6 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
+#include "GL3.hpp"
 #include "GL3GraphicsDriver.hpp"
 #include "GL3VertexBuffer.hpp"
 #include "GL3Debug.hpp"
@@ -22,13 +23,12 @@ namespace exeng {
 namespace graphics {
 namespace gl3 {
 
-GL3VertexBuffer::GL3VertexBuffer(GL3GraphicsDriver *owner, 
+GL3VertexBuffer::GL3VertexBuffer(ResourceFactory *factory, 
                                  const VertexFormat &format, 
-                                 int count) {
+                                 int count) : VertexBuffer(factory) {
     this->vertexArrayId = 0;
     this->name = 0;
     this->locked = false;
-    this->creator = owner;
     
     this->allocate(format, count);
 }

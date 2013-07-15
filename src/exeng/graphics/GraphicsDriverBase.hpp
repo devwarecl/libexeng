@@ -17,44 +17,43 @@
 #include <exeng/graphics/GraphicsDriver.hpp>
 #include <boost/ptr_container/ptr_list.hpp>
 
+namespace exeng { namespace graphics {
 
-namespace exeng {
-    namespace graphics {
-        
-        /**
-         * @brief Base common functionality for easing the process 
-         * of implementing graphics drivers
-         */
-        class GraphicsDriverBase : public GraphicsDriver {
-        public:
-            GraphicsDriverBase();
-            
-            virtual ~GraphicsDriverBase();
-            
-            virtual exeng::math::Matrix4f getTransform( Transform transform );
-            
-            virtual exeng::math::Rectf getViewport( ) const;
-            
-            virtual const exeng::graphics::Material* getMaterial( ) const;
-            
-            virtual VertexBuffer* createVertexBuffer( const VertexFormat &vertexFormat, int vertexCount );
-            
-            virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount );
-            
-            virtual void notifyDestruction(Object *object);
-            
-        protected:
-            const exeng::graphics::Material* material;
-            boost::ptr_list<Object> objects;
-            
-            exeng::math::Matrix4f model;
-            exeng::math::Matrix4f view;
-            exeng::math::Matrix4f projection;
-            exeng::math::Matrix4f modelView;
-            exeng::math::Rectf viewport;
-        };
-    }
-}
+/**
+ * @brief Base common functionality for easing the process 
+ * of implementing graphics drivers
+ */
+class GraphicsDriverBase : public GraphicsDriver {
+public:
+    GraphicsDriverBase();
+    
+    virtual ~GraphicsDriverBase();
+    
+    virtual exeng::math::Matrix4f getTransform( Transform transform );
+    
+    virtual exeng::math::Rectf getViewport( ) const;
+    
+    virtual const exeng::graphics::Material* getMaterial( ) const;
+    
+    virtual VertexBuffer* createVertexBuffer( const VertexFormat &vertexFormat, int vertexCount );
+    
+    virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount );
+    
+    virtual void onResourceDestruction(Resource *resource);
+    
+    virtual void setTransformName(Transform transform, const std::string &name);
+    
+    virtual std::string getTransformName(Transform transform) const;
+    
+protected:
+    const exeng::graphics::Material* material;
+    boost::ptr_list<Resource> resources;
+    exeng::math::Rectf viewport;
+    exeng::math::Matrix4f transforms[3];
+    std::string transformNames[3];
+};
+
+}}
 
 #include "GraphicsDriverBase.inl"
 

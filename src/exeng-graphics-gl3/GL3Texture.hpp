@@ -25,7 +25,7 @@ namespace gl3 {
 
 class GL3Texture : public Texture {
 public:
-    GL3Texture(Object *parent, 
+    GL3Texture(ResourceFactory *factory, 
                TextureType type, 
                exeng::math::Vector3i size, 
                const ColorFormat &colorFormat);
@@ -43,6 +43,8 @@ public:
     virtual ColorFormat getColorFormat() const;
     
     virtual exeng::math::Vector3i getSize() const;
+    
+    virtual void release();
     
     inline GLuint getTextureId() const {
         return this->textureId;

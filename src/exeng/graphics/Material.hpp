@@ -89,7 +89,14 @@ namespace exeng {
             MaterialLayer* getLayer(int index);
             const MaterialLayer* getLayer(int index) const;
             
+            bool checkTextureType(const TypeInfo &textureTypeInfo) const;
+            
             virtual TypeInfo getTypeInfo() const;
+            
+            int getPropertyNameCount() const;
+            std::string getPropertyName(int index) const;
+            TypeInfo getPropertyType(int index) const;
+            void removeProperty(const std::string &name);
             
         public:
             static const int getLayerCount();

@@ -23,6 +23,8 @@
 #include <exeng/HeapBuffer.hpp>
 #include <exeng/TypeInfo.hpp>
 
+#include <exeng/input/IEventHandler.hpp>
+
 #include <exeng/system/PluginManager.hpp>
 
 #include <exeng/framework/Application.hpp>

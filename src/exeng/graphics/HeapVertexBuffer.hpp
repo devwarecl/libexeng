@@ -25,9 +25,9 @@ namespace exeng {
          */
         class EXENGAPI HeapVertexBuffer : public VertexBuffer {
         public:
-            HeapVertexBuffer();
+            HeapVertexBuffer(ResourceFactory *resourceFactory);
             
-            HeapVertexBuffer(const VertexFormat &format, int count);
+            HeapVertexBuffer(ResourceFactory *resourceFactory, const VertexFormat &format, int count);
             
             virtual ~HeapVertexBuffer();
             
@@ -48,6 +48,7 @@ namespace exeng {
             virtual int getSize() const;
             
             virtual const VertexFormat& getFormat() const;
+            
         private:
             struct Private;
             Private *impl;

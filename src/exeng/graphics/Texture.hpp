@@ -15,7 +15,7 @@
 #ifndef __EXENG_GRAPHICS_TEXTURE_HPP__
 #define __EXENG_GRAPHICS_TEXTURE_HPP__
 
-#include <exeng/Object.hpp>
+#include <exeng/Resource.hpp>
 #include <exeng/math/TVector.hpp>
 
 #include <exeng/graphics/TextureType.hpp>
@@ -37,8 +37,10 @@ namespace exeng {
         /**
          * @brief Visual specific appearance for materials.
          */
-        class EXENGAPI Texture : public Object {
+        class EXENGAPI Texture : public Resource {
         public:
+            Texture(ResourceFactory *factory);
+            
             virtual ~Texture();
 
             /**

@@ -5,6 +5,7 @@
 #include <vector>
 #include <boost/scoped_ptr.hpp>
 #include <exeng/framework/Application.hpp>
+#include <exeng/input/IEventHandler.hpp>
 
 namespace raytracer {
     

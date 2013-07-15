@@ -15,6 +15,10 @@
 
 namespace exeng {
 namespace graphics {
+
+Texture::Texture(ResourceFactory *factory) : Resource(factory) {
+}
+
 Texture::~Texture() {
 }
 }

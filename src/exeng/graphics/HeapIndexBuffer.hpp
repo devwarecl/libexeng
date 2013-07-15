@@ -25,9 +25,9 @@ namespace exeng {
          */
         class EXENGAPI HeapIndexBuffer : public IndexBuffer {
         public:            
-            HeapIndexBuffer();
+            HeapIndexBuffer(ResourceFactory *factory);
             
-            HeapIndexBuffer(IndexFormat indexFormat, int indexCount);
+            HeapIndexBuffer(ResourceFactory *factory, IndexFormat indexFormat, int indexCount);
             
             virtual ~HeapIndexBuffer();
             
@@ -46,6 +46,8 @@ namespace exeng {
             virtual int getCount() const;
             
             virtual IndexFormat getFormat() const;
+            
+            
             
         private:
             struct Private;

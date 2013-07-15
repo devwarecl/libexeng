@@ -12,6 +12,7 @@
  */
 
 #include <exeng/HeapBuffer.hpp>
+#include <cstdlib>
 
 namespace exeng {
     const char errLockedBuffer[] = "The buffer is locked";

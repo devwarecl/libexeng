@@ -14,7 +14,7 @@
 #ifndef __EXENG_GRAPHICS_INDEXBUFFER_HPP__
 #define __EXENG_GRAPHICS_INDEXBUFFER_HPP__
 
-#include <exeng/Object.hpp>
+#include <exeng/Resource.hpp>
 #include <stdexcept>
 
 namespace exeng {
@@ -31,8 +31,10 @@ namespace exeng {
         /**
          * @brief Memory area dedicated for IndexData
          */
-        class EXENGAPI IndexBuffer : public Object {
+        class EXENGAPI IndexBuffer : public Resource {
         public:
+            IndexBuffer(ResourceFactory* factory);
+            
             /**
              * @brief 
              */

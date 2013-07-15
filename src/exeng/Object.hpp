@@ -94,26 +94,6 @@ namespace exeng {
 		 * @brief Get the TypeInfo of the object.
 		 */
 		virtual TypeInfo getTypeInfo() const;
-        
-        /**
-         * @brief Get the generator object for this one.
-         */
-        const Object* getCreator() const;
-        
-        /**
-         * @brief Get the generator object for this one.
-         */
-        Object* getCreator();
-        
-    protected:
-        /**
-         * @brief Notify the destruction of a object
-         */
-        virtual void notifyDestruction(Object *object);
-        
-    protected:
-        //! The object who construct this one
-        Object *creator;
 	};
 }
 

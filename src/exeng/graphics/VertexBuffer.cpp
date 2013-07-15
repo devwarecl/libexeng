@@ -20,8 +20,13 @@
 #include <exeng/graphics/VertexBuffer.hpp>
 
 namespace exeng {
-    namespace graphics {
-        VertexBuffer::~VertexBuffer() {
-        }
-    }
+namespace graphics {
+
+VertexBuffer::VertexBuffer(ResourceFactory *resourceFactory) : Resource(resourceFactory) {
+}
+
+VertexBuffer::~VertexBuffer() {
+}
+
+}
 }

@@ -11,12 +11,12 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "GL3GraphicsDriverFactory.hpp"
+#include "GL3.hpp"
 #include "GL3GraphicsDriver.hpp"
+#include "GL3GraphicsDriverFactory.hpp"
 
-namespace exeng {
-namespace graphics {
-namespace gl3 {
+namespace exeng { namespace graphics { namespace gl3 {
+
 GL3GraphicsDriverFactory::GL3GraphicsDriverFactory() {
 }
 
@@ -40,8 +40,21 @@ GraphicsDriverInfo GL3GraphicsDriverFactory::getDriverInfo() const {
 
 
 GraphicsDriver* GL3GraphicsDriverFactory::create() {
-    return new GL3GraphicsDriver();
+    auto *driver = new GL3GraphicsDriver();
+    this->graphicsDrivers.push_back(driver);
+    return driver;
 }
+
+
+GL3GraphicsDriver* GL3GraphicsDriverFactory::getGraphicsDriver(const GLFWwindow *window) {
+    auto &drivers = this->graphicsDrivers;
+    auto pos = std::find_if(drivers.begin(), drivers.end(), [window](const GL3GraphicsDriver *driver) {
+        return driver->getGLFWwindow() == window;
+    });
+    
+    assert(pos != drivers.end());
+    
+    return *pos;
 }
-}
-}
+
+}}}

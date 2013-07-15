@@ -21,14 +21,10 @@
 
 namespace exeng {
     Object::Object() {
-        this->creator = nullptr;
     }
     
     
 	Object::~Object() {
-        if (this->creator != nullptr) {
-            this->creator->notifyDestruction(this);
-        }
     }
 
     
@@ -99,19 +95,5 @@ namespace exeng {
 
 	TypeInfo Object::getTypeInfo() const {
         return TypeInfo::get<Object>();
-    }
-    
-    
-    const Object* Object::getCreator() const {
-        return this->creator;
-    }
-    
-    
-    Object* Object::getCreator() {
-        return this->creator;
-    }
-    
-    
-    void Object::notifyDestruction(Object *object) {
     }
 }

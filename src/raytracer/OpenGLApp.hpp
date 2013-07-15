@@ -9,7 +9,7 @@
 #include <memory>
 
 namespace raytracer {
-class OpenGLApp : public exeng::framework::Application {
+class OpenGLApp : public exeng::framework::Application, public exeng::input::IEventHandler {
 public:
     OpenGLApp();
     
@@ -31,9 +31,12 @@ public:
     
     virtual int getExitCode() const;
     
+    virtual void handleEvent(const exeng::input::EventData &data);
     
 private:
     exeng::Root *root;
+    
+    exeng::framework::ApplicationStatus applicationStatus;
     exeng::graphics::GraphicsDriver *driver;
     exeng::graphics::VertexBuffer *triangleVertexBuffer;
     exeng::graphics::VertexBuffer *squareVertexBuffer;
@@ -41,7 +44,6 @@ private:
     exeng::graphics::Shader *fragmentShader;
     exeng::graphics::ShaderProgram *program;
 	exeng::graphics::Texture *texture;
-    exeng::math::Matrix4f triangleTransform;
 };
 }
 

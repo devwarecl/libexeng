@@ -25,7 +25,7 @@ namespace exeng {
             
             class GL3VertexBuffer : public VertexBuffer {
             public:
-                GL3VertexBuffer(GL3GraphicsDriver *owner, const VertexFormat &format, int count);
+                GL3VertexBuffer(ResourceFactory *factory, const VertexFormat &format, int count);
                 
                 virtual ~GL3VertexBuffer();
                 

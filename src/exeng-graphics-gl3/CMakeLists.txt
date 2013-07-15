@@ -1,6 +1,12 @@
 include_directories( ${PROJECT_SOURCE_DIR}/src )
 
-# add_definitions(-DGLCOREARB_PROTOTYPES)
+# TODO: Add find package for GLFW3 
+
+find_package(OpenGL REQUIRED)
+include_directories(${OpenGL_INCLUDE_DIRS})
+
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
 
 add_library(exeng-graphics-gl3 SHARED
 Locker.hpp Locker.cpp
@@ -19,4 +25,4 @@ GL3.hpp
 gl_core_3_3.h gl_core_3_3.c
 )
 
-target_link_libraries(exeng-graphics-gl3 exeng glfw GL)
+target_link_libraries(exeng-graphics-gl3 exeng glfw ${OpenGL_LIBRARIES} ${Boost_LIBRARIES})
