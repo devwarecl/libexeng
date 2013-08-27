@@ -16,7 +16,6 @@ set (BaseFiles
   ./HeapBuffer.hpp          ./HeapBuffer.cpp 
   ./Resource.hpp            ./Resource.cpp 
   ./ResourceFactory.hpp     ./ResourceFactory.cpp 
-  ./ResourceFactoryBase.hpp ./ResourceFactoryBase.inl 
 )
 
 set (AudioFiles
