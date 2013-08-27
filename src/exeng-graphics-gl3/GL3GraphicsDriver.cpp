@@ -41,20 +41,26 @@ namespace exeng { namespace graphics { namespace gl3 {
 
 // TODO: Add the specific transformation variables
 const std::string defaultVSSource = std::string(
-    "#version 330 \n"
-    "layout(location=0) in vec4 position; \n"
-    "void main() { \n"
-    "    gl_Position = position; \n"
-    "}"
+            "#version 330 \n"
+            "layout(location=0) in vec4 position; \n"
+            "layout(location=1) in vec2 texCoord; \n"
+            "out vec2 uv; \n"
+            "\n"
+            "void main() { \n"
+            "    gl_Position = position; \n"
+            "    uv = texCoord; \n"
+            "}\n"
 );
 
 
 const std::string defaultFSSource = std::string(
-    "#version 330 \n"
-    "out vec4 outputColor; \n"
-    "void main() { \n"
-    "    outputColor = vec4(1.0, 1.0, 1.0, 1.0); \n"
-    "}\n"
+            "#version 330 \n"
+            "in vec2 uv; \n"
+            "out vec4 outputColor; \n"
+            "uniform sampler2D texSampler2D; \n"
+            "void main() { \n"
+            "outputColor = texture(texSampler2D, uv); \n"
+            "}\n"
 );
 
 
@@ -85,6 +91,10 @@ GL3GraphicsDriver::GL3GraphicsDriver() {
 GL3GraphicsDriver::~GL3GraphicsDriver() {
     this->terminate();
     boost::checked_delete(this->defaultMaterial);
+    
+    boost::checked_delete(this->defaultProgram);
+    boost::checked_delete(this->defaultVertexShader);
+    boost::checked_delete(this->defaultFragmentShader);
 }
 
 
@@ -111,7 +121,6 @@ void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
         case DisplayStatus::Window: monitor = nullptr; break;
         case DisplayStatus::Fullscreen: monitor = ::glfwGetPrimaryMonitor() ; break;
     }
-    
     
     ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -246,7 +255,7 @@ void GL3GraphicsDriver::endFrame() {
 
 void GL3GraphicsDriver::setVertexBuffer(const VertexBuffer* vertexBuffer) {
 #if defined(EXENG_DEBUG)
-    if (vertexBuffer->getCreator() != this) {
+    if (vertexBuffer->getResourceFactory() != this) {
         std::string msg;
         
         msg += "GL3GraphicsDriver::setVertexBuffer: ";
@@ -320,10 +329,11 @@ void  GL3GraphicsDriver::setIndexBuffer(const IndexBuffer* indexBuffer) {
 
 
 void  GL3GraphicsDriver::setMaterial(const Material* material) {
-    // Check texture type info
 #if defined (EXENG_DEBUG)
+    // Check texture type info
+    
     if (material->checkTextureType(TypeInfo::get<GL3Texture>()) == false) {
-        throw std::runtime_error("The supplied texture class implementation must be GL3Texture.");
+        throw std::runtime_error("GL3GraphicsDriver::setMaterial: The supplied texture class implementation must be GL3Texture.");
     }
         
     // Check if the  textures were created by this GL3GraphicsDriver.
@@ -333,19 +343,19 @@ void  GL3GraphicsDriver::setMaterial(const Material* material) {
     for (int i=0; i<layerCount; ++i) {
         layer = material->getLayer(i);
         
-        if (layer->hasTexture() == true && layer->getTexture()->getCreator() != this ) {
+        if (layer->hasTexture() == true && layer->getTexture()->getResourceFactory() != this ) {
             std::string msg;
             
             msg += "GL3GraphicsDriver::setMaterial: ";
             msg += "The textures used by this material are not valid.";
             
-            throw std::logic_error(msg)
+            throw std::logic_error(msg);
         }
     }
     
     // Check for shader program info and status
     if ( material->getShaderProgram() != nullptr ) {
-        if ( program->getTypeInfo() != TypeInfo::get<GL3ShaderProgram>() ) {
+        if ( material->getShaderProgram()->getTypeInfo() != TypeInfo::get<GL3ShaderProgram>() ) {
             std::string msg;
             
             msg += "GL3GraphicsDriver::setMaterial: ";
@@ -354,7 +364,7 @@ void  GL3GraphicsDriver::setMaterial(const Material* material) {
             throw std::invalid_argument(msg);
         }
         
-        if ( program->isLinked() == false ) {
+        if ( material->getShaderProgram()->isLinked() == false ) {
             std::string msg;
             
             msg += "GL3GraphicsDriver::setMaterial: ";
@@ -373,15 +383,13 @@ void  GL3GraphicsDriver::setMaterial(const Material* material) {
     }
     
     this->preRenderMaterial(material);
-    
     this->material = material;
 }
 
 
 VertexBuffer* GL3GraphicsDriver::createVertexBuffer(const VertexFormat &format, int count) {
     auto* vbuffer = new GL3VertexBuffer(this, format, count);
-    
-    this->resources.push_back(vbuffer);
+    this->addResource(vbuffer);
     
     return vbuffer;
 }
@@ -393,9 +401,8 @@ IndexBuffer* GL3GraphicsDriver::createIndexBuffer(IndexFormat format, int count)
 
 
 Texture* GL3GraphicsDriver::createTexture(TextureType type, const Vector3f& size, const ColorFormat &format) {
-    
     auto *texture = new GL3Texture(this, type, size, format);
-    this->resources.push_back(texture);
+    this->addResource(texture);
     
     return texture;
 }
@@ -489,7 +496,7 @@ const IndexBuffer* GL3GraphicsDriver::getIndexBuffer() const {
 
 Shader* GL3GraphicsDriver::createShader( ShaderType type ) {
     auto *resource = new GL3Shader(this, type);
-    this->resources.push_back(resource);
+    this->addResource(resource);
     
     return resource;
 }
@@ -497,7 +504,7 @@ Shader* GL3GraphicsDriver::createShader( ShaderType type ) {
 
 ShaderProgram* GL3GraphicsDriver::createShaderProgram( ) {
     auto *resource = new GL3ShaderProgram(this);
-    this->resources.push_back(resource);
+    this->addResource(resource);
     
     return resource;
 }
@@ -520,15 +527,21 @@ void GL3GraphicsDriver::preRenderMaterial(const Material *material) {
             textureType = convTextureType(texture->getType());
             textureId = texture->getTextureId();
             
-            ::glActiveTexture( GL_TEXTURE0 + i );
-            ::glBindTexture( textureType, textureId  );
+            ::glActiveTexture(GL_TEXTURE0 + i);
+            ::glBindTexture(textureType, textureId);
         }
     }
     
-    // Set the shader program state
-    auto shaderProgram = static_cast<const GL3ShaderProgram*>(material->getShaderProgram());
-    GLint programId = shaderProgram->getProgramId();
+    // set the shader program state
+    const GL3ShaderProgram *shaderProgram = nullptr;
     
+    if (material->getShaderProgram() != nullptr) {
+        shaderProgram = static_cast<const GL3ShaderProgram*>(material->getShaderProgram());
+    } else {
+        shaderProgram = static_cast<const GL3ShaderProgram*>(this->defaultProgram);
+    }
+    
+    GLint programId = shaderProgram->getProgramId();
     ::glUseProgram(programId);
     
     // Set material attributes

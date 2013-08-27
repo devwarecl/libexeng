@@ -17,7 +17,6 @@
 #include <exeng/scenegraph/Plane.hpp>
 #include <exeng/graphics/VertexArray.hpp>
 
-
 #include <cassert>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/checked_delete.hpp>

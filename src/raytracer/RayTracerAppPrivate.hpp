@@ -8,7 +8,7 @@
 #include <list>
 #include <memory>
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #include <exeng/graphics/Color.hpp>
 #include <exeng/math/TVector.hpp>
@@ -93,11 +93,12 @@ namespace raytracer {
          *  @return Devuelve el estado de la interseccion
          */
         IntersectInfo intersectRay(const SceneNodeList &nodes, const Ray &ray) const;
-        
+
         /**
          *  @brief Calcula el color del pixel indicado
          */
         Color traceRay(const SceneNodeList &nodeList, const exeng::math::Vector2i &pixel) const;
+        Color traceRayMultisampled(const SceneNodeList &nodeList, const exeng::math::Vector2i &pixel) const;
         
         /**
          *  @brief Limpia el backbuffer

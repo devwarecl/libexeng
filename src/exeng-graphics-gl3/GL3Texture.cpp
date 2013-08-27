@@ -57,15 +57,19 @@ GL3Texture::GL3Texture(ResourceFactory *factory,
     ::glGenTextures(1, &textureId);
     ::glBindTexture(textureTarget, textureId);
     
+    GL3_CHECK();
+    
     if (textureTarget == GL_TEXTURE_1D) {
-        ::glTexImage1D(textureTarget, 0, internalFormat, size.x, 0, 0, GL_UNSIGNED_BYTE, nullptr);
+        ::glTexImage1D(textureTarget, 0, internalFormat, size.x, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
     } else if (textureTarget == GL_TEXTURE_2D) {
-        ::glTexImage2D(textureTarget, 0, internalFormat, size.x, size.y, 0, 0, GL_UNSIGNED_BYTE, nullptr);
+        ::glTexImage2D(textureTarget, 0, internalFormat, size.x, size.y, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
     } else if (textureTarget == GL_TEXTURE_3D) {
-        ::glTexImage3D(textureTarget, 0, internalFormat, size.x, size.y, size.z, 0, 0, GL_UNSIGNED_BYTE, nullptr);
+        ::glTexImage3D(textureTarget, 0, internalFormat, size.x, size.y, size.z, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
     } else {
         assert(false);
     }
+    
+    GL3_CHECK();
     
     ::glTexParameteri(textureTarget, GL_TEXTURE_BASE_LEVEL, 0);
     ::glTexParameteri(textureTarget, GL_TEXTURE_MAX_LEVEL, 0);
@@ -74,6 +78,7 @@ GL3Texture::GL3Texture(ResourceFactory *factory,
     assert(textureId != 0);
     GL3_CHECK();
     
+    this->buffer.allocate(size.x*size.y*size.z * colorFormat.size/8);
     this->size = size;
     this->colorFormat = colorFormat;
     this->type = type;

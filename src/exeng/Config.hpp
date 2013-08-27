@@ -16,6 +16,12 @@
 
 #include <exeng/DetectEnv.hpp>
 
+#ifndef NDEBUG
+#  ifndef EXENG_DEBUG
+#    define EXENG_DEBUG
+#  endif
+#endif
+
 #ifdef EXENG_WINDOWS
 #  define EXENG_CALLCONV __stdcall
 #else

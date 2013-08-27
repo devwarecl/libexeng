@@ -18,17 +18,30 @@
 namespace exeng {
 
 /**
- * @brief Resource factory
+ * @brief Resource factory abstract base class.
  */
 class EXENGAPI Resource;
 class EXENGAPI ResourceFactory : public Object {
+    friend class Resource;
 public:
+    ResourceFactory();
+    
     virtual ~ResourceFactory();
     
+protected:
     /**
-     * @brief Notify the factory of the destruction of the object
+     * @brief Add a resource to the internal list.
      */
-    virtual void onResourceDestruction(Resource* resource) = 0;
+    virtual void addResource(Resource* resource);
+    
+    /**
+     * @brief Remove the resource from the resource factory.
+     */
+    virtual void removeResource(Resource* resource);
+    
+private:
+    struct Private;
+    Private *impl;
 };
 }
 

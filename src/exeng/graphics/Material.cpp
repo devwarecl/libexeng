@@ -96,14 +96,14 @@ struct PropertyValue {
     
     template<typename ValueType>
     inline bool checkType() const {
-        return typeInfo != TypeInfo::get<ValueType>();
+        return typeInfo == TypeInfo::get<ValueType>();
     }
     
     
     template<typename ValueType>
     inline void setValue( const ValueType &value ) {
 #if defined(EXENG_DEBUG)
-        if (this->checkType<ValueType>() == false) {
+        if (!this->checkType<void>() &&  !this->checkType<ValueType>()) {
             throw std::runtime_error("PropertyMap::setValue: The types doesn't coincides.");
         }
 #endif
@@ -313,7 +313,7 @@ bool Material::checkTextureType(const TypeInfo &textureTypeInfo) const {
 int Material::getPropertyNameCount() const {
     assert(this->impl != nullptr);
     
-    return this->impl->properties.size();
+    return static_cast<int>(this->impl->properties.size());
 }
 
 

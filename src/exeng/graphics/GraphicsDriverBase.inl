@@ -52,36 +52,22 @@ inline Rectf GraphicsDriverBase::getViewport() const {
 }
 
 
-inline VertexBuffer* GraphicsDriverBase::createVertexBuffer( const VertexFormat &format, 
-                                                             int count ) {
+inline 
+VertexBuffer* 
+GraphicsDriverBase::createVertexBuffer( const VertexFormat &format, int count ) {
     auto *vbuffer = new HeapVertexBuffer(this, format, count);
-    this->resources.push_back(vbuffer);
-    
+    this->addResource(vbuffer);
     return vbuffer;
 }
 
 
-inline IndexBuffer* GraphicsDriverBase::createIndexBuffer( IndexFormat indexFormat, 
-                                                           int indexCount ) {
+inline 
+IndexBuffer* 
+GraphicsDriverBase::createIndexBuffer(IndexFormat indexFormat, int indexCount) {
     auto *indexBuffer = new HeapIndexBuffer(this);
     indexBuffer->allocate(indexFormat, indexCount);
-    
-    this->resources.push_back(indexBuffer);
-    
+    this->addResource(indexBuffer);
     return indexBuffer;
-}
-
-
-inline void GraphicsDriverBase::onResourceDestruction(Resource *resource) {
-    assert (resource->getResourceFactory() == this);
-    
-    auto &resources = this->resources;
-    auto position = boost::range::find_if(resources, [resource](Resource &res){
-       return &res == resource;
-    });
-    
-    assert (position != resources.end());
-    resources.erase(position);
 }
 
 

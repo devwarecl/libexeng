@@ -54,7 +54,8 @@ namespace exeng {
                 inline int getVertexArrayId() const {
                     return this->vertexArrayId;
                 }
-                
+                                
+                virtual TypeInfo getTypeInfo() const;
                 
             private:
                 ::GLuint vertexArrayId;

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
+#include <iostream>
 
 #include "JitteredSampler.hpp"
 
@@ -46,6 +47,12 @@ namespace raytracer {
                     }
                 }
             }
+
+            for (auto element : this->sampleArray) {
+                std::cout << element << std::endl;
+            }
+            std::cout << std::endl;
+
         }
     }
 }

@@ -1,5 +1,6 @@
 
 #include "OpenGLApp.hpp"
+#include <cstdint>
 
 using namespace exeng;
 using namespace exeng::math;
@@ -10,13 +11,6 @@ using namespace exeng::input;
 namespace raytracer {
 
 OpenGLApp::OpenGLApp() {
-    this->root = nullptr;
-    this->driver = nullptr;
-    this->triangleVertexBuffer = nullptr;
-    this->vertexShader = nullptr;
-    this->fragmentShader = nullptr;
-    this->program = nullptr;
-	this->texture = nullptr;
     this->applicationStatus = ApplicationStatus::Running;
 }
 
@@ -27,23 +21,20 @@ OpenGLApp::~OpenGLApp () {
 
 
 void OpenGLApp::initialize(const StringVector& cmdLine) {
-    
     // Initialize the exeng root class and plugins.
-    this->root = new Root();
-
     std::string path;
 
 #if defined (EXENG_WINDOWS)
-    path = "./x64/Debug/";
+    path = "";
 #else
     path = "../exeng-graphics-gl3/";
 #endif
 
+    this->root.reset(new exeng::Root());
     this->root->getPluginManager()->load("exeng-graphics-gl3", path);
     
     // initialize the gl3 driver, in windowed mode
-    this->driver = this->root->getGraphicsManager()->createDriver();
-    
+    this->driver.reset(this->root->getGraphicsManager()->createDriver());
     this->driver->addEventHandler(this);
     
     DisplayMode mode;
@@ -59,73 +50,64 @@ void OpenGLApp::initialize(const StringVector& cmdLine) {
     this->driver->initialize(mode);
     
     // create the geometry (a single triangle)
-    VertexBuffer *vertexBuffer = nullptr;
-    
     VertexFormat format;
-    VertexField field(VertexAttrib::Position, 3, DataType::Float32);
-    format.fields.push_back(field);
+    // VertexField field(VertexAttrib::Position, 3, DataType::Float32);
     
-    vertexBuffer = this->driver->createVertexBuffer(format, 3);
+    format.fields.push_back(VertexField(VertexAttrib::Position, 3, DataType::Float32));
+    format.fields.push_back(VertexField(VertexAttrib::TexCoord, 2, DataType::Float32));
+    
+    auto vertexBuffer = this->driver->createVertexBuffer(format, 4);
     {
-        VertexArray<Vector3f> array(vertexBuffer);
+        struct Vertex {
+            Vector3f coord;
+            Vector2f texCoord;
+        };
         
-        array[0] = Vector3f( 0.0f,  0.5f, 0.0f);
-        array[1] = Vector3f( 0.5f, -0.5f, 0.0f);
-        array[2] = Vector3f(-0.5f, -0.5f, 0.0f);
-    }
-    this->triangleVertexBuffer = vertexBuffer;
-    
-    vertexBuffer = this->driver->createVertexBuffer(format, 4);
-    {
-        VertexArray<Vector3f> array(vertexBuffer);
+        VertexArray<Vertex> array(vertexBuffer);
         
-        array[0] = Vector3f(-0.5f,  0.5f, 0.0f);
-        array[1] = Vector3f( 0.5f,  0.5f, 0.0f);
-        array[2] = Vector3f(-0.5f, -0.5f, 0.0f);
-        array[3] = Vector3f( 0.5f, -0.5f, 0.0f);
+        array[0].coord = Vector3f(-1.0f,  1.0f, 0.0f);
+        array[0].texCoord = Vector2f(0.0f,  1.0f);
+        
+        array[1].coord = Vector3f( 1.0f,  1.0f, 0.0f);
+        array[1].texCoord = Vector2f(1.0f,  1.0f);
+        
+        array[2].coord = Vector3f(-1.0f, -1.0f, 0.0f);
+        array[2].texCoord = Vector2f(0.0f,  0.0f);
+        
+        array[3].coord = Vector3f( 1.0f, -1.0f, 0.0f);
+        array[3].texCoord = Vector2f(1.0f,  0.0f);
     }
+    this->vertexBuffer.reset(vertexBuffer);
     
-    this->squareVertexBuffer = vertexBuffer;
+    // create a texture for the render targets
+    auto texture = this->driver->createTexture(TextureType::Tex2D, Vector3f(640, 480), ColorFormat::R8G8B8A8);
     
-    // create the shaders
-    this->vertexShader = this->driver->createShader(ShaderType::Vertex);
-    this->vertexShader->setSourceCode(
-                "#version 330 \n"
-                "layout(location=0) in vec4 position; \n"
-                "void main() { \n"
-                "    gl_Position = position; \n"
-                "}"
-    );
-    this->vertexShader->compile();
+    struct Texel {
+        std::uint8_t red;
+        std::uint8_t green;
+        std::uint8_t blue;
+        std::uint8_t alpha;
+    };
     
-    this->fragmentShader = this->driver->createShader(ShaderType::Fragment);
-    this->fragmentShader->setSourceCode(
-                "#version 330 \n"
-                "out vec4 outputColor; \n"
-                "void main() { \n"
-                "    outputColor = vec4(1.0, 1.0, 1.0, 1.0); \n"
-                "}\n"
-    );
-    this->fragmentShader->compile();
+    Texel *textureData = reinterpret_cast<Texel*>(texture->lock());
+    for (int i=0; i<640*480; ++i) {
+        textureData[i].red      = 255;
+        textureData[i].green    = 255;
+        textureData[i].blue     = 255;
+        textureData[i].alpha    = 255;
+    }
+    texture->unlock();
     
-    this->program = this->driver->createShaderProgram();
-    this->program->addShader(this->vertexShader);
-    this->program->addShader(this->fragmentShader);
-    this->program->link();
+    this->texture.reset(texture);
+    
+    this->material.reset(new Material());
+    this->material->getLayer(0)->setTexture(texture);
     
     // transformations
 }
 
 
 void OpenGLApp::terminate() {
-    this->program->removeShader(this->fragmentShader);
-    this->program->removeShader(this->vertexShader);
-    
-    delete this->program;
-    delete this->triangleVertexBuffer;
-    delete this->squareVertexBuffer;
-    delete this->driver;
-    delete this->root;
 }
 
 
@@ -151,9 +133,9 @@ void OpenGLApp::update(double seconds) {
 void OpenGLApp::render() {
     Color clearColor(0.2f, 0.2f, 0.8f, 1.0f);
     this->driver->beginFrame(clearColor, ClearFlags::Color);
-    // this->driver->setShaderProgram(this->program);
     
-    this->driver->setVertexBuffer(this->squareVertexBuffer);
+    this->driver->setMaterial(this->material.get());
+    this->driver->setVertexBuffer(this->vertexBuffer.get());
     this->driver->render(Primitive::TriangleStrip, 4);
     
     this->driver->endFrame();

@@ -15,7 +15,9 @@
 #define __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
 
 #include <exeng/graphics/GraphicsDriver.hpp>
-#include <boost/ptr_container/ptr_list.hpp>
+
+#include <list>
+#include <boost/shared_ptr.hpp>
 
 namespace exeng { namespace graphics {
 
@@ -39,15 +41,12 @@ public:
     
     virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount );
     
-    virtual void onResourceDestruction(Resource *resource);
-    
     virtual void setTransformName(Transform transform, const std::string &name);
     
     virtual std::string getTransformName(Transform transform) const;
     
 protected:
     const exeng::graphics::Material* material;
-    boost::ptr_list<Resource> resources;
     exeng::math::Rectf viewport;
     exeng::math::Matrix4f transforms[3];
     std::string transformNames[3];

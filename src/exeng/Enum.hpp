@@ -17,7 +17,7 @@
 namespace exeng {
 
 /**
- * @brief Base class for the exeng 'strogly typed'
+ * @brief Base class for 'strogly typed' enumerations
  */
 struct Enum {
 private: Enum();

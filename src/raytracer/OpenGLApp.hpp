@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include <exeng/Exeng.hpp>
-#include <memory>
+#include <boost/scoped_ptr.hpp>
 
 namespace raytracer {
 class OpenGLApp : public exeng::framework::Application, public exeng::input::IEventHandler {
@@ -34,16 +34,12 @@ public:
     virtual void handleEvent(const exeng::input::EventData &data);
     
 private:
-    exeng::Root *root;
-    
+    boost::scoped_ptr<exeng::Root> root;
+    boost::scoped_ptr<exeng::graphics::Material> material;
+    boost::scoped_ptr<exeng::graphics::GraphicsDriver> driver;
+    boost::scoped_ptr<exeng::graphics::VertexBuffer> vertexBuffer;
+    boost::scoped_ptr<exeng::graphics::Texture> texture;
     exeng::framework::ApplicationStatus applicationStatus;
-    exeng::graphics::GraphicsDriver *driver;
-    exeng::graphics::VertexBuffer *triangleVertexBuffer;
-    exeng::graphics::VertexBuffer *squareVertexBuffer;
-    exeng::graphics::Shader *vertexShader;
-    exeng::graphics::Shader *fragmentShader;
-    exeng::graphics::ShaderProgram *program;
-	exeng::graphics::Texture *texture;
 };
 }
 

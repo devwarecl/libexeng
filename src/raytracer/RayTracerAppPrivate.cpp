@@ -144,6 +144,29 @@ namespace raytracer {
     
     
     Color RayTracerApp::Private::traceRay(const SceneNodeList &sceneNodeList, const Vector2i &pixel) const {
+        Color color(0.0f, 0.0f, 0.0f, 1.0f);
+        Vector2f pixelSample = static_cast<Vector2f>(pixel);
+        Ray ray = this->castRay(pixel, Vector2f(0.0, 0.0));
+            
+        // Intersectarlo con los objetos de la escena
+        IntersectInfo info = this->intersectRay(sceneNodeList, ray);
+            
+        if (info.intersect == true)  {
+            // Determinar el color
+            auto factor = info.normal.dot(ray.getDirection());
+                
+            auto vcolor = info.materialPtr->getProperty4f("diffuse");
+                
+            color = Color(vcolor) * factor;
+        } else {
+            color = this->scene->getBackgroundColor();
+        }
+
+        return color;
+    }
+
+
+    Color RayTracerApp::Private::traceRayMultisampled(const SceneNodeList &sceneNodeList, const Vector2i &pixel) const {
         
         Color color(0.0f, 0.0f, 0.0f, 1.0f);
         
@@ -153,15 +176,15 @@ namespace raytracer {
             
             // Trazar un rayo
             Vector2f sample = this->sampler->sampleUnitSquare();
-            Ray ray = this->castRay(pixel, sample);
+            Ray ray = this->castRay(pixelSample, sample);
             
             // Intersectarlo con los objetos de la escena
             IntersectInfo info = this->intersectRay(sceneNodeList, ray);
             
             if (info.intersect == true)  {
+
                 // Determinar el color
                 auto factor = info.normal.dot(ray.getDirection());
-                
                 auto vcolor = info.materialPtr->getProperty4f("diffuse");
                 
                 color += Color(vcolor) * factor;
@@ -198,14 +221,19 @@ namespace raytracer {
         auto rootNode = this->scene->getRootNodePtr();
         auto sphereGeometry = new SphereGeometry();
         auto sphereGeometry2 = new SphereGeometry();
+        auto sphereGeometry3 = new SphereGeometry();
         
         sphereGeometry->sphere.setAttributes(75.0, Vector3f(-100.0f, 0.0f, 0.0f));
         sphereGeometry->material.setProperty("diffuse", Vector4f(1.0f, 0.5f, 0.25f, 1.0f));
         
         sphereGeometry2->sphere.setAttributes(150.0, Vector3f(150.0f, 0.0f, 0.0f));
         sphereGeometry2->material.setProperty("diffuse", Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+
+        sphereGeometry3->sphere.setAttributes(200.0, Vector3f(0.0f, 100.0f, 0.0f));
+        sphereGeometry3->material.setProperty("diffuse", Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
         
         rootNode->addChildPtr("sphereGeometry")->setDataPtr(sphereGeometry);
         rootNode->addChildPtr("sphereGeometry2")->setDataPtr(sphereGeometry2);
+        rootNode->addChildPtr("sphereGeometry3")->setDataPtr(sphereGeometry3);
     }
 }

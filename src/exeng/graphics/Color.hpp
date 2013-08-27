@@ -15,6 +15,7 @@
 #define __EXENG_GRAPHICS_COLOR_HPP__
 
 #include <cstdint>
+#include <stdexcept>
 #include <exeng/math/Operations.hpp>
 
 namespace exeng {

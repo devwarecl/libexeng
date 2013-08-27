@@ -9,6 +9,9 @@ set (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 set (EXENG_VERSION_MAJOR 0)
 set (EXENG_VERSION_MINOR 1)
 
+add_definitions(-DEXENG_BUILD)
+add_definitions(-DEXENG_DYNAMIC)
+
 ## Compiler flags
 if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "-std=c++0x -Wall") 

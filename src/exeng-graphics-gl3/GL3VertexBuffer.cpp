@@ -135,6 +135,12 @@ int GL3VertexBuffer::getSize() const {
 const VertexFormat& GL3VertexBuffer::getFormat() const {
     return this->format;
 }
+
+
+TypeInfo GL3VertexBuffer::getTypeInfo() const {
+    return TypeInfo::get<GL3VertexBuffer>();
+}
+
 }
 }
 }

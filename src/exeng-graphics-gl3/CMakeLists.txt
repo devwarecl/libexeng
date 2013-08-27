@@ -1,12 +1,25 @@
 include_directories( ${PROJECT_SOURCE_DIR}/src )
 
-# TODO: Add find package for GLFW3 
-
 find_package(OpenGL REQUIRED)
-include_directories(${OpenGL_INCLUDE_DIRS})
-
 find_package(Boost REQUIRED)
+find_package(glfw REQUIRED)
+
 include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${OpenGL_INCLUDE_DIRS})
+include_directories(${GLFW_INCLUDE_DIR})
+
+link_directories(${Boost_LIBRARY_DIRS})
+link_directories(${GLFW_LIBRARY_DIR})
+link_directories(${OpenGL_LIBRARY_DIR})
+
+# FIXME: Use a module for GLFW 3 instead.
+if (NOT GLFW_LIBRARIES)
+  if (WIN32)
+	set(GLFW_LIBRARIES "glfw3dll")
+  else()
+    set(GLFW_LIBRARIES "glfw")
+  endif()
+endif()
 
 add_library(exeng-graphics-gl3 SHARED
 Locker.hpp Locker.cpp
@@ -25,4 +38,4 @@ GL3.hpp
 gl_core_3_3.h gl_core_3_3.c
 )
 
-target_link_libraries(exeng-graphics-gl3 exeng glfw ${OpenGL_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(exeng-graphics-gl3 exeng ${GLFW_LIBRARIES} ${OPENGL_LIBRARIES} ${Boost_LIBRARIES})

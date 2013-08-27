@@ -49,6 +49,8 @@ struct ResourceStatus : public Enum {
  * @brief Object with internal data asociated, dependent on another object.
  */
 class EXENGAPI Resource : public Object {    
+    friend class ResourceFactory;
+    
 public:
     explicit Resource(ResourceFactory *resourceFactory);
     
@@ -58,13 +60,17 @@ public:
      * @brief Get a pointer to the object who created this one.
      */
     ResourceFactory* getResourceFactory();
+    
+    /**
+     * @brief Get a pointer to the object who created this one.
+     */
     const ResourceFactory* getResourceFactory() const;
 
     /**
-     * @brief Release all the data associated with the resource, but don't delete the object.
+     * @brief Release all the data associated with the resource, without deleting it.
      * Called by the resource factory when this one has been eliminated or terminated on any form.
      */
-    virtual void release() = 0;
+    virtual void release();
     
     /**
      * @brief Restore the resource to a usable state. Only used when the resource have th
@@ -79,7 +85,7 @@ public:
     
     
 protected:
-    ResourceFactory *creator;
+    ResourceFactory *resourceFactory;
 };
 }
 
