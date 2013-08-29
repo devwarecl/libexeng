@@ -12,15 +12,20 @@ set (Boost_USE_STATIC_RUNTIME OFF)
 find_package(SDL REQUIRED)
 find_package(Boost COMPONENTS system timer REQUIRED)
 
-include_directories(${SDL_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
 link_directories(${Boost_LIBRARY_DIRS})
 
-add_executable(raytracer OpenGLApp.cpp RayTracerApp.cpp SphereGeometry.cpp RayTracerAppPrivate.cpp 
-                         samplers/Sampler.cpp samplers/JitteredSampler.cpp RayTracerMain.cpp)
+add_executable(raytracer 
+    OpenGLApp.cpp 
+    RayTracerApp.cpp 
+    SphereGeometry.cpp 
+    samplers/Sampler.cpp 
+    samplers/JitteredSampler.cpp 
+    RayTracerMain.cpp
+)
 
-target_link_libraries(raytracer exeng ${SDL_LIBRARY} ${Boost_LIBRARIES} )
+target_link_libraries(raytracer exeng ${Boost_LIBRARIES} )
 
 add_subdirectory(samplers)

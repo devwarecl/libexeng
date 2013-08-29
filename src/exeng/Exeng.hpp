@@ -43,6 +43,7 @@
 #include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/Primitive.hpp>
 #include <exeng/graphics/Image.hpp>
+#include <exeng/graphics/Material.hpp>
 
 #include <exeng/scenegraph/MeshManager.hpp>
 #include <exeng/scenegraph/Camera.hpp>
@@ -56,6 +57,8 @@
 #include <exeng/scenegraph/Ray.hpp>
 #include <exeng/scenegraph/Sphere.hpp>
 #include <exeng/scenegraph/Plane.hpp>
+#include <exeng/scenegraph/Scene.hpp>
+#include <exeng/scenegraph/SceneNode.hpp>
 
 #include <exeng/math/Common.hpp>
 #include <exeng/math/TSize.hpp>
