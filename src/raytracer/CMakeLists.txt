@@ -18,12 +18,10 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 link_directories(${Boost_LIBRARY_DIRS})
 
 add_executable(raytracer 
-    OpenGLApp.cpp 
     RayTracerApp.cpp 
     SphereGeometry.cpp 
     samplers/Sampler.cpp 
     samplers/JitteredSampler.cpp 
-    RayTracerMain.cpp
 )
 
 target_link_libraries(raytracer exeng ${Boost_LIBRARIES} )

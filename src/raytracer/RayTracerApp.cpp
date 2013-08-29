@@ -394,3 +394,6 @@ void RayTracerApp::handleEvent(const EventData &data) {
 }
 
 }
+
+
+EXENG_IMPLEMENT_MAIN(raytracer::RayTracerApp)
