@@ -19,7 +19,7 @@ typedef SceneNodeList::iterator SceneNodeListIt;
  */
 struct CameraView {
     CameraView() :  size(320, 200), pixelSize(1.0f),  gamma(0.0f), invGamma(0.0) {}
-    exeng::math::Vector2i size; //! Tamaño de la pantalla
+    exeng::math::Size2i size;   //! Tamaño de la pantalla
     float pixelSize;            //! Tamaño de cada pixel
     float gamma;                //! Factor gamma
     float invGamma;             //! Inverso del factor gamma
@@ -88,24 +88,24 @@ private:
 private:
     
     //! El color por defecto a usar en caso de que ningun rayo colisione con la escena.
-    std::uint32_t defaultColor;
+    std::uint32_t _defaultColor;
     
     //! La forma en que la escena se proyecta en la pantalla.
-    CameraView cameraView;
+    CameraView _cameraView;
     
-    boost::scoped_ptr<exeng::Root> root;
-    boost::scoped_ptr<exeng::graphics::Material> material;
-    boost::scoped_ptr<exeng::graphics::GraphicsDriver> driver;
-    boost::scoped_ptr<exeng::graphics::VertexBuffer> vertexBuffer;
-    boost::scoped_ptr<exeng::graphics::Texture> texture;
-    boost::scoped_ptr<exeng::scenegraph::Scene> scene;
+    boost::scoped_ptr<exeng::Root> _root;
+    boost::scoped_ptr<exeng::graphics::Material> _material;
+    boost::scoped_ptr<exeng::graphics::GraphicsDriver> _driver;
+    boost::scoped_ptr<exeng::graphics::VertexBuffer> _vertexBuffer;
+    boost::scoped_ptr<exeng::graphics::Texture> _texture;
+    boost::scoped_ptr<exeng::scenegraph::Scene> _scene;
     
     //! Implementa el antialias de nuestra escena
-    boost::scoped_ptr<raytracer::samplers::Sampler> sampler;
+    boost::scoped_ptr<raytracer::samplers::Sampler> _sampler;
     
-    exeng::framework::ApplicationStatus applicationStatus;
+    exeng::framework::ApplicationStatus _applicationStatus;
     
-    void *backbuffer;
+    void *_backbuffer;
 };
 }
 
