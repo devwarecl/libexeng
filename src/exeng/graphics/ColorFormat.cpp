@@ -103,27 +103,33 @@ bool ColorFormat::operator< (const ColorFormat &other) const {
     return true;
 }
 
-ColorFormat ColorFormat::R8G8B8A8 = ColorFormat(
-    32, 
-    ColorChannel(ColorComponent::Red,   8), 
-    ColorChannel(ColorComponent::Green, 8),
-    ColorChannel(ColorComponent::Blue,  8),
-    ColorChannel(ColorComponent::Alpha, 8)
-);
+const ColorFormat ColorFormat::getColorFormatR8G8B8A8() {
+    return ColorFormat(
+        32, 
+        ColorChannel(ColorComponent::Red,   8), 
+        ColorChannel(ColorComponent::Green, 8),
+        ColorChannel(ColorComponent::Blue,  8),
+        ColorChannel(ColorComponent::Alpha, 8)
+    );
+}
 
-ColorFormat ColorFormat::R5G6B5 = ColorFormat(
-    16, 
-    ColorChannel(ColorComponent::Red,   5), 
-    ColorChannel(ColorComponent::Green, 6),
-    ColorChannel(ColorComponent::Blue,  5)
-);
+const ColorFormat ColorFormat::getColorFormatR5G6B5() {
+    return ColorFormat(
+        16, 
+        ColorChannel(ColorComponent::Red,   5), 
+        ColorChannel(ColorComponent::Green, 6),
+        ColorChannel(ColorComponent::Blue,  5)
+    );
+}
 
-ColorFormat ColorFormat::R5G5B5X1 = ColorFormat(
-    16, 
-    ColorChannel(ColorComponent::Red,   5), 
-    ColorChannel(ColorComponent::Green, 5),
-    ColorChannel(ColorComponent::Blue,  5),
-    ColorChannel(ColorComponent::Unused, 1)
-);
+const ColorFormat ColorFormat::getColorFormatR5G5B5X1() {
+    return ColorFormat(
+        16, 
+        ColorChannel(ColorComponent::Red,   5), 
+        ColorChannel(ColorComponent::Green, 5),
+        ColorChannel(ColorComponent::Blue,  5),
+        ColorChannel(ColorComponent::Unused, 1)
+    );
+}
 
 }}

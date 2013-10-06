@@ -22,6 +22,7 @@
 #include <exeng/Buffer.hpp>
 #include <exeng/HeapBuffer.hpp>
 #include <exeng/TypeInfo.hpp>
+#include <exeng/Timer.hpp>
 
 #include <exeng/input/IEventHandler.hpp>
 

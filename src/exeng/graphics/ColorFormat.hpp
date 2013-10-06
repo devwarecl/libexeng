@@ -124,9 +124,9 @@ struct EXENGAPI ColorFormat {
     bool operator< (const ColorFormat &other) const;
     
     // Predefined color formats
-    static ColorFormat R8G8B8A8;
-    static ColorFormat R5G6B5;
-    static ColorFormat R5G5B5X1;
+    static const ColorFormat getColorFormatR8G8B8A8();
+    static const ColorFormat getColorFormatR5G6B5();
+    static const ColorFormat getColorFormatR5G5B5X1();
 };
 }}
 

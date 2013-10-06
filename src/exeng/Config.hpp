@@ -28,27 +28,24 @@
 #  define EXENG_CALLCONV 
 #endif
 
+#ifdef EXENG_WINDOWS
+#  define EXENG_EXPORT __declspec(dllexport)
+#  define EXENG_IMPORT __declspec(dllimport)
+#else 
+#  define EXENG_EXPORT
+#  define EXENG_IMPORT
+#endif
+
+// define EXENGAPI
 #ifdef EXENG_BUILD
-#  ifdef EXENG_DYNAMIC
-#    if defined(EXENG_MSVC) || defined(EXENG_BCC) || defined(EXENG_ICC)
-#      define EXENGAPI __declspec(dllexport)
-#    elif defined(EXENG_GCC)
-#      define EXENGAPI 
-#    else
-#      define EXENGAPI
-#    endif
+#  ifdef EXENG_WINDOWS
+#    define EXENGAPI EXENG_EXPORT
 #  else
 #    define EXENGAPI
 #  endif
-#else
-#  ifdef EXENG_DYNAMIC
-#    if defined(EXENG_MSVC) || defined(EXENG_BCC) || defined(EXENG_ICC)
-#      define EXENGAPI __declspec(dllimport)
-#    elif defined(EXENG_GCC)
-#      define EXENGAPI 
-#    else
-#      define EXENGAPI
-#    endif
+#else 
+#  ifdef EXENG_WINDOWS
+#    define EXENGAPI EXENG_IMPORT
 #  else
 #    define EXENGAPI
 #  endif

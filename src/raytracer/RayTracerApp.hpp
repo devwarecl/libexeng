@@ -86,28 +86,33 @@ private:
     void loadScene();
     
 private:
-    
     //! El color por defecto a usar en caso de que ningun rayo colisione con la escena.
-    std::uint32_t _defaultColor;
+    std::uint32_t defaultColor;
     
     //! La forma en que la escena se proyecta en la pantalla.
-    CameraView _cameraView;
+    CameraView cameraView;
     
-    boost::scoped_ptr<exeng::Root> _root;
-    boost::scoped_ptr<exeng::graphics::Material> _material;
-    boost::scoped_ptr<exeng::graphics::GraphicsDriver> _driver;
-    boost::scoped_ptr<exeng::graphics::VertexBuffer> _vertexBuffer;
-    boost::scoped_ptr<exeng::graphics::Texture> _texture;
-    boost::scoped_ptr<exeng::scenegraph::Scene> _scene;
+    boost::scoped_ptr<exeng::Root> root;
+    boost::scoped_ptr<exeng::graphics::Material> material;
+    boost::scoped_ptr<exeng::graphics::GraphicsDriver> driver;
+    boost::scoped_ptr<exeng::graphics::VertexBuffer> vertexBuffer;
+    boost::scoped_ptr<exeng::graphics::Texture> texture;
+    boost::scoped_ptr<exeng::scenegraph::Scene> scene;
     
     //! Implementa el antialias de nuestra escena
-    boost::scoped_ptr<raytracer::samplers::Sampler> _sampler;
+    boost::scoped_ptr<raytracer::samplers::Sampler> sampler;
     
-    exeng::framework::ApplicationStatus _applicationStatus;
+    exeng::framework::ApplicationStatus applicationStatus;
     
-    void *_backbuffer;
+    void *backbuffer;
+
+    mutable uint32_t lastTime;
+
+    uint32_t fpsCurrent;
+    double fpsLastTime;
+    double fpsCurrentTime;
 };
+
 }
 
 #endif	//__RAYTRACER_RAYTRACERAPP_HPP__
-

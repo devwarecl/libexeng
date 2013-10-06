@@ -9,7 +9,6 @@
 #include <stdexcept>
 #include <cstdint>
 #include <list>
-#include <boost/timer/timer.hpp>
 
 namespace raytracer {
 
@@ -22,13 +21,23 @@ using namespace exeng::input;
 
 using namespace raytracer::samplers;
 
-RayTracerApp::RayTracerApp() : _defaultColor(0xFF000000), _backbuffer(nullptr), _applicationStatus(ApplicationStatus::Running) {
-    _cameraView.size = Size2i(320, 200);
+RayTracerApp::RayTracerApp() {
+    this->defaultColor = 0xFF000000;
+    this->backbuffer = nullptr;
+    this->applicationStatus = ApplicationStatus::Running;
+    this->cameraView.size = Size2i(320, 200);
+
+    this->lastTime = Timer::getTime();
+
+    this->fpsCurrent = 0;
+    this->fpsLastTime = 0.0;
+    this->fpsCurrentTime = 0.0;
+
 }
 
 
 RayTracerApp::~RayTracerApp() {
-    terminate();
+    this->terminate();
 }
 
 
@@ -43,12 +52,12 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
     path = "../exeng-graphics-gl3/";
 #endif
 
-    _root.reset(new Root());
-    _root->getPluginManager()->load("exeng-graphics-gl3", path);
+    this->root.reset(new Root());
+    this->root->getPluginManager()->load("exeng-graphics-gl3", path);
     
     // initialize the gl3 driver, in windowed mode
-    _driver.reset(_root->getGraphicsManager()->createDriver());
-    _driver->addEventHandler(this);
+    this->driver.reset(this->root->getGraphicsManager()->createDriver());
+    this->driver->addEventHandler(this);
     
     DisplayMode mode;
     mode.size = Size2i(640, 480);
@@ -60,7 +69,7 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
     mode.depthBits = 16;
     mode.stencilBits = 0;
     
-    _driver->initialize(mode);
+    this->driver->initialize(mode);
     
     // create the geometry (a single triangle)
     VertexFormat format;
@@ -69,7 +78,7 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
     format.fields.push_back(VertexField(VertexAttrib::Position, 3, DataType::Float32));
     format.fields.push_back(VertexField(VertexAttrib::TexCoord, 2, DataType::Float32));
     
-    auto vertexBuffer = _driver->createVertexBuffer(format, 4);
+    auto vertexBuffer = this->driver->createVertexBuffer(format, 4);
     {
         struct Vertex {
             Vector3f coord;
@@ -90,10 +99,10 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
         array[3].coord = Vector3f( 1.0f, -1.0f, 0.0f);
         array[3].texCoord = Vector2f(1.0f,  0.0f);
     }
-    _vertexBuffer.reset(vertexBuffer);
+    this->vertexBuffer.reset(vertexBuffer);
     
     // create a texture for the render targets
-    auto texture = _driver->createTexture(TextureType::Tex2D, Vector3f(320, 200), ColorFormat::R8G8B8A8);
+    auto texture = this->driver->createTexture(TextureType::Tex2D, Vector3f(320, 200), ColorFormat::getColorFormatR8G8B8A8());
     
     struct Texel {
         std::uint8_t red;
@@ -111,50 +120,63 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
     }
     texture->unlock();
     
-    _texture.reset(texture);
+    this->texture.reset(texture);
     
-    _material.reset( new exeng::graphics::Material() );
-    _material->getLayer(0)->setTexture(texture);
+    this->material.reset( new exeng::graphics::Material() );
+    this->material->getLayer(0)->setTexture(texture);
     
-    _backbuffer = nullptr;
+    this->backbuffer = nullptr;
     
-    _sampler.reset(new JitteredSampler(25));
-    _scene.reset(new Scene());
+    this->sampler.reset(new JitteredSampler(25));
+    this->scene.reset(new Scene());
     
-    loadScene();    
+    this->loadScene();    
 }
 
 
 double RayTracerApp::getFrameTime() const {
-    return 0.0;
+    uint32_t lastTime = Timer::getTime();
+    double frameTime = static_cast<double>(lastTime - this->lastTime) / 1000.0;
+
+    this->lastTime = lastTime;
+
+    return frameTime;
 }
 
 
 void RayTracerApp::pollEvents() {
-    _driver->pollEvents();
+    this->driver->pollEvents();
 }
 
 
 ApplicationStatus RayTracerApp::getStatus() const {
-    return _applicationStatus;
+    return this->applicationStatus;
 }
 
 
 void RayTracerApp::update(double seconds) {
-    
+    // Actualizar los cuadros por segundo
+    if (this->fpsCurrentTime >= 1.0) {
+        uint32_t fps = this->fpsCurrent;
+        this->fpsCurrent = 0;
+        this->fpsCurrentTime = 0.0;
+
+        std::cout << "FPS: " << fps << std::endl;
+    } else {
+        this->fpsCurrent += 1;
+        this->fpsCurrentTime += seconds;
+    }
 }
 
 
 void RayTracerApp::render() {
-    boost::timer::auto_cpu_timer autoTimer;
-    
     SceneNodeList nodeList;
-    Vector2i screenSize = _cameraView.size;
+    Vector2i screenSize = this->cameraView.size;
     Vector2i pixel;
     Color pixelColor;
     
     clear();
-    flattenHierarchy(nodeList, _scene->getRootNodePtr());
+    flattenHierarchy(nodeList, this->scene->getRootNodePtr());
     
     for(pixel.y=0; pixel.y<screenSize.y; ++pixel.y) {
         for(pixel.x=0; pixel.x<screenSize.x; ++pixel.x) {
@@ -177,7 +199,7 @@ int RayTracerApp::getExitCode() const {
 
 
 void RayTracerApp::terminate() {
-    _driver->terminate();
+    this->driver->terminate();
 }
 
 
@@ -187,22 +209,22 @@ uint32_t RayTracerApp::pointToOffset(const Vector2i &point) const {
         throw std::invalid_argument("");
     }
     
-    if (point.x >= _cameraView.size.width) {
+    if (point.x >= this->cameraView.size.width) {
         throw std::invalid_argument("");
     }
     
-    if (point.y >= _cameraView.size.height) {
+    if (point.y >= this->cameraView.size.height) {
         throw std::invalid_argument("");
     }
 #endif  
-    int offset = point.y * _cameraView.size.width + point.x;
+    int offset = point.y * this->cameraView.size.width + point.x;
     return static_cast<uint32_t>(offset);
 }
 
 
 void RayTracerApp::putPixel(const Vector2i &point, uint32_t color) {
     uint32_t offset = pointToOffset(point);
-    uint32_t *data = static_cast<uint32_t*>(_backbuffer);
+    uint32_t *data = static_cast<uint32_t*>(this->backbuffer);
     
     data += offset;
     
@@ -212,7 +234,7 @@ void RayTracerApp::putPixel(const Vector2i &point, uint32_t color) {
 
 std::uint32_t RayTracerApp::getPixel(const Vector2i &point) const {
     auto offset = pointToOffset(point);
-    auto data = static_cast<uint32_t*>(_backbuffer);
+    auto data = static_cast<uint32_t*>(this->backbuffer);
     
     data += offset;
     
@@ -221,9 +243,9 @@ std::uint32_t RayTracerApp::getPixel(const Vector2i &point) const {
 
 
 Ray RayTracerApp::castRay(const Vector2f &pixel) const {
-    const float pixelSize = _cameraView.pixelSize;
-    const float halfWidth = _cameraView.size.width*0.5f;
-    const float halfHeight = _cameraView.size.height*0.5f;
+    const float pixelSize = this->cameraView.pixelSize;
+    const float halfWidth = this->cameraView.size.width*0.5f;
+    const float halfHeight = this->cameraView.size.height*0.5f;
     
     Ray ray;
     
@@ -240,9 +262,9 @@ Ray RayTracerApp::castRay(const Vector2f &pixel) const {
 
 
 Ray RayTracerApp::castRay(const exeng::math::Vector2f &pixel, const exeng::math::Vector2f &sample) const {
-    const float pixelSize = _cameraView.pixelSize;
-    const float halfWidth = _cameraView.size.width*0.5f;
-    const float halfHeight = _cameraView.size.height*0.5f;
+    const float pixelSize = this->cameraView.pixelSize;
+    const float halfWidth = this->cameraView.size.width*0.5f;
+    const float halfHeight = this->cameraView.size.height*0.5f;
     
     Ray ray;
     
@@ -268,7 +290,7 @@ void RayTracerApp::flattenHierarchy(SceneNodeList &out, SceneNode* node) const {
     }
 
     for (auto child : node->getChilds()) {
-        flattenHierarchy(out, child);
+        this->flattenHierarchy(out, child);
     }
 }
 
@@ -282,7 +304,7 @@ IntersectInfo RayTracerApp::intersectRay(const SceneNodeList &nodes, const Ray &
         assert(geometry != nullptr);
 
         if (geometry->hit(ray, &currentInfo) == true) {
-            if (prevInfo.distance == 0.0f == true || currentInfo.distance > prevInfo.distance) {
+            if (prevInfo.distance == 0.0f || currentInfo.distance > prevInfo.distance) {
                 info = currentInfo;
                 
                 assert(info.materialPtr != nullptr);
@@ -308,12 +330,11 @@ Color RayTracerApp::traceRay(const SceneNodeList &sceneNodeList, const Vector2i 
     if (info.intersect == true)  {
         // Determinar el color
         auto factor = info.normal.dot(ray.getDirection());
-            
         auto vcolor = info.materialPtr->getProperty4f("diffuse");
-            
+
         color = Color(vcolor) * factor;
     } else {
-        color = _scene->getBackgroundColor();
+        color = this->scene->getBackgroundColor();
     }
 
     return color;
@@ -325,9 +346,9 @@ Color RayTracerApp::traceRayMultisampled(const SceneNodeList &sceneNodeList, con
     
     Vector2f pixelSample = static_cast<Vector2f>(pixel);
     
-    for (int i=0; i<_sampler->getSampleCount(); ++i) {
+    for (int i=0; i<this->sampler->getSampleCount(); ++i) {
         // Trazar un rayo
-        Vector2f sample = _sampler->sampleUnitSquare();
+        Vector2f sample = this->sampler->sampleUnitSquare();
         Ray ray = castRay(pixelSample, sample);
         
         // Intersectarlo con los objetos de la escena
@@ -341,34 +362,34 @@ Color RayTracerApp::traceRayMultisampled(const SceneNodeList &sceneNodeList, con
             
             color += Color(vcolor) * factor;
         } else {
-            color += _scene->getBackgroundColor();
+            color += this->scene->getBackgroundColor();
         }
     }
     
-    float sampleCountf = static_cast<float>(_sampler->getSampleCount());
+    float sampleCountf = static_cast<float>(this->sampler->getSampleCount());
     return color / sampleCountf;
 }
 
 
 void RayTracerApp::clear() {
-    _driver->beginFrame(Color(0.0f, 0.0f, 0.0f, 1.0f));
-    _backbuffer = _texture->lock();
+    this->driver->beginFrame(Color(0.0f, 0.0f, 0.0f, 1.0f));
+    this->backbuffer = this->texture->lock();
 }
 
 
 void RayTracerApp::present() {
-    _texture->unlock();
-    _driver->setMaterial(_material.get());
-    _driver->setVertexBuffer(_vertexBuffer.get());
-    _driver->render(Primitive::TriangleStrip, 4);
-    _driver->endFrame();
+    this->texture->unlock();
+    this->driver->setMaterial(this->material.get());
+    this->driver->setVertexBuffer(this->vertexBuffer.get());
+    this->driver->render(Primitive::TriangleStrip, 4);
+    this->driver->endFrame();
 }
 
 
 void RayTracerApp::loadScene() {
     // Crear una escena de juguete, con una esfera al centro de la escena.
     // TODO: Cargar esta escena desde un archivo XML, o similar
-    auto rootNode = _scene->getRootNodePtr();
+    auto rootNode = this->scene->getRootNodePtr();
     auto sphereGeometry = new SphereGeometry();
     auto sphereGeometry2 = new SphereGeometry();
     auto sphereGeometry3 = new SphereGeometry();
@@ -379,20 +400,21 @@ void RayTracerApp::loadScene() {
     sphereGeometry2->sphere.setAttributes(150.0, Vector3f(150.0f, 0.0f, 0.0f));
     sphereGeometry2->material.setProperty("diffuse", Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
 
+    /*
     sphereGeometry3->sphere.setAttributes(200.0, Vector3f(0.0f, 100.0f, 0.0f));
     sphereGeometry3->material.setProperty("diffuse", Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+    */
     
     rootNode->addChildPtr("sphereGeometry")->setDataPtr(sphereGeometry);
     rootNode->addChildPtr("sphereGeometry2")->setDataPtr(sphereGeometry2);
-    rootNode->addChildPtr("sphereGeometry3")->setDataPtr(sphereGeometry3);
+    // rootNode->addChildPtr("sphereGeometry3")->setDataPtr(sphereGeometry3);
 }
 
 
 void RayTracerApp::handleEvent(const EventData &data) {
-    _applicationStatus = ApplicationStatus::Terminated;
+    this->applicationStatus = ApplicationStatus::Terminated;
 }
 
 }
-
 
 EXENG_IMPLEMENT_MAIN(raytracer::RayTracerApp)

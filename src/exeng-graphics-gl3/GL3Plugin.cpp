@@ -19,9 +19,7 @@
 #include <exeng/graphics/GraphicsManager.hpp>
 #include <iostream>
 
-namespace exeng {
-namespace graphics {
-namespace gl3 {
+namespace exeng { namespace graphics { namespace gl3 {
 
 GL3Plugin::GL3Plugin() : root(nullptr), factory(nullptr) {
     std::cout << "GL3Plugin::GL3Plugin()" << std::endl;
@@ -83,26 +81,25 @@ void GL3Plugin::terminate() {
 }
 
 GL3Plugin *currentPlugin = nullptr;
-}
-}
-}
+
+}}}
 
 // EXENG_EXPORT_PLUGIN(exeng::graphics::gl3::GL3Plugin)
 
+#if defined (EXENG_WINDOWS)
+#  if defined (EXENG_64)
+#    pragma comment (linker, "/export:ExengGetPluginObject")
+#    undef EXENG_EXPORT
+#  endif
+#endif 
+
 extern "C" { 
-	exeng::system::Plugin*                             
-	EXENG_CALLCONV ExengGetPluginObject() {                
+	EXENG_EXPORT
+	exeng::system::Plugin*
+	EXENG_CALLCONV ExengGetPluginObject() {
 		if (exeng::graphics::gl3::currentPlugin == nullptr) {
 			exeng::graphics::gl3::currentPlugin = new exeng::graphics::gl3::GL3Plugin();
 		}
 		return exeng::graphics::gl3::currentPlugin;
 	}
 }
-
-#if defined (EXENG_WINDOWS)
-#  if defined (EXENG_32)
-#    pragma comment (linker, "/export:ExengGetPluginObject=_ExengGetPluginObject")
-#  elif defined (EXENG_64)
-#    pragma comment (linker, "/export:ExengGetPluginObject")
-#  endif
-#endif 

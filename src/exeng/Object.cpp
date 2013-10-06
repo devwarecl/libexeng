@@ -28,7 +28,6 @@ Object::Object() {
 #if defined (EXENG_DEBUG)
     ++count;
     std::cout << "Creating object (currentCount: " << count << ")" << std::endl;
-    
 #endif
 }
 

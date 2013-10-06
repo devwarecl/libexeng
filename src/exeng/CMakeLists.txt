@@ -1,3 +1,6 @@
+
+add_definitions(-DEXENG_BUILD)
+
 include_directories( ${PROJECT_SOURCE_DIR}/src )
 
 find_package(Boost REQUIRED)
@@ -16,6 +19,7 @@ set (BaseFiles
   ./HeapBuffer.hpp          ./HeapBuffer.cpp 
   ./Resource.hpp            ./Resource.cpp 
   ./ResourceFactory.hpp     ./ResourceFactory.cpp 
+  ./Timer.hpp               ./Timer_Win.cpp ./Timer_Unix.cpp 
 )
 
 set (AudioFiles

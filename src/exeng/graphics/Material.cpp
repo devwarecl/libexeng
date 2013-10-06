@@ -110,7 +110,6 @@ struct PropertyValue {
         *reinterpret_cast<ValueType*>(this->rawData) = value;
     }
     
-    
     template<typename ValueType>
     inline ValueType getValue() const {
 #if defined(EXENG_DEBUG)
