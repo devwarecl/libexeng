@@ -16,9 +16,7 @@
 
 #include <exeng/system/Plugin.hpp>
 
-namespace exeng {
-namespace graphics {
-namespace gl3 {
+namespace exeng { namespace graphics { namespace gl3 {
 
 class GL3GraphicsDriverFactory;
 
@@ -28,17 +26,11 @@ class GL3GraphicsDriverFactory;
 class GL3Plugin : public exeng::system::Plugin {
 public:
     GL3Plugin();
-    
     virtual ~GL3Plugin();
-    
     virtual std::string getName() const;
-    
     virtual std::string getDescription() const;
-    
     virtual Version getVersion() const;
-    
     virtual void initialize(Root *root);
-    
     virtual void terminate();
     
 public:
@@ -53,8 +45,6 @@ private:
 
 extern GL3Plugin *currentPlugin;
 
-}
-}
-}
+}}}
 
 #endif // __EXENG_GRAPHICS_GL3_GL3PLUGIN_HPP__

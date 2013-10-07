@@ -19,9 +19,7 @@
 
 #include <iostream>
 
-namespace exeng {
-namespace graphics {
-namespace gl3 {
+namespace exeng { namespace graphics { namespace gl3 {
 
 GL3VertexBuffer::GL3VertexBuffer(ResourceFactory *factory, 
                                  const VertexFormat &format, 
@@ -40,11 +38,13 @@ GL3VertexBuffer::~GL3VertexBuffer() {
 
 
 void GL3VertexBuffer::allocate(const VertexFormat &format, int count) {
+#if defined(EXENG_DEBUG)
     if (this->locked == true) {
         const char *msg = "GL3VertexBuffer::allocate: "
                           "GL3VertexBuffer object is locked.";
         throw std::runtime_error(msg);
     } else {
+#endif
         int size = 0;
         
         this->release();
@@ -69,21 +69,27 @@ void GL3VertexBuffer::allocate(const VertexFormat &format, int count) {
             
             GL3_CHECK();
         }
+#if defined(EXENG_DEBUG)
     }
+#endif
 }
 
 
 void GL3VertexBuffer::release() {
+#if defined(EXENG_DEBUG)
     if (this->locked == true) {
         throw std::runtime_error("GL3VertexBuffer::allocate: "
                                  "GL3VertexBuffer object is locked.");
     } else {
+#endif
         if (this->name != 0) {
             ::glDeleteBuffers(1, &this->name);
             this->name = 0;
             GL3_CHECK();
         }
+#if defined(EXENG_DEBUG)
     }
+#endif
 }
 
 
@@ -93,11 +99,12 @@ bool GL3VertexBuffer::isEmpty() const {
 
 
 void* GL3VertexBuffer::lock() {
+#if defined(EXENG_DEBUG)
     if (this->locked == true) {
         throw std::runtime_error("GL3VertexBuffer::lock: "
                                  "Buffer already locked");
     }
-    
+#endif    
     this->locked = true;
     return this->buffer.getPtr();
 }
@@ -109,14 +116,19 @@ bool GL3VertexBuffer::isLocked() const {
 
 
 void GL3VertexBuffer::unlock() {
+#if defined(EXENG_DEBUG)
     if (this->locked == false) {
         throw std::runtime_error("The buffer isn't locked");
     } else {
+#endif
         BufferStatus<GL_ARRAY_BUFFER> status;
         
         ::glBindBuffer(GL_ARRAY_BUFFER, this->name);
         ::glBufferSubData(GL_ARRAY_BUFFER, 0, this->getSize(), this->buffer.getPtr());
+
+#if defined(EXENG_DEBUG)
     }
+#endif
     
     this->locked = false;
 }
@@ -141,8 +153,6 @@ TypeInfo GL3VertexBuffer::getTypeInfo() const {
     return TypeInfo::get<GL3VertexBuffer>();
 }
 
-}
-}
-}
+}}}
 
 // hola amorcito

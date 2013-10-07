@@ -18,8 +18,7 @@
 #if defined (EXENG_WINDOWS)
 #include <Windows.h>
 
-namespace exeng {
-namespace system {
+namespace exeng { namespace system {
 
 static std::string getLastErrorStrWin32() {
     // error string formatting WinAPI call extracted from
@@ -71,7 +70,6 @@ void Library::Private::unload() {
     }
 }
 
-
 FunctionPtr Library::Private::getFunctionPtr(const std::string &name) {
     HMODULE handle = NULL;
     FARPROC procAddress = NULL;
@@ -84,8 +82,19 @@ FunctionPtr Library::Private::getFunctionPtr(const std::string &name) {
         throw std::runtime_error("Library::Private::getFunctionPtr: The function name must be non-empty.");
     }
 
-    handle = static_cast<HMODULE>(this->handle);
-    procAddress = ::GetProcAddress(handle, name.c_str());
+	handle = static_cast<HMODULE>(this->handle);
+
+#if defined(EXENG_32)
+	std::string functionName;
+
+	functionName += "_";
+	functionName += name;
+	functionName += "@0";
+
+    procAddress = ::GetProcAddress(handle, functionName.c_str());
+#else
+	procAddress = ::GetProcAddress(handle, name.c_str());
+#endif
 
     if (procAddress == NULL) {
         std::string msg;
@@ -98,7 +107,7 @@ FunctionPtr Library::Private::getFunctionPtr(const std::string &name) {
 
     return reinterpret_cast<FunctionPtr>(procAddress);
 }
-}
-}
+
+}}
 
 #endif

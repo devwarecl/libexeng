@@ -19,6 +19,11 @@ endif()
 
 add_subdirectory(src)
 
+set_property(TARGET exeng PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set_property(TARGET exeng-graphics-gl3 PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set_property(TARGET raytracer PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set_property(TARGET test PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
 # TODO: Ver como ejecutar post 
 # Pruebas unitarias
 # enable_testing()

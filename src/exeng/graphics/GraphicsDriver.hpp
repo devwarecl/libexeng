@@ -36,8 +36,7 @@
 
 #include <memory>
 
-namespace exeng {
-namespace graphics {
+namespace exeng { namespace graphics {
 
 /**
  * @brief Transformation types
@@ -85,10 +84,7 @@ struct DisplayMode {
         this->status = DisplayStatus::Window;
     }
     
-    
-    inline DisplayMode(exeng::math::Size2i size, 
-                       int redBits, int greenBits, int blueBits, int alphaBits) {
-        
+    inline DisplayMode(exeng::math::Size2i size, int redBits, int greenBits, int blueBits, int alphaBits) {
         this->size = size;
         this->redBits = redBits;
         this->greenBits = greenBits;
@@ -99,11 +95,9 @@ struct DisplayMode {
         this->status = DisplayStatus::Window;
     }
     
-    
     inline DisplayMode(exeng::math::Size2i size, 
                        int redBits, int greenBits, int blueBits, int alphaBits,
                        int depthBits, int stencilBits, DisplayStatus status) {
-        
         this->size = size;
         this->redBits = redBits;
         this->greenBits = greenBits;
@@ -115,8 +109,58 @@ struct DisplayMode {
     }
 };
 
+struct CloseReason : public Enum {
+	enum Enum{
+		User,
+		System,
+		Unknown
+	};
+};
+
+struct CloseEventData : public exeng::input::EventDataImpl<CloseEventData> {
+	CloseReason::Enum reason;
+
+	CloseEventData() : reason(CloseReason::Unknown) {}
+	CloseEventData(CloseReason::Enum reason_) : reason(reason_) {}
+};
+
+struct ButtonStatus : public Enum {
+	enum Enum {
+		Release,
+		Press
+	};
+};
+
+struct ButtonCode : public Enum {
+	enum Enum {
+		None,
+		KeyLeft, KeyRight, KeyUp, KeyDown, KeyEsc, KeySpace, KeyEnter,
+		Count
+	};
+};
+
+struct InputEventData : public exeng::input::EventDataImpl<InputEventData> {
+public:
+	InputEventData() {
+		for(int i=0; i<ButtonCode::Count; ++i) {
+			this->status[i] = ButtonStatus::Release;
+		}
+	}
+	
+	ButtonStatus::Enum getButtonStatus(ButtonCode::Enum code) const {
+		return this->status[code];
+	}
+
+	void setButtonStatus(ButtonCode::Enum code, ButtonStatus::Enum status) {
+		this->status[code] = status;
+	}
+
+private:
+	ButtonStatus::Enum status[ButtonCode::Count];
+};
+
 /**
- * @brief Software interface to graphics hardware (Ha!)
+ * @brief Software interface to graphics hardware
  */
 class EXENGAPI GraphicsDriver : public ResourceFactory, public exeng::input::IEventRaiser {
 public:
@@ -268,7 +312,7 @@ public:
      */
     virtual std::string getTransformName(Transform transform) const = 0;
 };
-}
-}
+
+}}
 
 #endif

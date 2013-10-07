@@ -3,7 +3,6 @@
  * @brief Interfaz del objeto trazador de rayos
  */
 
-
 #include "RayTracer.hpp"
 #include <CL/cl.h>
 
@@ -33,7 +32,6 @@ struct RayTracer::Private {
     ~Private() {
         this->renderTarget = nullptr;
         this->scene = nullptr;
-        
         
         if (this->queue != nullptr) {
             ::clReleaseCommandQueue(this->queue);
@@ -94,7 +92,6 @@ void RayTracer::render() {
 
 
 RayTracer::~RayTracer() {
-    
 }
 
 }

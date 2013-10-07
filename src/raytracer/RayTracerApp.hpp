@@ -64,8 +64,10 @@ private:
     exeng::scenegraph::Ray 
     castRay(const exeng::math::Vector2f &pixel) const;
     
+	/*
     exeng::scenegraph::Ray 
     castRay(const exeng::math::Vector2f &pixel, const exeng::math::Vector2f &sample) const;
+	*/
     
     void 
     flattenHierarchy(SceneNodeList &out, exeng::scenegraph::SceneNode* node) const;
@@ -76,9 +78,11 @@ private:
     exeng::graphics::Color 
     traceRay(const SceneNodeList &nodeList, const exeng::math::Vector2i &pixel) const;
     
+	/*
     exeng::graphics::Color 
     traceRayMultisampled(const SceneNodeList &nodeList, const exeng::math::Vector2i &pixel) const;
-    
+    */
+
     void clear();
     
     void present();
@@ -111,6 +115,8 @@ private:
     uint32_t fpsCurrent;
     double fpsLastTime;
     double fpsCurrentTime;
+
+	exeng::math::Vector3f eye;
 };
 
 }

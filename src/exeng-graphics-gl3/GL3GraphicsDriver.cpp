@@ -3,7 +3,6 @@
  * @brief Implementation of the GL3 Graphics Driver class.
  */
 
-
 /*
  * Copyright (c) 2013 Felipe Apablaza.
  *
@@ -16,7 +15,6 @@
 #include <GLFW/glfw3.h>
 
 #include "GL3GraphicsDriver.hpp"
-
 #include "GL3Plugin.hpp"
 #include "GL3GraphicsDriverFactory.hpp"
 #include "GL3Debug.hpp"
@@ -40,7 +38,7 @@ using namespace exeng::input;
 namespace exeng { namespace graphics { namespace gl3 {
 
 // TODO: Add the specific transformation variables
-const std::string defaultVSSource = std::string(
+static const std::string defaultVSSource = std::string(
             "#version 330 \n"
             "layout(location=0) in vec4 position; \n"
             "layout(location=1) in vec2 texCoord; \n"
@@ -52,8 +50,7 @@ const std::string defaultVSSource = std::string(
             "}\n"
 );
 
-
-const std::string defaultFSSource = std::string(
+static const std::string defaultFSSource = std::string(
             "#version 330 \n"
             "in vec2 uv; \n"
             "out vec4 outputColor; \n"
@@ -63,15 +60,39 @@ const std::string defaultFSSource = std::string(
             "}\n"
 );
 
-
-void closeEvent(GLFWwindow *window) {
+static void closeEvent(GLFWwindow *window) {
     auto *plugin = exeng::graphics::gl3::currentPlugin;
     
-    exeng::input::EventData data;
-    
-    plugin->getFactory()->getGraphicsDriver(window)->raiseEvent(data);
+    plugin->getFactory()->getGraphicsDriver(window)->raiseEvent(CloseEventData(CloseReason::Unknown));
 }
 
+static InputEventData inputEventData;
+
+static void keyEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
+	ButtonCode::Enum code;
+	switch (key) {
+		case GLFW_KEY_ESCAPE:	code = ButtonCode::KeyEsc;		break;
+		case GLFW_KEY_LEFT:		code = ButtonCode::KeyLeft;		break;
+		case GLFW_KEY_RIGHT:	code = ButtonCode::KeyRight;	break;
+		case GLFW_KEY_UP:		code = ButtonCode::KeyUp;		break;
+		case GLFW_KEY_DOWN:		code = ButtonCode::KeyDown;		break;
+		case GLFW_KEY_SPACE:	code = ButtonCode::KeySpace;	break;
+		case GLFW_KEY_ENTER:	code = ButtonCode::KeyEnter;	break;
+		default: code = ButtonCode::None;
+	}
+
+	ButtonStatus::Enum status = ButtonStatus::Press;
+	if (action == GLFW_RELEASE) {
+		status = ButtonStatus::Release;
+	} else if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+		status = ButtonStatus::Press;
+	}
+
+	inputEventData.setButtonStatus(code, status);
+
+	auto *plugin = exeng::graphics::gl3::currentPlugin;
+    plugin->getFactory()->getGraphicsDriver(window)->raiseEvent(inputEventData);
+}
 
 int GL3GraphicsDriver::initializedCount = 0;
 
@@ -87,16 +108,15 @@ GL3GraphicsDriver::GL3GraphicsDriver() {
     this->window = nullptr;
 }
 
-
 GL3GraphicsDriver::~GL3GraphicsDriver() {
-    this->terminate();
     boost::checked_delete(this->defaultMaterial);
     
     boost::checked_delete(this->defaultProgram);
     boost::checked_delete(this->defaultVertexShader);
     boost::checked_delete(this->defaultFragmentShader);
-}
 
+	this->terminate();
+}
 
 void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
     if (initializedCount > 0) {
@@ -109,9 +129,8 @@ void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
     }
     
     // initialize GLFW
-    if (! ::glfwInit()) {
-        throw std::runtime_error("GL3GraphicsDriver::initialize: "
-                                 "GLFW initialization error.");
+    if (!::glfwInit()) {
+        throw std::runtime_error("GL3GraphicsDriver::initialize: GLFW initialization error.");
     }
     
     // Configure and create the context
@@ -122,10 +141,10 @@ void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
         case DisplayStatus::Fullscreen: monitor = ::glfwGetPrimaryMonitor() ; break;
     }
     
+	::glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     ::glfwWindowHint(GLFW_OPENGL_CORE_PROFILE, GL_TRUE);
-    
     
     int width = displayMode.size.width;
     int height = displayMode.size.height;
@@ -140,7 +159,8 @@ void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
     
     // Set the 
     ::glfwSetWindowCloseCallback(this->window, closeEvent);
-    
+	::glfwSetKeyCallback(this->window, keyEvent);
+
     this->setTransformName(Transform::World, "WorldTransform");
     this->setTransformName(Transform::View, "ViewTransform");
     this->setTransformName(Transform::Projection, "ProjectionTransform");
@@ -179,7 +199,6 @@ void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
     ++GL3GraphicsDriver::initializedCount;
 }
 
-
 void GL3GraphicsDriver::terminate() {
     if (this->initialized == true) {
         --GL3GraphicsDriver::initializedCount;
@@ -192,11 +211,9 @@ void GL3GraphicsDriver::terminate() {
     }
 }
 
-
 bool GL3GraphicsDriver::isInitialized() const {
     return this->initialized;
 }
-
 
 void GL3GraphicsDriver::beginFrame(const Color &color, ClearFlags::Flags flags) {
 #if defined(EXENG_DEBUG)
@@ -215,6 +232,7 @@ void GL3GraphicsDriver::beginFrame(const Color &color, ClearFlags::Flags flags) 
     clearFlags |= flags.getFlag(ClearFlags::Depth) ? GL_DEPTH_BUFFER_BIT : 0;
     clearFlags |= flags.getFlag(ClearFlags::Stencil) ? GL_STENCIL_BUFFER_BIT : 0;
     
+#if defined(EXENG_DEBUG)
     if (!clearFlags) {
         std::string msg;
         
@@ -223,6 +241,7 @@ void GL3GraphicsDriver::beginFrame(const Color &color, ClearFlags::Flags flags) 
         
         throw std::invalid_argument(msg);
     }
+#endif
     
     ::glClearColor(color.red, color.green, color.blue, color.alpha);
     ::glClear(clearFlags);
@@ -324,7 +343,7 @@ void GL3GraphicsDriver::setVertexBuffer(const VertexBuffer* vertexBuffer) {
 }
 
 
-void  GL3GraphicsDriver::setIndexBuffer(const IndexBuffer* indexBuffer) {
+void GL3GraphicsDriver::setIndexBuffer(const IndexBuffer* indexBuffer) {
 }
 
 
@@ -595,7 +614,6 @@ void GL3GraphicsDriver::postRenderMaterial(const Material *material) {
     GL3_CHECK();
 }
 
-
 void GL3GraphicsDriver::updateTransforms() {
     const GLint programId = this->shaderProgram->getProgramId();
     
@@ -613,7 +631,6 @@ void GL3GraphicsDriver::updateTransforms() {
     
     GL3_CHECK();
 }
-
 
 void GL3GraphicsDriver::raiseEvent(EventData &data) {
     for ( IEventHandler *handler : this->eventHandlers ) {

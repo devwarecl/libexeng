@@ -23,7 +23,7 @@ namespace exeng { namespace input {
  */
 struct EventData {
     /**
-     * @brief Specific event type info.
+     * @brief Specific event type info. Used for validations.
      */
     TypeInfo eventType;
     
@@ -39,6 +39,33 @@ struct EventData {
     explicit inline EventData(TypeInfo e) : 
         eventType(e), handled(false) {
     }
+
+	template<typename DerivedEventType>
+	const DerivedEventType& cast() const {
+#if defined(EXENG_DEBUG)
+		if (this->eventType != TypeInfo::get<DerivedEventType>()) {
+			throw std::bad_cast();
+		}
+#endif
+		return static_cast<const DerivedEventType&>(*this);
+	}
+
+	template<typename DerivedEventType>
+	DerivedEventType& cast() {
+#if defined(EXENG_DEBUG)
+		if (this->eventType != TypeInfo::get<DerivedEventType>()) {
+			throw std::bad_cast();
+		}
+#endif
+		return static_cast<DerivedEventType&>(*this);
+	}
+};
+
+
+template<typename DerivedEventDataType>
+struct EventDataImpl : public EventData {
+	EventDataImpl() : EventData( TypeInfo::get<DerivedEventDataType>() ) {
+	}
 };
 
 }}

@@ -3,15 +3,12 @@
  * @brief Implementation of OpenGL 3 debugging routines.
  */
 
-
 /*
  * Copyright (c) 2013 Felipe Apablaza.
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution.
  */
-
-
 
 #include "GL3Debug.hpp"
 #include "GL3.hpp"
@@ -21,9 +18,14 @@
 
 namespace exeng { namespace graphics { namespace gl3 {
 void checkGLError(const char *file, int line) {
+
+	const int maxErrorCount = 4;
+	int errorCount = 0;
+
     GLenum err = ::glGetError();
     
-    while(err != GL_NO_ERROR) {
+    while(err!=GL_NO_ERROR && errorCount<maxErrorCount) {
+		++errorCount;
         std::string error;
     
         switch(err) {
@@ -37,10 +39,10 @@ void checkGLError(const char *file, int line) {
                 break;
         }
     
-        std::cout << "GL_" << error.c_str() << " - " 
-                  << file << ":" << line << std::endl;
+        std::cout << "GL_" << error.c_str() << " - " << file << ":" << line << std::endl;
         
         err = ::glGetError();
     }
 }
+
 }}}

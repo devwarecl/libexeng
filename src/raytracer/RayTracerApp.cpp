@@ -33,6 +33,7 @@ RayTracerApp::RayTracerApp() {
     this->fpsLastTime = 0.0;
     this->fpsCurrentTime = 0.0;
 
+	this->eye = Vector3f(0.0f, 0.0f, -75.0f);
 }
 
 
@@ -42,14 +43,13 @@ RayTracerApp::~RayTracerApp() {
 
 
 void RayTracerApp::initialize(const StringVector& cmdLine) {
-    
     // Initialize the exeng root class and plugins.
     std::string path;
 
-#if defined (EXENG_WINDOWS)
-    path = "";
+#ifdef EXENG_DEBUG
+	path = "../../bin/Debug/";
 #else
-    path = "../exeng-graphics-gl3/";
+    path = "../../bin/Release/";
 #endif
 
     this->root.reset(new Root());
@@ -60,7 +60,7 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
     this->driver->addEventHandler(this);
     
     DisplayMode mode;
-    mode.size = Size2i(640, 480);
+    mode.size = cameraView.size;
     mode.redBits = 8;
     mode.greenBits = 8;
     mode.blueBits = 8;
@@ -102,7 +102,12 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
     this->vertexBuffer.reset(vertexBuffer);
     
     // create a texture for the render targets
-    auto texture = this->driver->createTexture(TextureType::Tex2D, Vector3f(320, 200), ColorFormat::getColorFormatR8G8B8A8());
+	auto texture = this->driver->createTexture(
+		TextureType::Tex2D, 
+		Vector3f(static_cast<float>(mode.size.width), 
+		static_cast<float>(mode.size.height)), 
+		ColorFormat::getColorFormatR8G8B8A8()
+	);
     
     struct Texel {
         std::uint8_t red;
@@ -110,9 +115,9 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
         std::uint8_t blue;
         std::uint8_t alpha;
     };
-    
+	
     Texel *textureData = reinterpret_cast<Texel*>(texture->lock());
-    for (int i=0; i<320*200; ++i) {
+    for (int i=0; i<mode.size.width * mode.size.height; ++i) {
         textureData[i].red      = 255;
         textureData[i].green    = 255;
         textureData[i].blue     = 255;
@@ -242,6 +247,7 @@ std::uint32_t RayTracerApp::getPixel(const Vector2i &point) const {
 }
 
 
+/*
 Ray RayTracerApp::castRay(const Vector2f &pixel) const {
     const float pixelSize = this->cameraView.pixelSize;
     const float halfWidth = this->cameraView.size.width*0.5f;
@@ -259,15 +265,38 @@ Ray RayTracerApp::castRay(const Vector2f &pixel) const {
 
     return ray;
 }
+*/
 
 
-Ray RayTracerApp::castRay(const exeng::math::Vector2f &pixel, const exeng::math::Vector2f &sample) const {
+Ray RayTracerApp::castRay(const Vector2f &pixel) const {
+	// trazar el rayo usando una proyeccion ortografica
+    const float pixelSize = this->cameraView.pixelSize;
+    const float halfWidth = (this->cameraView.size.width - 1) * 0.5f;
+    const float halfHeight = (this->cameraView.size.height - 1) * 0.5f;
+	const float d = -150.0f;
+
+    Ray ray;
+    
+    // Trazar un rayo
+    float x = pixelSize * (pixel.x - halfWidth + 0.5f);
+    float y = pixelSize * (pixel.y - halfHeight + 0.5f);
+    float z = -d;
+    
+	ray.setPoint(this->eye);
+    ray.setDirection(Vector3f(x, y, z));
+
+    return ray;
+}
+
+
+/*
+Ray RayTracerApp::castRay(const Vector2f &pixel, const Vector2f &sample) const {
     const float pixelSize = this->cameraView.pixelSize;
     const float halfWidth = this->cameraView.size.width*0.5f;
     const float halfHeight = this->cameraView.size.height*0.5f;
     
     Ray ray;
-    
+
     // Trazar un rayo
     float x = pixelSize * (pixel.x - halfWidth + 0.5f + sample.x);
     float y = pixelSize * (pixel.y - halfHeight + 0.5f + sample.y);
@@ -279,6 +308,7 @@ Ray RayTracerApp::castRay(const exeng::math::Vector2f &pixel, const exeng::math:
 
     return ray;
 }
+*/
 
 
 void RayTracerApp::flattenHierarchy(SceneNodeList &out, SceneNode* node) const {
@@ -322,17 +352,22 @@ IntersectInfo RayTracerApp::intersectRay(const SceneNodeList &nodes, const Ray &
 Color RayTracerApp::traceRay(const SceneNodeList &sceneNodeList, const Vector2i &pixel) const {
     Color color(0.0f, 0.0f, 0.0f, 1.0f);
     Vector2f pixelSample = static_cast<Vector2f>(pixel);
-    Ray ray = castRay(pixel, Vector2f(0.0, 0.0));
+    Ray ray = castRay(pixel);
         
     // Intersectarlo con los objetos de la escena
     IntersectInfo info = intersectRay(sceneNodeList, ray);
         
     if (info.intersect == true)  {
+
         // Determinar el color
         auto factor = info.normal.dot(ray.getDirection());
         auto vcolor = info.materialPtr->getProperty4f("diffuse");
 
         color = Color(vcolor) * factor;
+		if (color.red < 0.0f)	color.red = 0.0f;
+		if (color.green < 0.0f)	color.green = 0.0f;
+		if (color.blue < 0.0f)	color.blue = 0.0f;
+		if (color.alpha < 0.0f)	color.alpha = 0.0f;
     } else {
         color = this->scene->getBackgroundColor();
     }
@@ -341,6 +376,7 @@ Color RayTracerApp::traceRay(const SceneNodeList &sceneNodeList, const Vector2i 
 }
 
 
+/*
 Color RayTracerApp::traceRayMultisampled(const SceneNodeList &sceneNodeList, const Vector2i &pixel) const {
     Color color(0.0f, 0.0f, 0.0f, 1.0f);
     
@@ -369,6 +405,7 @@ Color RayTracerApp::traceRayMultisampled(const SceneNodeList &sceneNodeList, con
     float sampleCountf = static_cast<float>(this->sampler->getSampleCount());
     return color / sampleCountf;
 }
+*/
 
 
 void RayTracerApp::clear() {
@@ -394,25 +431,42 @@ void RayTracerApp::loadScene() {
     auto sphereGeometry2 = new SphereGeometry();
     auto sphereGeometry3 = new SphereGeometry();
     
-    sphereGeometry->sphere.setAttributes(75.0, Vector3f(-100.0f, 0.0f, 0.0f));
+    sphereGeometry->sphere.setAttributes(25.0f, Vector3f(-50.0f, 0.0f, 0.0f));
     sphereGeometry->material.setProperty("diffuse", Vector4f(1.0f, 0.5f, 0.25f, 1.0f));
     
-    sphereGeometry2->sphere.setAttributes(150.0, Vector3f(150.0f, 0.0f, 0.0f));
+    sphereGeometry2->sphere.setAttributes(40.0f, Vector3f(40.0f, 0.0f, 0.0f));
     sphereGeometry2->material.setProperty("diffuse", Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
 
-    /*
-    sphereGeometry3->sphere.setAttributes(200.0, Vector3f(0.0f, 100.0f, 0.0f));
-    sphereGeometry3->material.setProperty("diffuse", Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-    */
+    // sphereGeometry3->sphere.setAttributes(200.0, Vector3f(0.0f, 100.0f, 0.0f));
+    // sphereGeometry3->material.setProperty("diffuse", Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
     
     rootNode->addChildPtr("sphereGeometry")->setDataPtr(sphereGeometry);
     rootNode->addChildPtr("sphereGeometry2")->setDataPtr(sphereGeometry2);
     // rootNode->addChildPtr("sphereGeometry3")->setDataPtr(sphereGeometry3);
 }
 
-
 void RayTracerApp::handleEvent(const EventData &data) {
-    this->applicationStatus = ApplicationStatus::Terminated;
+	if (data.eventType == TypeInfo::get<InputEventData>()) {
+		const InputEventData &inputEventData = data.cast<InputEventData>();
+
+		if (inputEventData.getButtonStatus(ButtonCode::KeyEsc) == ButtonStatus::Press) {
+			this->applicationStatus = ApplicationStatus::Terminated;
+		}
+		if (inputEventData.getButtonStatus(ButtonCode::KeyUp) == ButtonStatus::Press) {
+			this->eye.z += 2.5f;
+		}
+		if (inputEventData.getButtonStatus(ButtonCode::KeyDown) == ButtonStatus::Press) {
+			this->eye.z -= 2.5f;
+		}
+		if (inputEventData.getButtonStatus(ButtonCode::KeyRight) == ButtonStatus::Press) {
+			this->eye.x += 2.5f;
+		}
+		if (inputEventData.getButtonStatus(ButtonCode::KeyLeft) == ButtonStatus::Press) {
+			this->eye.x -= 2.5f;
+		}
+	} else if (data.eventType == TypeInfo::get<CloseEventData>()) {
+		this->applicationStatus = ApplicationStatus::Terminated;
+	}
 }
 
 }
