@@ -13,7 +13,8 @@
 
 #include <exeng/graphics/VertexFormat.hpp>
 
-namespace exeng  {
-    namespace graphics {   
-    }
-}
+namespace exeng  { namespace graphics {   
+
+
+
+}}

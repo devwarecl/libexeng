@@ -136,5 +136,5 @@ source_group(System	    FILES ${SystemFiles})
 source_group(Math       FILES ${MathFiles})
 
 if (UNIX AND NOT APPLE)
-  target_link_libraries(exeng dl)
+  target_link_libraries(exeng dl rt)
 endif()

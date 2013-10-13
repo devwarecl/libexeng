@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <list>
 
+#include <exeng/graphics/HeapVertexBuffer.hpp>
+
 namespace raytracer {
 
 using namespace exeng;
@@ -72,13 +74,7 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
     this->driver->initialize(mode);
     
     // create the geometry (a single triangle)
-    VertexFormat format;
-    // VertexField field(VertexAttrib::Position, 3, DataType::Float32);
-    
-    format.fields.push_back(VertexField(VertexAttrib::Position, 3, DataType::Float32));
-    format.fields.push_back(VertexField(VertexAttrib::TexCoord, 2, DataType::Float32));
-    
-    auto vertexBuffer = this->driver->createVertexBuffer(format, 4);
+    auto vertexBuffer = this->driver->createVertexBuffer(VertexFormat::makeStandardVertex(), 4);
     {
         struct Vertex {
             Vector3f coord;
@@ -429,7 +425,6 @@ void RayTracerApp::loadScene() {
     auto rootNode = this->scene->getRootNodePtr();
     auto sphereGeometry = new SphereGeometry();
     auto sphereGeometry2 = new SphereGeometry();
-    auto sphereGeometry3 = new SphereGeometry();
     
     sphereGeometry->sphere.setAttributes(25.0f, Vector3f(-50.0f, 0.0f, 0.0f));
     sphereGeometry->material.setProperty("diffuse", Vector4f(1.0f, 0.5f, 0.25f, 1.0f));
@@ -439,11 +434,38 @@ void RayTracerApp::loadScene() {
 
     // sphereGeometry3->sphere.setAttributes(200.0, Vector3f(0.0f, 100.0f, 0.0f));
     // sphereGeometry3->material.setProperty("diffuse", Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-    
+	// auto vertexBuffer = new HeapVertexBuffer(nullptr, 
+
     rootNode->addChildPtr("sphereGeometry")->setDataPtr(sphereGeometry);
     rootNode->addChildPtr("sphereGeometry2")->setDataPtr(sphereGeometry2);
     // rootNode->addChildPtr("sphereGeometry3")->setDataPtr(sphereGeometry3);
+
+	Mesh *mesh = new Mesh(1);
+
+	VertexBuffer *vertexBuffer = new HeapVertexBuffer(nullptr, VertexFormat::makeStandardVertex(), 3);
+	{
+		VertexArray<StandardVertex> vertices(vertexBuffer);
+
+		vertices[0].coord = Vector3f(-1.0f, 0.0f, 0.0f);
+		vertices[0].normal = Vector3f(0.0f, 0.0f, -1.0f);
+		vertices[0].texCoord = Vector2f(0.0f, 0.0f);
+
+		vertices[1].coord = Vector3f(0.0f, 1.0f, 0.0f);
+		vertices[1].normal = Vector3f(0.0f, 0.0f, -1.0f);
+		vertices[1].texCoord = Vector2f(1.0f, 0.0f);
+
+		vertices[2].coord = Vector3f(1.0f, 0.0f, 0.0f);
+		vertices[2].normal = Vector3f(0.0f, 0.0f, -1.0f);
+		vertices[2].texCoord = Vector2f(0.0f, 1.0f);
+	}
+	
+	mesh->getPart(0)->setVertexBuffer(vertexBuffer);
+	mesh->getPart(0)->setPrimitiveType(Primitive::TriangleList);
+
+	rootNode->addChildPtr("triangleMesh")->setDataPtr(mesh);
+
 }
+
 
 void RayTracerApp::handleEvent(const EventData &data) {
 	if (data.eventType == TypeInfo::get<InputEventData>()) {

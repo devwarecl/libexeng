@@ -197,9 +197,11 @@ Mesh::Mesh(int partCount) {
     this->impl->parts.resize(partCount);
     
     // Crear partes vacias
+	/*
     for (int i=0; i<partCount; ++i) {
         this->impl->parts.push_back(nullptr);
     }
+	*/
 }
 
 

@@ -19,8 +19,8 @@
 #include <boost/checked_delete.hpp>
 #include <exeng/HeapBuffer.hpp>
 
-namespace exeng {
-namespace graphics {
+namespace exeng { namespace graphics {
+
 struct HeapVertexBuffer::Private {
 public:
     Private() : count(0) {}
@@ -86,7 +86,7 @@ bool HeapVertexBuffer::isLocked() const {
 
 void HeapVertexBuffer::unlock() {
     assert(this->impl != nullptr);
-    this->unlock();
+	this->impl->buffer.unlock();
 }
 
 
@@ -106,5 +106,4 @@ const VertexFormat& HeapVertexBuffer::getFormat() const {
     return this->impl->format;
 }
 
-}
-}
+}}

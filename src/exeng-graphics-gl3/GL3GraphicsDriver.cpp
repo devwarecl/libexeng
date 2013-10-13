@@ -63,7 +63,9 @@ static const std::string defaultFSSource = std::string(
 static void closeEvent(GLFWwindow *window) {
     auto *plugin = exeng::graphics::gl3::currentPlugin;
     
-    plugin->getFactory()->getGraphicsDriver(window)->raiseEvent(CloseEventData(CloseReason::Unknown));
+    CloseEventData closeEventData(CloseReason::Unknown);
+    
+    plugin->getFactory()->getGraphicsDriver(window)->raiseEvent(closeEventData);
 }
 
 static InputEventData inputEventData;
