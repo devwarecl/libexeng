@@ -36,61 +36,60 @@ namespace exeng {
 }
 
 
-namespace exeng {
-    namespace graphics {
+namespace exeng { namespace graphics {
 
-        /**
-         *	@brief Clase para almacenar numeros en punto flotante RGBA
-         */
-        struct Color {
-            Color();
+/**
+    *	@brief Clase para almacenar numeros en punto flotante RGBA
+    */
+struct Color {
+    Color();
 
-            explicit Color(float value);
-            explicit Color(const float *values);
-            
-            template<typename ArrayLikeType>
-            explicit Color(const ArrayLikeType &other) {
-                for (int i=0; i<4; ++i) {
-                    this->data[i] = static_cast<float>(other[i]);
-                }
-            }
-            
-            Color(float red, float green, float blue, float alpha=1.0f);
-            
-            void set(float red, float green, float blue, float alpha);
-            
-            Color operator+() const;
-            Color operator-() const;
-            Color operator+(const Color &other) const;
-            Color operator-(const Color &other) const;
-            Color operator*(const Color &other) const;
-            Color operator/(const Color &other) const;
-            Color operator*(float scale);
-            Color operator/(float scale);
-
-            Color& operator+=(const Color &other);
-            Color& operator-=(const Color &other);
-            Color& operator*=(const Color &other);
-            Color& operator/=(const Color &other);
-            Color& operator*=(float scale);
-            Color& operator/=(float scale);
-
-            float& operator[] (int index);
-
-            const float& operator[] (int index) const;
-            
-            operator std::uint32_t() const;
-            
-            union {
-                struct {
-                    float red, green, blue, alpha;
-                };
-                
-                float data[4];
-            };
-        };
+    explicit Color(float value);
+    explicit Color(const float *values);
+    
+    template<typename ArrayLikeType>
+    explicit Color(const ArrayLikeType &other) {
+        for (int i=0; i<4; ++i) {
+            this->data[i] = static_cast<float>(other[i]);
+        }
     }
-}
+    
+    Color(float red, float green, float blue, float alpha=1.0f);
+    
+    void set(float red, float green, float blue, float alpha);
+    
+    Color operator+() const;
+    Color operator-() const;
+    Color operator+(const Color &other) const;
+    Color operator-(const Color &other) const;
+    Color operator*(const Color &other) const;
+    Color operator/(const Color &other) const;
+    Color operator*(float scale);
+    Color operator/(float scale);
+
+    Color& operator+=(const Color &other);
+    Color& operator-=(const Color &other);
+    Color& operator*=(const Color &other);
+    Color& operator/=(const Color &other);
+    Color& operator*=(float scale);
+    Color& operator/=(float scale);
+
+    float& operator[] (int index);
+
+    const float& operator[] (int index) const;
+    
+    operator std::uint32_t() const;
+    
+    union {
+        struct {
+            float red, green, blue, alpha;
+        };
+        
+        float data[4];
+    };
+};
+        
+}}
 
 #include "Color.inl"
 

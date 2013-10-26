@@ -19,56 +19,58 @@
 #include <exeng/math/TVector.hpp>
 #include <exeng/graphics/Color.hpp>
 
-namespace exeng {
-    namespace scenegraph {
-        class EXENGAPI Light;
-        class EXENGAPI Camera;
-        class EXENGAPI SceneNode;
-        class EXENGAPI Material;
-		class EXENGAPI Geometry;
+namespace exeng { namespace scenegraph {
+    
+class EXENGAPI Light;
+class EXENGAPI Camera;
+class EXENGAPI SceneNode;
+class EXENGAPI Material;
+class EXENGAPI Geometry;
 
-        /**
-         *@brief Clase de grafos de escena
-         */
-        class EXENGAPI Scene : public Object {
-        public:
-            Scene();
-            
-            virtual ~Scene();
-            
-            /**
-             * @brief Devuelve el nodo raiz de la escena
-             */
-            SceneNode* getRootNodePtr();
-            
-            /**
-             * @brief Agrega la camera indicada al grafo de escena
-             */
-            SceneNode* addCamera(Camera *camera);
-            
-            /**
-             * @brief Agrega la luz indicada al grafo de escena
-             */
-            SceneNode* addLight(Light *light);
-            
-            /**
-             * @brief Establece el color de fondo de la escena
-             * @param color Un color como vector de cuatro componentes en punto flotante, 
-             * representado como RGBA
-             */
-            void setBackgroundColor(const exeng::graphics::Color &color);
-            
-            /**
-             * @brief Devuelve el color de fondo de la escena
-             * @return Color RGBA, punto flotante, encapsulado en un objeto exeng::graphics::Color
-             */
-            exeng::graphics::Color getBackgroundColor() const;
+/**
+ *  @brief Clase de grafos de escena
+ */
+class EXENGAPI Scene : public Object {
+public:
+    Scene();
+    
+    virtual ~Scene();
+    
+    /**
+        * @brief Devuelve el nodo raiz de la escena
+        */
+    SceneNode* getRootNodePtr();
+    
+    const SceneNode *getRootNodePtr() const;
+    
+    /**
+        * @brief Agrega la camera indicada al grafo de escena
+        */
+    SceneNode* addCamera(Camera *camera);
+    
+    /**
+        * @brief Agrega la luz indicada al grafo de escena
+        */
+    SceneNode* addLight(Light *light);
+    
+    /**
+        * @brief Establece el color de fondo de la escena
+        * @param color Un color como vector de cuatro componentes en punto flotante, 
+        * representado como RGBA
+        */
+    void setBackgroundColor(const exeng::graphics::Color &color);
+    
+    /**
+        * @brief Devuelve el color de fondo de la escena
+        * @return Color RGBA, punto flotante, encapsulado en un objeto exeng::graphics::Color
+        */
+    exeng::graphics::Color getBackgroundColor() const;
 
-        private:
-            struct Private;
-            Private* impl;
-        };
-    }
-}
+private:
+    struct Private;
+    Private* impl;
+};
+    
+}}
 
 #endif

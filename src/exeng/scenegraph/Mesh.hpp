@@ -16,8 +16,8 @@
 
 #include <exeng/scenegraph/Geometry.hpp>
 
-namespace exeng {
-namespace scenegraph {
+namespace exeng { namespace scenegraph {
+    
 class EXENGAPI MeshPart;
 
 /**
@@ -60,7 +60,7 @@ private:
     struct Private;
     Private *impl;
 };
-}
-}
+
+}}
 
 #endif  //__EXENG_SCENEGRAPH_MESH_HPP__

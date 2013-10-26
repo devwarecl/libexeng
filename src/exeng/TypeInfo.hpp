@@ -18,42 +18,40 @@
 #include <exeng/Config.hpp>
 
 namespace exeng {
-	/**
-     *  @brief std::type_info wrapper.
-     */
-	class EXENGAPI TypeInfo {
-	public:
-		TypeInfo();
-		
-		TypeInfo(const std::type_info& info);
+/**
+ *  @brief std::type_info wrapper.
+ */
+class EXENGAPI TypeInfo {
+public:
+    TypeInfo();
+    
+    TypeInfo(const std::type_info& info);
 
-		void setStdTypeInfo(const std::type_info& info);
+    void setStdTypeInfo(const std::type_info& info);
 
-		const std::type_info& getStdTypeInfo() const;
+    const std::type_info& getStdTypeInfo() const;
 
-		bool operator== (const TypeInfo& other) const;
-		bool operator!= (const TypeInfo& other) const;
+    bool operator== (const TypeInfo& other) const;
+    bool operator!= (const TypeInfo& other) const;
 
-		bool operator< (const TypeInfo& other) const;
-		bool operator> (const TypeInfo& other) const;
+    bool operator< (const TypeInfo& other) const;
+    bool operator> (const TypeInfo& other) const;
 
-		bool operator<= (const TypeInfo& other) const;
-		bool operator>= (const TypeInfo& other) const;
+    bool operator<= (const TypeInfo& other) const;
+    bool operator>= (const TypeInfo& other) const;
 
-		bool isEmpty() const;
+    bool isEmpty() const;
 
-		template<typename Type>
-		static TypeInfo get() {
-			TypeInfo info;
+    template<typename Type>
+    static TypeInfo get() {
+        TypeInfo info;
+        info.setStdTypeInfo(typeid(Type));
+        return info;
+    }
 
-			info.setStdTypeInfo(typeid(Type));
-
-			return info;
-		}
-
-	private:
-		std::type_info *typeInfo;
-	};
+private:
+    std::type_info *typeInfo;
+};
 }
 
 #endif

@@ -109,11 +109,13 @@ Vector3f Camera::getUp() const {
         
 void Camera::setUp(const Vector3f &up) {
     assert(this->impl != nullptr);
-            
-    if (up.isZero() == false) {
-        throw std::invalid_argument("La direccion superior de la camara no puede ser el vector cero.");
+    
+#if defined(EXENG_DEBUG)
+    if (up.isZero()) {
+        throw std::invalid_argument("exeng::scenegraph::Camera::setUp: The length of the up vector can't be zero.");
     }
-            
+#endif
+    
     this->impl->up = up;
     this->impl->up.normalize();
 }

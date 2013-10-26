@@ -3,7 +3,8 @@
  * @brief Interfaz del objeto trazador de rayos
  */
 
-#include "RayTracer.hpp"
+/*
+#include "TracerCL.hpp"
 #include <CL/cl.h>
 
 using namespace exeng;
@@ -95,3 +96,4 @@ RayTracer::~RayTracer() {
 }
 
 }
+*/

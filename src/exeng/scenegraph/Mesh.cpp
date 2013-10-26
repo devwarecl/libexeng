@@ -30,8 +30,7 @@ using namespace exeng::graphics;
 typedef boost::ptr_vector<MeshPart> MeshPartVector;
 typedef MeshPartVector::iterator MeshPartVectorIt;
 
-namespace exeng {
-namespace scenegraph {
+namespace exeng { namespace scenegraph {
 
 struct Triangle {
     Vector3f &p1;
@@ -195,13 +194,6 @@ Mesh::Mesh(int partCount) {
     this->impl = new Mesh::Private();
     this->impl->parts.reserve(partCount);
     this->impl->parts.resize(partCount);
-    
-    // Crear partes vacias
-	/*
-    for (int i=0; i<partCount; ++i) {
-        this->impl->parts.push_back(nullptr);
-    }
-	*/
 }
 
 
@@ -230,7 +222,6 @@ Boxf Mesh::getBox() const {
  * @brief Detecta si existe interseccion entre la parte y el rayo indicado.
  */
 bool meshSubsetHit(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectInfo=nullptr) {
-    
     if (Primitive::isTriangle(meshPart.getPrimitiveType()) == false) {
         return false;
     }
@@ -244,7 +235,7 @@ bool meshSubsetHit(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectI
     IntersectInfo info;
     Plane plane;
     
-    triangleArray.reset( getTriangleArray(vertexBuffer, indexBuffer, type) );
+    triangleArray.reset(getTriangleArray(vertexBuffer, indexBuffer, type) );
     
     for (int i=0; i<triangleArray->size(); ++i) {
         Triangle tri = triangleArray->triangle(i);
@@ -255,15 +246,15 @@ bool meshSubsetHit(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectI
             
             // Si se intersecto con el punto, ver si el punto esta 
             // dentro de las coordenadas del triangulo        
-            if (info.distance <= 0.0) {
+            if (info.distance <= 0.0f) {
                 continue;
             }
             
             // Comprobar si el punto de interseccion pertenece al triangulo o no, usando 
             // coordenadas baricentricas
-            Vector3f r0=ray.getPointAt(info.distance);
-            Vector3f p=ray.getPoint(), q=r0;
-            Vector3f a=tri.p1, b=tri.p2, c=tri.p3;
+            Vector3f r0 = ray.getPointAt(info.distance);
+            Vector3f p = ray.getPoint(), q=r0;
+            Vector3f a = tri.p1, b=tri.p2, c=tri.p3;
             
             Vector3f pq = (q - p);
             Vector3f pa = (a - p);
@@ -276,11 +267,9 @@ bool meshSubsetHit(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectI
             w = pq.triple(pb, pa);
             
             // Detectar si existe colision, sin importar como esten ordenados los triangulos
-            bool isBackSide = (u > 0.0f && v > 0.0f && w > 0.0f);
-            bool isFrontSide = (u < 0.0f && v < 0.0f && w < 0.0f);
-            
-            if (isBackSide == true || isFrontSide == true) {
-                if (intersectInfo != nullptr){
+            if ((u > 0.0f && v > 0.0f && w > 0.0f) == true || 
+                (u < 0.0f && v < 0.0f && w < 0.0f) == true) {
+                if (intersectInfo != nullptr) {
                     intersectInfo->intersect = true;
                     intersectInfo->distance = info.distance;
                     intersectInfo->materialPtr = meshPart.getMaterial();
@@ -305,10 +294,7 @@ bool Mesh::hit(const Ray &ray, IntersectInfo *intersectInfo) {
     IntersectInfo info, bestInfo;
     
     for (MeshPart &meshPart : this->impl->parts) {
-        bool intersect = meshSubsetHit(meshPart, ray, &info);
-        bool isFront =  info.distance >= 0.0;
-        
-        if ( intersect == true && isFront == true) {
+        if (meshSubsetHit(meshPart, ray, &info) && info.distance >= 0.0f ) {
             if (info.distance > bestInfo.distance) {
                 bestInfo = info;
             }
@@ -337,5 +323,5 @@ MeshPart* Mesh::getPart(int index) {
 const MeshPart* Mesh::getPart(int index) const {
     return &this->impl->parts[index];
 }
-}
-}
+
+}}

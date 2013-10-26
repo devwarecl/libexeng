@@ -8,8 +8,9 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "samplers/Sampler.hpp"
+#include "tracers/Tracer.hpp"
 
-namespace raytracer {    
+namespace raytracer {
 
 typedef std::list<exeng::scenegraph::SceneNode*> SceneNodeList;
 typedef SceneNodeList::iterator SceneNodeListIt;
@@ -52,6 +53,7 @@ public:
     
     
 private:
+    /*
     std::uint32_t 
     pointToOffset(const exeng::math::Vector2i &point) const;
     
@@ -63,12 +65,13 @@ private:
     
     exeng::scenegraph::Ray 
     castRay(const exeng::math::Vector2f &pixel) const;
-    
+    */
 	/*
     exeng::scenegraph::Ray 
     castRay(const exeng::math::Vector2f &pixel, const exeng::math::Vector2f &sample) const;
 	*/
     
+    /*
     void 
     flattenHierarchy(SceneNodeList &out, exeng::scenegraph::SceneNode* node) const;
 
@@ -77,12 +80,12 @@ private:
 
     exeng::graphics::Color 
     traceRay(const SceneNodeList &nodeList, const exeng::math::Vector2i &pixel) const;
-    
+    */
 	/*
     exeng::graphics::Color 
     traceRayMultisampled(const SceneNodeList &nodeList, const exeng::math::Vector2i &pixel) const;
     */
-
+    
     void clear();
     
     void present();
@@ -94,7 +97,7 @@ private:
     std::uint32_t defaultColor;
     
     //! La forma en que la escena se proyecta en la pantalla.
-    CameraView cameraView;
+    // CameraView cameraView;
     
     boost::scoped_ptr<exeng::Root> root;
     boost::scoped_ptr<exeng::graphics::Material> material;
@@ -108,15 +111,16 @@ private:
     
     exeng::framework::ApplicationStatus applicationStatus;
     
-    void *backbuffer;
-
+    boost::scoped_ptr<exeng::graphics::Material> meshMaterial;
+    
     mutable uint32_t lastTime;
-
+    
     uint32_t fpsCurrent;
     double fpsLastTime;
     double fpsCurrentTime;
-
-	exeng::math::Vector3f eye;
+    
+    boost::scoped_ptr<raytracer::tracers::Tracer> tracer;
+    boost::scoped_ptr<exeng::scenegraph::Camera> camera;
 };
 
 }

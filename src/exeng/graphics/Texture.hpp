@@ -22,58 +22,56 @@
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/ColorFormat.hpp>
 
-namespace exeng {
-    namespace graphics {
+namespace exeng { namespace graphics {
 
-        /**
-         * @brief 
-         */
-        enum class TextureCubeMapFace {
-            PositiveX, NegativeX,
-            PositiveY, NegativeY,
-            PositiveZ, NegativeZ
-        };
-        
-        /**
-         * @brief Visual specific appearance for materials.
-         */
-        class EXENGAPI Texture : public Resource {
-        public:
-            Texture(ResourceFactory *factory);
-            
-            virtual ~Texture();
+/**
+    * @brief 
+    */
+enum class TextureCubeMapFace {
+    PositiveX, NegativeX,
+    PositiveY, NegativeY,
+    PositiveZ, NegativeZ
+};
 
-            /**
-             * @brief Locks the texture
-             */
-            virtual void* lock() = 0;
-            
-            /**
-             * @brief Locks the texture
-             */
-            virtual void* lock(TextureCubeMapFace Face) = 0;
-            
-            /**
-             * @brief Unlocks the texture.
-             */
-            virtual void unlock() = 0;
-            
-            /**
-             * @brief Get the current type of texture
-             */
-            virtual TextureType getType() const = 0;
-            
-            /**
-             * @brief Get the color format of the texture
-             */
-            virtual ColorFormat getColorFormat() const = 0;
-            
-            /**
-             * @brief Get the size, in texels, of the texture.
-             */
-            virtual exeng::math::Vector3i getSize() const = 0;
-        };
-    }
-}
+/**
+    * @brief Visual specific appearance for materials.
+    */
+class EXENGAPI Texture : public Resource {
+public:
+    Texture(ResourceFactory *factory);
+    
+    virtual ~Texture();
+
+    /**
+        * @brief Locks the texture
+        */
+    virtual void* lock() = 0;
+    
+    /**
+        * @brief Locks the texture
+        */
+    virtual void* lock(TextureCubeMapFace Face) = 0;
+    
+    /**
+        * @brief Unlocks the texture.
+        */
+    virtual void unlock() = 0;
+    
+    /**
+        * @brief Get the current type of texture
+        */
+    virtual TextureType getType() const = 0;
+    
+    /**
+        * @brief Get the color format of the texture
+        */
+    virtual ColorFormat getColorFormat() const = 0;
+    
+    /**
+        * @brief Get the size, in texels, of the texture.
+        */
+    virtual exeng::math::Vector3i getSize() const = 0;
+};
+}}
 
 #endif  // __EXENG_GRAPHICS_TEXTURE_HPP__

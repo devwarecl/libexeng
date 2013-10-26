@@ -80,6 +80,13 @@ struct VertexFormat {
 	 * values as floats.
 	 */
 	static VertexFormat makeStandardVertex();
+
+
+	/**
+	 * Vertex with a 3D coordinate, normal vector and a single-unit 2D texture coordinates. All
+	 * values as floats.
+	 */
+	static VertexFormat makeVertex2D();
 };
         
         
@@ -98,6 +105,17 @@ inline VertexFormat VertexFormat::makeStandardVertex() {
     VertexFormat format;
 
     format.fields.push_back(VertexField(VertexAttrib::Position, 3, DataType::Float32));
+	format.fields.push_back(VertexField(VertexAttrib::Normal, 3, DataType::Float32));
+    format.fields.push_back(VertexField(VertexAttrib::TexCoord, 2, DataType::Float32));
+
+	return format;
+}
+
+
+inline VertexFormat VertexFormat::makeVertex2D() {
+    VertexFormat format;
+
+    format.fields.push_back(VertexField(VertexAttrib::Position, 3, DataType::Float32));
     format.fields.push_back(VertexField(VertexAttrib::TexCoord, 2, DataType::Float32));
 
 	return format;
@@ -107,6 +125,11 @@ inline VertexFormat VertexFormat::makeStandardVertex() {
 struct StandardVertex {
     exeng::math::Vector3f coord;
 	exeng::math::Vector3f normal;
+    exeng::math::Vector2f texCoord;
+};
+
+struct Vertex2D {
+	exeng::math::Vector3f coord;
     exeng::math::Vector2f texCoord;
 };
 

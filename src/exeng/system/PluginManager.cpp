@@ -75,9 +75,10 @@ namespace exeng {
         }
         
         
-        void PluginManager::load(const std::string &name, const std::string &path) {
+        void PluginManager::load(const std::string &name, const std::string &path_) {
             assert(this->impl != nullptr);
             
+            std::string path = path_;
             std::string libname;    // The library filename.
             std::cout << "PluginManager: Loading module '" << name << "'" << std::endl;
             
@@ -90,6 +91,11 @@ namespace exeng {
             libname = name;
 #endif
             if (path.empty() == false) {
+                
+                if (path[path.size()-1] != '/') {
+                    path += '/';
+                }
+                
                 libname = path + libname;
             }
             
