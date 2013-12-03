@@ -140,23 +140,22 @@ struct ButtonCode : public Enum {
 };
 
 struct InputEventData : public exeng::input::EventDataImpl<InputEventData> {
-public:
-	InputEventData() {
-		for(int i=0; i<ButtonCode::Count; ++i) {
-			this->status[i] = ButtonStatus::Release;
-		}
-	}
-	
-	ButtonStatus::Enum getButtonStatus(ButtonCode::Enum code) const {
-		return this->status[code];
+	ButtonStatus::Enum buttonStatus;
+	ButtonCode::Enum buttonCode;
+
+	InputEventData() : buttonStatus(ButtonStatus::Release), buttonCode(ButtonCode::None) {}
+
+	InputEventData(ButtonStatus::Enum buttonStatus_, ButtonCode::Enum buttonCode_) 
+		: buttonStatus(buttonStatus_), buttonCode(buttonCode_) {
 	}
 
-	void setButtonStatus(ButtonCode::Enum code, ButtonStatus::Enum status) {
-		this->status[code] = status;
+	InputEventData(ButtonCode::Enum buttonCode_, ButtonStatus::Enum buttonStatus_) 
+		: buttonStatus(buttonStatus_), buttonCode(buttonCode_) {
 	}
 
-private:
-	ButtonStatus::Enum status[ButtonCode::Count];
+	bool check(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) const {
+		return this->buttonStatus==buttonStatus && this->buttonCode==buttonCode;
+	}
 };
 
 /**

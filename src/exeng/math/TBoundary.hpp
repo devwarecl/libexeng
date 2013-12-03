@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file TBoundary.hpp
+ * @brief TBoundary class template definition
  */
 
 
@@ -117,6 +117,7 @@ public:
      * @return El tamanio de la frontera, encapsulado como un Size.
      */
     Size getSize() const;
+
     
     /**
      * @brief Devuelve un punto que se encuentra en una de las esquinas de la frontera.
@@ -142,13 +143,18 @@ public:
      */
     bool isInside(const Vector& point) const;
 
+	/**
+     * @brief Check if the point is the interior of the boundary. Check using epsilon-based values
+     */
+	bool isInside(const Vector& point, Type epsilon) const;
+
     /**
-     * @brief Expande las proporciones de la frontera, de tal forma que el punto indicado se encuentre dentro de ella. 
+     * @brief Make bigger the boundary if the point doesn't be inside.
      */
     void expand(const Vector& point);
 
     /**
-     * @brief Expande las proporciones de la frontera.
+     * @brief Make bigger the boundary if the point doesn't be inside.
      */
     void expand(const Boundary& other);
     
@@ -172,10 +178,6 @@ private:
     Vector edges[2];
 };
 
-
-template<typename Type, int Dimension>
-std::ostream& operator<< (std::ostream &os, const TBoundary<Type, Dimension>& Boundary);
-
 typedef TBoundary<float, 3> Boxf;
 typedef TBoundary<int, 3> Boxi;
 typedef TBoundary<double, 3> Boxd;
@@ -184,11 +186,17 @@ typedef TBoundary<float, 2> Rectf;
 typedef TBoundary<int, 2> Recti;
 typedef TBoundary<double, 2> Rectd;
 
+/*
 typedef TBoundary<float, 1> Intervalf;
 typedef TBoundary<int, 1> Intervali;
 typedef TBoundary<double, 1> Intervald;
+*/
 
 }}
+
+
+template<typename Type, int Dimension>
+std::ostream& operator<< (std::ostream &os, const exeng::math::TBoundary<Type, Dimension>& Boundary);
 
 #include "TBoundary.inl"
 

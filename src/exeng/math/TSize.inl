@@ -147,17 +147,13 @@ const Type* TSize<Type, Dimension>::getPtr() const {
 
 template<typename Type, int Size>
 std::ostream& operator<< (std::ostream &os, const exeng::math::TSize<Type, Size>& size) {
-    os << "(";
-    
     for(int i=0; i<Size; ++i) {
         os << std::fixed << std::setprecision( 4 ) << size[i];
         
         if (i + 1 != Size) {
             os << ", ";
-		}
+        }
     }
-    
-    os << ")";
     
     return os;
 }

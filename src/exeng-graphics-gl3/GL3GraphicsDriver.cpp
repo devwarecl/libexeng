@@ -68,7 +68,7 @@ static void closeEvent(GLFWwindow *window) {
     plugin->getFactory()->getGraphicsDriver(window)->raiseEvent(closeEventData);
 }
 
-static InputEventData inputEventData;
+// static InputEventData inputEventData;
 
 static void keyEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
 	ButtonCode::Enum code;
@@ -90,9 +90,12 @@ static void keyEvent(GLFWwindow *window, int key, int scancode, int action, int 
 		status = ButtonStatus::Press;
 	}
 
-	inputEventData.setButtonStatus(code, status);
-
+	InputEventData inputEventData;
+	inputEventData.buttonCode = code;
+	inputEventData.buttonStatus = status;
+	
 	auto *plugin = exeng::graphics::gl3::currentPlugin;
+    
     plugin->getFactory()->getGraphicsDriver(window)->raiseEvent(inputEventData);
 }
 
@@ -229,7 +232,6 @@ void GL3GraphicsDriver::beginFrame(const Color &color, ClearFlags::Flags flags) 
     }       
 #endif
     GLenum clearFlags = 0L;
-    
     clearFlags |= flags.getFlag(ClearFlags::Color) ? GL_COLOR_BUFFER_BIT : 0;
     clearFlags |= flags.getFlag(ClearFlags::Depth) ? GL_DEPTH_BUFFER_BIT : 0;
     clearFlags |= flags.getFlag(ClearFlags::Stencil) ? GL_STENCIL_BUFFER_BIT : 0;
@@ -346,6 +348,7 @@ void GL3GraphicsDriver::setVertexBuffer(const VertexBuffer* vertexBuffer) {
 
 
 void GL3GraphicsDriver::setIndexBuffer(const IndexBuffer* indexBuffer) {
+	// TODO: Implement
 }
 
 
@@ -589,7 +592,7 @@ void GL3GraphicsDriver::preRenderMaterial(const Material *material) {
                 const Vector4f value = material->getProperty4f(name);
                 ::glUniform4f( uniformLocation, value.x, value.y, value.z, value.w );
             } else {
-                // TODO: Throw exception for the unsupported type.
+                // TODO: Throw exception for unsupported type.
             }
         }
     }

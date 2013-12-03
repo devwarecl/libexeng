@@ -18,5 +18,5 @@ Tracer::Tracer(Texture *renderTarget, const Scene *scene) : renderTarget(nullptr
 
 Tracer::~Tracer() {
 }
-    
+
 }}

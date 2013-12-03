@@ -18,10 +18,7 @@
 #include <cstdint>
 
 namespace exeng {
-
     class EXENGAPI Timer {
-    public:
-
     public:
         /**
          * @brief Get the current time in milliseconds 

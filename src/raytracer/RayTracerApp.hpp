@@ -18,6 +18,7 @@ typedef SceneNodeList::iterator SceneNodeListIt;
 /**
  *  @brief Define la forma en que se generara la imagen trazada
  */
+/*
 struct CameraView {
     CameraView() :  size(320, 200), pixelSize(1.0f),  gamma(0.0f), invGamma(0.0) {}
     exeng::math::Size2i size;   //! Tamaño de la pantalla
@@ -25,7 +26,7 @@ struct CameraView {
     float gamma;                //! Factor gamma
     float invGamma;             //! Inverso del factor gamma
 };
-
+*/
 
 class RayTracerApp : public exeng::framework::Application, public exeng::input::IEventHandler {
 public:
@@ -96,9 +97,6 @@ private:
     //! El color por defecto a usar en caso de que ningun rayo colisione con la escena.
     std::uint32_t defaultColor;
     
-    //! La forma en que la escena se proyecta en la pantalla.
-    // CameraView cameraView;
-    
     boost::scoped_ptr<exeng::Root> root;
     boost::scoped_ptr<exeng::graphics::Material> material;
     boost::scoped_ptr<exeng::graphics::GraphicsDriver> driver;
@@ -112,6 +110,7 @@ private:
     exeng::framework::ApplicationStatus applicationStatus;
     
     boost::scoped_ptr<exeng::graphics::Material> meshMaterial;
+	boost::scoped_ptr<exeng::graphics::Material> boxMaterial;
     
     mutable uint32_t lastTime;
     
@@ -121,6 +120,8 @@ private:
     
     boost::scoped_ptr<raytracer::tracers::Tracer> tracer;
     boost::scoped_ptr<exeng::scenegraph::Camera> camera;
+
+	exeng::graphics::ButtonStatus::Enum buttonStatus[exeng::graphics::ButtonCode::Count];
 };
 
 }

@@ -13,7 +13,10 @@
 
 namespace exeng { namespace math {
 template<typename Type, int Dimension>
-TBoundary<Type, Dimension>::TBoundary() { }
+TBoundary<Type, Dimension>::TBoundary() {
+    this->edges[0] = TVector<Type, Dimension>(-1);
+    this->edges[1] = TVector<Type, Dimension>(1);
+}
 
 
 template<typename Type, int Dimension>
@@ -147,14 +150,28 @@ bool TBoundary<Type, Dimension>::intersect(const TBoundary<Type, Dimension>& oth
 
 template<typename Type, int Dimension>
 bool TBoundary<Type, Dimension>::isInside(const TVector<Type, Dimension>& point) const {
-    Type value;
-    
     for(int i=0; i<Dimension; ++i) { 
-        value = point[i];
+        Type value = point[i];
         
-        if ( value < this->edges[Min][i] ) {
+        if (value < this->edges[Min][i]) {
             return false;
-        } else if ( value > this->edges[Max][i] ) {
+        } else if (value > this->edges[Max][i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+
+template<typename Type, int Dimension>
+bool TBoundary<Type, Dimension>::isInside(const TVector<Type, Dimension>& point, Type epsilon) const {
+    for(int i=0; i<Dimension; ++i) { 
+        Type value = point[i];
+        
+        if (value - epsilon < this->edges[Min][i]) {
+            return false;
+        } else if (value + epsilon > this->edges[Max][i]) {
             return false;
         }
     }
@@ -178,13 +195,6 @@ void TBoundary<Type, Dimension>::expand(const TBoundary<Type, Dimension>& bounda
 
 
 template<typename Type, int Dimension>
-std::ostream& operator<< (std::ostream &os, const TBoundary<Type, Dimension>& Boundary) {
-    os << Boundary.getMin() << ", " << Boundary.getMax();
-    
-    return os;
-}
-
-template<typename Type, int Dimension>
 inline TVector<Type, Dimension> TBoundary<Type, Dimension>::getMin() const {
     return this->edges[0];
 }
@@ -195,3 +205,9 @@ inline TVector<Type, Dimension> TBoundary<Type, Dimension>::getMax() const {
 }
 
 }}
+
+
+template<typename Type, int Dimension>
+std::ostream& operator<< (std::ostream &os, const exeng::math::TBoundary<Type, Dimension>& Boundary) {
+    return os << "Center : {" << Boundary.getCenter() << "} , Size {" << Boundary.getSize() << "}";
+}

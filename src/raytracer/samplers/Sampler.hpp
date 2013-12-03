@@ -5,8 +5,8 @@
 #include <vector>
 #include <exeng/math/TVector.hpp>
 
-namespace raytracer {
-namespace samplers {
+namespace raytracer { namespace samplers {
+    
 typedef std::vector< exeng::math::Vector2f > Vector2fArray;
 typedef Vector2fArray::iterator Vector2fArrayIt;
 
@@ -87,7 +87,7 @@ protected:
     */ 
     int jump;
 };
-}
-}
+
+}}
 
 #endif  //__RAYTRACER_SAMPLER_HPP__

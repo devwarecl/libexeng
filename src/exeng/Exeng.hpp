@@ -60,6 +60,7 @@
 #include <exeng/scenegraph/Plane.hpp>
 #include <exeng/scenegraph/Scene.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
+#include <exeng/scenegraph/Segment.hpp>
 
 #include <exeng/math/Common.hpp>
 #include <exeng/math/TSize.hpp>

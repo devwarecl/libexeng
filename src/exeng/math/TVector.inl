@@ -464,8 +464,6 @@ TVector<Type, Size> TVector<Type, Size>::zero() {
 
 template<typename Type, int Size>
 std::ostream& operator<< (std::ostream &os, const exeng::math::TVector<Type, Size>& Vector) {
-    os << "(";
-    
     for(int i=0; i<Size; ++i) {
         os << std::fixed << std::setprecision( 4 ) << Vector[i];
         
@@ -473,8 +471,6 @@ std::ostream& operator<< (std::ostream &os, const exeng::math::TVector<Type, Siz
             os << ", ";
         }
     }
-    
-    os << ")";
     
     return os;
 }

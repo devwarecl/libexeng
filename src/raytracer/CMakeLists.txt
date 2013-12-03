@@ -16,18 +16,34 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 
 link_directories(${Boost_LIBRARY_DIRS})
 
-add_executable(raytracer 
-    tracers/Tracer.hpp              tracers/Tracer.cpp 
+# Grouping
+set (BaseFiles
+	RayTracerApp.hpp                RayTracerApp.cpp 
+    SphereGeometry.hpp              SphereGeometry.cpp 
+)
+
+set ( Tracers
+	tracers/Tracer.hpp              tracers/Tracer.cpp 
     tracers/SoftwareTracer.hpp      tracers/SoftwareTracer.cpp 
     tracers/HardwareTracer.hpp      tracers/HardwareTracer.cpp 
-    RayTracerApp.hpp                RayTracerApp.cpp 
-    SphereGeometry.hpp              SphereGeometry.cpp 
-    samplers/Sampler.hpp            samplers/Sampler.cpp 
+)
+
+set ( Samplers
+	samplers/Sampler.hpp            samplers/Sampler.cpp 
     samplers/JitteredSampler.hpp    samplers/JitteredSampler.cpp 
+)
+
+add_executable(raytracer 
+	${BaseFiles}
+	${Tracers}
+	${Samplers}
 )
 
 target_link_libraries(raytracer exeng ${Boost_LIBRARIES} OpenCL )
 
-add_subdirectory(samplers)
+source_group(Base		FILES ${BaseFiles})
+source_group(Tracers	FILES ${Tracers})
+source_group(Samplers	FILES ${Samplers})
 
+add_subdirectory(samplers)
 add_subdirectory(tracers)

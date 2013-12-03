@@ -4,11 +4,10 @@
 
 #include "Sampler.hpp"
 
-namespace raytracer {
+namespace raytracer { namespace samplers {
     
-    namespace samplers {
-        
-    }
-}
+    
+    
+}}
 
 #endif  //__RAYTRACER_SAMPLERS_REGULARSAMPLER_HPP__

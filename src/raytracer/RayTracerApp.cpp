@@ -7,9 +7,11 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cfloat>
 #include <stdexcept>
 #include <cstdint>
 #include <list>
+#include <array>
 
 #include <exeng/graphics/HeapVertexBuffer.hpp>
 
@@ -24,19 +26,142 @@ using namespace exeng::input;
 
 using namespace raytracer::samplers;
 
+/**
+ * @brief Check for collisions between a box and a ray
+ * @todo Put a epsilon value
+ */
+bool intersect(const Boxf &box, const Ray &ray, IntersectInfo *info) {
+    Vector3f minEdge = box.getMin();
+    Vector3f maxEdge = box.getMax();
+    
+    Vector3f rayPoint = ray.getPoint();
+    Vector3f rayDirection = ray.getDirection();
+    
+    float near = -std::numeric_limits<float>::max();
+    float far = std::numeric_limits<float>::max();
+    
+    // For each coord, get the near and far intersection distances
+    for (int coord=0; coord<3; ++coord) {
+        
+        // Ray is parallel to current coordinate
+        if (rayDirection[coord] == 0.0f) { 
+            if (rayPoint[coord] < minEdge[coord] || rayPoint[coord] > maxEdge[coord]) {
+                if ( info != nullptr ) {
+                    info->intersect = false;
+                }
+                
+                return false;
+            }
+            
+            continue;
+        }
+        
+        // Ray is not parallel. Continue compute of the intersection
+        // TODO: cache the inv direction of the ray, for calculation speed-up
+        float t1 = (minEdge[coord] - rayPoint[coord]) / rayDirection[coord];
+        float t2 = (maxEdge[coord] - rayPoint[coord]) / rayDirection[coord];
+        
+        if (t1 > t2) {
+            std::swap(t1, t2);
+        }
+        
+        if (t1 > near) {
+            near = t1;
+        }
+        
+        if (t2 < far) {
+            far = t2;
+        }
+        
+        if (near > far) {
+            if (info != nullptr) {
+                info->intersect = false;
+            }
+            
+            return false;
+        }
+        
+        if (far < 0.0f) {
+            if (info != nullptr) {
+                info->intersect = false;
+            }
+            
+            return false;
+        }
+    }
+    
+    // Compute intersection point
+    if (info != nullptr) {
+        info->intersect = true;
+        info->point = ray.getPointAt(near);
+        
+        // Compute face normal
+        info->normal = Vector3f::zero();
+        
+        const float epsilon = 0.00001f;
+        
+        for (int coord=0; coord<3; ++coord) {
+            if (abs(info->point[coord] - minEdge[coord]) <= epsilon) {
+                info->normal[coord] = -1.0f;
+                break;
+            }
+            
+            if (abs(info->point[coord] - maxEdge[coord]) <= epsilon) {
+                info->normal[coord] = 1.0f;
+                break;
+            }
+        }
+        
+        info->distance = near;
+    }
+    
+    return info->intersect;
+}
+
+
+bool intersect(const Plane &plane, const Ray &ray, IntersectInfo *info) {
+    return plane.intersect(ray, info);
+}
+
+
+template<typename Solid>
+class BasicGeometry : public exeng::scenegraph::Geometry {
+public:
+    BasicGeometry() : material(nullptr) {}
+    
+    BasicGeometry(const Solid solid_, const exeng::graphics::Material* material_) : solid(solid_), material(material_) {}
+    
+    virtual bool hit(const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo) {
+        bool intersection = intersect(this->solid, ray, intersectInfo);
+        
+        if (intersection==true && intersectInfo!=nullptr) {
+            intersectInfo->materialPtr = this->material;
+        }
+        
+        return intersection;
+    }
+    
+    virtual exeng::math::Boxf getBox() const {
+        return Boxf();
+    }
+
+    Solid solid;
+    const exeng::graphics::Material* material;
+};
+
+
 RayTracerApp::RayTracerApp() {
     this->defaultColor = 0xFF000000;
-//    this->backbuffer = nullptr;
     this->applicationStatus = ApplicationStatus::Running;
-    // this->cameraView.size = Size2i(320, 200);
-
     this->lastTime = Timer::getTime();
     
     this->fpsCurrent = 0;
     this->fpsLastTime = 0.0;
     this->fpsCurrentTime = 0.0;
 
-	// this->eye = Vector3f(0.0f, 0.0f, -75.0f);
+	for (int i=0; i<ButtonCode::Count; ++i) {
+		this->buttonStatus[i] = ButtonStatus::Release;
+	}
 }
 
 
@@ -57,8 +182,9 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
 #  endif
 #else 
     // con ruta actual ${PROJECT}
-    path = "./build/linux-gcc/src/exeng-graphics-gl3";
+    path = "../exeng-graphics-gl3/";
 #endif
+
     this->root.reset(new Root());
     this->root->getPluginManager()->load("exeng-graphics-gl3", path);
     
@@ -126,8 +252,6 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
     this->material.reset( new exeng::graphics::Material() );
     this->material->getLayer(0)->setTexture(texture);
     
-//    this->backbuffer = nullptr;
-    
     this->sampler.reset(new JitteredSampler(25));
     this->scene.reset(new Scene());
     this->scene->setBackgroundColor(Color(0.0f, 0.0f, 0.0f, 1.0));
@@ -136,7 +260,7 @@ void RayTracerApp::initialize(const StringVector& cmdLine) {
     
     this->camera.reset( new Camera() );
     this->camera->setLookAt(Vector3f(0.0f, 0.0f, 0.0f));
-    this->camera->setPosition(Vector3f(0.0f, 0.0f, -75.0f));
+    this->camera->setPosition(Vector3f(0.0f, 2.0f, -75.0f));
     this->camera->setUp(Vector3f(0.0f, 1.0f, 0.0f));
     
     this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get()));
@@ -174,6 +298,35 @@ void RayTracerApp::update(double seconds) {
     } else {
         this->fpsCurrent += 1;
         this->fpsCurrentTime += seconds;
+    }
+
+	// actualiza la camara en funcion de la entrada por teclado
+	if (this->buttonStatus[ButtonCode::KeyEsc]) {
+		this->applicationStatus = ApplicationStatus::Terminated;
+	}
+
+    if (this->buttonStatus[ButtonCode::KeyUp]) {
+        auto cameraPosition = this->camera->getPosition();
+        cameraPosition.z += 2.5f;
+        this->camera->setPosition(cameraPosition);
+    }
+
+    if (this->buttonStatus[ButtonCode::KeyDown]) {
+        auto cameraPosition = this->camera->getPosition();
+        cameraPosition.z -= 2.5f;
+        this->camera->setPosition(cameraPosition);
+    }
+
+    if (this->buttonStatus[ButtonCode::KeyRight]) {
+        auto cameraPosition = this->camera->getPosition();
+        cameraPosition.x += 2.5f;
+        this->camera->setPosition(cameraPosition);
+    }
+
+    if (this->buttonStatus[ButtonCode::KeyLeft]) {
+        auto cameraPosition = this->camera->getPosition();
+        cameraPosition.x -= 2.5f;
+        this->camera->setPosition(cameraPosition);
     }
 }
 
@@ -271,7 +424,7 @@ void RayTracerApp::loadScene() {
         vertices[0].coord = Vector3f(0.0f, 15.0f, 0.0f);
         vertices[0].normal = Vector3f(0.0f, 0.0f, -1.0f);
         vertices[0].texCoord = Vector2f(0.0f, 0.0f);
-
+        
         vertices[1].coord = Vector3f(15.0f, -15.0f, 0.0f);
         vertices[1].normal = Vector3f(0.0f, 0.0f, -1.0f);
         vertices[1].texCoord = Vector2f(1.0f, 0.0f);
@@ -284,42 +437,36 @@ void RayTracerApp::loadScene() {
     this->meshMaterial.reset( new exeng::graphics::Material() );
     this->meshMaterial->setProperty("diffuse", Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
     
+    /*
     mesh->getPart(0)->setVertexBuffer(vertexBuffer);
     mesh->getPart(0)->setPrimitiveType(Primitive::TriangleList);
     mesh->getPart(0)->setMaterial(this->meshMaterial.get());
-    
     rootNode->addChildPtr("triangleMesh")->setDataPtr(mesh);
+    */
+
+    Geometry* planeGeometry = new BasicGeometry<Plane>(
+        Plane( Vector3f(0.0f, -1.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f) ),
+        this->meshMaterial.get()
+    );
+    
+	// Mostrar una caja en pantalla
+	this->boxMaterial.reset( new exeng::graphics::Material() );
+	this->boxMaterial->setProperty("diffuse", Vector4f(1.0f, 0.3f, 0.2f, 1.0f));
+
+    Geometry* boxGeometry = new BasicGeometry<Boxf>(
+        Boxf(-Vector3f(18.0f) + Vector3f(0.0f, 5.0f, 0.0f), Vector3f(18.0f) + Vector3f(0.0f, 5.0f, 0.0f)),
+        this->boxMaterial.get()
+    );
+    
+    rootNode->addChildPtr("boxGeometry")->setDataPtr(boxGeometry);
+    rootNode->addChildPtr("planeGeometry")->setDataPtr(planeGeometry);
 }
 
 
 void RayTracerApp::handleEvent(const EventData &data) {
     if (data.eventType == TypeInfo::get<InputEventData>()) {
         const InputEventData &inputEventData = data.cast<InputEventData>();
-        
-        if (inputEventData.getButtonStatus(ButtonCode::KeyEsc) == ButtonStatus::Press) {
-            this->applicationStatus = ApplicationStatus::Terminated;
-        }
-        
-        if (inputEventData.getButtonStatus(ButtonCode::KeyUp) == ButtonStatus::Press) {
-            auto cameraPosition = this->camera->getPosition();
-            cameraPosition.z += 2.5f;
-            this->camera->setPosition(cameraPosition);
-        }
-        if (inputEventData.getButtonStatus(ButtonCode::KeyDown) == ButtonStatus::Press) {
-            auto cameraPosition = this->camera->getPosition();
-            cameraPosition.z -= 2.5f;
-            this->camera->setPosition(cameraPosition);
-        }
-        if (inputEventData.getButtonStatus(ButtonCode::KeyRight) == ButtonStatus::Press) {
-            auto cameraPosition = this->camera->getPosition();
-            cameraPosition.x += 2.5f;
-            this->camera->setPosition(cameraPosition);
-        }
-        if (inputEventData.getButtonStatus(ButtonCode::KeyLeft) == ButtonStatus::Press) {
-            auto cameraPosition = this->camera->getPosition();
-            cameraPosition.x -= 2.5f;
-            this->camera->setPosition(cameraPosition);
-        }
+		this->buttonStatus[ inputEventData.buttonCode ] = inputEventData.buttonStatus;
     } else if (data.eventType == TypeInfo::get<CloseEventData>()) {
         this->applicationStatus = ApplicationStatus::Terminated;
     }
@@ -329,29 +476,30 @@ void RayTracerApp::handleEvent(const EventData &data) {
 
 EXENG_IMPLEMENT_MAIN(raytracer::RayTracerApp)
 
-
 /*
 using namespace exeng;
 using namespace exeng::math;
-using namespeace exeng::scenegraph;
+using namespace exeng::scenegraph;
 using namespace exeng::graphics;
 using namespace exeng::framework;
 using namespace exeng::input;
 
-int main() {
-    Plane plane;
-    plane.setPoint(Vector3f(0.0, 0.0, 0.0));
-    plane.setNormal(Vector3f(0.0, 1.0, 0.0));
-    
+
+int main(int argc, char** argv) {
     Ray ray;
-    ray.setPoint(Vector3f(0.0, 1.0, 0.0));
-    ray.setDirection(Vector3f(0.0, -1.0, 0.0));
+    ray.setPoint( Vector3f(0.0f, 0.0f, -5.0f) );
+    ray.setDirection( Vector3f(0.0f, 0.0f, -1.0f) );
     
-    IntersectInfo info;
-    if (plane.intersect(ray, &info)) {
+    Boxf box;
+    box.set(-Vector3f(0.5f), Vector3f(0.5f));
+
+    std::cout << ray << std::endl;
+    std::cout << box << std::endl;
+    
+    if (boxIntersect(box, ray) == true) {
         std::cout << "Interseccion!" << std::endl;
     } else {
-        std::cout << "NO Interseccion!" << std::endl;
+        std::cout << "NO!" << std::endl;
     }
     
     return 0;

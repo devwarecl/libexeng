@@ -110,6 +110,8 @@ private:
 }}
 
 
+std::ostream& operator<< (std::ostream& os, const exeng::scenegraph::Plane &plane);
+
 
 namespace exeng { namespace scenegraph {
     
@@ -197,6 +199,11 @@ inline bool Plane::intersect(const Ray& ray, IntersectInfo* intersectInfo) const
 }
 
 }}
+
+
+inline std::ostream& operator<< (std::ostream& os, const exeng::scenegraph::Plane &plane) {
+    return os << "Point : {" << plane.getPoint() << "}, Normal : {" << plane.getNormal() << "}";
+}
 
 
 #endif	//__EXENG_SCENEGRAPH_PLANE_HPP__

@@ -30,20 +30,19 @@ namespace exeng { namespace scenegraph {
 class Ray {
 public:
     /**
-        * @brief Inicializa el rayo apuntando en direccion al eje Z positivo (direccion hacia adelante)
-        */
+     * @brief Inicializa el rayo apuntando en direccion al eje Z positivo (direccion hacia adelante)
+     */
     Ray();
     
     /**
-        * @brief Inicializa el rayo, usando un punto de base y una direccion arbitrarias
-        */
+     * @brief Inicializa el rayo, usando un punto de base y una direccion arbitrarias
+     */
     Ray(const exeng::math::Vector3f& point, 
         const exeng::math::Vector3f& direction);
 
     /**
-        * @brief Establece el punto tomado como base del rayo.
-        * @param point
-        */
+     * @brief Set the base of the ray
+     */
     void setPoint(const exeng::math::Vector3f& point);
 
     /**
@@ -139,8 +138,7 @@ inline void Ray::set(const math::Vector3f &point, const math::Vector3f &directio
 
 
 inline std::ostream& operator<< (std::ostream& os, const exeng::scenegraph::Ray& ray) {
-    os << ray.getPoint() << ", " << ray.getDirection();
-    return os;
+    return os << "Point : {" << ray.getPoint() << "}, Direction : {" << ray.getDirection() << "}";
 }
 
 #endif	//__EXENG_SCENEGRAPH_RAY_HPP__

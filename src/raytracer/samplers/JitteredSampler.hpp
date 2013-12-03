@@ -4,16 +4,16 @@
 
 #include "Sampler.hpp"
 
-namespace raytracer {
-    namespace samplers {
-        class JitteredSampler : public Sampler {
-        public:
-            JitteredSampler(int sampleCount);
-            
-            virtual void generateSamples();
-        };
-    }
-}
+namespace raytracer { namespace samplers {
+
+class JitteredSampler : public Sampler {
+public:
+    JitteredSampler(int sampleCount);
+    
+    virtual void generateSamples();
+};
+
+}}
 
 #endif  //__RAYTRACER_JITTEREDSAMPLER_HPP__
 

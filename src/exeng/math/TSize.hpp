@@ -199,7 +199,6 @@ public:
     }
 };
 
-
 typedef TSize<double, 3> Size3d;
 typedef TSize<float, 3> Size3f;
 typedef TSize<int, 3> Size3i;

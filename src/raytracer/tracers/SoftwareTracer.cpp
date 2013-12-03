@@ -63,22 +63,23 @@ inline Ray SoftwareTracer::castRay(const Vector2f &pixel, const Camera *camera) 
 
 
 inline IntersectInfo SoftwareTracer::intersectRay(const std::list<const SceneNode*> &nodes, const Ray &ray) const {
-    IntersectInfo prevInfo, currentInfo, info;
-
+    
+    IntersectInfo currentInfo, info;
+    
+    info.distance = std::numeric_limits<float>::max();
+    
     // Determinar colision con el contenido del nodo
     for (auto node : nodes) {
         Geometry* geometry = static_cast<Geometry*>( node->getDataPtr() );
         assert(geometry != nullptr);
 
         if (geometry->hit(ray, &currentInfo) == true) {
-            if (prevInfo.distance == 0.0f || currentInfo.distance < prevInfo.distance) {
+            if (currentInfo.distance < info.distance) {
                 info = currentInfo;
                 
                 assert(info.materialPtr != nullptr);
                 assert(info.normal != Vector3f(0.0f));
             }
-            
-            prevInfo = currentInfo;
         }
     }
 
@@ -90,23 +91,22 @@ inline Color SoftwareTracer::traceRay(const std::list<const SceneNode*> &nodeLis
     Color color(0.0f, 0.0f, 0.0f, 1.0f);
     Vector2f pixelSample = static_cast<Vector2f>(pixel);
     Ray ray = this->castRay(pixel, camera);
-        
+    
     // Intersectarlo con los objetos de la escena
     IntersectInfo info = intersectRay(nodeList, ray);
     
     if (info.intersect == true)  {
-        
         // Determinar el color
         // auto factor = info.normal.dot(ray.getDirection());
         auto vcolor = info.materialPtr->getProperty4f("diffuse");
 
-        color = Color(vcolor)/* * -factor*/;
-        /*
+        color = Color(vcolor)/* * -factor */;
+        
         if (color.red < 0.0f)   {color.red = 0.0f;}
         if (color.green < 0.0f) {color.green = 0.0f;}
         if (color.blue < 0.0f)  {color.blue = 0.0f;}
         if (color.alpha < 0.0f) {color.alpha = 0.0f;}
-        */
+        
     } else {
         color = this->scene->getBackgroundColor();
     }
@@ -122,7 +122,7 @@ inline void SoftwareTracer::flattenHierarchy(std::list<const SceneNode*> &out, c
             out.push_back(node);
         }
     }
-
+    
     for (auto child : node->getChilds()) {
         this->flattenHierarchy(out, child);
     }
@@ -130,10 +130,12 @@ inline void SoftwareTracer::flattenHierarchy(std::list<const SceneNode*> &out, c
 
 
 SoftwareTracer::SoftwareTracer(Texture *renderTarget, const Scene *scene) : Tracer(renderTarget, scene) {
+    
 }
 
 
 SoftwareTracer::~SoftwareTracer() {
+    
 }
 
 
@@ -157,8 +159,6 @@ void SoftwareTracer::render(const Camera *camera) {
     
     this->renderTarget->unlock();
     backbuffer = nullptr;
-    
-    std::cout << "Background color:" << this->scene->getBackgroundColor() << std::endl;
 }
 
 }}

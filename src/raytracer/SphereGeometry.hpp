@@ -13,17 +13,17 @@ namespace raytracer {
  */
 class SphereGeometry : public exeng::scenegraph::Geometry {
 public:
-	SphereGeometry();
-	SphereGeometry(float radius, const exeng::math::Vector3f &position);
+    SphereGeometry();
+    SphereGeometry(float radius, const exeng::math::Vector3f &position);
 
-	virtual ~SphereGeometry();
-		
-	virtual bool hit(const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo);
-		
-	virtual exeng::math::Boxf getBox() const;
+    virtual ~SphereGeometry();
+        
+    virtual bool hit(const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo);
 
-	exeng::scenegraph::Sphere sphere;	// La esfera
-	exeng::graphics::Material material;	// El material de la esfera
+    virtual exeng::math::Boxf getBox() const;
+
+    exeng::scenegraph::Sphere sphere;	// La esfera
+    exeng::graphics::Material material;	// El material de la esfera
 };
 
 }
