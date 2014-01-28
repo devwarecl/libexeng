@@ -19,8 +19,7 @@
 #include <exeng/scenegraph/Ray.hpp>
 #include <exeng/scenegraph/IntersectInfo.hpp>
 
-namespace exeng {
-namespace scenegraph {
+namespace exeng { namespace scenegraph {
 
 template<typename VectorType>
 struct Triangle {
@@ -37,8 +36,7 @@ struct Triangle {
     bool hit(const Ray& ray, IntersectInfo *info=nullptr) const;
 };
 
-}
-}
+}}
 
 #include "Triangle.inl"
 

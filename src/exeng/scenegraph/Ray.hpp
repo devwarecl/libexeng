@@ -22,123 +22,60 @@
 namespace exeng { namespace scenegraph { 
     
 /**
- * @brief Abstraccion de un rayo.
- *
- * Encapsula del conjunto de operaciones aplicables, o deviradas de la utilizacion de un rayo
- * en un entorno tridimensional.
+ * @brief Ray abstraction.
  */
 class Ray {
 public:
     /**
-     * @brief Inicializa el rayo apuntando en direccion al eje Z positivo (direccion hacia adelante)
+     * @brief Initializes the ray, positioned around the origin, and pointing in the positive Z-axis.
      */
     Ray();
     
     /**
-     * @brief Inicializa el rayo, usando un punto de base y una direccion arbitrarias
+     * @brief Initialize the ray, orientated around a arbitrary origin and direction.
      */
-    Ray(const exeng::math::Vector3f& point, 
-        const exeng::math::Vector3f& direction);
+    Ray(const exeng::math::Vector3f& point, const exeng::math::Vector3f& direction);
 
     /**
-     * @brief Set the base of the ray
+     * @brief Set the starting point of the ray.
      */
     void setPoint(const exeng::math::Vector3f& point);
 
     /**
-        * @brief Devuelve el punto base del rayo.
-        * @return 
-        */
+     * @brief Get the starting point of the ray.
+     */
     exeng::math::Vector3f getPoint() const;
     
     /**
-        * @brief Establece la direccion del rayo.
-        * @param direction
-        */
+     * @brief Set the direction of the ray. The vector of direction is normalized before mutates the Ray object.
+     */
     void setDirection(const exeng::math::Vector3f& direction);
     
     /**
-        * @brief Devuelve la direccion del rayo.
-        * @return 
-        */
+     * @brief Get the direction of the ray. This vector is always normalized.
+     */
     exeng::math::Vector3f getDirection() const;
-
+    
     /**
-        * @brief Calcula el punto que se encuentra a 't' unidades. 
-        * 
-        * Toma como base el punto base del rayo y la direccion.
-        * Es posible que la distancia entre el punto base del rayo y el punto calculado por este
-        * metodo es muy cercano a 't', por lo que a la hora de hacer comparaciones, es necesario
-        * usar un valor de tolerancia 'epsilon'.
-        * @param t
-        * @return 
-        */
+     * @brief Computes the point of the ray at 't' distance from the starting point, to the 
+     * direction of the ray.
+     */
     exeng::math::Vector3f getPointAt(float t) const;
     
     /**
-        * @brief Establece los atributos del rayo.
-        * @param point El punto base del rayo.
-        * @param direction La direccion del rayo. 
-        */
-    void set(const exeng::math::Vector3f& point, 
-                const exeng::math::Vector3f& direction);
+     * @brief Set the starting point and the direction of the ray in one method call.
+     */
+    void set(const exeng::math::Vector3f& point, const exeng::math::Vector3f& direction);
     
 private:
-    exeng::math::Vector3f point;        //! Ray start point
-    exeng::math::Vector3f direction;	//! Ray direction
+    exeng::math::Vector3f point;
+    exeng::math::Vector3f direction;
 };
+
 }}
 
 std::ostream& operator<< (std::ostream& os, const exeng::scenegraph::Ray& ray);
 
-
-#include <cassert>
-
-namespace exeng { namespace scenegraph {
-    
-inline Ray::Ray() : point(0.0f), direction(0.0, 0.0, 1.0f) { }
-
-inline Ray::Ray(const exeng::math::Vector3f& point, const exeng::math::Vector3f& direction){
-    this->set(point, direction);
-}
-
-inline void Ray::setPoint(const exeng::math::Vector3f& point){
-    this->point = point;
-}
-
-inline exeng::math::Vector3f Ray::getPoint() const {
-    return this->point;
-}
-
-inline void Ray::setDirection(const exeng::math::Vector3f& direction) {
-    this->direction = direction;
-    this->direction.normalize();
-}
-
-inline exeng::math::Vector3f Ray::getDirection() const {
-    return this->direction;
-}
-
-inline exeng::math::Vector3f Ray::getPointAt(float t) const {
-    assert( exeng::math::equals(this->direction.getMagnitude(), 1.0f) == true );
-    
-    auto p = this->point;
-    auto d = this->direction;
-    
-    return p + t*d;
-}
-
-
-inline void Ray::set(const math::Vector3f &point, const math::Vector3f &direction) {
-    this->setPoint(point);
-    this->setDirection(direction);
-}
-        
-}}
-
-
-inline std::ostream& operator<< (std::ostream& os, const exeng::scenegraph::Ray& ray) {
-    return os << "Point : {" << ray.getPoint() << "}, Direction : {" << ray.getDirection() << "}";
-}
+#include "Ray.inl"
 
 #endif	//__EXENG_SCENEGRAPH_RAY_HPP__

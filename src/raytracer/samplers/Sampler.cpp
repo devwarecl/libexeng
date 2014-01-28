@@ -25,7 +25,7 @@ Sampler::~Sampler() {
 }
 
 
-Vector2f Sampler::sampleUnitSquare() {
+Vector2f Sampler::sampleUnitSquare() const {
     auto sampleIndex = this->count++ % (this->sampleCount * this->setCount);
     return this->sampleArray[sampleIndex];
 }

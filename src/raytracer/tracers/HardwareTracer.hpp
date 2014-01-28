@@ -3,8 +3,8 @@
  * @brief Interfaz de un trazador de rayos
  */
 
-#ifndef __RAYTRACER_TRACERS_TRACER_HPP__
-#define __RAYTRACER_TRACERS_TRACER_HPP__
+#ifndef __RAYTRACER_TRACERS_HARDWARETRACER_HPP__
+#define __RAYTRACER_TRACERS_HARDWARETRACER_HPP__
 
 /*
 #include <exeng/Exeng.hpp>

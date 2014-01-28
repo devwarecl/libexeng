@@ -1,4 +1,6 @@
 
+#if 0
+
 #ifndef __RAYTRACER_SPHEREGEOMETRY_HPP__
 #define __RAYTRACER_SPHEREGEOMETRY_HPP__
 
@@ -29,3 +31,5 @@ public:
 }
 
 #endif	//__RAYTRACER_SPHEREGEOMETRY_HPP__
+
+#endif

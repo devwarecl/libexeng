@@ -26,8 +26,14 @@ int RunApplication(const StringVector &cmdLine) {
 }
 }
 
+#ifdef EXENG_WINDOWS
+#  define EXENG_MAIN_CONVENTION __cdecl
+#else
+#  define EXENG_MAIN_CONVENTION
+#endif
+
 #define EXENG_IMPLEMENT_MAIN(AppClass)          \
-int main(int argc, char** argv) {               \
+int EXENG_MAIN_CONVENTION main(int argc, char** argv) {               \
     using namespace exeng;                      \
     using namespace exeng::framework;           \
     StringVector cmdLine;                       \

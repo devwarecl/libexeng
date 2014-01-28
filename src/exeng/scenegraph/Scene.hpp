@@ -19,12 +19,15 @@
 #include <exeng/math/TVector.hpp>
 #include <exeng/graphics/Color.hpp>
 
+namespace exeng { namespace graphics {
+class EXENGAPI Material;
+}}
+
 namespace exeng { namespace scenegraph {
     
 class EXENGAPI Light;
 class EXENGAPI Camera;
 class EXENGAPI SceneNode;
-class EXENGAPI Material;
 class EXENGAPI Geometry;
 
 /**
@@ -33,37 +36,37 @@ class EXENGAPI Geometry;
 class EXENGAPI Scene : public Object {
 public:
     Scene();
-    
     virtual ~Scene();
     
     /**
-        * @brief Devuelve el nodo raiz de la escena
-        */
+     * @brief Devuelven el nodo raiz de la escena
+     */
     SceneNode* getRootNodePtr();
-    
     const SceneNode *getRootNodePtr() const;
     
     /**
-        * @brief Agrega la camera indicada al grafo de escena
-        */
+     * @brief Agrega la camera indicada al grafo de escena
+     */
     SceneNode* addCamera(Camera *camera);
+    SceneNode* addCamera();
+    
     
     /**
-        * @brief Agrega la luz indicada al grafo de escena
-        */
+     * @brief Agrega la luz indicada al grafo de escena
+     */
     SceneNode* addLight(Light *light);
     
     /**
-        * @brief Establece el color de fondo de la escena
-        * @param color Un color como vector de cuatro componentes en punto flotante, 
-        * representado como RGBA
-        */
+     * @brief Establece el color de fondo de la escena
+     * @param color Un color como vector de cuatro componentes en punto flotante, 
+     * representado como RGBA
+     */
     void setBackgroundColor(const exeng::graphics::Color &color);
     
     /**
-        * @brief Devuelve el color de fondo de la escena
-        * @return Color RGBA, punto flotante, encapsulado en un objeto exeng::graphics::Color
-        */
+     * @brief Devuelve el color de fondo de la escena
+     * @return Color RGBA, punto flotante, encapsulado en un objeto exeng::graphics::Color
+     */
     exeng::graphics::Color getBackgroundColor() const;
 
 private:

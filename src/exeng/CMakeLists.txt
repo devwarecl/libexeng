@@ -29,8 +29,9 @@ set (AudioFiles
 )
 
 set (FrameworkFiles
-  ./framework/Application.hpp ./framework/Application.cpp 
-  ./framework/Main.hpp        ./framework/Main.inl
+  ./framework/Main.hpp                ./framework/Main.inl
+  ./framework/Application.hpp         ./framework/Application.cpp 
+  ./framework/GraphicsApplication.hpp ./framework/GraphicsApplication.inl
 )
 
 set (ComputeFiles

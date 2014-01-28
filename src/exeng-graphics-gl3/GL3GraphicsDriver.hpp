@@ -20,9 +20,7 @@
 #include <exeng/graphics/GraphicsDriverBase.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
 
-namespace exeng {
-namespace graphics {
-namespace gl3 {
+namespace exeng { namespace graphics { namespace gl3 {
 
 class GL3VertexBuffer;
 class GL3ShaderProgram;
@@ -35,6 +33,8 @@ public:
     GL3GraphicsDriver();
     
     virtual ~GL3GraphicsDriver();
+    
+    virtual void initialize();
     
     virtual void initialize(const DisplayMode &displayMode);
     
@@ -128,11 +128,12 @@ private:
     bool initialized;
     bool renderingFrame;
     
+    DisplayMode displayMode;
+    
 private:
     static int initializedCount;
 };
-}
-}
-}
+
+}}}
 
 #endif  // __EXENG_GRAPHICS_GL3_GRAPHICSDRIVER_HPP__

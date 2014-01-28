@@ -1,4 +1,6 @@
 
+#if 0
+
 #include "SphereGeometry.hpp"
 #include <algorithm>
 
@@ -33,3 +35,5 @@ namespace raytracer {
 		return Boxf(-point, point);
 	}
 }
+
+#endif

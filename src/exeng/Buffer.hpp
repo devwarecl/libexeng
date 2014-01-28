@@ -63,4 +63,4 @@ namespace exeng {
     };
 }
 
-#endif // exeng_buffer_hpp
+#endif // __EXENG_BUFFER_HPP__

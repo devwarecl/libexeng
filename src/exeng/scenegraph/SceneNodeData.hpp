@@ -17,18 +17,18 @@
 
 #include <exeng/Object.hpp>
 
-namespace exeng {
-    namespace scenegraph {
-        /**
-         * @brief Clase base para la informacion que se desee colgar de un nodo de escena.
-         * La duracion de este objeto es independiente del nodo de escena que lo contiene
-         */
-        class EXENGAPI SceneNodeData : public Object {
-        public:
-            virtual ~SceneNodeData();
-        };
-    }
-}
+namespace exeng { namespace scenegraph {
+
+/**
+ * @brief Base class for display data in the scene graph. Can be any multi-media element.
+ * The lifetime of this object is independent of the containing scenegraph.
+ */
+class EXENGAPI SceneNodeData : public Object {
+public:
+    virtual ~SceneNodeData();
+};
+        
+}}
 
 
 #endif // __EXENG_SCENEGRAPH_SCENENODEDATA_HPP__

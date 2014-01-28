@@ -38,38 +38,20 @@ struct SceneNode::Private {
         this->transform.identity();
     }
             
-    ~Private()  {
-	}
+    ~Private()  {}
             
     /**
-        * @brief Busca el nodo hijo con el nombre indicado, y devuelve un iterador.
-        * En caso de que no exista, se devuelve el fin de la secuencia
-        * @param name
-        * @return 
-        */
+     * @brief Busca el nodo hijo con el nombre indicado, y devuelve un iterador.
+     * En caso de que no exista, se devuelve el fin de la secuencia
+     * @param name
+     * @return 
+     */
     SceneNodeVectorIt getChild(const std::string &name) {
-		/*
-        SceneNode *child = nullptr; 
-		*/
-
 		auto &childs = this->childVector;
         
 		return std::find_if(std::begin(childs), std::end(childs), [&name](SceneNode *node) {
 			return node->impl->name == name;
 		});
-
-		/*
-        for (auto it=std::begin(childs); it!=std::end(childs); ++it) {
-            child = *it;
-                    
-            if ( child->impl->name == name ) {
-                return it;
-            }
-        }
-        
-        // No encontrado
-        return childs.end();
-		*/
     }
 };
 }

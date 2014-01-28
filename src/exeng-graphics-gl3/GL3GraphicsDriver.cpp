@@ -123,6 +123,12 @@ GL3GraphicsDriver::~GL3GraphicsDriver() {
 	this->terminate();
 }
 
+
+void GL3GraphicsDriver::initialize() {
+    this->initialize(DisplayMode());
+}
+
+
 void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
     if (initializedCount > 0) {
         std::string msg;
@@ -199,6 +205,8 @@ void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
     this->defaultVertexShader = vertexShader;
     this->defaultFragmentShader = fragmentShader;
     this->defaultProgram = shaderProgram;
+    
+    this->displayMode = displayMode;
     
     this->initialized = true;
     ++GL3GraphicsDriver::initializedCount;
@@ -420,7 +428,7 @@ VertexBuffer* GL3GraphicsDriver::createVertexBuffer(const VertexFormat &format, 
 
 
 IndexBuffer* GL3GraphicsDriver::createIndexBuffer(IndexFormat format, int count) {
-    return nullptr;
+    throw std::runtime_error("GL3GraphicsDriver::createIndexBuffer: Not yet implemented");
 }
 
 
@@ -502,7 +510,7 @@ void GL3GraphicsDriver::setDisplayMode(const DisplayMode &displayMode) {
 }
 
 DisplayMode GL3GraphicsDriver::getDisplayMode() const {
-    throw std::runtime_error("GL3GraphicsDriver::getDisplayMode: Not implemented yet.");
+    return this->displayMode;
 }
 
 void GL3GraphicsDriver::restoreDisplayMode() {

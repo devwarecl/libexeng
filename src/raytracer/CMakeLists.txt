@@ -19,7 +19,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 # Grouping
 set (BaseFiles
 	RayTracerApp.hpp                RayTracerApp.cpp 
-    SphereGeometry.hpp              SphereGeometry.cpp 
+    RayTracerSceneRenderer.hpp      RayTracerSceneRenderer.cpp 
 )
 
 set ( Tracers

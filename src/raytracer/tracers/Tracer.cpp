@@ -1,22 +1,24 @@
 
-
-#include "Tracer.hpp"
+#include <raytracer/tracers/Tracer.hpp>
 
 namespace raytracer { namespace tracers {
+    using namespace exeng;
+    using namespace exeng::graphics;
+    using namespace exeng::scenegraph;
     
-using namespace exeng;
-using namespace exeng::graphics;
-using namespace exeng::scenegraph;
-
-Tracer::Tracer(Texture *renderTarget, const Scene *scene) : renderTarget(nullptr), scene(nullptr)  {
-    assert(renderTarget != nullptr);
-    assert(scene != nullptr);
+    using namespace raytracer::samplers;
     
-    this->renderTarget = renderTarget;
-    this->scene = scene;
-}
-
-Tracer::~Tracer() {
-}
-
+    Tracer::Tracer(Texture *renderTarget, const Scene *scene, const Sampler *sampler) 
+        : renderTarget(nullptr), scene(nullptr), sampler(nullptr)  {
+        assert(renderTarget != nullptr);
+        assert(scene != nullptr);
+        
+        this->renderTarget = renderTarget;
+        this->scene = scene;
+        this->sampler = sampler;
+    }
+    
+    
+    Tracer::~Tracer() {
+    }
 }}

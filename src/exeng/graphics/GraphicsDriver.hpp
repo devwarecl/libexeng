@@ -78,8 +78,8 @@ struct DisplayMode {
     int depthBits, stencilBits;                     //! Frame buffer support
     DisplayStatus status;                           //! Fullscreen or window?
     
-    inline DisplayMode() : size(800, 600) {
-        this->redBits = this->greenBits = this->blueBits = this->alphaBits = 0;
+    inline DisplayMode() : size(640, 480) {
+        this->redBits = this->greenBits = this->blueBits = this->alphaBits = 8;
         this->depthBits = this->stencilBits = 0;
         this->status = DisplayStatus::Window;
     }
@@ -90,7 +90,7 @@ struct DisplayMode {
         this->greenBits = greenBits;
         this->blueBits = blueBits;
         this->alphaBits = alphaBits;
-        this->depthBits = 0;
+        this->depthBits = 16;
         this->stencilBits = 0;
         this->status = DisplayStatus::Window;
     }
@@ -172,6 +172,15 @@ public:
      * @param displayMode The settings requested.
      */
     virtual void initialize(const DisplayMode &displayMode) = 0;
+    
+    /**
+     * @brief Initializes the graphics driver, with the states specified by default
+     * on the DisplayMode structure.
+     * Throws exception if the graphics drives can't be initialized with the
+     * supplied settings.
+     * @param displayMode The settings requested.
+     */
+    virtual void initialize() = 0;
     
     /**
      * @brief Terminate the use of the graphics drivers, killing all resources 

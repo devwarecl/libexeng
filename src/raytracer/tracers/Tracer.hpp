@@ -10,21 +10,25 @@
 #include <exeng/scenegraph/Scene.hpp>
 #include <exeng/scenegraph/Camera.hpp>
 
-namespace raytracer { namespace tracers {
+#include <raytracer/samplers/Sampler.hpp>
 
-class Tracer {
-public:
-    Tracer(exeng::graphics::Texture *renderTarget, const exeng::scenegraph::Scene *scene);
-    virtual ~Tracer();
-    virtual void render(const exeng::scenegraph::Camera *camera) = 0;
-    
-protected:
-    exeng::graphics::Texture *renderTarget;
-    const exeng::scenegraph::Scene *scene;
-    const exeng::scenegraph::Camera *camera;
-};
-    
-    
+namespace raytracer { namespace tracers {
+    class Tracer {
+    public:
+        Tracer(exeng::graphics::Texture *renderTarget, const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
+        
+        virtual ~Tracer();
+        virtual void render(const exeng::scenegraph::Camera *camera) = 0;
+        
+        const exeng::scenegraph::Scene *getScene() const;
+        const exeng::scenegraph::Camera *getcamera;
+        const raytracer::samplers::Sampler *sampler;
+        
+    protected:
+        exeng::graphics::Texture *renderTarget;
+        const exeng::scenegraph::Scene *scene;
+        const exeng::scenegraph::Camera *camera;
+    };
 }}
 
 #endif  // __RAYTRACER_TRACERS_TRACER_HPP__

@@ -5,7 +5,7 @@
 
 
 /*
- * Copyright (c) 2013 Felipe Apablaza.
+ * Copyright (c) 2013-2014 Felipe Apablaza.
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution.
@@ -31,7 +31,7 @@ enum class CameraProjectionType {
 };
 
 /**
- * @brief The Projection struct
+ * @brief CameraProjection
  */
 struct CameraProjection {
     exeng::math::Boxf box;
@@ -43,91 +43,57 @@ struct CameraProjection {
     }
 };
 
-
 /**
- * @brief The Camera class
+ * @brief Camera class
  */
 class EXENGAPI Camera : public SceneNodeData {
 public:
     Camera();
-    
     virtual ~Camera();
     
-    /**
-        * @brief Establece la orientacion de la camara
-        * @param pos
-        * @param lookAt
-        */
-    void setOrientation(const exeng::math::Vector3f &pos, const exeng::math::Vector3f& lookAt);
+    void 
+    setOrientation(const exeng::math::Vector3f &pos, const exeng::math::Vector3f& lookAt);
     
     
-    /**
-        * @brief setPosition
-        * @param position
-        */
-    void setPosition(const exeng::math::Vector3f &position);
+    void 
+    setPosition(const exeng::math::Vector3f &position);
     
-    /**
-        * @brief getPosition
-        * @return 
-        */
-    exeng::math::Vector3f getPosition() const;
-    
-    /**
-        * @brief setLookAt
-        * @param lookAt
-        */
-    void setLookAt(const exeng::math::Vector3f &lookAt);
-    
-    /**
-        * @brief getLookAt
-        * @return 
-        */
-    exeng::math::Vector3f getLookAt() const;
-    
-    /**
-        * @brief getUp
-        * @return 
-        */
-    exeng::math::Vector3f getUp() const;
-    
-    /**
-        * @brief setUp
-        * @param up
-        */
-    void setUp(const exeng::math::Vector3f &up);
-    
-    /**
-        * @brief setViewport
-        * @param viewport
-        */
-    void setViewport(const exeng::math::Rectf &viewport);
-    
-    /**
-        * @brief getViewport
-        * @return 
-        */
-    exeng::math::Rectf getViewport() const;
+    exeng::math::Vector3f 
+    getPosition() const;
     
     
-    /**
-        * @brief setProjection
-        * @param proj
-        */
-    void setProjection(const CameraProjection &proj);
+    void 
+    setLookAt(const exeng::math::Vector3f &lookAt);
+    
+    exeng::math::Vector3f 
+    getLookAt() const;
     
     
-    /**
-        * @brief getProjection
-        * @return 
-        */
-    CameraProjection getProjection() const;
+    exeng::math::Vector3f 
+    getUp() const;
+    
+    void 
+    setUp(const exeng::math::Vector3f &up);
+    
+    
+    void 
+    setViewport(const exeng::math::Rectf &viewport);
+    
+    exeng::math::Rectf 
+    getViewport() const;
+    
+    
+    void 
+    setProjection(const CameraProjection &proj);
+    
+    CameraProjection 
+    getProjection() const;
 
-    
 private:
     struct Private;
     Private *impl;
-};      
+};
+
 }}
 
 #endif // __EXENG_SCENEGRAPH_CAMERA_HPP__

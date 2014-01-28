@@ -27,7 +27,7 @@ PluginLibrary::PluginLibrary(Library *library) : plugin(nullptr), library(nullpt
 
 		msg += "PluginLibrary::PluginLibrary: The loaded library object '";
 		msg += library->getFileName() + "' doesn't have the exported function " ;
-		msg += "'"EXENG_GET_PLUGIN_OBJECT_NAME_STR "'.";
+		msg += "'" EXENG_GET_PLUGIN_OBJECT_NAME_STR "'.";
 
 		throw std::runtime_error(msg);
 	}

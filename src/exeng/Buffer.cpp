@@ -15,5 +15,6 @@
 
 namespace exeng {
     Buffer::~Buffer() {
+        
     }
 }

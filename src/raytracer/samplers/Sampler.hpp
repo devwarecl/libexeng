@@ -45,7 +45,7 @@ public:
     /**
     *  @brief Obtiene la siguiente muestra en el cuadrano unitario
     */
-    exeng::math::Vector2f sampleUnitSquare();
+    exeng::math::Vector2f sampleUnitSquare() const;
     
     
     /**
@@ -80,7 +80,7 @@ protected:
     /**
     *  @brief El numero actual de puntos de muestra usados
     */
-    int count;
+    mutable int count;
     
     /** 
     *  @brief Salto de indice aleatorio

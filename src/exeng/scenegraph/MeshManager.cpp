@@ -21,33 +21,29 @@
 #include <exeng/scenegraph/IMeshLoader.hpp>
 #include <exeng/scenegraph/MeshManager.hpp>
 
-namespace exeng {
-    namespace scenegraph {
-        
-        struct MeshManager::Private  {
-            boost::ptr_list<IMeshLoader> loaders;
-        };
+namespace exeng { namespace scenegraph {
     
-        
-        MeshManager::MeshManager() : impl(new MeshManager::Private()) {}
-        
-        MeshManager::~MeshManager() {}
-        
-        
-        void MeshManager::addMeshLoader(IMeshLoader *loader) {
-            this->impl->loaders.push_back(loader);
-        }
-        
-        
-        Mesh* MeshManager::loadMesh(const char* filename) {
-            // Search for the first loader.
-            for (auto& loader : this->impl->loaders) {
-                if (loader.isSupported(filename) == true) {
-                    return loader.loadMesh(filename);
-                }
-            }
-            
-            return nullptr;
-        }
+    struct MeshManager::Private  {
+        boost::ptr_list<IMeshLoader> loaders;
+    };
+    
+    MeshManager::MeshManager() : impl(new MeshManager::Private()) {}
+    MeshManager::~MeshManager() {}
+    
+    
+    void MeshManager::addMeshLoader(IMeshLoader *loader) {
+        this->impl->loaders.push_back(loader);
     }
-}
+    
+    
+    Mesh* MeshManager::loadMesh(const char* filename) {
+        // Search for the first loader.
+        for (auto& loader : this->impl->loaders) {
+            if (loader.isSupported(filename) == true) {
+                return loader.loadMesh(filename);
+            }
+        }
+        
+        return nullptr;
+    }   
+}}
