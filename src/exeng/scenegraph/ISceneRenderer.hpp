@@ -24,7 +24,7 @@ namespace exeng { namespace scenegraph {
     /**
      * @brief Interface to a undetermined scene renderer.
      */
-    class ISceneRenderer {
+	class EXENGAPI ISceneRenderer {
     public:
         virtual ~ISceneRenderer();
         

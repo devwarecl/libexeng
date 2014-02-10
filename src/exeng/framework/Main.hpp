@@ -16,15 +16,12 @@
 #include <exeng/Config.hpp>
 #include <exeng/framework/Application.hpp>
 
-namespace exeng {
-namespace framework {
-template<typename AppClass>
-int RunApplication(const StringVector &cmdLine) {
-    return Application::run( new AppClass(), cmdLine );
-}
-
-}
-}
+namespace exeng { namespace framework {
+	template<typename AppClass>
+	int RunApplication(const StringVector &cmdLine) {
+		return Application::run( new AppClass(), cmdLine );
+	}
+}}
 
 #ifdef EXENG_WINDOWS
 #  define EXENG_MAIN_CONVENTION __cdecl
@@ -32,17 +29,27 @@ int RunApplication(const StringVector &cmdLine) {
 #  define EXENG_MAIN_CONVENTION
 #endif
 
-#define EXENG_IMPLEMENT_MAIN(AppClass)          \
-int EXENG_MAIN_CONVENTION main(int argc, char** argv) {               \
-    using namespace exeng;                      \
-    using namespace exeng::framework;           \
-    StringVector cmdLine;                       \
-    cmdLine.reserve(argc);                      \
-    cmdLine.resize(argc);                       \
-    for(int i=0; i<argc; ++i) {                 \
-        cmdLine[i] = std::string(argv[i]);      \
-    }                                           \
-    return RunApplication<AppClass>(cmdLine);   \
-}
-    
+#ifdef EXENG_WINDOWS
+	#define EXENG_IMPLEMENT_MAIN(AppClass)					\
+	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, INT nCmdShow) {  \
+		using namespace exeng;								\
+        using namespace exeng::framework;					\
+        StringVector cmdLine;								\
+        return RunApplication<AppClass>(StringVector());	\
+	}
+#else 
+  #define EXENG_IMPLEMENT_MAIN(AppClass)          \
+  int EXENG_MAIN_CONVENTION main(int argc, char** argv) {               \
+      using namespace exeng;                      \
+      using namespace exeng::framework;           \
+      StringVector cmdLine;                       \
+      cmdLine.reserve(argc);                      \
+      cmdLine.resize(argc);                       \
+      for(int i=0; i<argc; ++i) {                 \
+          cmdLine[i] = std::string(argv[i]);      \
+      }                                           \
+      return RunApplication<AppClass>(cmdLine);   \
+  }
+#endif
+
 #endif 

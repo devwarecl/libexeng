@@ -117,7 +117,7 @@ VertexBuffer* MeshPart::getVertexBuffer(){
 TypeInfo MeshPart::getTypeInfo() const {
     assert(this->impl != nullptr);
     
-    return TypeInfo::get<MeshPart>();
+    return TypeId<MeshPart>();
 }
 
 

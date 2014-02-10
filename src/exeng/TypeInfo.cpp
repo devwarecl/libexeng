@@ -20,7 +20,6 @@
 namespace exeng {
 	const std::string invalidTypePtr = "TypeInfo: Debe asignar primero un objeto std::type_info";
 
-
 	TypeInfo::TypeInfo() : typeInfo(nullptr) {}
 
 

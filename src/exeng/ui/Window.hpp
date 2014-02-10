@@ -2,16 +2,19 @@
 #ifndef __EXENG_UI_WINDOW_HPP__
 #define __EXENG_UI_WINDOW_HPP__
 
-#include <exeng/ui/Widget.hpp>
+#include <exeng/ui/Control.hpp>
 
-namespace exeng {
-    namespace ui {
-        class Window : public Widget {
-        public:
-        private:
-        };
-    }
-}
+namespace exeng { namespace ui {
+	class WindowPrivate;
+	class EXENGAPI Window : public Control {
+	public:
+		Window(Window *parent=nullptr, const std::string &text="");
 
+		virtual TypeInfo getTypeInfo() const;
 
-#endif  //  __EXENG_UI_WINDOW_HPP__
+		// HACK: temporary method (to make the window work)
+		virtual bool doEvent();
+	};
+}}
+
+#endif	//__EXENG_UI_WINDOW_HPP__

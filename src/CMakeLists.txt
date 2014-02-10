@@ -1,5 +1,9 @@
-add_subdirectory(test)
-add_subdirectory(raytracer)
-add_subdirectory(exeng-graphics-gl3)
-add_subdirectory(exeng-compute-cl)
+
+add_subdirectory(exeng.tests)
+add_subdirectory(exeng.raytracer)
+# add_subdirectory(exeng.audio.al)
+add_subdirectory(exeng.graphics.gl3)
+# add_subdirectory(exeng.compute.cl)
+add_subdirectory(exeng.ui.demo)
+add_subdirectory(exeng.main)
 add_subdirectory(exeng)

@@ -18,7 +18,7 @@ namespace exeng {
         Geometry::~Geometry() { }
 
 		TypeInfo Geometry::getTypeInfo() const {
-			return TypeInfo::get<Geometry>();
+			return TypeId<Geometry>();
 		}
     }
 }
