@@ -12,7 +12,7 @@ namespace raytracer { namespace tracers {
     using namespace raytracer::samplers;
     
     inline uint32_t SoftwareTracer::getOffset(const Vector2i &point) const {
-    #ifdef EXENG_DEBUG
+#ifdef EXENG_DEBUG
         if (point.x < 0 || point.y < 0) {
             throw std::invalid_argument("");
         }
@@ -24,7 +24,7 @@ namespace raytracer { namespace tracers {
         if (point.y >= this->renderTarget->getSize().y) {
             throw std::invalid_argument("");
         }
-    #endif  
+#endif  
         int offset = point.y * this->renderTarget->getSize().x + point.x;
         return static_cast<uint32_t>(offset);
     }
@@ -197,7 +197,7 @@ namespace raytracer { namespace tracers {
                 }
             }
         } else {
-            // usar un sampler (aumenta la calidad de la imagen, pero disminuye el tiempo de procesamiento)
+            // usar un sampler (aumenta la calidad de la imagen, pero aumenta el tiempo de procesamiento)
             for(pixel.y=0; pixel.y<screenSize.y; ++pixel.y) {
                 for(pixel.x=0; pixel.x<screenSize.x; ++pixel.x) {
                     Color pixelColor = this->traceRayMultisampled(nodeList, pixel, camera);
@@ -209,5 +209,4 @@ namespace raytracer { namespace tracers {
         this->renderTarget->unlock();
         backbuffer = nullptr;
     }
-
 }}

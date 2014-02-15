@@ -59,8 +59,8 @@ namespace raytracer {
             // Ray is not parallel. Continue compute of the intersection
             // TODO: cache the inv direction of the ray, for calculation speed-up
             float invRayDirection = 1.0f / rayDirection[coord];
-            float t1 = (minEdge[coord] - rayPoint[coord]) / invRayDirection;
-            float t2 = (maxEdge[coord] - rayPoint[coord]) / invRayDirection;
+            float t1 = (minEdge[coord] - rayPoint[coord]) * invRayDirection;
+            float t2 = (maxEdge[coord] - rayPoint[coord]) * invRayDirection;
             
             if (t1 > t2) {
                 std::swap(t1, t2);
@@ -156,14 +156,13 @@ namespace raytracer {
     };
     
     
-    RayTracerApp::RayTracerApp() 
-        : 
-            defaultColor(0xFFFFFFFF), 
-            applicationStatus(ApplicationStatus::Running),
-            lastTime(Timer::getTime()), 
-            fpsCurrent(0), 
-            fpsLastTime(0.0), 
-            fpsCurrentTime(0.0) {
+    RayTracerApp::RayTracerApp() {
+        this->defaultColor = 0xFFFFFFFF;
+        this->applicationStatus = ApplicationStatus::Running;
+        this->lastTime = Timer::getTime();
+        this->fpsCurrent = 0;
+        this->fpsLastTime = 0.0f;
+        this->fpsCurrentTime = 0.0f;
         
         for (int i=0; i<ButtonCode::Count; ++i) {
             this->buttonStatus[i] = ButtonStatus::Release;
@@ -180,17 +179,15 @@ namespace raytracer {
         // Initialize the exeng root class and plugins.
         std::string path;
     
-    #ifdef EXENG_WINDOWS
-    #  ifdef EXENG_DEBUG
+#ifdef EXENG_WINDOWS
+#  ifdef EXENG_DEBUG
         path = "../../bin/Debug/";
-    #  else
+#  else
         path = "../../bin/Release/";
-    #  endif
-    #else 
-        // con ruta actual ${PROJECT}
+#  endif
+#else 
         path = "../exeng-graphics-gl3/";
-    #endif
-    
+#endif
         this->root.reset(new Root());
         this->root->getPluginManager()->load("exeng-graphics-gl3", path);
         
@@ -362,72 +359,17 @@ namespace raytracer {
         // Crear una escena de juguete, con una esfera al centro de la escena.
         // TODO: Cargar esta escena desde un archivo XML, o similar
         auto rootNode = this->scene->getRootNodePtr();
-        auto sphereGeometry = new BasicGeometry<Sphere>();
-        auto sphereGeometry2 = new BasicGeometry<Sphere>();
-        
-        Material *sphereGeometryMaterial = new Material();
-        sphereGeometryMaterial->setProperty("diffuse", Vector4f(1.0f, 0.5f, 0.25f, 1.0f));
-        sphereGeometry->material = sphereGeometryMaterial;
-        sphereGeometry->solid.setAttributes(25.0f, Vector3f(-50.0f, 0.0f, 0.0f));
-        
-        Material *sphereGeometry2Material = new Material();
-        sphereGeometry2Material->setProperty("diffuse", Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
-        sphereGeometry2->material = sphereGeometry2Material;
-        sphereGeometry2->solid.setAttributes(40.0f, Vector3f(60.0f, 0.0f, 0.0f));
-        
-        // sphereGeometry3->sphere.setAttributes(200.0, Vector3f(0.0f, 100.0f, 0.0f));
-        // sphereGeometry3->material.setProperty("diffuse", Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-        // auto vertexBuffer = new HeapVertexBuffer(nullptr, 
-        
-        rootNode->addChildPtr("sphereGeometry")->setDataPtr(sphereGeometry);
-        rootNode->addChildPtr("sphereGeometry2")->setDataPtr(sphereGeometry2);
-        // rootNode->addChildPtr("sphereGeometry3")->setDataPtr(sphereGeometry3);
-        
-        Mesh *mesh = new Mesh(1);
-        
-        VertexBuffer *vertexBuffer = new HeapVertexBuffer(nullptr, VertexFormat::makeStandardVertex(), 6);
-        {
-            VertexArray<StandardVertex> vertices(vertexBuffer);
-            
-            vertices[0].coord = Vector3f(0.0f, 15.0f, 0.0f);
-            vertices[0].normal = Vector3f(0.0f, 0.0f, -1.0f);
-            vertices[0].texCoord = Vector2f(0.0f, 0.0f);
-            
-            vertices[1].coord = Vector3f(15.0f, -15.0f, 0.0f);
-            vertices[1].normal = Vector3f(0.0f, 0.0f, -1.0f);
-            vertices[1].texCoord = Vector2f(1.0f, 0.0f);
-            
-            vertices[2].coord = Vector3f(-15.0f, -15.0f, 0.0f);
-            vertices[2].normal = Vector3f(0.0f, 0.0f, -1.0f);
-            vertices[2].texCoord = Vector2f(0.0f, 1.0f);
-        }
-        
-        this->meshMaterial.reset( new exeng::graphics::Material() );
-        this->meshMaterial->setProperty("diffuse", Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-        
-        /*
-        mesh->getPart(0)->setVertexBuffer(vertexBuffer);
-        mesh->getPart(0)->setPrimitiveType(Primitive::TriangleList);
-        mesh->getPart(0)->setMaterial(this->meshMaterial.get());
-        rootNode->addChildPtr("triangleMesh")->setDataPtr(mesh);
-        */
     
-        Geometry* planeGeometry = new BasicGeometry<Plane>(
-            Plane( Vector3f(0.0f, -1.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f) ),
-            this->meshMaterial.get()
-        );
-        
         // Mostrar una caja en pantalla
         this->boxMaterial.reset( new exeng::graphics::Material() );
         this->boxMaterial->setProperty("diffuse", Vector4f(1.0f, 0.3f, 0.2f, 1.0f));
     
         Geometry* boxGeometry = new BasicGeometry<Boxf>(
-            Boxf(-Vector3f(18.0f) + Vector3f(0.0f, 5.0f, 0.0f), Vector3f(18.0f) + Vector3f(0.0f, 5.0f, 0.0f)),
+            Boxf(-Vector3f(10.0f), Vector3f(10.0f)),
             this->boxMaterial.get()
         );
         
         rootNode->addChildPtr("boxGeometry")->setDataPtr(boxGeometry);
-        rootNode->addChildPtr("planeGeometry")->setDataPtr(planeGeometry);
     }
     
     
@@ -447,4 +389,3 @@ namespace exeng { namespace main {
 		return exeng::framework::RunApplication<raytracer::RayTracerApp>(exeng::framework::StringVector());
 	}
 }}
-

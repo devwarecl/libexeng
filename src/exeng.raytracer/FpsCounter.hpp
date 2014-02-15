@@ -22,7 +22,7 @@ namespace raytracer {
         int getCount() const;
         
     private:
-        mutable ::uint32_t lastTime;        
+        mutable ::uint32_t lastTime;
         int current;
     };
 }

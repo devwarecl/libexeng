@@ -1,7 +1,7 @@
 
-#include <exeng/ui/win32/WindowPrivate.hpp>
-
 #if defined(EXENG_WINDOWS)
+
+#include <exeng/ui/win32/WindowPrivate.hpp>
 
 namespace exeng { namespace ui { namespace win32 {
 

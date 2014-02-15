@@ -43,20 +43,17 @@ namespace exeng {
 
 
 	bool TypeInfo::operator== (const TypeInfo& other) const {
-		return this->getStdTypeInfo() == other.getStdTypeInfo();
+        return this->typeInfo == other.typeInfo;
 	}
 
 
 	bool TypeInfo::operator!= (const TypeInfo& other) const {
-		return this->getStdTypeInfo() != other.getStdTypeInfo();
+        return ! (*this == other);
 	}
 
 
 	bool TypeInfo::operator< (const TypeInfo& other) const {
-		auto &info1 = this->getStdTypeInfo();
-		auto &info2 = other.getStdTypeInfo();
-
-		return info1.before(info2);
+		return this->typeInfo->before(*other.typeInfo);
 	}
 
 

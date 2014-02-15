@@ -16,36 +16,35 @@
 #include <exeng/ResourceFactory.hpp>
 
 namespace exeng {
-Resource::Resource(ResourceFactory *resourceFactory_) : resourceFactory(resourceFactory_) {
-}
+    Resource::Resource(ResourceFactory *resourceFactory_) : resourceFactory(resourceFactory_) {}
 
 
-Resource::~Resource() {
-    if (this->resourceFactory != nullptr) {
-        this->resourceFactory->removeResource(this);
+    Resource::~Resource() {
+        if (this->resourceFactory != nullptr) {
+            this->resourceFactory->removeResource(this);
+        }
     }
-}
 
 
-ResourceFactory* Resource::getResourceFactory() {
-    return this->resourceFactory;
-}
+    ResourceFactory* Resource::getResourceFactory() {
+        return this->resourceFactory;
+    }
 
 
-const ResourceFactory* Resource::getResourceFactory() const {
-    return this->resourceFactory;
-}
+    const ResourceFactory* Resource::getResourceFactory() const {
+        return this->resourceFactory;
+    }
 
 
-void Resource::restore() {
-    std::cout << "Resource::restore: Not implemented." << std::endl;
-}
+    void Resource::restore() {
+        std::cout << "Resource::restore: Not implemented." << std::endl;
+    }
 
-void Resource::release() {
-    std::cout << "Resource::release: Not implemented." << std::endl;
-}
+    void Resource::release() {
+        std::cout << "Resource::release: Not implemented." << std::endl;
+    }
 
-ResourceStatus::Flags Resource::getStatusFlags() const {
-    return ResourceStatus::Ready;
-}
+    ResourceStatus::Flags Resource::getStatusFlags() const {
+        return ResourceStatus::Ready;
+    }
 }

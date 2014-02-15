@@ -3,6 +3,7 @@
 #define __RAYTRACER_RAYTRACERAPP_HPP__
 
 #include <exeng/Exeng.hpp>
+#include <exeng/scenegraph/SceneManager.hpp>
 #include <vector>
 #include <list>
 #include <boost/scoped_ptr.hpp>
@@ -56,7 +57,7 @@ namespace raytracer {
         boost::scoped_ptr<exeng::graphics::Texture> texture;
         boost::scoped_ptr<exeng::scenegraph::Scene> scene;
         boost::scoped_ptr<raytracer::samplers::Sampler> sampler;
-        boost::scoped_ptr<exeng::graphics::Material> meshMaterial;
+        
         boost::scoped_ptr<exeng::graphics::Material> boxMaterial;
         
         exeng::framework::ApplicationStatus applicationStatus;
@@ -69,7 +70,7 @@ namespace raytracer {
         
         boost::scoped_ptr<raytracer::tracers::Tracer> tracer;
         boost::scoped_ptr<exeng::scenegraph::Camera> camera;
-    
+        
         exeng::graphics::ButtonStatus::Enum buttonStatus[exeng::graphics::ButtonCode::Count];
     };
 
