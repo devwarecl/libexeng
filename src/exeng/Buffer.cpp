@@ -14,7 +14,5 @@
 #include <exeng/Buffer.hpp>
 
 namespace exeng {
-    Buffer::~Buffer() {
-        
-    }
+    Buffer::~Buffer() {}
 }

@@ -24,62 +24,60 @@ using namespace exeng::math;
 
 namespace exeng { namespace scenegraph {
 
-struct Scene::Private {
-    SceneNode *rootNode;
-    Color backColor;
+    struct Scene::Private {
+        SceneNode *rootNode;
+        Color backColor;
+        
+        Private() {
+            this->rootNode = new SceneNode("");
+        }
+    };
 
-    Private() {
-        this->rootNode = new SceneNode("");
+    Scene::Scene() {
+        this->impl = new Scene::Private();
     }
-};
-
-Scene::Scene() {
-    this->impl = new Scene::Private();
-}
 
 
-Scene::~Scene() {
-    delete this->impl;
-}
+    Scene::~Scene() {
+        delete this->impl;
+    }
 
 
-SceneNode* Scene::getRootNodePtr() {
-    return this->impl->rootNode;
-}
+    SceneNode* Scene::getRootNode() {
+        return this->impl->rootNode;
+    }
 
-const SceneNode* Scene::getRootNodePtr() const {
-    return this->impl->rootNode;
-}
-
-
-SceneNode* Scene::addCamera(Camera *camera) {
-    SceneNode *cameraNode = nullptr;
+    const SceneNode* Scene::getRootNode() const {
+        return this->impl->rootNode;
+    }
     
-    cameraNode = this->getRootNodePtr()->addChildPtr("");
-    cameraNode->setDataPtr(camera);
     
-    return cameraNode;
-}
+    SceneNode* Scene::addCamera(Camera *camera) {
+        SceneNode *cameraNode = nullptr;
+        
+        cameraNode = this->getRootNode()->addChildPtr("");
+        cameraNode->setDataPtr(camera);
+        
+        return cameraNode;
+    }
 
 
-SceneNode* Scene::addLight(Light *light) {
-    SceneNode *lightNode = nullptr;
-    
-    lightNode = this->getRootNodePtr()->addChildPtr("");
-    lightNode->setDataPtr(light);
-    
-    return lightNode;
-}
+    SceneNode* Scene::addLight(Light *light) {
+        SceneNode *lightNode = nullptr;
+        
+        lightNode = this->getRootNode()->addChildPtr("");
+        lightNode->setDataPtr(light);
+        
+        return lightNode;
+    }
 
 
-void Scene::setBackgroundColor(const Color &color){
-    this->impl->backColor = color;
-}
+    void Scene::setBackgroundColor(const Color &color){
+        this->impl->backColor = color;
+    }
 
 
-Color Scene::getBackgroundColor() const{
-    return this->impl->backColor;
-}
-
-
+    Color Scene::getBackgroundColor() const{
+        return this->impl->backColor;
+    }
 }}

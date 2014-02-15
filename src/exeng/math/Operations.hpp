@@ -40,82 +40,80 @@ struct Name {								\
 	}										\
 }
 
-namespace exeng {
-    namespace math {
-		namespace BinaryOperators {
-			EXENG_DECLARE_BIN_OP(Add, +);
-			EXENG_DECLARE_BIN_OP(Sub, -);
-			EXENG_DECLARE_BIN_OP(Mul, *);
-			EXENG_DECLARE_BIN_OP(Div, /);
+namespace exeng { namespace math {
+    namespace BinaryOperators {
+        EXENG_DECLARE_BIN_OP(Add, +);
+        EXENG_DECLARE_BIN_OP(Sub, -);
+        EXENG_DECLARE_BIN_OP(Mul, *);
+        EXENG_DECLARE_BIN_OP(Div, /);
 
-			EXENG_DECLARE_ASSIGN_BIN_OP(AddAssign, +=);
-			EXENG_DECLARE_ASSIGN_BIN_OP(SubAssign, -=);
-			EXENG_DECLARE_ASSIGN_BIN_OP(MulAssign, *=);
-			EXENG_DECLARE_ASSIGN_BIN_OP(DivAssign, /=);
-		}
-
-		
-		template<typename SequenceType>
-		struct SequenceTypeTraits {};
-        
-        
-		/**
-		 *	@brief Aplica una operacion
-		 */
-		template< typename _SequenceTypeTraits, int Index=_SequenceTypeTraits::Dimension-1 >
-		struct Unroller {
-            typedef typename _SequenceTypeTraits::SequenceType      Sequence;
-            typedef typename _SequenceTypeTraits::SequenceValueType Type;
-            typedef Unroller<_SequenceTypeTraits, Index - 1>        PrevUnroller;
-            
-            
-			template< template<typename T> class BinaryOperator >
-			static void unroll(Sequence &out, const Sequence &arr1, const Sequence &arr2) {
-                PrevUnroller::template unroll< BinaryOperator >(out, arr1, arr2);
-                out[Index] = BinaryOperator<Type>::eval(arr1[Index], arr2[Index]);
-			}
-			
-			
-			template< template<typename T> class AssignBinaryOperator >
-			static void unrollAssign(Sequence &out, const Sequence &arr) {
-                
-				PrevUnroller::template unrollAssign < AssignBinaryOperator >(out, arr);
-                AssignBinaryOperator<Type>::eval(out[Index], arr[Index]);
-			}
-
-
-			template< template<typename T> class BinaryOperator >
-			static void unrollScalar(Sequence &out, const Sequence &arr, Type scalar) {
-                
-                PrevUnroller::template unrollScalar<BinaryOperator>(out, arr, scalar);
-                out[Index] = BinaryOperator<Type>::eval(arr[Index], scalar);
-			}
-		};
-
-
-		template<typename _SequenceTypeTraits>
-		struct Unroller<_SequenceTypeTraits, 0> {
-            typedef typename _SequenceTypeTraits::SequenceType      Sequence;
-            typedef typename _SequenceTypeTraits::SequenceValueType Type;
-            
-			template< template<typename> class BinaryOperator >
-			static void unroll(Sequence &out, const Sequence &arr1, const Sequence &arr2) {
-                out[0] = BinaryOperator<Type>::eval(arr1[0], arr2[0]);
-			}
-
-
-			template< template<typename> class AssignBinaryOperator >
-			static void unrollAssign(Sequence &out, const Sequence &arr) {
-                AssignBinaryOperator<Type>::eval(out[0], arr[0]);
-			}
-			
-			
-			template< template<typename> class BinaryOperator >
-            static void unrollScalar(Sequence &out, const Sequence &arr, Type scalar) {
-                out[0] = BinaryOperator<Type>::eval(arr[0], scalar);
-            }
-		};
+        EXENG_DECLARE_ASSIGN_BIN_OP(AddAssign, +=);
+        EXENG_DECLARE_ASSIGN_BIN_OP(SubAssign, -=);
+        EXENG_DECLARE_ASSIGN_BIN_OP(MulAssign, *=);
+        EXENG_DECLARE_ASSIGN_BIN_OP(DivAssign, /=);
     }
-}
+
+    
+    template<typename SequenceType>
+    struct SequenceTypeTraits {};
+    
+    
+    /**
+        *	@brief Aplica una operacion
+        */
+    template< typename _SequenceTypeTraits, int Index=_SequenceTypeTraits::Dimension-1 >
+    struct Unroller {
+        typedef typename _SequenceTypeTraits::SequenceType      Sequence;
+        typedef typename _SequenceTypeTraits::SequenceValueType Type;
+        typedef Unroller<_SequenceTypeTraits, Index - 1>        PrevUnroller;
+        
+        
+        template< template<typename T> class BinaryOperator >
+        static void unroll(Sequence &out, const Sequence &arr1, const Sequence &arr2) {
+            PrevUnroller::template unroll< BinaryOperator >(out, arr1, arr2);
+            out[Index] = BinaryOperator<Type>::eval(arr1[Index], arr2[Index]);
+        }
+        
+        
+        template< template<typename T> class AssignBinaryOperator >
+        static void unrollAssign(Sequence &out, const Sequence &arr) {
+            
+            PrevUnroller::template unrollAssign < AssignBinaryOperator >(out, arr);
+            AssignBinaryOperator<Type>::eval(out[Index], arr[Index]);
+        }
+
+
+        template< template<typename T> class BinaryOperator >
+        static void unrollScalar(Sequence &out, const Sequence &arr, Type scalar) {
+            
+            PrevUnroller::template unrollScalar<BinaryOperator>(out, arr, scalar);
+            out[Index] = BinaryOperator<Type>::eval(arr[Index], scalar);
+        }
+    };
+
+
+    template<typename _SequenceTypeTraits>
+    struct Unroller<_SequenceTypeTraits, 0> {
+        typedef typename _SequenceTypeTraits::SequenceType      Sequence;
+        typedef typename _SequenceTypeTraits::SequenceValueType Type;
+        
+        template< template<typename> class BinaryOperator >
+        static void unroll(Sequence &out, const Sequence &arr1, const Sequence &arr2) {
+            out[0] = BinaryOperator<Type>::eval(arr1[0], arr2[0]);
+        }
+
+
+        template< template<typename> class AssignBinaryOperator >
+        static void unrollAssign(Sequence &out, const Sequence &arr) {
+            AssignBinaryOperator<Type>::eval(out[0], arr[0]);
+        }
+        
+        
+        template< template<typename> class BinaryOperator >
+        static void unrollScalar(Sequence &out, const Sequence &arr, Type scalar) {
+            out[0] = BinaryOperator<Type>::eval(arr[0], scalar);
+        }
+    };
+}}
 
 #endif // __EXENG_MATH_OPERATIONS_HPP__

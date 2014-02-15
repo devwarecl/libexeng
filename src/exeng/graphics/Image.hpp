@@ -21,68 +21,66 @@
 #include <exeng/graphics/PixelType.hpp>
 #include <exeng/graphics/ColorFormat.hpp>
 
-namespace exeng {
-    namespace graphics {
+namespace exeng { namespace graphics {
+    /**
+     * @brief Image class.
+     */
+    class EXENGAPI Image {
+    public:
+        Image();
+        Image(const exeng::math::Vector3i& size, 
+                ColorFormat format, 
+                PixelType type=PixelType::Integer);
+        
+        virtual ~Image();
+        
+        /** 
+            * @brief Get a raw pointer to the pixel data
+            */
+        const void* getPtr() const;
+        
         /**
-         * @brief Image class.
+         * @brief Get a raw pointer
          */
-        class EXENGAPI Image {
-        public:
-            Image();
-            Image(const exeng::math::Vector3i& size, 
-                  ColorFormat format, 
-                  PixelType type=PixelType::Integer);
-            
-            virtual ~Image();
-            
-            /** 
-             * @brief Get a raw pointer to the pixel data
-             */
-            const void* getPtr() const;
-            
-            /**
-             * @brief Get a raw pointer
-             */
-            void* getPtr();
-            
-            /**
-             * @brief Get the current image format
-             */
-            ColorFormat getFormat() const;
-            
-            /**
-             * @brief Get the pixel data type storage
-             */
-            PixelType getType() const;
-            
-            /**
-             * @brief 
-             */
-            math::Vector3i getSize() const;
-            
-            /**
-             * @brief 
-             */
-            void initialize( const math::Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
-            
-            /**
-             * @brief 
-             */
-            std::uint32_t getPixel(const math::Vector2i& position) const;
-            
-            /**
-             * @brief 
-             */
-            void setPixel(const math::Vector2i& position, std::uint32_t color);
-            
-        private:
-            int getOffset(const math::Vector2i& position) const;
-            
-        private:
-            struct Private;
-            Private* Data;
-        };
-    }
-}
+        void* getPtr();
+        
+        /**
+         * @brief Get the current image format
+         */
+        ColorFormat getFormat() const;
+        
+        /**
+            * @brief Get the pixel data type storage
+            */
+        PixelType getType() const;
+        
+        /**
+            * @brief 
+            */
+        math::Vector3i getSize() const;
+        
+        /**
+            * @brief 
+            */
+        void initialize( const math::Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
+        
+        /**
+            * @brief 
+            */
+        std::uint32_t getPixel(const math::Vector2i& position) const;
+        
+        /**
+            * @brief 
+            */
+        void setPixel(const math::Vector2i& position, std::uint32_t color);
+        
+    private:
+        int getOffset(const math::Vector2i& position) const;
+        
+    private:
+        struct Private;
+        Private* Data;
+    };
+}}
 
 #endif  //__EXENG_GRAPHICS_IMAGE_HPP__

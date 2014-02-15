@@ -48,7 +48,7 @@ namespace raytracer {
         
     private:
         //! El color por defecto a usar en caso de que ningun rayo colisione con la escena.
-        std::uint32_t defaultColor;
+        // std::uint32_t defaultColor;
         
         boost::scoped_ptr<exeng::Root> root;
         boost::scoped_ptr<exeng::graphics::Material> material;

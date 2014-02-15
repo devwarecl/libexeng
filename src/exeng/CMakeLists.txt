@@ -96,8 +96,10 @@ set (ScenegraphFiles
   scenegraph/Light.hpp          scenegraph/Light.cpp
   scenegraph/SceneNodeData.hpp  scenegraph/SceneNodeData.cpp 
   scenegraph/Geometry.hpp       scenegraph/Geometry.cpp
+  scenegraph/Box.hpp            scenegraph/Box.inl
   scenegraph/Ray.hpp            scenegraph/Ray.inl
   scenegraph/Plane.hpp          scenegraph/Plane.inl
+  scenegraph/Intersect.hpp      scenegraph/Intersect.inl
   scenegraph/IntersectInfo.hpp  scenegraph/IntersectInfo.inl
   scenegraph/Sphere.hpp         scenegraph/Sphere.inl
   scenegraph/Mesh.hpp           scenegraph/Mesh.cpp

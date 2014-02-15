@@ -18,12 +18,12 @@ namespace exeng { namespace graphics {
 }}
 
 namespace exeng { namespace scenegraph {
-
+    
     class EXENGAPI Light;
     class EXENGAPI Camera;
     class EXENGAPI SceneNode;
     class EXENGAPI Geometry;
-
+    
     /**
      *  @brief Clase de grafos de escena
      */
@@ -35,8 +35,8 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Devuelven el nodo raiz de la escena
          */
-        SceneNode* getRootNodePtr();
-        const SceneNode *getRootNodePtr() const;
+        SceneNode* getRootNode();
+        const SceneNode *getRootNode() const;
         
         /**
          * @brief Agrega la camera indicada al grafo de escena

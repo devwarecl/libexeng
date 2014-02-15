@@ -183,7 +183,7 @@ namespace raytracer { namespace tracers {
         uint32_t *backbuffer = static_cast<uint32_t*>(this->renderTarget->lock());
         
         std::list<const SceneNode*> nodeList;
-        this->flattenHierarchy(nodeList, this->scene->getRootNodePtr());
+        this->flattenHierarchy(nodeList, this->scene->getRootNode());
         
         Vector2i pixel(0);
         Vector2i screenSize = Vector2i(this->renderTarget->getSize());

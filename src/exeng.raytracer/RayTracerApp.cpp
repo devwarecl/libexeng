@@ -14,6 +14,7 @@
 
 #include <exeng/graphics/HeapVertexBuffer.hpp>
 #include <exeng/graphics/Material.hpp>
+#include <exeng/scenegraph/TSolidGeometry.hpp>
 
 namespace raytracer {
     
@@ -26,137 +27,7 @@ namespace raytracer {
     
     using namespace raytracer::samplers;
     
-    /**
-     * @brief Check for collisions between a box and a ray
-     * @todo Put a epsilon value
-     */
-    bool intersect(const Boxf &box, const Ray &ray, IntersectInfo *info) {
-        Vector3f minEdge = box.getMin();
-        Vector3f maxEdge = box.getMax();
-        
-        Vector3f rayPoint = ray.getPoint();
-        Vector3f rayDirection = ray.getDirection();
-        
-        float near = -std::numeric_limits<float>::max();
-        float far = std::numeric_limits<float>::max();
-        
-        // For each coord, get the near and far intersection distances
-        for (int coord=0; coord<3; ++coord) {
-            
-            // Ray is parallel to current coordinate
-            if (rayDirection[coord] == 0.0f) { 
-                if (rayPoint[coord] < minEdge[coord] || rayPoint[coord] > maxEdge[coord]) {
-                    if ( info != nullptr ) {
-                        info->intersect = false;
-                    }
-                    
-                    return false;
-                }
-                
-                continue;
-            }
-            
-            // Ray is not parallel. Continue compute of the intersection
-            float invRayDirection = 1.0f / rayDirection[coord];
-            float t1 = (minEdge[coord] - rayPoint[coord]) * invRayDirection;
-            float t2 = (maxEdge[coord] - rayPoint[coord]) * invRayDirection;
-            
-            if (t1 > t2) {
-                std::swap(t1, t2);
-            }
-            
-            if (t1 > near) {
-                near = t1;
-            }
-            
-            if (t2 < far) {
-                far = t2;
-            }
-            
-            if (near > far) {
-                if (info != nullptr) {
-                    info->intersect = false;
-                }
-                
-                return false;
-            }
-            
-            if (far < 0.0f) {
-                if (info != nullptr) {
-                    info->intersect = false;
-                }
-                
-                return false;
-            }
-        }
-        
-        // Compute intersection point
-        if (info != nullptr) {
-            info->intersect = true;
-            info->point = ray.getPointAt(near);
-            
-            // Compute face normal
-            info->normal = Vector3f::zero();
-            
-            const float epsilon = 0.00001f;
-            
-            for (int coord=0; coord<3; ++coord) {
-                if (abs(info->point[coord] - minEdge[coord]) <= epsilon) {
-                    info->normal[coord] = -1.0f;
-                    break;
-                }
-                
-                if (abs(info->point[coord] - maxEdge[coord]) <= epsilon) {
-                    info->normal[coord] = 1.0f;
-                    break;
-                }
-            }
-            
-            info->distance = near;
-        }
-        
-        return true;
-    }
-    
-    
-    bool intersect(const Plane &plane, const Ray &ray, IntersectInfo *info) {
-        return plane.intersect(ray, info);
-    }
-    
-    
-    bool intersect(const Sphere &sphere, const Ray &ray, IntersectInfo *info) {
-        return sphere.intersect(ray, info);
-    }
-    
-    
-    template<typename Solid>
-    class BasicGeometry : public exeng::scenegraph::Geometry {
-    public:
-        BasicGeometry() : material(nullptr) {}
-        
-        BasicGeometry(const Solid solid_, const exeng::graphics::Material* material_) : solid(solid_), material(material_) {}
-        
-        virtual bool hit(const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo) {
-            bool intersection = intersect(this->solid, ray, intersectInfo);
-            
-            if (intersection==true && intersectInfo!=nullptr) {
-                intersectInfo->materialPtr = this->material;
-            }
-            
-            return intersection;
-        }
-        
-        virtual exeng::math::Boxf getBox() const {
-            return Boxf();
-        }
-    
-        Solid solid;
-        const exeng::graphics::Material* material;
-    };
-    
-    
     RayTracerApp::RayTracerApp() {
-        this->defaultColor = 0xFFFFFFFF;
         this->applicationStatus = ApplicationStatus::Running;
         this->lastTime = Timer::getTime();
         this->fpsCurrent = 0;
@@ -258,8 +129,8 @@ namespace raytracer {
         this->camera->setPosition(Vector3f(0.0f, 2.0f, -75.0f));
         this->camera->setUp(Vector3f(0.0f, 1.0f, 0.0f));
         
-        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), this->sampler.get()));
-        this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), nullptr));
+        this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), this->sampler.get()));
+        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), nullptr));
     }
     
     
@@ -357,13 +228,13 @@ namespace raytracer {
     void RayTracerApp::loadScene() {
         // Crear una escena de juguete, con una esfera al centro de la escena.
         // TODO: Cargar esta escena desde un archivo XML, o similar
-        auto rootNode = this->scene->getRootNodePtr();
+        auto rootNode = this->scene->getRootNode();
     
         // Mostrar una caja en pantalla
         this->boxMaterial.reset( new exeng::graphics::Material() );
         this->boxMaterial->setProperty("diffuse", Vector4f(1.0f, 0.3f, 0.2f, 1.0f));
     
-        Geometry* boxGeometry = new BasicGeometry<Boxf>(
+        Geometry* boxGeometry = new TSolidGeometry<Boxf>(
             Boxf(-Vector3f(10.0f), Vector3f(10.0f)),
             this->boxMaterial.get()
         );
