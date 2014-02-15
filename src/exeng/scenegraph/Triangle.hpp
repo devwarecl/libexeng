@@ -20,24 +20,22 @@
 #include <exeng/scenegraph/IntersectInfo.hpp>
 
 namespace exeng { namespace scenegraph {
-
-template<typename VectorType>
-struct Triangle {
-    const VectorType &p1;
-    const VectorType &p2;
-    const VectorType &p3;
-    
-    Triangle(const VectorType &p1, const VectorType &p2, const VectorType &p3);
-    
-    VectorType getNormal() const;
-    
-    VectorType getNormalUnnormalized() const;
-    
-    bool hit(const Ray& ray, IntersectInfo *info=nullptr) const;
-};
-
+    template<typename VectorType>
+    struct Triangle {
+        const VectorType &p1;
+        const VectorType &p2;
+        const VectorType &p3;
+        
+        Triangle(const VectorType &p1, const VectorType &p2, const VectorType &p3);
+        
+        VectorType getNormal() const;
+        
+        VectorType getNormalUnnormalized() const;
+        
+        bool hit(const Ray& ray, IntersectInfo *info=nullptr) const;
+    };
 }}
 
-#include "Triangle.inl"
+#include <exeng/scenegraph/Triangle.inl>
 
 #endif  //__EXENG_SCENEGRAPH_TRIANGLE_HPP__

@@ -20,23 +20,23 @@
 
 namespace exeng {
 
-	#if defined (EXENG_DEBUG)
+#if defined (EXENG_DEBUG)
 	int count = 0;
-	#endif
+#endif
 
 	Object::Object() {
-	#if defined (EXENG_DEBUG)
+#if defined (EXENG_DEBUG)
 		++count;
 		std::cout << "Creating object (currentCount: " << count << ")" << std::endl;
-	#endif
+#endif
 	}
 
 
 	Object::~Object() {
-	#if defined (EXENG_DEBUG)
+#if defined (EXENG_DEBUG)
 		std::cout << "Destroying object (currentCount: " << count << ")(type: " << this->toString() << ")" << std::endl;
 		--count;
-	#endif
+#endif
 	}
 
 
@@ -49,64 +49,23 @@ namespace exeng {
 		return ss.str();
 	}
 
-
-	Object* Object::clone() const { 
-		throw std::runtime_error("Metodo Object::clone no reimplementado.");
-	}
-
-
+	
 	bool Object::equals(const Object &other) const {
 		return this == &other;
 	}
 
-
-	bool Object::lesserThan(const Object& other) const {
-		throw std::runtime_error("Must reimplement the method Object::lesserThan.");
-	}
-
-
-	void Object::assign(const Object& other) {
-		throw std::runtime_error("Must reimplement the method Object::assign.");
-	}
-
-
-	bool Object::operator == (const Object& other) const {
-		return this->equals(other);
-	}
-
     
-	bool Object::operator != (const Object& other) const {
-		return !this->equals(other);
-	}
-
-    
-	bool Object::operator < (const Object& other) const {
-		return this->lesserThan(other);
-	}
-
-    
-	bool Object::operator > (const Object& other) const {
-		return !(this->equals(other) || this->lesserThan(other));
-	}
-
-    
-	bool Object::operator <= (const Object& other) const {
-		return this->equals(other) || this->lesserThan(other);
-	}
-
-    
-	bool Object::operator >= (const Object& other) const {
-		return !this->lesserThan(other);
-	}
-
-
-	Object& Object::operator= (const Object& other) {
-		this->assign(other);
-		return *this;
-	}
-
-
 	TypeInfo Object::getTypeInfo() const {
 		return TypeId<Object>();
 	}
+	
+	
+	bool Object::isClonable() const {
+        return false;
+    }
+    
+    
+    Object* Object::clone() const {
+        throw std::logic_error("Object::clone is not implemented.");
+    }
 }

@@ -28,15 +28,23 @@ namespace exeng {
 	public:
         Object();
         
-		virtual ~Object() = 0;
+		virtual ~Object();
 		
 		/**
 		 * @brief Get a string representation of the object.
 		 */
 		virtual std::string	toString() const;
 		
+        /**
+         * @brief Checks if the object can be cloned. 
+         * 
+         * Returns false for his default implementation. Derived clases must override this method
+         * in order to implement the exeng::Object::clone virtual method.
+         */
+        virtual bool isClonable() const;
+        
 		/**
-		 * @brief Get a exact copy of the object attributes. Derived classes must override this method.
+		 * @brief Get a exact copy of the object attributes. 
 		 */
 		virtual Object* clone() const;
 
@@ -44,51 +52,6 @@ namespace exeng {
 		 * @brief Check if two given objects are equal.
 		 */
 		virtual bool equals(const Object &other) const;
-
-		/**
-		 * @brief Check if one object if lesser than the other.
-		 */
-		virtual bool lesserThan(const Object& other) const;
-
-		/**
-		 * @brief Copy the contents of the other object on the current one.
-		 */
-		virtual void assign(const Object& other);
-
-		/**
-		 * @brief Equality operator overload.
-		 */
-		bool operator== (const Object& other) const;
-
-		/**
-		 * @brief Inequality operator overload.
-		 */
-		bool operator!= (const Object& other) const;
-
-		/**
-		 * @brief Lesser than operator overload.
-		 */
-		bool operator< (const Object& other) const;
-
-		/**
-		 * @brief Greater than operator overload
-		 */
-		bool operator> (const Object& other) const;
-
-		/**
-		 * @brief Equal or lesser than operator overload.
-		 */
-		bool operator<= (const Object& other) const;
-
-		/**
-		 * @brief Equal or greater than operator overload.
-		 */
-		bool operator>= (const Object& other) const;
-
-		/**
-		 * @brief Asignation operator overload.
-		 */
-		Object& operator= (const Object& other);
 
 		/**
 		 * @brief Get the TypeInfo of the object.
