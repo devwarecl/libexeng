@@ -14,39 +14,26 @@
 #ifndef __EXENG_GRAPHICS_GL3_LOCKER_HPP__
 #define __EXENG_GRAPHICS_GL3_LOCKER_HPP__
 
-namespace exeng {
-namespace graphics {
-namespace gl3 {
+namespace exeng { namespace graphics { namespace gl3 {
 
-/**
- * @brief The Locker class
- */
-class Locker {
-public:
-    Locker();
-    
     /**
-     * @brief lock
-     */
-    void lock();
-    
-    /**
-     * @brief unlock
-     */
-    void unlock();
-    
-    /**
-     * @brief tryLock
-     * @return 
-     */
-    bool tryLock() const;
-    
-private:
-    bool locked;
+    * @brief The Locker class
+    */
+    class Locker {
+    public:
+        Locker();
+        
+        void lock();
+        
+        void unlock();
+        
+        bool tryLock() const;
+        
+    private:
+        bool locked;
 };
-}
-}
-}
+
+}}}
 
 
 #endif // LOCKER_HPP

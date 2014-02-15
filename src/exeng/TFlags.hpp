@@ -20,10 +20,7 @@ namespace exeng {
 	/**
 	 * @brief Flags management
 	 */
-	template <
-		typename _EnumType,
-		typename _StorageType = int
-	>
+	template < typename _EnumType, typename _StorageType = int >
 	class TFlags {
 	public:
 		// Definir alias para posibilitar el uso en un ambiente de 

@@ -27,7 +27,7 @@ namespace raytracer {
         
         virtual void pollEvents();
         
-        virtual exeng::framework::ApplicationStatus getStatus() const;
+        virtual exeng::framework::ApplicationStatus::Enum getStatus() const;
         
         virtual void update(double seconds);
         
@@ -60,7 +60,7 @@ namespace raytracer {
         
         boost::scoped_ptr<exeng::graphics::Material> boxMaterial;
         
-        exeng::framework::ApplicationStatus applicationStatus;
+        exeng::framework::ApplicationStatus::Enum applicationStatus;
         
         mutable uint32_t lastTime;
         

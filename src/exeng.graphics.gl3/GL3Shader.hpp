@@ -17,50 +17,46 @@
 #include <exeng/graphics/Shader.hpp>
 #include "GL3.hpp"
 
-namespace exeng {
-namespace graphics {
-namespace gl3 {
+namespace exeng { namespace graphics { namespace gl3 {
 
-/**
- * @brief OpenGL 3 shader.
- */
-class GL3Shader : public Shader {
-public:
-    GL3Shader(ResourceFactory* factory, ShaderType type);
-    
-    virtual ~GL3Shader();
-    
-    virtual TypeInfo getTypeInfo() const;
-    
-    virtual void setSourceCode(const std::string &sourceCode);
-    
-    virtual std::string getSourceCode() const;
-    
-    virtual bool isSourceModified() const;
-    
-    virtual void compile();
-    
-    virtual bool isCompiled() const;
-    
-    virtual ShaderType getType() const;
-
-    virtual void release();
-    
     /**
-     * @brief Get the gl3 identifier of the shader.
-     */    
-    GLuint getName() const;
-    
-private:
-    GLuint name;
-    std::string sourceCode;
-    bool modified;
-    bool compiled;
-    ShaderType type;
-};
+    * @brief OpenGL 3 shader.
+    */
+    class GL3Shader : public Shader {
+    public:
+        GL3Shader(ResourceFactory* factory, ShaderType type);
+        
+        virtual ~GL3Shader();
+        
+        virtual TypeInfo getTypeInfo() const;
+        
+        virtual void setSourceCode(const std::string &sourceCode);
+        
+        virtual std::string getSourceCode() const;
+        
+        virtual bool isSourceModified() const;
+        
+        virtual void compile();
+        
+        virtual bool isCompiled() const;
+        
+        virtual ShaderType getType() const;
 
-}
-}
-}
+        virtual void release();
+        
+        /**
+        * @brief Get the gl3 identifier of the shader.
+        */    
+        GLuint getName() const;
+        
+    private:
+        GLuint name;
+        std::string sourceCode;
+        bool modified;
+        bool compiled;
+        ShaderType type;
+    };
+
+}}}
 
 #endif // __EXENG_GRAPHICS_GL3_GL3SHADER_HPP__

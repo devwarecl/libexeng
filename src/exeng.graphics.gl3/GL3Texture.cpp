@@ -24,7 +24,7 @@ using namespace exeng::math;
 
 namespace exeng { namespace graphics { namespace gl3 {
 
-	GL3Texture::GL3Texture(ResourceFactory *factory,  TextureType type,  Vector3i size,  const ColorFormat &colorFormat) : Texture(factory) {
+	GL3Texture::GL3Texture(ResourceFactory *factory,  TextureType::Enum type, Vector3i size, const ColorFormat &colorFormat) : Texture(factory) {
 		GLuint textureId = 0;
     
 		// check for a valid type
@@ -99,7 +99,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 	}
 
 
-	void* GL3Texture::lock(TextureCubeMapFace face) {
+	void* GL3Texture::lock(TextureCubeMapFace::Enum face) {
 		assert(this->textureId != 0);
 		throw std::runtime_error("GL3Texture::lock(TextureCubeMapFace): Not yet implemented.");
 	}
@@ -139,7 +139,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 	}
 
 
-	TextureType GL3Texture::getType() const {
+	TextureType::Enum GL3Texture::getType() const {
 		return this->type;
 	}
 

@@ -17,10 +17,10 @@
 
 namespace exeng { namespace graphics { namespace gl3 {
 
-/**
- * @brief Check the OpenGL global error value.
- */
-void checkGLError(const char *file, int line);
+    /**
+    * @brief Check the OpenGL global error value.
+    */
+    void checkGLError(const char *file, int line);
 
 }}}
 

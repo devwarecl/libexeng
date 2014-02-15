@@ -17,32 +17,32 @@
 
 namespace exeng {
 
-/**
- * @brief Resource factory abstract base class.
- */
-class EXENGAPI Resource;
-class EXENGAPI ResourceFactory : public Object {
-    friend class Resource;
-public:
-    ResourceFactory();
-    
-    virtual ~ResourceFactory();
-    
-protected:
     /**
-     * @brief Add a resource to the internal list.
+     * @brief Resource factory abstract base class.
      */
-    virtual void addResource(Resource* resource);
-    
-    /**
-     * @brief Remove the resource from the resource factory.
-     */
-    virtual void removeResource(Resource* resource);
-    
-private:
-    struct Private;
-    Private *impl;
-};
+    class EXENGAPI Resource;
+    class EXENGAPI ResourceFactory : public Object {
+        friend class Resource;
+    public:
+        ResourceFactory();
+        
+        virtual ~ResourceFactory();
+        
+    protected:
+        /**
+        * @brief Add a resource to the internal list.
+        */
+        virtual void addResource(Resource* resource);
+        
+        /**
+        * @brief Remove the resource from the resource factory.
+        */
+        virtual void removeResource(Resource* resource);
+        
+    private:
+        struct Private;
+        Private *impl;
+    };
 }
 
  

@@ -31,25 +31,25 @@ namespace exeng {
     ResourceFactory::~ResourceFactory() {
         assert(this->impl != nullptr);
         
-    #if defined (EXENG_DEBUG)
+#if defined (EXENG_DEBUG)
         std::cout << "ResourceFactory::~ResourceFactory: Releasing ";
         std::cout << this->impl->resources.size() << " objects:" << std::endl;
-    #endif
+#endif
         
         for (Resource *resource : this->impl->resources) {
             assert(resource->resourceFactory == this);
-    #if defined (EXENG_DEBUG)
+#if defined (EXENG_DEBUG)
             std::cout << "    " << resource->toString() << std::endl;
-    #endif
+#endif
             resource->resourceFactory = nullptr;
             resource->release();
         }
         
         this->impl->resources.clear();
         
-    #if defined (EXENG_DEBUG)
+#if defined (EXENG_DEBUG)
         std::cout << std::endl;
-    #endif
+#endif
         
         delete this->impl;
     }
@@ -67,5 +67,4 @@ namespace exeng {
         
         this->impl->resources.remove(resource);
     }
-
 }

@@ -20,44 +20,40 @@
 #include <list>
 #include "GL3.hpp"
 
-namespace exeng {
-namespace graphics {
-namespace gl3 {
+namespace exeng { namespace graphics { namespace gl3 {
 
-class GL3Shader;
-class GL3ShaderProgram : public ShaderProgram {
-public:
-    GL3ShaderProgram(ResourceFactory *factory);
-    
-    virtual ~GL3ShaderProgram();
+    class GL3Shader;
+    class GL3ShaderProgram : public ShaderProgram {
+    public:
+        GL3ShaderProgram(ResourceFactory *factory);
+        
+        virtual ~GL3ShaderProgram();
 
-    virtual TypeInfo getTypeInfo() const;
-    
-    virtual void addShader(Shader *shader);
-    
-    virtual void removeShader(Shader *shader);
-    
-    virtual void link();
-    
-    virtual bool isLinked() const;
-    
-    virtual bool mustRelink() const;
-    
-    GLuint getProgramId() const;
-    
-    virtual void release();
-    
-private:
-    GLuint programId;
-    bool modified;
-    bool linked;
-    
-    std::list< GL3Shader* > shaders;
-};
+        virtual TypeInfo getTypeInfo() const;
+        
+        virtual void addShader(Shader *shader);
+        
+        virtual void removeShader(Shader *shader);
+        
+        virtual void link();
+        
+        virtual bool isLinked() const;
+        
+        virtual bool mustRelink() const;
+        
+        GLuint getProgramId() const;
+        
+        virtual void release();
+        
+    private:
+        GLuint programId;
+        bool modified;
+        bool linked;
+        
+        std::list< GL3Shader* > shaders;
+    };
 
 
-}
-}
-}
+}}}
 
 #endif // __EXENG_GRAPHICS_GL3_GL3SHADERPROGRAM_HPP__

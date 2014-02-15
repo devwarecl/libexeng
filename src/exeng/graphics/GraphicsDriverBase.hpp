@@ -31,7 +31,7 @@ public:
     
     virtual ~GraphicsDriverBase();
     
-    virtual exeng::math::Matrix4f getTransform( Transform transform );
+    virtual exeng::math::Matrix4f getTransform( Transform::Enum transform );
     
     virtual exeng::math::Rectf getViewport( ) const;
     
@@ -41,9 +41,9 @@ public:
     
     virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount );
     
-    virtual void setTransformName(Transform transform, const std::string &name);
+    virtual void setTransformName(Transform::Enum transform, const std::string &name);
     
-    virtual std::string getTransformName(Transform transform) const;
+    virtual std::string getTransformName(Transform::Enum transform) const;
     
 protected:
     const exeng::graphics::Material* material;

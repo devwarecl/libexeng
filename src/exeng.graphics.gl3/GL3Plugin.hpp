@@ -18,32 +18,32 @@
 
 namespace exeng { namespace graphics { namespace gl3 {
 
-class GL3GraphicsDriverFactory;
+    class GL3GraphicsDriverFactory;
 
-/**
- * @brief The GL3Plugin class
- */
-class GL3Plugin : public exeng::system::Plugin {
-public:
-    GL3Plugin();
-    virtual ~GL3Plugin();
-    virtual std::string getName() const;
-    virtual std::string getDescription() const;
-    virtual Version getVersion() const;
-    virtual void initialize(Root *root);
-    virtual void terminate();
-    
-public:
-    inline GL3GraphicsDriverFactory* getFactory() {
-        return this->factory;
-    }
-    
-private:
-    Root *root;
-    GL3GraphicsDriverFactory *factory;
-};
+    /**
+    * @brief The GL3Plugin class
+    */
+    class GL3Plugin : public exeng::system::Plugin {
+    public:
+        GL3Plugin();
+        virtual ~GL3Plugin();
+        virtual std::string getName() const;
+        virtual std::string getDescription() const;
+        virtual Version getVersion() const;
+        virtual void initialize(Root *root);
+        virtual void terminate();
+        
+    public:
+        inline GL3GraphicsDriverFactory* getFactory() {
+            return this->factory;
+        }
+        
+    private:
+        Root *root;
+        GL3GraphicsDriverFactory *factory;
+    };
 
-extern GL3Plugin *currentPlugin;
+    extern GL3Plugin *currentPlugin;
 
 }}}
 

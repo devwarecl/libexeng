@@ -57,7 +57,6 @@ namespace raytracer {
             }
             
             // Ray is not parallel. Continue compute of the intersection
-            // TODO: cache the inv direction of the ray, for calculation speed-up
             float invRayDirection = 1.0f / rayDirection[coord];
             float t1 = (minEdge[coord] - rayPoint[coord]) * invRayDirection;
             float t2 = (maxEdge[coord] - rayPoint[coord]) * invRayDirection;
@@ -188,7 +187,7 @@ namespace raytracer {
 #else 
         path = "../exeng-graphics-gl3/";
 #endif
-        this->root.reset(new Root());
+        this->root.reset(new exeng::Root());
         this->root->getPluginManager()->load("exeng-graphics-gl3", path);
         
         // initialize the gl3 driver, in windowed mode
@@ -278,7 +277,7 @@ namespace raytracer {
     }
     
     
-    ApplicationStatus RayTracerApp::getStatus() const {
+    ApplicationStatus::Enum RayTracerApp::getStatus() const {
         return this->applicationStatus;
     }
     

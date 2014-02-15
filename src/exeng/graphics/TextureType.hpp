@@ -15,21 +15,20 @@
 #ifndef __EXENG_GRAPHICS_TEXTURETYPE_HPP__
 #define __EXENG_GRAPHICS_TEXTURETYPE_HPP__
 
-namespace exeng {
-namespace graphics {
+#include <exeng/Enum.hpp>
 
-/**
- * @brief Type of texture.
- */
-enum class TextureType {
-    Tex1D,
-    Tex2D,
-    Tex3D,
-    TexCubeMap
-};
-
-
-}
-}
+namespace exeng { namespace graphics {
+    /**
+     * @brief Type of texture.
+     */
+    struct TextureType : public Enum {
+        enum Enum {
+            Tex1D,
+            Tex2D,
+            Tex3D,
+            TexCubeMap
+        };
+    };
+}}
 
 #endif  // __EXENG_GRAPHICS_TEXTURETYPE_HPP__

@@ -14,6 +14,7 @@
 #define __EXENG_FRAMEWORK_APPLICATION_HPP__
 
 #include <exeng/Config.hpp>
+#include <exeng/Enum.hpp>
 
 #include <string>
 #include <vector>
@@ -23,11 +24,13 @@ namespace exeng { namespace framework {
     typedef std::vector< std::string > StringVector;
     
     /**
-     * @brief The different status of an application.
+     * @brief Application status
      */
-    enum class ApplicationStatus {
-        Running,
-        Terminated
+    struct ApplicationStatus : public Enum {
+        enum Enum {
+            Running,
+            Terminated
+        };
     };
     
     /**
@@ -59,7 +62,7 @@ namespace exeng { namespace framework {
         /**
          * @brief Devuelve el estado actual general de la aplicacion
          */
-        virtual ApplicationStatus getStatus() const = 0;
+        virtual ApplicationStatus::Enum getStatus() const = 0;
         
         /**
          * @brief Actualiza, en base a los estados internos.
@@ -72,7 +75,7 @@ namespace exeng { namespace framework {
         virtual void render() = 0;
         
         /**
-         * @brief Devuelve el codigo de salida de la aplicacion.
+         * @brief Get the exit code of the application .
          * 
          * El valor es valido siempre que el estado actual de 
          * la aplicacion sea ApplicationStatus::Stopped
@@ -80,7 +83,7 @@ namespace exeng { namespace framework {
         virtual int getExitCode() const = 0;
         
         /**
-         * @brief Libera los recursos alojados por la aplicacion.
+         * @brief Free all the allocated resources for the application.
          */
         virtual void terminate() = 0;
     

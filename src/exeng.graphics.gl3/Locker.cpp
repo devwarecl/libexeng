@@ -14,36 +14,30 @@
 #include "Locker.hpp"
 #include <stdexcept>
 
-namespace exeng {
-namespace graphics {
-namespace gl3 {
+namespace exeng { namespace graphics { namespace gl3 {
 
-Locker::Locker() : locked(false) {
-}
-
-
-void Locker::lock() {
-    if (this->locked == true) {
-        throw std::logic_error("Locker::lock: Resource already locked.");
-    }
+    Locker::Locker() : locked(false) {}
     
-    this->locked = true;
-}
-
-
-void Locker::unlock() {
-    if (this->locked == false) {
-        throw std::logic_error("Locker::unlock: The resource isn't locked.");
+    void Locker::lock() {
+        if (this->locked == true) {
+            throw std::logic_error("Locker::lock: Resource already locked.");
+        }
+        
+        this->locked = true;
     }
-    
-    this->locked = false;
-}
 
 
-bool Locker::tryLock() const {
-    return !this->locked;
-}
+    void Locker::unlock() {
+        if (this->locked == false) {
+            throw std::logic_error("Locker::unlock: The resource isn't locked.");
+        }
+        
+        this->locked = false;
+    }
 
-}
-}
-}
+
+    bool Locker::tryLock() const {
+        return !this->locked;
+    }
+
+}}}

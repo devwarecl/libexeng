@@ -17,44 +17,39 @@
 
 namespace exeng { namespace graphics { namespace gl3 {
 
-GL3GraphicsDriverFactory::GL3GraphicsDriverFactory() {
-}
+    GL3GraphicsDriverFactory::GL3GraphicsDriverFactory() {}
+
+    GL3GraphicsDriverFactory::~GL3GraphicsDriverFactory() {}
+
+    GraphicsDriverInfo GL3GraphicsDriverFactory::getDriverInfo() const {
+        GraphicsDriverInfo info;
+        
+        info.name = "OpenGL 3 core profile graphics driver";
+        info.version = Version(0, 0, 0, 1);
+        info.hardware = true;
+        info.supportsVertexShaders = true;
+        info.supportsPixelShader = true;
+        info.supportGeometryShaders = true;
+        
+        return info;
+    }
 
 
-GL3GraphicsDriverFactory::~GL3GraphicsDriverFactory() {
-}
+    GraphicsDriver* GL3GraphicsDriverFactory::create() {
+        auto *driver = new GL3GraphicsDriver();
+        this->graphicsDrivers.push_back(driver);
+        return driver;
+    }
 
 
-GraphicsDriverInfo GL3GraphicsDriverFactory::getDriverInfo() const {
-    GraphicsDriverInfo info;
-    
-    info.name = "OpenGL 3 core profile graphics driver";
-    info.version = Version(0, 0, 0, 1);
-    info.hardware = true;
-    info.supportsVertexShaders = true;
-    info.supportsPixelShader = true;
-    info.supportGeometryShaders = true;
-    
-    return info;
-}
-
-
-GraphicsDriver* GL3GraphicsDriverFactory::create() {
-    auto *driver = new GL3GraphicsDriver();
-    this->graphicsDrivers.push_back(driver);
-    return driver;
-}
-
-
-GL3GraphicsDriver* GL3GraphicsDriverFactory::getGraphicsDriver(const GLFWwindow *window) {
-    auto &drivers = this->graphicsDrivers;
-    auto pos = std::find_if(drivers.begin(), drivers.end(), [window](const GL3GraphicsDriver *driver) {
-        return driver->getGLFWwindow() == window;
-    });
-    
-    assert(pos != drivers.end());
-    
-    return *pos;
-}
-
+    GL3GraphicsDriver* GL3GraphicsDriverFactory::getGraphicsDriver(const GLFWwindow *window) {
+        auto &drivers = this->graphicsDrivers;
+        auto pos = std::find_if(drivers.begin(), drivers.end(), [window](const GL3GraphicsDriver *driver) {
+            return driver->getGLFWwindow() == window;
+        });
+        
+        assert(pos != drivers.end());
+        
+        return *pos;
+    }
 }}}

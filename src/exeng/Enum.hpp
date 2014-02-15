@@ -16,12 +16,10 @@
 
 namespace exeng {
 
-/**
- * @brief Base class for 'strogly typed' enumerations
- */
-struct Enum {
-private: Enum();
-};
+    /**
+     * @brief Base class for 'strogly typed' enumerations
+     */
+    struct Enum { private: Enum(); };
 }
 
 #endif // __EXENG_ENUM_HPP__
