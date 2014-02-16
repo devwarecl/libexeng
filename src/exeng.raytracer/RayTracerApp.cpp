@@ -56,10 +56,10 @@ namespace raytracer {
         path = "../../bin/Release/";
 #  endif
 #else 
-        path = "../exeng-graphics-gl3/";
+        path = "../exeng.graphics.gl3/";
 #endif
         this->root.reset(new exeng::Root());
-        this->root->getPluginManager()->load("exeng-graphics-gl3", path);
+        this->root->getPluginManager()->load("exeng.graphics.gl3", path);
         
         // initialize the gl3 driver, in windowed mode
         this->driver.reset(this->root->getGraphicsManager()->createDriver());
@@ -120,7 +120,7 @@ namespace raytracer {
         this->sampler->generateSamples();
         
         this->scene.reset(new Scene());
-        this->scene->setBackgroundColor(Color(1.0f, 1.0f, 1.0f, 1.0));
+        this->scene->setBackColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
         
         this->loadScene();
         
@@ -239,7 +239,7 @@ namespace raytracer {
             this->boxMaterial.get()
         );
         
-        rootNode->addChildPtr("boxGeometry")->setDataPtr(boxGeometry);
+        rootNode->addChild("boxGeometry")->setData(boxGeometry);
     }
     
     

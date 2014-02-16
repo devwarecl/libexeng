@@ -28,7 +28,7 @@ namespace exeng {
 	public:
         Object();
         
-		virtual ~Object();
+		virtual ~Object() = 0;
 		
 		/**
 		 * @brief Get a string representation of the object.

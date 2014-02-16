@@ -15,7 +15,7 @@
 namespace exeng { namespace io {
     class EXENGAPI Stream : public Object {
     public:
-        virtual ~Stream();
+        virtual ~Stream() = 0;
         
         virtual bool isWritable() const;
         virtual int write(const void* data, int size, int offset) = 0;

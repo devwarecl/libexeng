@@ -11,6 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
+#include <list>
 #include <exeng/math/TVector.hpp>
 #include <exeng/scenegraph/Scene.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
@@ -23,17 +24,24 @@ using namespace exeng::scenegraph;
 using namespace exeng::math;
 
 namespace exeng { namespace scenegraph {
-
     struct Scene::Private {
         SceneNode *rootNode;
         Color backColor;
         
+        SceneNodes cameraNodes;
+        SceneNodes lightNodes;
+        
         Private() {
-            this->rootNode = new SceneNode("");
+            this->rootNode = new SceneNode("rootNode");
+        }
+        
+        ~Private() {
+            delete this->rootNode;
         }
     };
-
-    Scene::Scene() {
+    
+    
+    Scene::Scene() : impl(nullptr) {
         this->impl = new Scene::Private();
     }
 
@@ -41,8 +49,8 @@ namespace exeng { namespace scenegraph {
     Scene::~Scene() {
         delete this->impl;
     }
-
-
+    
+    
     SceneNode* Scene::getRootNode() {
         return this->impl->rootNode;
     }
@@ -52,32 +60,75 @@ namespace exeng { namespace scenegraph {
     }
     
     
-    SceneNode* Scene::addCamera(Camera *camera) {
+    SceneNode* Scene::addCamera(Camera *camera, const std::string &name) {
+        assert(this->impl != nullptr);
+        
+        return this->addCamera(camera, name, this->getRootNode());
+    }
+    
+    
+    SceneNode* Scene::addCamera(Camera *camera, const std::string &name, SceneNode *parent) {
+        assert(this->impl != nullptr);
+        
         SceneNode *cameraNode = nullptr;
         
-        cameraNode = this->getRootNode()->addChildPtr("");
-        cameraNode->setDataPtr(camera);
+        cameraNode = new SceneNode();
+        cameraNode->setName(name);
+        cameraNode->setParent(parent);
+        cameraNode->setData(camera);
+        
+        this->impl->cameraNodes.push_back(cameraNode);
         
         return cameraNode;
     }
-
-
-    SceneNode* Scene::addLight(Light *light) {
+    
+    
+    const SceneNodes& Scene::getCameraSceneNodes() const {
+        assert(this->impl != nullptr);
+        return this->impl->cameraNodes;
+    }
+    
+    
+    SceneNode* Scene::addLight(Light *light, const std::string &name) {
+        assert(this->impl != nullptr);
+        
+        return this->addLight(light, name, this->getRootNode());
+    }
+    
+    
+    SceneNode* Scene::addLight(Light *light, const std::string &name, SceneNode *parent) {
+        assert(this->impl != nullptr);
+        
         SceneNode *lightNode = nullptr;
         
-        lightNode = this->getRootNode()->addChildPtr("");
-        lightNode->setDataPtr(light);
+        lightNode = new SceneNode();
+        lightNode->setName(name);
+        lightNode->setParent(parent);
+        lightNode->setData(light);
+
+        this->impl->lightNodes.push_back(lightNode);        
         
         return lightNode;
     }
-
-
-    void Scene::setBackgroundColor(const Color &color){
+    
+    
+    const SceneNodes& Scene::getLightSceneNodes() const {
+        assert(this->impl != nullptr);
+        
+        return this->impl->lightNodes;
+    }
+    
+    
+    void Scene::setBackColor(const Color &color){
+        assert(this->impl != nullptr);
+        
         this->impl->backColor = color;
     }
 
 
-    Color Scene::getBackgroundColor() const{
+    Color Scene::getBackColor() const{
+        assert(this->impl != nullptr);
+        
         return this->impl->backColor;
     }
 }}

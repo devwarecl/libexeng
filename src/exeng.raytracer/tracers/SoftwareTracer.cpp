@@ -89,7 +89,7 @@ namespace raytracer { namespace tracers {
         
         // Determinar colision con el contenido del nodo
         for (auto node : nodes) {
-            Geometry* geometry = static_cast<Geometry*>( node->getDataPtr() );
+            Geometry* geometry = static_cast<Geometry*>( node->getData() );
             assert(geometry != nullptr);
     
             if (geometry->hit(ray, &currentInfo) == true) {
@@ -123,7 +123,7 @@ namespace raytracer { namespace tracers {
                 auto vcolor = info.materialPtr->getProperty4f("diffuse");
                 color += Color(vcolor);
             } else {
-                color += this->scene->getBackgroundColor();
+                color += this->scene->getBackColor();
             }
         }
         
@@ -151,7 +151,7 @@ namespace raytracer { namespace tracers {
             if (color.alpha < 0.0f) {color.alpha = 0.0f;}
             
         } else {
-            color = this->scene->getBackgroundColor();
+            color = this->scene->getBackColor();
         }
     
         return color;
@@ -160,8 +160,8 @@ namespace raytracer { namespace tracers {
     
     inline void SoftwareTracer::flattenHierarchy(std::list<const SceneNode*> &out, const SceneNode* node) const {
         // Poner los nodos de escena
-        if (node != nullptr && node->getDataPtr() != nullptr) {
-            if (node->getDataPtr()->getTypeInfo() == TypeId<Geometry>())  {
+        if (node != nullptr && node->getData() != nullptr) {
+            if (node->getData()->getTypeInfo() == TypeId<Geometry>())  {
                 out.push_back(node);
             }
         }

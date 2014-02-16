@@ -21,22 +21,26 @@
 #include <exeng/math/TMatrix.hpp>
 
 namespace exeng { namespace scenegraph {
-
     class EXENGAPI SceneNode;
     class EXENGAPI SceneNodeData;
 
-    typedef std::vector<SceneNode*> SceneNodeVector;
-    typedef SceneNodeVector::iterator SceneNodeVectorIt;
+    typedef std::vector<SceneNode*> SceneNodes;
+    typedef SceneNodes::iterator SceneNodesIterator;
 
     /**
-    * @brief Nodo de un grafo de escena. Representa a cualquier entidad existente en un 
-    * grafo de escena, y que puede ser representada en cualquier tipo de medio. 
-    */
+     * @brief Node of the Scene Graph.
+     * 
+     * Represent any existing entity on a 3D-World
+     * 
+     * @TODO: Clean the interface.
+     */
     class EXENGAPI SceneNode : public Object {
     public:
         SceneNode();
         explicit SceneNode(const std::string& name);
-
+        
+        SceneNode(const std::string &name, SceneNode *parent);
+        
         virtual ~SceneNode();
 
         virtual std::string toString() const;
@@ -51,43 +55,42 @@ namespace exeng { namespace scenegraph {
         
         int getChildCount() const;
         
-        SceneNode* getChildPtr(int index) const;
+        SceneNode* getChild(int index) const;
         
-        SceneNode* getChildPtr(const std::string& name) const;
+        SceneNode* getChild(const std::string& name) const;
         
-        SceneNode* getChildPtr(const std::string& name);
+        SceneNode* getChild(const std::string& name);
         
         bool existChild(const std::string& name) const;
         
         bool hasParent() const;
 
-        SceneNode* getParentPtr() const;
+        SceneNode* getParent() const;
         
-        void setParentPtr(SceneNode* parent);
+        void setParent(SceneNode* parent);
 
-        SceneNode* findNodePtr(const std::string &name) const;
+        SceneNode* findNode(const std::string &name) const;
         
-        SceneNode* addChildPtr(SceneNode *childPtr);
+        SceneNode* addChild(SceneNode *childPtr);
         
-        SceneNode* removeChildPtr(const std::string& name);
+        SceneNode* removeChild(const std::string& name);
 
-        SceneNode* removeChildPtr(SceneNode* childRef);
+        SceneNode* removeChild(SceneNode* childRef);
 
-        SceneNode* addChildPtr(const std::string& name);
+        SceneNode* addChild(const std::string& name);
         
         void orphan();
         
-        void setDataPtr(SceneNodeData* data);
+        void setData(SceneNodeData* data);
 
-        SceneNodeData* getDataPtr() const;
+        SceneNodeData* getData() const;
         
-        const SceneNodeVector& getChilds() const;
+        const SceneNodes& getChilds() const;
         
     private:
         struct Private;
         Private *impl;
     };
-
 }}
 
 #endif

@@ -22,6 +22,11 @@ set (BaseFiles
   Timer.hpp               Timer_Win.cpp Timer_Unix.cpp 
 )
 
+set (IoFiles 
+  io/Stream.hpp              io/Stream.cpp          io/Stream.inl
+  io/StreamBuffer.hpp        io/StreamBuffer.cpp
+)
+
 set (AudioFiles
   audio/AudioBuffer.hpp audio/AudioBuffer.cpp
   audio/Listener.hpp    audio/Listener.cpp
@@ -130,6 +135,7 @@ set (MathFiles
 
 add_library(exeng SHARED 
   ${BaseFiles}
+  ${IoFiles}
   ${AudioFiles}
   ${FrameworkFiles}
   ${ComputeFiles}
@@ -142,6 +148,7 @@ add_library(exeng SHARED
 )
 
 source_group(base       FILES ${BaseFiles})
+source_group(io         FILES ${IoFiles})
 source_group(audio      FILES ${AudioFiles})
 source_group(framework  FILES ${FrameworkFiles})
 source_group(compute    FILES ${ComputeFiles})
