@@ -45,7 +45,7 @@ namespace raytracer {
     }
     
     
-    void RayTracerApp::initialize(const StringVector& cmdLine) {
+    void RayTracerApp::initialize(int argc, char **argv) {
         // Initialize the exeng root class and plugins.
         std::string path;
     
@@ -131,15 +131,6 @@ namespace raytracer {
         
         this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), this->sampler.get()));
         // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), nullptr));
-    }
-    
-    
-    double RayTracerApp::getFrameTime() const {
-        uint32_t lastTime = Timer::getTime();
-        double frameTime = static_cast<double>(lastTime - this->lastTime) / 1000.0;
-        this->lastTime = lastTime;
-    
-        return frameTime;
     }
     
     
@@ -256,6 +247,6 @@ namespace raytracer {
 
 namespace exeng { namespace main {
 	int main(int argc, char **argv) {
-		return exeng::framework::RunApplication<raytracer::RayTracerApp>(exeng::framework::StringVector());
+        exeng::framework::Application::execute<raytracer::RayTracerApp>(argc, argv);
 	}
 }}

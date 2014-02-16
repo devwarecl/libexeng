@@ -17,12 +17,15 @@
 #include <exeng/framework/Application.hpp>
 
 namespace exeng { namespace framework {
+    /*
 	template<typename AppClass>
-	int RunApplication(const StringVector &cmdLine) {
-		return Application::run( new AppClass(), cmdLine );
+	int RunApplication(int argc) {
+		return Application::execute( new AppClass(), cmdLine );
 	}
+	*/
 }}
 
+/*
 #ifdef EXENG_WINDOWS
 #  define EXENG_MAIN_CONVENTION __cdecl
 #else
@@ -51,5 +54,6 @@ namespace exeng { namespace framework {
       return RunApplication<AppClass>(cmdLine);   \
   }
 #endif
+*/
 
 #endif 

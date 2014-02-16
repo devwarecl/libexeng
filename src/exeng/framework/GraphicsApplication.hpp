@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Felipe Apablaza.
+ * Copyright (c) 2013-2014 Felipe Apablaza.
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution.
@@ -8,64 +8,38 @@
 #ifndef __EXENG_FRAMEWORK_GRAPHICSAPPLICATION_HPP__
 #define __EXENG_FRAMEWORK_GRAPHICSAPPLICATION_HPP__
 
-#include <boost/scoped_ptr.hpp>
-
-#include <exeng/Root.hpp>
 #include <exeng/framework/Application.hpp>
-#include <exeng/system/PluginManager.hpp>
-#include <exeng/graphics/GraphicsManager.hpp>
-#include <exeng/scenegraph/SceneManager.hpp>
-#include <exeng/scenegraph/MeshManager.hpp>
 
 namespace exeng { namespace framework {
-    class GraphicsApplication : public exeng::framework::Application {
+    
+    /**
+     * @brief Default application interface for graphics applications
+     */
+    class GraphicsApplication : public Application {
     public:
         GraphicsApplication();
         
-        virtual ~GraphicsApplication();
+        virtual ~GraphicsApplication() = 0;
         
-        virtual void initialize();
+        virtual int run(int argc, char **argv);
+        
+    protected:
+        virtual int getExitCode() const;
+        
+        virtual ApplicationStatus::Enum getStatus() const;
+        
+        virtual void initialize(int argc, char **argv);
         
         virtual void terminate();
         
-        virtual void initializePlugins() = 0;
-        virtual void terminatePlugins() = 0;
+        virtual void pollEvents();
         
-        virtual void initializeAssets() = 0;
-        virtual void terminateAssets() = 0;
+        virtual void update(double frameTime);
         
-    private:
-        boost::scoped_ptr<exeng::Root> root;
-        boost::scoped_ptr<exeng::scenegraph::SceneManager> sceneManager;
-        boost::scoped_ptr<exeng::scenegraph::MeshManager> meshManager;
+        virtual void render();
     };
 }}
 
-
-namespace exeng { namespace framework {
-
-    GraphicsApplication::GraphicsApplication() : 
-        root(new exeng::Root()),
-        sceneManager( new exeng::scenegraph::SceneManager() ),
-        meshManager( new exeng::scenegraph::MeshManager() )
-    {
-    }
-    
-    
-    GraphicsApplication::~GraphicsApplication() {}
-    
-    
-    void GraphicsApplication::initialize() {
-        this->initializePlugins();
-        this->initializeAssets();
-    }
-    
-    
-    void GraphicsApplication::terminate() {
-        this->terminateAssets();
-        this->terminatePlugins();
-    }
-}}
 
 #include <exeng/framework/GraphicsApplication.inl>
 

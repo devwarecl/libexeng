@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2013 Felipe Apablaza.
+ * Copyright (c) 2013-2014 Felipe Apablaza.
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution.
@@ -15,36 +15,45 @@
 #include <iostream>
 
 namespace exeng { namespace framework {
-
-Application::~Application() {}
-
-int Application::run(Application *theApp, const StringVector& cmdLine) {
-    std::unique_ptr<Application> app(theApp);
     
-    try {
-        int exitCode = 0;
-        double seconds = 0.0;
+    Application* Application::instance = nullptr;
+    
+    Application::Application() : root(nullptr) {
         
-        app->initialize(cmdLine);
-        
-        while (app->getStatus() != ApplicationStatus::Terminated) {
-            seconds = app->getFrameTime();
-            
-            app->pollEvents();
-            app->update(seconds);
-            app->render();
+        if (Application::instance) {
+            throw std::logic_error("Application::Application: Another application instance is still running. Concurrent application executions are not yet supported.");
         }
         
-        app->terminate();
+        this->root = new Root();
         
-        exitCode = app->getExitCode();
-        return exitCode;
-        
-    } catch(const std::exception &exp) {
-        std::cout << "Unhandled exception:" << std::endl ;
-        std::cout << exp.what() << std::endl;
-        return -1;
+        Application::instance = this;
     }
-}
-
+    
+    
+    Application::~Application()  {
+        Application::instance = nullptr;
+        
+        if (this->root) {
+            delete this->root;
+        }
+    }
+    
+    
+    int Application::run(int argc, char **argv) {
+        throw std::logic_error("Application::run must be implemented.");
+    }
+    
+    
+    int Application::execute(Application *app, int argc, char** argv) {
+        try {
+            if (!app) {
+                throw std::logic_error("Application::execute: The application cannot be 'nullptr'.");
+            }
+            return app->run(argc, argv);
+        } catch(const std::exception &exp) {
+            std::cout << "Unexcepted exception thrown:" << std::endl ;
+            std::cout << "    " << exp.what() << std::endl;
+            return -1;
+        }
+    }
 }}

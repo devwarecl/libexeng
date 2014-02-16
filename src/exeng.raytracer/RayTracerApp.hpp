@@ -3,6 +3,7 @@
 #define __RAYTRACER_RAYTRACERAPP_HPP__
 
 #include <exeng/Exeng.hpp>
+#include <exeng/framework/GraphicsApplication.hpp>
 #include <exeng/scenegraph/SceneManager.hpp>
 #include <vector>
 #include <list>
@@ -15,28 +16,21 @@ namespace raytracer {
     typedef std::list<exeng::scenegraph::SceneNode*> SceneNodeList;
     typedef SceneNodeList::iterator SceneNodeListIt;
     
-    class RayTracerApp : public exeng::framework::Application, public exeng::input::IEventHandler {
+    class RayTracerApp : public exeng::framework::GraphicsApplication, public exeng::input::IEventHandler {
     public:
         RayTracerApp();
-        
         virtual ~RayTracerApp();
         
-        virtual void initialize(const exeng::framework::StringVector& cmdLine);
-    
-        virtual double getFrameTime() const;
-        
+        /* exeng::framework::GraphicsApplication overrides */
+        virtual void initialize(int argc, char **argv);
         virtual void pollEvents();
-        
         virtual exeng::framework::ApplicationStatus::Enum getStatus() const;
-        
-        virtual void update(double seconds);
-        
+        virtual void update(double seconds);        
         virtual void render();
-        
         virtual int getExitCode() const;
-        
         virtual void terminate();
         
+        /* exeng::input::IEventHandler overrides */
         virtual void handleEvent(const exeng::input::EventData &data);
         
     private:

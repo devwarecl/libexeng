@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2013 Felipe Apablaza.
+ * Copyright (c) 2013-2014 Felipe Apablaza.
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution.
@@ -15,13 +15,9 @@
 
 #include <exeng/Config.hpp>
 #include <exeng/Enum.hpp>
-
-#include <string>
-#include <vector>
+#include <exeng/Root.hpp>
 
 namespace exeng { namespace framework {
-    
-    typedef std::vector< std::string > StringVector;
     
     /**
      * @brief Application status
@@ -38,62 +34,55 @@ namespace exeng { namespace framework {
      */
     class EXENGAPI Application {
     public:
-        virtual ~Application();
+        Application();
+        
+        virtual ~Application() = 0;
         
         /**
-         * @brief Inicializa una aplicacion.
+         * @brief Get the root object associated with the application instance.
+         */
+        Root* getRoot();
+        
+        /**
+         * @brief Get the root object associated with the application instance.
+         */
+        const Root* getRoot() const;
+        
+        /**
+         * @brief Run the application.
          * 
-         * Carga y genera todos los recursos necesarios
-         * para su ejecucion.
+         * Must be implemented in derived classes.
          */
-        virtual void initialize(const StringVector& cmdLine) = 0;
-    
-        /**
-         * @brief Devuelve el tiempo, en segundos, que tardo en completarse el ultimo cuadro.
-         */
-        virtual double getFrameTime() const = 0;
+        virtual int run(int argc, char **argv);
         
-        /**
-         * @brief Procesa la entrada del usuario, actualizando 
-         * adecuadamente los estados internos de la escena.
-         */
-        virtual void pollEvents() = 0;
+    private:
+        Root *root;
         
-        /**
-         * @brief Devuelve el estado actual general de la aplicacion
-         */
-        virtual ApplicationStatus::Enum getStatus() const = 0;
+    private:
+        static Application *instance;
         
-        /**
-         * @brief Actualiza, en base a los estados internos.
-         */
-        virtual void update(double seconds) = 0;
-        
-        /**
-         *  @brief Presenta los resultados de la renderizacion al usuario
-         */
-        virtual void render() = 0;
-        
-        /**
-         * @brief Get the exit code of the application .
-         * 
-         * El valor es valido siempre que el estado actual de 
-         * la aplicacion sea ApplicationStatus::Stopped
-         */
-        virtual int getExitCode() const = 0;
-        
-        /**
-         * @brief Free all the allocated resources for the application.
-         */
-        virtual void terminate() = 0;
-    
     public:
         /**
-         * @brief Executes the specified application.
+         * @brief Get the currenly running application. If is null, 
+         * then the application has been terminated.
          */
-        static int run(Application *app, const StringVector& cmdLine);
+        static Application* getInstance();
+        
+        /**
+         * @brief Executes the specified application
+         * 
+         * Captures all exceptions and 
+         * writes its messages to the standard output
+         * 
+         * When execution completes, the Application object is destroyed.
+         */
+        static int execute(Application *app, int argc, char **argv);
+        
+        template<typename ApplicationClass>
+        static int execute(int argc, char **argv);
     };
-
 }}
+
+#include <exeng/framework/Application.inl>
 
 #endif  // __EXENG_FRAMEWORK_APPLICATION_HPP__
