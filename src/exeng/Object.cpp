@@ -19,7 +19,6 @@
 #include <iostream>
 
 namespace exeng {
-
 #if defined (EXENG_DEBUG)
 	int count = 0;
 #endif
@@ -67,5 +66,25 @@ namespace exeng {
     
     Object* Object::clone() const {
         throw std::logic_error("Object::clone is not implemented.");
+    }
+    
+    
+    bool Object::isSerializable() const {
+        return false;
+    }
+
+    
+    void Object::serialize(exeng::io::Stream *outStream) const {
+        throw std::logic_error("Object::serialize must be implemented.");
+    }
+
+    
+    bool Object::isDeserializable() const {
+        return false;
+    }
+
+    
+    void Object::deserialize(const exeng::io::Stream *inStream) {
+        throw std::logic_error("Object::deserialize must be implemented.");
     }
 }

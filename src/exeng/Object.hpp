@@ -21,6 +21,10 @@
 
 namespace exeng {
     
+    namespace io {
+        class EXENGAPI Stream;
+    }
+    
 	/**
 	 * @brief Base class of the class hierarchy of the multimedia engine. 
 	 */
@@ -57,6 +61,39 @@ namespace exeng {
 		 * @brief Get the TypeInfo of the object.
 		 */
 		virtual TypeInfo getTypeInfo() const;
+        
+        /**
+         * @brief Check if the object can be serialized.
+         */
+        virtual bool isSerializable() const;
+        
+        /**
+         * @brief Serialize the object. 
+         * @todo Specify whenever to use binary or text based streamming.
+         * 
+         * Store the current state of the object to the specified stream, so can
+         * be restored in a later time.
+         * 
+         * Throws a std::logic_exception if this operation is 
+         * unsupported (Object::isSerializable returns false).
+         */
+        virtual void serialize(exeng::io::Stream *outStream) const;
+        
+        /**
+         * @brief Check if the object can be serialized.
+         */
+        virtual bool isDeserializable() const;
+        
+        /**
+         * @brief Deserialize the object
+         * @todo Specify whenever to use binary or text based streamming.
+         * 
+         * Restore the object to a past state, stored in the specified stream.
+         * 
+         * Throws a std::logic_exception if this operation is 
+         * unsupported (Object::isDeserializable returns false).
+         */
+        virtual void deserialize(const exeng::io::Stream *inStream);
 	};
 }
 
