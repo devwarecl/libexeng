@@ -5,9 +5,9 @@
 #include <exeng/ui/win32/ControlPrivate.hpp>
 
 namespace exeng { namespace ui { namespace win32 {
-	class WindowPrivate : public ControlPrivate {
+	class WindowPrivateWin32 : public ControlPrivateWin32 {
 	public:
-		WindowPrivate();
+		WindowPrivateWin32();
 
 		bool doEvent() const;
 	};

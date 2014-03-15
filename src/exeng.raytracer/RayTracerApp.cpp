@@ -129,8 +129,8 @@ namespace raytracer {
         this->camera->setPosition(Vector3f(0.0f, 2.0f, -75.0f));
         this->camera->setUp(Vector3f(0.0f, 1.0f, 0.0f));
         
-        this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), this->sampler.get()));
-        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), nullptr));
+        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), this->sampler.get()));
+        this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), nullptr));
     }
     
     
@@ -247,6 +247,6 @@ namespace raytracer {
 
 namespace exeng { namespace main {
 	int main(int argc, char **argv) {
-        exeng::framework::Application::execute<raytracer::RayTracerApp>(argc, argv);
+        return exeng::framework::Application::execute<raytracer::RayTracerApp>(argc, argv);
 	}
 }}

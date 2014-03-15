@@ -24,7 +24,7 @@ using namespace exeng::math;
 
 namespace exeng { namespace graphics { namespace gl3 {
 
-	GL3Texture::GL3Texture(ResourceFactory *factory,  TextureType::Enum type, Vector3i size, const ColorFormat &colorFormat) : Texture(factory) {
+	GL3Texture::GL3Texture(ResourceManager *factory,  TextureType::Enum type, Vector3i size, const ColorFormat &colorFormat) : Texture(factory) {
 		GLuint textureId = 0;
     
 		// check for a valid type

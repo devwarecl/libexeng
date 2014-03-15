@@ -1,11 +1,13 @@
 
+#include <exeng/Config.hpp>
+
 #if defined(EXENG_WINDOWS)
 
 #include <exeng/ui/win32/WindowPrivate.hpp>
 
 namespace exeng { namespace ui { namespace win32 {
 
-	WindowPrivate::WindowPrivate() {
+	WindowPrivateWin32::WindowPrivateWin32() {
 		const char windowClassName[] = "WindowClassName";
 
 		WNDCLASS wc = {0};
@@ -29,7 +31,7 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	bool WindowPrivate::doEvent() const {
+	bool WindowPrivateWin32::doEvent() const {
 		MSG msg = {0};
 		BOOL result = ::GetMessage(&msg, this->hWnd, 0, 0);
 

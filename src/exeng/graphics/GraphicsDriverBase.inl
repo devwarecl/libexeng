@@ -55,7 +55,7 @@ namespace exeng { namespace graphics {
     VertexBuffer* 
     GraphicsDriverBase::createVertexBuffer( const VertexFormat &format, int count ) {
         auto *vbuffer = new HeapVertexBuffer(this, format, count);
-        this->addResource(vbuffer);
+//        this->addResource(vbuffer);
         return vbuffer;
     }
 
@@ -65,7 +65,7 @@ namespace exeng { namespace graphics {
     GraphicsDriverBase::createIndexBuffer(IndexFormat indexFormat, int indexCount) {
         auto *indexBuffer = new HeapIndexBuffer(this);
         indexBuffer->allocate(indexFormat, indexCount);
-        this->addResource(indexBuffer);
+//        this->addResource(indexBuffer);
         return indexBuffer;
     }
 

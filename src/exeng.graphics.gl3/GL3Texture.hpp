@@ -23,7 +23,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 
     class GL3Texture : public Texture {
     public:
-        GL3Texture( ResourceFactory *factory, 
+        GL3Texture( ResourceManager *factory, 
                     TextureType::Enum type, 
                     exeng::math::Vector3i size, 
                     const ColorFormat &colorFormat);

@@ -16,7 +16,7 @@
 namespace exeng {
 namespace graphics {
 
-IndexBuffer::IndexBuffer(ResourceFactory* factory) : Resource(factory) {
+IndexBuffer::IndexBuffer(ResourceManager* factory) : Resource(factory) {
 }
 
 IndexBuffer::~IndexBuffer() {   

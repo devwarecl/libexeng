@@ -9,6 +9,10 @@
 #include <Windows.h>
 #include <stdexcept>
 
+namespace exeng { namespace ui {
+	class EXENGAPI Control;
+}}
+
 namespace exeng { namespace ui { namespace win32 {
 	class WindowsException : public std::runtime_error {
 	public:
@@ -40,12 +44,11 @@ namespace exeng { namespace ui { namespace win32 {
 		std::string msg;
 	};
     
-    
-	class Control;
-	class ControlPrivate : public exeng::ui::ControlPrivate {
+
+	class ControlPrivateWin32 : public ControlPrivate {
 	public:
-		ControlPrivate();
-		virtual ~ControlPrivate();
+		ControlPrivateWin32();
+		virtual ~ControlPrivateWin32();
 	
 		virtual void* getHandle();
 		virtual const void* getHandle() const;

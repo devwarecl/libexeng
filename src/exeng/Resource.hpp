@@ -19,7 +19,7 @@
 #include <exeng/TFlags.hpp>
 
 namespace exeng {
-    class EXENGAPI ResourceFactory;
+    class EXENGAPI ResourceManager;
     /**
     * @brief Resource status enumeration 
     */
@@ -47,42 +47,36 @@ namespace exeng {
     * @brief Object with internal data asociated, dependent on another object.
     */
     class EXENGAPI Resource : public Object {    
-        friend class ResourceFactory;
+        friend class ResourceManager;
         
     public:
-        explicit Resource(ResourceFactory *resourceFactory);
+        explicit Resource(ResourceManager *resourceFactory);
         
         virtual ~Resource();
         
         /**
-        * @brief Get a pointer to the object who created this one.
-        */
-        ResourceFactory* getResourceFactory();
-        
-        /**
-        * @brief Get a pointer to the object who created this one.
-        */
-        const ResourceFactory* getResourceFactory() const;
-
-        /**
-        * @brief Release all the data associated with the resource, without deleting it.
-        * Called by the resource factory when this one has been eliminated or terminated on any form.
-        */
+         * @brief Release all the data associated with the resource, without deleting it.
+         * Called by the resource factory when this one has been eliminated or terminated on any form.
+         */
         virtual void release();
         
         /**
-        * @brief Restore the resource to a usable state. Only used when the resource have
-        * the 'Lost' status flag.
-        */
+         * @brief Restore the resource to a usable state. Only used when the resource have
+         * the 'Lost' status flag.
+         */
         virtual void restore();
         
         /**
-        * @brief Get the current states of the resource.
-        */
+         * @brief Get the current states of the resource.
+         */
         virtual ResourceStatus::Flags getStatusFlags() const;
         
+		virtual ResourceManager* getResourceManager();
+
+		virtual const ResourceManager* getResourceManager() const;
+
     protected:
-        ResourceFactory *resourceFactory;
+        ResourceManager *resourceManager;
     };
 }
 

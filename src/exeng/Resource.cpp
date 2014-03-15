@@ -12,38 +12,39 @@
  */
 
 #include <iostream>
+#include <stdexcept>
 #include <exeng/Resource.hpp>
-#include <exeng/ResourceFactory.hpp>
+#include <exeng/ResourceManager.hpp>
 
 namespace exeng {
-    Resource::Resource(ResourceFactory *resourceFactory_) : resourceFactory(resourceFactory_) {}
-
-
+    Resource::Resource(ResourceManager *resourceManager_) : resourceManager(resourceManager_) {
+    }
+    
     Resource::~Resource() {
-        if (this->resourceFactory != nullptr) {
-            this->resourceFactory->removeResource(this);
+        if (this->resourceManager != nullptr) {
+            this->resourceManager->removeResource(this);
         }
     }
+    
 
-
-    ResourceFactory* Resource::getResourceFactory() {
-        return this->resourceFactory;
+    ResourceManager* Resource::getResourceManager() {
+        return this->resourceManager;
     }
 
 
-    const ResourceFactory* Resource::getResourceFactory() const {
-        return this->resourceFactory;
+    const ResourceManager* Resource::getResourceManager() const {
+        return this->resourceManager;
     }
 
 
     void Resource::restore() {
-        std::cout << "Resource::restore: Not implemented." << std::endl;
+        throw std::logic_error("Resource::restore: Is not implemented.");
     }
 
     void Resource::release() {
-        std::cout << "Resource::release: Not implemented." << std::endl;
+        throw std::logic_error("Resource::release: Is not implemented.");
     }
-
+    
     ResourceStatus::Flags Resource::getStatusFlags() const {
         return ResourceStatus::Ready;
     }

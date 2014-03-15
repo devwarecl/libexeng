@@ -19,14 +19,10 @@
 #include <exeng/HeapBuffer.hpp>
 #include <exeng/graphics/VertexBuffer.hpp>
 
-namespace exeng {
-namespace graphics {
+namespace exeng { namespace graphics {
+	VertexBuffer::VertexBuffer(ResourceManager *resourceManager) : Resource(resourceManager) {
+	}
 
-VertexBuffer::VertexBuffer(ResourceFactory *resourceFactory) : Resource(resourceFactory) {
-}
-
-VertexBuffer::~VertexBuffer() {
-}
-
-}
-}
+	VertexBuffer::~VertexBuffer() {
+	}
+}}

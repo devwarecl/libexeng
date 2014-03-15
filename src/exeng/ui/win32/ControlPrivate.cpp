@@ -1,13 +1,14 @@
 
 
+#include <exeng/ui/Control.hpp>
+
 #if defined(EXENG_WINDOWS)
 
-#include <exeng/ui/Control.hpp>
-#include <exeng/ui/Win32ControlPrivate.hpp>
+#include <exeng/ui/win32/ControlPrivate.hpp>
 
 namespace exeng { namespace ui { namespace win32 {
     
-	Win32ControlPrivate::Win32ControlPrivate() {
+	ControlPrivateWin32::ControlPrivateWin32() {
 		this->hInstance = ::GetModuleHandle(NULL);
 		this->hWnd = NULL;
 		this->parent = nullptr;
@@ -15,7 +16,7 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	Win32ControlPrivate::~Win32ControlPrivate() {
+	ControlPrivateWin32::~ControlPrivateWin32() {
 		if (this->hWnd) {
 			::CloseWindow(this->hWnd);
 			::DestroyWindow(this->hWnd);
@@ -25,17 +26,17 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	void* Win32ControlPrivate::getHandle() {
+	void* ControlPrivateWin32::getHandle() {
 		return this->hWnd;
 	}
 
 
-	const void* Win32ControlPrivate::getHandle() const {
+	const void* ControlPrivateWin32::getHandle() const {
 		return this->hWnd;
 	}
 
 
-	void Win32ControlPrivate::setParent(Control *parent) {
+	void ControlPrivateWin32::setParent(Control *parent) {
 		if (this->parent == parent) {
 			return;
 		}
@@ -43,7 +44,8 @@ namespace exeng { namespace ui { namespace win32 {
 		HWND hWnd;
 
 		if (parent != nullptr) {
-			hWnd = parent->impl->hWnd;
+			// HACK: Resolve soon plz
+			hWnd = static_cast<HWND>(parent->getHandle());
 		} else {
 			hWnd = NULL;
 		}
@@ -56,13 +58,13 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	Control* Win32ControlPrivate::getParent() const {
+	Control* ControlPrivateWin32::getParent() const {
 		return this->parent;
 	}
 
 
 
-	void Win32ControlPrivate::setText(const std::string &text) {
+	void ControlPrivateWin32::setText(const std::string &text) {
 		if (! ::SetWindowText(this->hWnd, text.c_str())) {
 			throw WindowsException( ::GetLastError() );
 		}
@@ -71,22 +73,22 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	std::string Win32ControlPrivate::getText() const {
+	std::string ControlPrivateWin32::getText() const {
 		return this->text;
 	}
 
 
-	void Win32ControlPrivate::setName(const std::string &name) {
+	void ControlPrivateWin32::setName(const std::string &name) {
 		this->name = name;
 	}
 
 
-	std::string Win32ControlPrivate::getName() const {
+	std::string ControlPrivateWin32::getName() const {
 		return this->name;
 	}
 
 
-	void Win32ControlPrivate::setVisible(bool visible) {
+	void ControlPrivateWin32::setVisible(bool visible) {
 		if (this->visible == visible) {
 			return;
 		}
@@ -96,7 +98,7 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	bool Win32ControlPrivate::getVisible() const {
+	bool ControlPrivateWin32::getVisible() const {
 		bool status = ::IsWindowVisible(this->hWnd)?true:false;
 		this->visible = status;
 
@@ -104,14 +106,14 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	void Win32ControlPrivate::setSize( const exeng::math::Size2i &size) {
+	void ControlPrivateWin32::setSize( const exeng::math::Size2i &size) {
 		if (! ::SetWindowPos(this->hWnd, HWND_NOTOPMOST, 0, 0, size.width, size.height, SWP_NOMOVE)) {
 			throw WindowsException( ::GetLastError() );
 		}
 	}
 
 
-	exeng::math::Size2i Win32ControlPrivate::getSize() const {
+	exeng::math::Size2i ControlPrivateWin32::getSize() const {
 		RECT rect = {0};
 
 		if (! ::GetClientRect(this->hWnd, &rect)) {
@@ -122,7 +124,7 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	void Win32ControlPrivate::setPosition( const exeng::math::Vector2i &pos) {
+	void ControlPrivateWin32::setPosition( const exeng::math::Vector2i &pos) {
 		if (this->getParent() == nullptr) {
 			if (! ::SetWindowPos(this->hWnd, HWND_NOTOPMOST, pos.x, pos.y, 0, 0, SWP_NOSIZE)) {
 				throw WindowsException( ::GetLastError() );
@@ -133,7 +135,7 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	exeng::math::Vector2i Win32ControlPrivate::getPosition() const {
+	exeng::math::Vector2i ControlPrivateWin32::getPosition() const {
 		RECT rc = {0};
 
 		if (! ::GetClientRect(this->hWnd, &rc) ) {

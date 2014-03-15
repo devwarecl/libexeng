@@ -1,10 +1,12 @@
 
-#include <exeng/ui/win32/LabelPrivate.hpp>
+#include <exeng/Config.hpp>
 
 #if defined(EXENG_WINDOWS)
 
+#include <exeng/ui/win32/LabelPrivate.hpp>
+
 namespace exeng { namespace ui { namespace win32 {
-	LabelPrivate::LabelPrivate(void *parentHandle) {
+	LabelPrivateWin32::LabelPrivateWin32(void *parentHandle) {
 		HWND hWnd = ::CreateWindow(
 					   "Static",
 					   NULL,

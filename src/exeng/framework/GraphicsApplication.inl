@@ -24,11 +24,11 @@ namespace exeng { namespace framework {
         ApplicationGuard appGuard(this, argc, argv);
         
         while (this->getStatus() == ApplicationStatus::Running) {
-            frameTimeMs = static_cast<double>(Timer::getTime() - lastTime) / 1000.0;
+            frameTimeMs = Timer::getTime() - lastTime;
             lastTime = Timer::getTime();
             
             this->pollEvents();
-            this->update(frameTimeMs);
+            this->update(frameTimeMs / 1000.0);
             this->render();
         }
         

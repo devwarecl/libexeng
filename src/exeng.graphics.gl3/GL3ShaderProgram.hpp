@@ -25,7 +25,7 @@ namespace exeng { namespace graphics { namespace gl3 {
     class GL3Shader;
     class GL3ShaderProgram : public ShaderProgram {
     public:
-        GL3ShaderProgram(ResourceFactory *factory);
+        GL3ShaderProgram(ResourceManager *factory);
         
         virtual ~GL3ShaderProgram();
 

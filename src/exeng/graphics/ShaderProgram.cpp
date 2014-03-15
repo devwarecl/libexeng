@@ -17,7 +17,7 @@
 namespace exeng {
 namespace graphics {
 
-ShaderProgram::ShaderProgram(ResourceFactory *factory) : Resource(factory) {
+ShaderProgram::ShaderProgram(ResourceManager *factory) : Resource(factory) {
 }
 
 ShaderProgram::~ShaderProgram() {

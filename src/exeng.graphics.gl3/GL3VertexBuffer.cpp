@@ -21,7 +21,7 @@
 
 namespace exeng { namespace graphics { namespace gl3 {
 
-	GL3VertexBuffer::GL3VertexBuffer(ResourceFactory *factory, 
+	GL3VertexBuffer::GL3VertexBuffer(ResourceManager *factory, 
 									 const VertexFormat &format, 
 									 int count) : VertexBuffer(factory) {
 		this->vertexArrayId = 0;

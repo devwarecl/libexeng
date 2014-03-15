@@ -5,9 +5,9 @@
 #include <exeng/ui/win32/ControlPrivate.hpp>
 
 namespace exeng { namespace ui { namespace win32 {
-	class LabelPrivate : public ControlPrivate {
+	class LabelPrivateWin32 : public ControlPrivateWin32 {
 	public:
-		LabelPrivate(void *parentHandle);
+		LabelPrivateWin32(void *parentHandle);
 	};
 }}}
 

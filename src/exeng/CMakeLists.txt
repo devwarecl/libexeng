@@ -18,7 +18,7 @@ set (BaseFiles
   Buffer.hpp              Buffer.cpp 
   HeapBuffer.hpp          HeapBuffer.cpp 
   Resource.hpp            Resource.cpp 
-  ResourceFactory.hpp     ResourceFactory.cpp 
+  ResourceManager.hpp     ResourceManager.cpp 
   Timer.hpp               Timer_Win.cpp Timer_Unix.cpp 
 )
 

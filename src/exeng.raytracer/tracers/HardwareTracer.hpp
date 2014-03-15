@@ -6,25 +6,20 @@
 #ifndef __RAYTRACER_TRACERS_HARDWARETRACER_HPP__
 #define __RAYTRACER_TRACERS_HARDWARETRACER_HPP__
 
-/*
 #include <exeng/Exeng.hpp>
 #include <memory>
 
-namespace raytracer {
-
-class RayTracer {
-public:
-    RayTracer( exeng::graphics::Texture &renderTarget, const exeng::scenegraph::Scene &scene );
-    void render();
-    ~RayTracer();
-    
-private:
-    struct Private;
-    std::unique_ptr<Private> impl;
-};
-
-
-}
-*/
+namespace raytracer { namespace tracers {
+    class HardwareTracer {
+    public:
+        HardwareTracer( exeng::graphics::Texture &renderTarget, const exeng::scenegraph::Scene &scene );
+        virtual void render(const exeng::scenegraph::Camera *camera);
+        ~HardwareTracer();
+        
+    private:
+        struct Private;
+        std::unique_ptr<Private> impl;
+    };
+}}
 
 #endif // __RAYTRACER_TRACERS_TRACER_HPP__

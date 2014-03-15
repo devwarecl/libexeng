@@ -16,44 +16,42 @@
 
 #include <exeng/graphics/VertexBuffer.hpp>
 
-namespace exeng {
-    namespace graphics {
+namespace exeng { namespace graphics {
         
-        /**
-         * @brief VertexBuffer allocated on heap memory. Useful for
-         * software-based rasterizers.
-         */
-        class EXENGAPI HeapVertexBuffer : public VertexBuffer {
-        public:
-            HeapVertexBuffer(ResourceFactory *resourceFactory);
+    /**
+	 * @brief VertexBuffer allocated on heap memory. Useful for
+     * software-based rasterizers.
+     */
+    class EXENGAPI HeapVertexBuffer : public VertexBuffer {
+    public:
+        HeapVertexBuffer(ResourceManager *resourceFactory);
             
-            HeapVertexBuffer(ResourceFactory *resourceFactory, const VertexFormat &format, int count);
+        HeapVertexBuffer(ResourceManager *resourceFactory, const VertexFormat &format, int count);
             
-            virtual ~HeapVertexBuffer();
+        virtual ~HeapVertexBuffer();
             
-            virtual void allocate(const VertexFormat &format, int count);
+        virtual void allocate(const VertexFormat &format, int count);
             
-            virtual void release();
+        virtual void release();
             
-            virtual bool isEmpty() const;
+        virtual bool isEmpty() const;
             
-            virtual void* lock();
+        virtual void* lock();
             
-            virtual bool isLocked() const;
+        virtual bool isLocked() const;
             
-            virtual void unlock();
+        virtual void unlock();
             
-            virtual int getCount() const;
+        virtual int getCount() const;
             
-            virtual int getSize() const;
+        virtual int getSize() const;
             
-            virtual const VertexFormat& getFormat() const;
+        virtual const VertexFormat& getFormat() const;
             
-        private:
-            struct Private;
-            Private *impl;
-        };        
-    }
-}
+    private:
+        struct Private;
+        Private *impl;
+    };        
+}}
 
 #endif // __EXENG_GRAPHICS_HEAPVERTEXBUFFER_HPP__

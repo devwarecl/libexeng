@@ -33,7 +33,7 @@ namespace exeng {
          */
         class EXENGAPI IndexBuffer : public Resource {
         public:
-            IndexBuffer(ResourceFactory* factory);
+            IndexBuffer(ResourceManager* factory);
             
             /**
              * @brief 

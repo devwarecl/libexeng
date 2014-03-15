@@ -286,7 +286,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 
     void GL3GraphicsDriver::setVertexBuffer(const VertexBuffer* vertexBuffer) {
     #if defined(EXENG_DEBUG)
-        if (vertexBuffer->getResourceFactory() != this) {
+        if (vertexBuffer->getResourceManager() != this) {
             std::string msg;
             
             msg += "GL3GraphicsDriver::setVertexBuffer: ";
@@ -375,7 +375,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         for (int i=0; i<layerCount; ++i) {
             layer = material->getLayer(i);
             
-            if (layer->hasTexture() == true && layer->getTexture()->getResourceFactory() != this ) {
+            if (layer->hasTexture() == true && layer->getTexture()->getResourceManager() != this ) {
                 std::string msg;
                 
                 msg += "GL3GraphicsDriver::setMaterial: ";

@@ -32,13 +32,13 @@ namespace exeng {
         };
         
         
-        HeapIndexBuffer::HeapIndexBuffer(ResourceFactory *factory) : 
+        HeapIndexBuffer::HeapIndexBuffer(ResourceManager *factory) : 
             IndexBuffer(factory), impl(nullptr) {
             this->impl = new HeapIndexBuffer::Private();
         }
         
         
-        HeapIndexBuffer::HeapIndexBuffer(ResourceFactory *factory, IndexFormat indexFormat, int indexCount) : 
+        HeapIndexBuffer::HeapIndexBuffer(ResourceManager *factory, IndexFormat indexFormat, int indexCount) : 
             IndexBuffer(factory), impl(nullptr)  {
             this->impl = new HeapIndexBuffer::Private();
             this->allocate(indexFormat, indexCount);

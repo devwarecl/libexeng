@@ -17,44 +17,39 @@
 
 #include <exeng/graphics/IndexBuffer.hpp>
 
-namespace exeng {
-    namespace graphics {
-        
-        /**
-         * @brief IndexBuffer allocated on heap memory.
-         */
-        class EXENGAPI HeapIndexBuffer : public IndexBuffer {
-        public:            
-            HeapIndexBuffer(ResourceFactory *factory);
+namespace exeng { namespace graphics {
+    /**
+     * @brief IndexBuffer allocated on heap memory.
+     */
+    class EXENGAPI HeapIndexBuffer : public IndexBuffer {
+    public:            
+        HeapIndexBuffer(ResourceManager *factory);
             
-            HeapIndexBuffer(ResourceFactory *factory, IndexFormat indexFormat, int indexCount);
+        HeapIndexBuffer(ResourceManager *factory, IndexFormat indexFormat, int indexCount);
             
-            virtual ~HeapIndexBuffer();
+        virtual ~HeapIndexBuffer();
             
-            virtual void allocate(IndexFormat indexFormat, int indexCount);
+        virtual void allocate(IndexFormat indexFormat, int indexCount);
             
-            virtual void release();
+        virtual void release();
             
-            virtual bool isEmpty() const;
+        virtual bool isEmpty() const;
             
-            virtual void* lock();
+        virtual void* lock();
             
-            virtual bool isLocked() const;
+        virtual bool isLocked() const;
             
-            virtual void unlock();
+        virtual void unlock();
             
-            virtual int getCount() const;
+        virtual int getCount() const;
             
-            virtual IndexFormat getFormat() const;
+        virtual IndexFormat getFormat() const;
             
-            
-            
-        private:
-            struct Private;
-            Private *impl;
-        };
-    }
-}
+    private:
+        struct Private;
+        Private *impl;
+    };
+}}
 
 
 #endif // __EXENG_GRAPHICS_HEAPINDEXBUFFER_HPP__

@@ -9,7 +9,6 @@
 #include <exeng.raytracer/tracers/Tracer.hpp>
 
 namespace raytracer {
-
     /**
      * @brief Renderizador de escenas, implementado como un trazador de rayos
      */

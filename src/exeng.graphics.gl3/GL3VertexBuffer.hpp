@@ -23,7 +23,7 @@ namespace exeng { namespace graphics { namespace gl3 {
     
     class GL3VertexBuffer : public VertexBuffer {
     public:
-        GL3VertexBuffer(ResourceFactory *factory, const VertexFormat &format, int count);
+        GL3VertexBuffer(ResourceManager *factory, const VertexFormat &format, int count);
         
         virtual ~GL3VertexBuffer();
         

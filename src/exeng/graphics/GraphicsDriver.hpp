@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include <exeng/ResourceFactory.hpp>
+#include <exeng/ResourceManager.hpp>
 #include <exeng/Enum.hpp>
 #include <exeng/TFlags.hpp>
 #include <exeng/math/TBoundary.hpp>
@@ -156,7 +156,7 @@ namespace exeng { namespace graphics {
     /**
     * @brief Software interface to graphics hardware
     */
-    class EXENGAPI GraphicsDriver : public ResourceFactory, public exeng::input::IEventRaiser {
+	class EXENGAPI GraphicsDriver : public exeng::ResourceManager, public exeng::input::IEventRaiser {
     public:
         virtual ~GraphicsDriver();
         
