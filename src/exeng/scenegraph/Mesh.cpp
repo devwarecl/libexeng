@@ -31,297 +31,279 @@ typedef boost::ptr_vector<MeshPart> MeshPartVector;
 typedef MeshPartVector::iterator MeshPartVectorIt;
 
 namespace exeng { namespace scenegraph {
-
-struct Triangle {
-    Vector3f &p1;
-    Vector3f &p2;
-    Vector3f &p3;
     
-    Triangle(Vector3f &P1, Vector3f &P2, Vector3f &P3) : p1(P1), p2(P2), p3(P3) {}
-    
-    Vector3f getNormal() const {
-        Vector3f v1 = p2 - p1;
-        Vector3f v2 = p3 - p1;
-        Vector3f n = v1.cross(v2);
-        
+    /**
+     * @brief Computes the normal vector, in clockwise order, to the
+     * triangle conformed by the points P1, P2, P3.
+     */
+    inline Vector3f computeNormal(const Vector3f &p1, const Vector3f &p2, const Vector3f &p3) {
+        Vector3f n = (p2 - p1).cross(p3 - p1);
         n.normalize();
-        
         return n;
     }
-};
-
-
-class TriangleArray {
-public:
-    TriangleArray (VertexBuffer *vertexBuffer) : 
-        vertices(vertexBuffer) {
-    }
-    
-    virtual ~TriangleArray()  { }
     
     /**
-     * @brief Devuelve la cantidad de triangulos
+     * @brief Convert a triangle primitive type to a zero based index.
      */
-    virtual int size() const = 0;
+    inline int trianglePrimitiveToIndex(Primitive::Enum primitive) {
+        assert(Primitive::isTriangle(primitive));
+        
+        switch (primitive) {
+            case Primitive::TriangleList:   return 0;
+            case Primitive::TriangleStrip : return 1;
+            case Primitive::TriangleFan:    return 2;
+            
+            default: assert(false);
+        }
+    }
     
     /**
-     * @brief Devuelve el triangulo que se encuentre en el indice indicado.
+     * @brief Check if the specified ray intersects with the triangle defined by the points p1, p2, p3 and the normal n.
      */
-    virtual Triangle triangle(int index) = 0;
-    
-    
-protected:
-    VertexArray<Vertex> vertices;
-};
-
-
-class TriangleListArray : public TriangleArray {
-public:
-    TriangleListArray(VertexBuffer *vertexBuffer) : TriangleArray(vertexBuffer) {
-    }
-    
-    virtual ~TriangleListArray() {}
-    
-    virtual int size() const {
-        return this->vertices.size() / 3;
-    }
-    
-    virtual Triangle triangle(int index) {
-        if (index >= this->size()) {
-            throw std::runtime_error("");
-        }
-        
-        Vector3f &p1 = this->vertices[3*index + 0].coord;
-        Vector3f &p2 = this->vertices[3*index + 1].coord;
-        Vector3f &p3 = this->vertices[3*index + 2].coord;
-        
-        return Triangle(p1, p2, p3);
-    }
-};
-
-
-class TriangleStripArray : public TriangleArray {
-public:
-    TriangleStripArray(VertexBuffer *vertexBuffer) : TriangleArray(vertexBuffer) {
-    }
-    
-    virtual ~TriangleStripArray() {}
-    
-    virtual int size() const {
-        return this->vertices.size() - 2;
-    }
-    
-    virtual Triangle triangle(int index) {
-        if (index >= this->size()) {
-            throw std::runtime_error("");
-        }
-        
-        if (index%2 == 0) {
-            Vector3f &p1 = this->vertices[index + 0].coord;
-            Vector3f &p2 = this->vertices[index + 1].coord;
-            Vector3f &p3 = this->vertices[index + 2].coord;
-            
-            return Triangle(p1, p2, p3);
-        } else {
-            Vector3f &p1 = this->vertices[index + 0].coord;
-            Vector3f &p2 = this->vertices[index + 2].coord;
-            Vector3f &p3 = this->vertices[index + 0].coord;
-            
-            return Triangle(p1, p2, p3);
-        }
-    }
-};
-
-
-class TriangleFanArray : public TriangleArray {
-public:
-    TriangleFanArray(VertexBuffer *vertexBuffer) : TriangleArray(vertexBuffer) {
-    }
-    
-    virtual ~TriangleFanArray() {}
-    
-    virtual int size() const {
-        return this->vertices.size() - 2;
-    }
-    
-    virtual Triangle triangle(int index) {
-        if (index >= this->size()) {
-            throw std::runtime_error("");
-        }
-        
-        if (index%2 == 0) {
-            Vector3f &p1 = this->vertices[0].coord;
-            Vector3f &p2 = this->vertices[index + 1].coord;
-            Vector3f &p3 = this->vertices[index + 2].coord;
-            
-            return Triangle(p1, p2, p3);
-        } else {
-            Vector3f &p1 = this->vertices[0].coord;
-            Vector3f &p2 = this->vertices[index + 2].coord;
-            Vector3f &p3 = this->vertices[index + 0].coord;
-            
-            return Triangle(p1, p2, p3);
-        }
-    }
-};
-
-
-/**
- * @brief Construye un arreglo de triangulos apropiado segun el tipo de primitiva
- */
-inline TriangleArray* getTriangleArray(VertexBuffer *vb, IndexBuffer *ib, Primitive::Enum type) {
-    TriangleArray* result = nullptr;
-    
-    switch(type) {
-        case Primitive::Enum::TriangleList:   result = new TriangleListArray(vb); break;
-        case Primitive::Enum::TriangleStrip:  result = new TriangleStripArray(vb);break;
-        case Primitive::Enum::TriangleFan:    result = new TriangleFanArray(vb);  break;
-        default: throw std::runtime_error("Unexpected primitive type"); break;
-    }
-    
-    return result;
-}
-
-
-struct Mesh::Private {
-    MeshPartVector  parts;  //! Las partes que componen a un modelo tridimensional
-    Boxf box;               //! La caja colision general del modelo.
-};
-
-
-Mesh::Mesh(int partCount) {
-    // Hacer espacio para las partes
-    this->impl = new Mesh::Private();
-    this->impl->parts.reserve(partCount);
-    this->impl->parts.resize(partCount);
-}
-
-
-Mesh::~Mesh() {
-    boost::checked_delete(this->impl);
-}
-
-
-Boxf Mesh::getBox() const {
-    assert(this->impl != nullptr);
-    
-    auto &parts = this->impl->parts;
-    auto &box = this->impl->box;
-    
-    box = parts[0].getBox();
-
-    for(auto &part : parts) {
-        box.expand(part.getBox() );
-    }
-    
-    return box;
-}
-
-
-/**
- * @brief Detecta si existe interseccion entre la parte y el rayo indicado.
- */
-bool meshSubsetHit(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectInfo=nullptr) {
-    if (Primitive::isTriangle(meshPart.getPrimitiveType()) == false) {
-        return false;
-    }
-    
-    std::unique_ptr<TriangleArray> triangleArray;
-    Primitive::Enum type = meshPart.getPrimitiveType();
-    VertexBuffer *vertexBuffer = meshPart.getVertexBuffer();
-    IndexBuffer *indexBuffer = meshPart.getIndexBuffer();
-    
-    IntersectInfo lastInfo;
-    IntersectInfo info;
-    Plane plane;
-    
-    triangleArray.reset(getTriangleArray(vertexBuffer, indexBuffer, type) );
-    
-    for (int i=0; i<triangleArray->size(); ++i) {
-        Triangle tri = triangleArray->triangle(i);
-        
-        // Generar un plano con los tres puntos
-        plane.set(tri.p1, tri.p2, tri.p3);
-        if (plane.intersect(ray, &info) == true) {
-            
-            // Si se intersecto con el punto, ver si el punto esta 
-            // dentro de las coordenadas del triangulo        
-            if (info.distance <= 0.0f) {
-                continue;
+    inline bool intersectWithTriangle(const Vector3f &p1, const Vector3f &p2, const Vector3f &p3, const Vector3f &n, 
+                                      const Ray &ray, 
+                                      IntersectInfo *intersectInfo=nullptr) {
+        IntersectInfo info;
+       
+        if (Plane(p1, n).intersect(ray, &info) == false) {
+            if (intersectInfo != nullptr) {
+                intersectInfo->intersect = false;
             }
             
-            // Comprobar si el punto de interseccion pertenece al triangulo o no, usando 
-            // coordenadas baricentricas
-            Vector3f r0 = ray.getPointAt(info.distance);
-            Vector3f p = ray.getPoint(), q=r0;
-            Vector3f a = tri.p1, b=tri.p2, c=tri.p3;
+            return false;
+        }
+        
+        // Check triangle collision
+        Vector3f r0 = ray.getPointAt(info.distance);
+        Vector3f p = ray.getPoint(), q=r0;
+        Vector3f a = p1, b=p2, c=p3;
+        
+        Vector3f pq = (q - p);
+        Vector3f pa = (a - p);
+        Vector3f pb = (b - p);
+        Vector3f pc = (c - p);
+        
+        float u = pq.triple(pc, pb);
+        float v = pq.triple(pa, pc);
+        float w = pq.triple(pb, pa);
+        
+        // Check collision exists
+        if ((u > 0.0f && v > 0.0f && w > 0.0f) == true || (u < 0.0f && v < 0.0f && w < 0.0f) == true) {
+            if (intersectInfo != nullptr) {
+                intersectInfo->intersect = true;
+                intersectInfo->distance = info.distance;
+                intersectInfo->material = nullptr;
+                intersectInfo->normal = n;
+            }
             
-            Vector3f pq = (q - p);
-            Vector3f pa = (a - p);
-            Vector3f pb = (b - p);
-            Vector3f pc = (c - p);
-            
-            float u, v, w;
-            u = pq.triple(pc, pb);
-            v = pq.triple(pa, pc);
-            w = pq.triple(pb, pa);
-            
-            // Detectar si existe colision, sin importar como esten ordenados los triangulos
-            if ((u > 0.0f && v > 0.0f && w > 0.0f) == true || 
-                (u < 0.0f && v < 0.0f && w < 0.0f) == true) {
-                if (intersectInfo != nullptr) {
-                    intersectInfo->intersect = true;
-                    intersectInfo->distance = info.distance;
-                    intersectInfo->materialPtr = meshPart.getMaterial();
-                    intersectInfo->normal = tri.getNormal();
-                }
+            return true;
+        } else {
+            //! TODO: Check with a epsilon
+            return false;
+        }
+    }
+    
+    inline int getTriangleCount(int vertexCount, Primitive::Enum trianglePrimitive) {
+        assert(Primitive::isTriangle(trianglePrimitive));
+        
+        switch (trianglePrimitive) {
+            case Primitive::TriangleStrip:
+            case Primitive::TriangleFan:
+                return vertexCount - 2;
                 
-                return true;
-            } else {
-                //! TODO: Comprobar mediante un epsilon
-                return false;
+            case Primitive::TriangleList:
+                return vertexCount / 3;
+                
+            default: assert(false);
+        }
+    }
+    
+    inline int getVertexIndex_TriangleList(int triangleIndex, int pointIndex) {
+        assert(pointIndex >= 0);
+        assert(pointIndex <= 3);
+        
+        return triangleIndex*3 + pointIndex;
+    }
+    
+    inline int getVertexIndex_TriangleStrip(int triangleIndex, int pointIndex) {
+        assert(pointIndex >= 0);
+        assert(pointIndex <= 3);
+        
+        if (triangleIndex%2 == 0) {
+            return triangleIndex*3 + pointIndex;
+        } else {
+            // TODO: Correct this approach
+            switch (pointIndex) {
+                case 0: return triangleIndex;
+                case 1: return triangleIndex + 2;
+                case 2: return triangleIndex + 1;
+                default: assert(false);
             }
         }
     }
     
-    return false;
-}
-
-
-bool Mesh::hit(const Ray &ray, IntersectInfo *intersectInfo) {
-    assert(this->impl != nullptr);
-    
-    IntersectInfo info, bestInfo;
-    
-    for (MeshPart &meshPart : this->impl->parts) {
-        if (meshSubsetHit(meshPart, ray, &info) && info.distance >= 0.0f ) {
-            if (info.distance > bestInfo.distance) {
-                bestInfo = info;
+    inline int getVertexIndex_TriangleFan(int triangleIndex, int pointIndex) {
+        assert(pointIndex >= 0);
+        assert(pointIndex <= 3);
+        
+        if (pointIndex == 0) {
+            return 0;
+        } else {
+            switch (pointIndex) {
+                case 1: return triangleIndex + 2;
+                case 2: return triangleIndex + 1;
+                default: assert(false);
             }
         }
+        
+        return triangleIndex*3 + pointIndex;
     }
     
-    if (intersectInfo != nullptr) {
-        *intersectInfo = bestInfo;
+    
+    struct Mesh::Private {
+        MeshPartVector  parts;  //! Vector of MeshPart pointers
+        Boxf box;               //! General collision box for the mesh.
+    };
+    
+    
+    Mesh::Mesh(int partCount) : impl(new Mesh::Private()) {
+        // Make space for the parts...
+        this->impl->parts.reserve(partCount);
+        this->impl->parts.resize(partCount);
     }
     
-    return bestInfo.intersect;
-}
-
-
-int Mesh::getPartCount() const {
-    assert(this->impl != nullptr);
-    return static_cast<int>(this->impl->parts.size());
-}
-
-
-MeshPart* Mesh::getPart(int index) {
-    return &this->impl->parts[index];
-}
-
-
-const MeshPart* Mesh::getPart(int index) const {
-    return &this->impl->parts[index];
-}
-
+    
+    Mesh::~Mesh() {
+        boost::checked_delete(this->impl);
+    }
+    
+    
+    Boxf Mesh::getBox() const {
+        assert(this->impl != nullptr);
+        
+        /*
+        MeshPartVector &parts = this->impl->parts;
+        Boxf box = parts[0].getBox();
+    
+        for(MeshPart &part : parts) {
+            box.expand(part. );
+        }
+        
+        return box;
+        */
+        
+        return Boxf();
+    }
+    
+    /**
+     * @brief Detect intersection between a Ray and a MeshPart.
+     */
+    bool meshSubsetIntersect(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectInfo=nullptr) {
+        if (Primitive::isTriangle(meshPart.primitiveType) == false) {
+            return false;
+        }
+        
+        Primitive::Enum type = meshPart.primitiveType;
+        VertexBuffer *vertexBuffer = meshPart.vertexBuffer;
+        
+        const VertexFormat &vertexFormat = vertexBuffer->getFormat();
+        void* vertexData = vertexBuffer->lock();
+        
+        int vertexOffset = vertexFormat.getAttribOffset(VertexAttrib::Position);
+        int vertexStride = vertexFormat.getSize();
+        
+        // TODO: Handle properly the vertex format
+        IntersectInfo info;
+        
+        int triangleCount = getTriangleCount(vertexBuffer->getCount(), meshPart.primitiveType);
+        
+        for (int triangleIndex=0; triangleIndex<triangleCount; triangleIndex++) {
+            
+            IntersectInfo localInfo;
+            
+            // Get the triangle points, based on the triangle type and the vertex format
+            int i1, i2, i3;
+            
+            switch (type) {
+                case Primitive::TriangleList:
+                    i1 = getVertexIndex_TriangleList(triangleIndex, 0);
+                    i2 = getVertexIndex_TriangleList(triangleIndex, 1);
+                    i3 = getVertexIndex_TriangleList(triangleIndex, 2);
+                    break;
+                    
+                case Primitive::TriangleStrip:
+                    i1 = getVertexIndex_TriangleStrip(triangleIndex, 0);
+                    i2 = getVertexIndex_TriangleStrip(triangleIndex, 1);
+                    i3 = getVertexIndex_TriangleStrip(triangleIndex, 2);
+                    break;
+                    
+                case Primitive::TriangleFan:
+                    i1 = getVertexIndex_TriangleFan(triangleIndex, 0);
+                    i2 = getVertexIndex_TriangleFan(triangleIndex, 1);
+                    i3 = getVertexIndex_TriangleFan(triangleIndex, 2);
+                    break;
+                    
+                default: assert(false);
+            }
+            
+            // TODO: Get the normal vector from the mesh data, if exists.
+            Vector3f &p1 = *reinterpret_cast<Vector3f*>(static_cast<float*>(vertexData) + i1*vertexStride + vertexOffset);
+            Vector3f &p2 = *reinterpret_cast<Vector3f*>(static_cast<float*>(vertexData) + i2*vertexStride + vertexOffset);
+            Vector3f &p3 = *reinterpret_cast<Vector3f*>(static_cast<float*>(vertexData) + i3*vertexStride + vertexOffset);
+            
+            Vector3f n = computeNormal(p1, p2, p3);
+            
+            if (intersectWithTriangle(p1, p2, p3, n, ray, &localInfo) && localInfo.distance >= 0.0f ) {
+                localInfo.material = meshPart.material;
+                if (localInfo.distance > info.distance) {
+                    info = localInfo;
+                }
+            }
+        }
+        
+        if (intersectInfo != nullptr) {
+            *intersectInfo = info;
+        }
+        
+        vertexBuffer->unlock();
+        
+        return info.intersect;
+    }
+    
+    
+    bool Mesh::hit(const Ray &ray, IntersectInfo *intersectInfo) {
+        assert(this->impl != nullptr);
+        
+        IntersectInfo info, bestInfo;
+        
+        for (MeshPart &meshPart : this->impl->parts) {
+            if (meshSubsetIntersect(meshPart, ray, &info) && info.distance >= 0.0f ) {
+                if (info.distance > bestInfo.distance) {
+                    bestInfo = info;
+                }
+            }
+        }
+        
+        if (intersectInfo != nullptr) {
+            *intersectInfo = bestInfo;
+        }
+        
+        return bestInfo.intersect;
+    }
+    
+    
+    int Mesh::getPartCount() const {
+        assert(this->impl != nullptr);
+        return static_cast<int>(this->impl->parts.size());
+    }
+    
+    
+    MeshPart* Mesh::getPart(int index) {
+        return &this->impl->parts[index];
+    }
+    
+    
+    const MeshPart* Mesh::getPart(int index) const {
+        return &this->impl->parts[index];
+    }
 }}

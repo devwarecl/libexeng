@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file Mesh.hpp
+ * @brief Mesh class definition.
  */
 
 
@@ -17,50 +17,49 @@
 #include <exeng/scenegraph/Geometry.hpp>
 
 namespace exeng { namespace scenegraph {
-    
-class EXENGAPI MeshPart;
+        
+    class EXENGAPI MeshPart;
 
-/**
- * @brief Holds the geometric information about a object composed of primitives.
- */
-class EXENGAPI Mesh : public Geometry {
-public:
-    explicit Mesh(int meshPartCount);
-    
-    virtual ~Mesh();
-    
     /**
-     * @brief Computes and returns the corresponding bounding box of the mesh.
+     * @brief Holds the geometric information about a object, composed of different MeshParts.
+     * 
+     * The MeshParts ARE owned by the Mesh object, and they cannot be shared.
      */
-    virtual exeng::math::Boxf getBox() const;
-    
-    virtual bool hit( const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo);
-    
-    /**
-     * @brief Devuelve la cantidad total de MeshSubset's contenidos en la malla.
-     */
-    int getPartCount() const;
-    
-    /**
-     * @brief Devuelve el meshsubset contenido en el indice indicado
-     */
-    MeshPart* getPart(int index);
-    
-    /**
-     * @brief Devuelve el meshsubset contenido en el indice indicado
-     */
-    const MeshPart* getPart(int index) const;
-    
-    /**
-     * @brief Establece la parte de la malla indicada.
-     */
-    void setPart(int index, MeshPart *part);
-    
-private:
-    struct Private;
-    Private *impl;
-};
-
+    class EXENGAPI Mesh : public Geometry {
+    public:
+        explicit Mesh(int meshPartCount);
+        
+        virtual ~Mesh();
+        
+        /**
+         * @brief Computes and returns the corresponding bounding box of the mesh.
+         */
+        virtual exeng::math::Boxf getBox() const;
+        
+        /**
+         * @brief Checks if the specified ray intersects with the Mesh.
+         */
+        virtual bool hit( const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo);
+        
+        /**
+         * @brief Get the numbers of MeshParts on the Mesh.
+         */
+        int getPartCount() const;
+        
+        /**
+         * @brief Get the part at the corresponding index.
+         */
+        MeshPart* getPart(int index);
+        
+        /**
+         * @brief Get the part at the corresponding index.
+         */
+        const MeshPart* getPart(int index) const;
+        
+    private:
+        struct Private;
+        Private *impl;
+    };
 }}
 
 #endif  //__EXENG_SCENEGRAPH_MESH_HPP__

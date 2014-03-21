@@ -16,7 +16,7 @@ namespace exeng { namespace scenegraph {
         bool intersection = intersect(ray, this->solid, intersectInfo);
         
         if (intersection==true && intersectInfo!=nullptr) {
-            intersectInfo->materialPtr = this->material;
+            intersectInfo->material = this->material;
         }
         
         return intersection;

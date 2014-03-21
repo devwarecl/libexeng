@@ -24,15 +24,6 @@
 namespace exeng { namespace graphics {
 
 	/**
-	 *  @brief Simple vertex structure. 
-	 */
-	struct Vertex {
-		exeng::math::Vector3f coord;
-		exeng::math::Vector3f normal;
-		exeng::math::Vector2f texCoord;
-	};
-
-	/**
 	 * @brief Buffer that stores vertex data, directly in VideoRAM.
 	 */
 	class EXENGAPI VertexBuffer : public Resource {
@@ -87,7 +78,6 @@ namespace exeng { namespace graphics {
 		 */
 		virtual const VertexFormat& getFormat() const = 0;
 	};
-    
 }}
 
 #endif  //__EXENG_GRAPHICS_VERTEXBUFFER_HPP__

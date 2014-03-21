@@ -92,7 +92,6 @@ namespace raytracer { namespace tracers {
     
     
     void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
-        // TODO: Implement
         const Scene *scene = this->impl->scene;
         Texture *renderTarget = this->impl->renderTarget;
     }

@@ -37,21 +37,21 @@ namespace exeng { namespace graphics {
             // Group markers. Used for check if a given primitive 
             // is a point, line or triangle. They are not valid
             // enumeration entries.
-            Point           = 0x00001000,
-            Line            = 0x00002000,
-            Triangle        = 0x00004000
+            __Point         = 0x00001000,
+            __Line          = 0x00002000,
+            __Triangle      = 0x00004000
         };
         
         inline static bool isTriangle(Enum e) {
-            return e & Triangle?true:false;
+            return e & __Triangle?true:false;
         }
         
         inline static bool isLine(Enum e) {
-            return e & Line?true:false;
+            return e & __Line?true:false;
         }
         
         inline static bool isPoint(Enum e) {
-            return e & Point?true:false;
+            return e & __Point?true:false;
         }
     };
 }}

@@ -96,7 +96,7 @@ namespace raytracer { namespace tracers {
                 if (currentInfo.distance < info.distance) {
                     info = currentInfo;
                     
-                    assert(info.materialPtr != nullptr);
+                    assert(info.material != nullptr);
                     assert(info.normal != Vector3f(0.0f));
                 }
             }
@@ -120,7 +120,7 @@ namespace raytracer { namespace tracers {
             
             if (info.intersect == true)  {
                 // Determinar el color
-                auto vcolor = info.materialPtr->getProperty4f("diffuse");
+                auto vcolor = info.material->getProperty4f("diffuse");
                 color += Color(vcolor);
             } else {
                 color += this->scene->getBackColor();
@@ -142,7 +142,7 @@ namespace raytracer { namespace tracers {
         
         if (info.intersect == true)  {
             // Determinar el color
-            auto vcolor = info.materialPtr->getProperty4f("diffuse");
+            auto vcolor = info.material->getProperty4f("diffuse");
             color = Color(vcolor);
             
             if (color.red < 0.0f)   {color.red = 0.0f;}

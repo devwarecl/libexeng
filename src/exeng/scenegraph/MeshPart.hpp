@@ -1,5 +1,5 @@
 /**
- * @file 
+ * @file Definition of the MeshPart structure.
  * @brief 
  */
 
@@ -17,7 +17,6 @@
 #include <cstdint>
 #include <vector>
 
-#include <exeng/Object.hpp>
 #include <exeng/math/TVector.hpp>
 #include <exeng/math/TBoundary.hpp>
 #include <exeng/graphics/Material.hpp>
@@ -26,45 +25,17 @@
 #include <exeng/graphics/Primitive.hpp>
 
 namespace exeng { namespace scenegraph {
-
-/**
- * @brief Three-Dimensional Model.
- */
-class EXENGAPI MeshPart : public Object {
-public:            
-    MeshPart();
-    
-    virtual ~MeshPart();
-    
-    exeng::graphics::Primitive::Enum getPrimitiveType() const;
-    
-    void setPrimitiveType(exeng::graphics::Primitive::Enum primitiveType);
-    
-    const exeng::graphics::Material* getMaterial() const;
-    
-    void setMaterial(const exeng::graphics::Material* material);
-    
-    void setIndexBuffer( exeng::graphics::IndexBuffer *buffer);
-    
-    const exeng::graphics::IndexBuffer* getIndexBuffer() const;
-    
-    exeng::graphics::IndexBuffer* getIndexBuffer();
-    
-    void setVertexBuffer(exeng::graphics::VertexBuffer *buffer);
-    
-    const exeng::graphics::VertexBuffer* getVertexBuffer() const;
-    
-    exeng::graphics::VertexBuffer* getVertexBuffer();
-    
-    exeng::math::Boxf getBox() const;
-    
-    virtual TypeInfo getTypeInfo() const;
-    
-private:
-    struct Private;
-    Private *impl;
-};
+    /**
+     * @brief Component for the Mesh class.
+     */
+    struct EXENGAPI MeshPart {
+        const exeng::graphics::Material *material;
+        exeng::graphics::VertexBuffer *vertexBuffer;
+        exeng::graphics::IndexBuffer *indexBuffer;
+        exeng::graphics::Primitive::Enum primitiveType;
         
+        MeshPart();
+    };
 }}
 
 #endif
