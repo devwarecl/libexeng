@@ -14,6 +14,8 @@
 #include <exeng/graphics/Material.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
+#include <exeng/scenegraph/Light.hpp>
+#include <exeng/scenegraph/Camera.hpp>
 
 namespace exeng { namespace scenegraph {    
     /**
