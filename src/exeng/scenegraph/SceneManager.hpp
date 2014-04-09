@@ -15,78 +15,73 @@
 #define __EXENG_SCENEGRAPH_SCENEMANAGER_HPP__
 
 #include <exeng/Config.hpp>
+#include <exeng/Root.hpp>
+#include <exeng/graphics/Material.hpp>
 
-namespace exeng { namespace graphics {
-class EXENGAPI Material;
-}}
+#include <exeng/scenegraph/ISceneRenderer.hpp>
+#include <exeng/scenegraph/Scene.hpp>
+#include <exeng/scenegraph/Camera.hpp>
 
 namespace exeng { namespace scenegraph {
+    /**
+     * @brief Scene Manager. Handles the rendering of the scene.
+     */
+    class EXENGAPI SceneManager {
+        friend class exeng::Root;
+
+    private:
+        SceneManager(Root* root);
+    
+    public:
+        /**
+         * @brief Get the parent root object.
+         */
+        const Root* getRoot() const;
         
-class EXENGAPI Root;
-class EXENGAPI Scene;
-class EXENGAPI Camera;
-class EXENGAPI ISceneRenderer;
-
-/**
- * @brief Scene Manager. Handles the rendering of the scene.
- */
-class EXENGAPI SceneManager {
-public:
-    explicit SceneManager(Root *root);
-    
-    /**
-     * @brief Get the parent root object.
-     */
-    const Root* getRoot() const;
-    
-    /**
-     * @brief Get the parent root object.
-     */
-    Root* getRoot();
-    
-    /**
-     * @brief Set the current scene renderer.
-     */
-    void setSceneRenderer(ISceneRenderer *renderer);
-    
-    /**
-     * @brief Get the current scene renderer.
-     */
-    ISceneRenderer* getSceneRenderer();
-    
-    /**
-     * @brief Get the current used scene renderer.
-     */
-    const ISceneRenderer* getSceneRenderer() const;
-    
-    /**
-     * @brief Set the scene to render.
-     */
-    void setScene(Scene *scene);
-    
-    /**
-     * @brief Get the current scene.
-     */
-    Scene* getScene();
-    
-    /**
-     * @brief Get the current scene.
-     */
-    const Scene* getScene() const;
-    
-    /**
-     * @brief Renders the scene using the currently setted renderer.
-     */
-    void render(const Camera *camera);
-    
-    // exeng::graphics::Material* createMaterial();
-    // exeng::graphics::Material* createMaterial(const std::string &name);
-    
-private:
-    struct Private;
-    Private *impl;
-}; 
-
+        /**
+         * @brief Get the parent root object.
+         */
+        Root* getRoot();
+        
+        /**
+         * @brief Set the current scene renderer.
+         */
+        void setSceneRenderer(ISceneRenderer *renderer);
+        
+        /**
+         * @brief Get the currently scene renderer.
+         */
+        ISceneRenderer* getSceneRenderer();
+        
+        /**
+         * @brief Get the currently used scene renderer.
+         */
+        const ISceneRenderer* getSceneRenderer() const;
+        
+        /**
+         * @brief Set the scene to render.
+         */
+        void setScene(Scene *scene);
+        
+        /**
+         * @brief Get the current scene.
+         */
+        Scene* getScene();
+        
+        /**
+         * @brief Get the current scene.
+         */
+        const Scene* getScene() const;
+        
+        /**
+         * @brief Renders the scene using the currently setted renderer.
+         */
+        void render(const Camera *camera);
+        
+    private:
+        struct Private;
+        Private *impl;
+    }; 
 }}
 
 #endif // SCENEMANAGER_HPP

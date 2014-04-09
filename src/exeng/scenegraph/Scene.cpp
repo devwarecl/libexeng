@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file Scene.cpp
+ * @brief Scene class implementation.
  */
 
 
@@ -12,6 +12,7 @@
  */
 
 #include <list>
+#include <map>
 #include <exeng/math/TVector.hpp>
 #include <exeng/scenegraph/Scene.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
@@ -31,6 +32,9 @@ namespace exeng { namespace scenegraph {
         SceneNodes cameraNodes;
         SceneNodes lightNodes;
         
+        std::map<std::string, Material*> materials;
+        std::list<Geometry*> geometries;
+        
         Private() {
             this->rootNode = new SceneNode("rootNode");
         }
@@ -44,9 +48,19 @@ namespace exeng { namespace scenegraph {
     Scene::Scene() : impl(nullptr) {
         this->impl = new Scene::Private();
     }
-
-
+    
+    
     Scene::~Scene() {
+        if (this->impl != nullptr) {
+            for (auto materialIterator : this->impl->materials) {
+                delete materialIterator.second;
+            }
+            
+            for (auto *geometry : this->impl->geometries) {
+                delete geometry;
+            }
+        }
+        
         delete this->impl;
     }
     
@@ -55,6 +69,7 @@ namespace exeng { namespace scenegraph {
         return this->impl->rootNode;
     }
 
+    
     const SceneNode* Scene::getRootNode() const {
         return this->impl->rootNode;
     }
@@ -130,5 +145,24 @@ namespace exeng { namespace scenegraph {
         assert(this->impl != nullptr);
         
         return this->impl->backColor;
+    }
+    
+    
+    Material* Scene::addMaterial(const std::string &name) {
+        assert(this->impl != nullptr);
+        
+        Material *material = new Material(name);
+        
+        this->impl->materials.insert({name, material});
+        
+        return material;
+    }
+    
+    Geometry* Scene::addGeometry(Geometry* geometry) {
+        assert(this->impl != nullptr);
+        
+        this->impl->geometries.push_back(geometry);
+        
+        return geometry;
     }
 }}

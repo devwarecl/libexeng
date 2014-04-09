@@ -12,33 +12,36 @@
  
 
 namespace exeng { namespace io {
-    
-    template<typename Type> void Stream::write(const Type &value) {
-        this->write(&value, 1);
+    template<typename Type> 
+    void write(Stream *stream, const Type &value) {
+        stream->write(&value, 1);
     }
     
     
-    template<typename Type> void Stream::write(const Type *values, int count) {
+    template<typename Type> 
+    void write(Stream *stream, const Type *values, int count) {
         const int total = sizeof(Type) * count;
         int current = 0;
 
         while (current < total) {
-            total -= this->write(values, total - current, current);
+            total -= stream->write(values, total - current, current);
         }
     }
     
     
-    template<typename Type> void Stream::read(Type &value) const {
-        this->read(&value, 1);
+    template<typename Type> 
+    void read(const Stream *stream, Type &value) {
+        stream->read(&value, 1);
     }
     
     
-    template<typename Type> void Stream::read(Type *values, int count) const {
+    template<typename Type> 
+    void read(const Stream *stream, Type *values, int count) {
         const int total = sizeof(Type) * count;
         int current = 0;
 
         while (current < total) {
-            total -= this->read(values, total - current, current);
+            total -= stream->read(values, total - current, current);
         }
     }
 }}

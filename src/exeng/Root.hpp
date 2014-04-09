@@ -43,19 +43,19 @@ namespace exeng {
         Root();
         ~Root();
         
+        Version getVersion() const;
+        
         exeng::system::PluginManager* getPluginManager();
         const exeng::system::PluginManager* getPluginManager() const;
         
         exeng::scenegraph::MeshManager* getMeshManager();
         const exeng::scenegraph::MeshManager* getMeshManager() const;
         
-        exeng::scenegraph::SceneManager* getSceneManager();
-        const exeng::scenegraph::SceneManager* getSceneManager() const;
-        
         exeng::graphics::GraphicsManager* getGraphicsManager();
         const exeng::graphics::GraphicsManager* getGraphicsManager() const;
         
-        Version getVersion() const;
+        exeng::scenegraph::SceneManager* getSceneManager();
+        const exeng::scenegraph::SceneManager* getSceneManager() const;
         
     private:
         struct Private;

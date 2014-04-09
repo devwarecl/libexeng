@@ -30,9 +30,6 @@ namespace raytracer {
     RayTracerApp::RayTracerApp() {
         this->applicationStatus = ApplicationStatus::Running;
         this->lastTime = Timer::getTime();
-        this->fpsCurrent = 0;
-        this->fpsLastTime = 0.0f;
-        this->fpsCurrentTime = 0.0f;
         
         for (int i=0; i<ButtonCode::Count; ++i) {
             this->buttonStatus[i] = ButtonStatus::Release;
@@ -58,11 +55,11 @@ namespace raytracer {
 #else 
         path = "../exeng.graphics.gl3/";
 #endif
-        this->root.reset(new exeng::Root());
-        this->root->getPluginManager()->load("exeng.graphics.gl3", path);
+        
+        this->getRoot()->getPluginManager()->load("exeng.graphics.gl3", path);
         
         // initialize the gl3 driver, in windowed mode
-        this->driver.reset(this->root->getGraphicsManager()->createDriver());
+        this->driver.reset(this->getRoot()->getGraphicsManager()->createDriver());
         this->driver->addEventHandler(this);
         
         this->driver->initialize();
@@ -146,17 +143,9 @@ namespace raytracer {
     
     void RayTracerApp::update(double seconds) {
         // Actualizar los cuadros por segundo
-        if (this->fpsCurrentTime >= 1.0) {
-            uint32_t fps = this->fpsCurrent;
-            this->fpsCurrent = 0;
-            this->fpsCurrentTime = 0.0;
-    
-            std::cout << "FPS: " << fps << std::endl;
-        } else {
-            this->fpsCurrent += 1;
-            this->fpsCurrentTime += seconds;
-        }
-    
+        this->frameCounter.update(seconds);
+        std::cout << this->frameCounter.getCurrentFps() << std::endl;
+        
         // actualiza la camara en funcion de la entrada por teclado
         if (this->buttonStatus[ButtonCode::KeyEsc]) {
             this->applicationStatus = ApplicationStatus::Terminated;
@@ -217,20 +206,7 @@ namespace raytracer {
     
     
     void RayTracerApp::loadScene() {
-        // Crear una escena de juguete, con una esfera al centro de la escena.
-        // TODO: Cargar esta escena desde un archivo XML, o similar
-        auto rootNode = this->scene->getRootNode();
-    
-        // Mostrar una caja en pantalla
-        this->boxMaterial.reset( new exeng::graphics::Material() );
-        this->boxMaterial->setProperty("diffuse", Vector4f(1.0f, 0.3f, 0.2f, 1.0f));
-    
-        Geometry* boxGeometry = new TSolidGeometry<Boxf>(
-            Boxf(-Vector3f(10.0f), Vector3f(10.0f)),
-            this->boxMaterial.get()
-        );
-        
-        rootNode->addChild("boxGeometry")->setData(boxGeometry);
+        this->scene.reset( this->sceneLoader.loadScene("scene.xml") );
     }
     
     

@@ -338,6 +338,10 @@ namespace exeng { namespace graphics { namespace gl3 {
         ::glBindBuffer( GL_ARRAY_BUFFER, this->vertexBuffer->getName() );
         
         for (const VertexField& field : format.fields) {
+            if (field.attribute == VertexAttrib::Unused) {
+                break;
+            }
+            
             dataTypeKey = static_cast<DataType::Enum>(field.dataType.getValue());
             GLenum dataType = convDataType(dataTypeKey);
             
@@ -650,5 +654,4 @@ namespace exeng { namespace graphics { namespace gl3 {
             handler->handleEvent(data);
         }
     }
-
 }}}

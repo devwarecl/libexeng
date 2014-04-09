@@ -1,4 +1,3 @@
-
 /**
  * @file ISceneRenderer.hpp
  * @brief Definition of the ISceneRenderer interface.

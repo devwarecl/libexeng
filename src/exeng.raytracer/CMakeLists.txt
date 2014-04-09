@@ -20,6 +20,8 @@ link_directories(${Boost_LIBRARY_DIRS})
 set (BaseFiles
 	RayTracerApp.hpp                RayTracerApp.cpp 
     RayTracerSceneRenderer.hpp      RayTracerSceneRenderer.cpp 
+    FpsCounter.hpp                  FpsCounter.cpp 
+    SceneLoader.hpp                 SceneLoader.cpp 
 )
 
 set ( Tracers

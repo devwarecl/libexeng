@@ -37,6 +37,14 @@ namespace exeng { namespace framework {
         virtual void update(double frameTime);
         
         virtual void render();
+        
+    protected:
+        /* App wide root object */
+        Root* getRoot();
+        const Root* getRoot() const;
+        
+    private:
+        Root *root;
     };
 }}
 

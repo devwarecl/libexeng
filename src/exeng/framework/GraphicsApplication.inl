@@ -3,9 +3,12 @@
 
 namespace exeng { namespace framework {
     
-    inline GraphicsApplication::GraphicsApplication() {}
+    inline GraphicsApplication::GraphicsApplication() : root(new Root()) {
+    }
         
-    inline GraphicsApplication::~GraphicsApplication() {}
+    inline GraphicsApplication::~GraphicsApplication() {
+        delete this->root;
+    }
     
     inline int GraphicsApplication::run(int argc, char **argv) {
         struct ApplicationGuard {
@@ -36,22 +39,24 @@ namespace exeng { namespace framework {
     }
     
     inline void GraphicsApplication::initialize(int argc, char **argv) {}
-     
     inline void GraphicsApplication::terminate() {}
-        
     inline void GraphicsApplication::pollEvents() {}
-        
     inline void GraphicsApplication::update(double frameTime) {}
-
     inline void GraphicsApplication::render() {}
-    
     
     inline ApplicationStatus::Enum GraphicsApplication::getStatus() const {
         return ApplicationStatus::Terminated;
     }
     
-    
     inline int GraphicsApplication::getExitCode() const {
         return 0;
+    }
+    
+    inline Root* GraphicsApplication::getRoot() {
+        return this->root;
+    }
+
+    inline const Root* GraphicsApplication::getRoot() const {
+        return this->root;
     }
 }}

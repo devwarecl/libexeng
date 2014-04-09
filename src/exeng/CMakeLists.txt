@@ -19,6 +19,7 @@ set (BaseFiles
   HeapBuffer.hpp          HeapBuffer.cpp 
   Resource.hpp            Resource.cpp 
   ResourceManager.hpp     ResourceManager.cpp 
+  ISerializable.hpp       ISerializable.cpp 
   Timer.hpp               Timer_Win.cpp Timer_Unix.cpp 
 )
 

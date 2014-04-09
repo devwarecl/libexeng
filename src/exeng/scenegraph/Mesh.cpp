@@ -33,6 +33,27 @@ typedef MeshPartVector::iterator MeshPartVectorIt;
 namespace exeng { namespace scenegraph {
     
     /**
+     * @brief 
+     */
+    class VertexArrayAdapter {
+    public:
+        VertexArrayAdapter(VertexBuffer *vertexBuffer_) : vertexBuffer(vertexBuffer_) {
+            this->vertexBuffer->lock();
+        }
+        
+        ~VertexArrayAdapter() {
+            this->vertexBuffer->unlock();
+        }
+        
+        template<typename FieldType>
+        FieldType& getField();
+        
+    private:
+        VertexBuffer *vertexBuffer;
+        void *data;
+    };
+    
+    /**
      * @brief Computes the normal vector, in clockwise order, to the
      * triangle conformed by the points P1, P2, P3.
      */

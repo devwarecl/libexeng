@@ -11,19 +11,11 @@
 #include <exeng/Object.hpp>
 #include <exeng/math/TVector.hpp>
 #include <exeng/graphics/Color.hpp>
+#include <exeng/graphics/Material.hpp>
+#include <exeng/scenegraph/Geometry.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 
-namespace exeng { namespace graphics {
-    class EXENGAPI Material;
-}}
-
-namespace exeng { namespace scenegraph {
-    
-    class EXENGAPI Light;
-    class EXENGAPI Camera;
-    class EXENGAPI SceneNode;
-    class EXENGAPI Geometry;
-    
+namespace exeng { namespace scenegraph {    
     /**
      *  @brief Clase de grafos de escena
      */
@@ -70,17 +62,26 @@ namespace exeng { namespace scenegraph {
         
         /**
          * @brief Sets the scene background color.
-         * @param color Un color como vector de cuatro componentes en punto flotante, 
-         * representado como RGBA
          */
         void setBackColor(const exeng::graphics::Color &color);
         
         /**
-         * @brief Devuelve el color de fondo de la escena
-         * @return Color RGBA, punto flotante, encapsulado en un objeto exeng::graphics::Color
+         * @brief Gets the scene background color.
          */
         exeng::graphics::Color getBackColor() const;
-
+        
+        /**
+         * @brief Add a new material to the scene.
+         */
+        exeng::graphics::Material* addMaterial(const std::string &name);
+        
+        /**
+         * @brief Add a new Geometry to the scene. 
+         * 
+         * The Scene object takes ownership of the recently added object.
+         */
+        exeng::scenegraph::Geometry* addGeometry(exeng::scenegraph::Geometry* geometry);
+        
     private:
         struct Private;
         Private* impl;

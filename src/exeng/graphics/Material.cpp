@@ -15,6 +15,7 @@
 
 #include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/Texture.hpp>
+#include <exeng/io/Stream.hpp>
 
 using namespace exeng;
 using namespace exeng::math;
@@ -23,13 +24,12 @@ namespace exeng { namespace graphics {
 
 	struct MaterialLayer::Private {
 		Texture* texture;
-    
 		Private() : texture(nullptr) {}
 	};
-
-
-	MaterialLayer::MaterialLayer() : impl( new MaterialLayer::Private() ) {
-	}
+    
+	MaterialLayer::MaterialLayer() : impl(nullptr) {
+        this->impl = new MaterialLayer::Private();
+    }
 
     
 	MaterialLayer::~MaterialLayer() {
@@ -47,8 +47,8 @@ namespace exeng { namespace graphics {
 		assert(this->impl != nullptr);
 		return this->impl->texture;
 	}
-
-
+    
+    
 	void MaterialLayer::setTexture(Texture* texture) {
 		assert(this->impl != nullptr);
 		this->impl->texture = texture;
@@ -59,13 +59,11 @@ namespace exeng { namespace graphics {
 		assert(this->impl != nullptr);
 		return this->impl->texture != nullptr;
 	}
+}}
 
-	}
-	}
 
-	// Material implementation
-	namespace exeng {
-	namespace graphics {
+// Material implementation
+namespace exeng { namespace graphics {
 	using namespace exeng::math;
 
 	static const int LayerCount = 4;
@@ -141,7 +139,7 @@ namespace exeng { namespace graphics {
 			PropertyMap::const_iterator it = this->properties.end();
         
 			int i=0;
-        
+            
 			for(it=this->properties.begin(); it!=this->properties.end(); ++it ) {
 				if (index == i) {
 					break;
@@ -159,7 +157,13 @@ namespace exeng { namespace graphics {
 		this->impl = new Material::Private();
 	}
 
-
+	
+	Material::Material(const std::string &name) : impl(nullptr) {
+        this->impl = new Material::Private();
+        this->setName(name);
+    }
+	
+    
 	Material::~Material() {
 		boost::checked_delete(this->impl);
 	}
@@ -241,8 +245,8 @@ namespace exeng { namespace graphics {
 
 		return &this->impl->layers[index];
 	}
-
-
+	
+	
 	const MaterialLayer* Material::getLayer(int index) const {
 		assert(this->impl != nullptr);
 
@@ -348,4 +352,23 @@ namespace exeng { namespace graphics {
 			throw std::runtime_error(msg);
 		}
 	}
+	
+	
+	bool Material::isSerializable() const {
+        return true;
+    }
+    
+    
+    void Material::serialize(exeng::io::Stream *out) const {
+        // chunk based serialization
+    }
+    
+    
+    bool Material::isDeserializable() const {
+        return true;
+    }
+    
+    void Material::deserialize(const exeng::io::Stream *inStream) {
+        
+    }
 }}
