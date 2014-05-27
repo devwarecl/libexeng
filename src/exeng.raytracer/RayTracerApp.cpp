@@ -1,7 +1,7 @@
 
 #include <exeng.raytracer/RayTracerApp.hpp>
 #include <exeng.raytracer/samplers/JitteredSampler.hpp>
-#include <exeng.raytracer/tracers/SoftwareTracer.hpp>
+#include <exeng.raytracer/tracers/HardwareTracer.hpp>
 #include <exeng.main/Main.hpp>
 
 #include <algorithm>
@@ -101,9 +101,9 @@ namespace raytracer {
         
         Texel *textureData = reinterpret_cast<Texel*>(texture->lock());
         for (int i=0; i<mode.size.width * mode.size.height; ++i) {
-            textureData[i].red      = 255;
-            textureData[i].green    = 255;
-            textureData[i].blue     = 255;
+            textureData[i].red      = 0;
+            textureData[i].green    = 0;
+            textureData[i].blue     = 0;
             textureData[i].alpha    = 255;
         }
         texture->unlock();
@@ -127,7 +127,7 @@ namespace raytracer {
         this->camera->setUp(Vector3f(0.0f, 1.0f, 0.0f));
         
         // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), this->sampler.get()));
-        this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), nullptr));
+        this->tracer.reset(new raytracer::tracers::HardwareTracer(this->texture.get(), this->scene.get()));
     }
     
     
@@ -186,16 +186,13 @@ namespace raytracer {
         return 0;
     }
     
-    
     void RayTracerApp::terminate() {
         this->driver->terminate();
     }
     
-    
     void RayTracerApp::clear() {
         this->driver->beginFrame(Color(0.0f, 0.0f, 0.0f, 1.0f));
     }
-    
     
     void RayTracerApp::present() {
         this->driver->setMaterial(this->material.get());
@@ -204,12 +201,10 @@ namespace raytracer {
         this->driver->endFrame();
     }
     
-    
     void RayTracerApp::loadScene() {
         this->scene.reset( this->sceneLoader.loadScene("scene.xml") );
     }
-    
-    
+        
     void RayTracerApp::handleEvent(const EventData &data) {
         if (data.eventType == TypeId<InputEventData>()) {
             const InputEventData &inputEventData = data.cast<InputEventData>();
@@ -220,9 +215,12 @@ namespace raytracer {
     }
 }
 
-
 namespace exeng { namespace main {
 	int main(int argc, char **argv) {
-        return exeng::framework::Application::execute<raytracer::RayTracerApp>(argc, argv);
+        try {
+            return exeng::framework::Application::execute<raytracer::RayTracerApp>(argc, argv);
+        } catch (std::exception &exp) {
+            std::cout << exp.what() << std::endl;
+        }
 	}
 }}

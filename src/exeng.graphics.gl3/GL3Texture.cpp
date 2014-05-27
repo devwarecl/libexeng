@@ -162,4 +162,8 @@ namespace exeng { namespace graphics { namespace gl3 {
 	void GL3Texture::release() {
 		std::cout << "GL3Texture::release: TODO: Not implemented." << std::endl;
 	}
+	
+	std::uint64_t GL3Texture::getHandle() const {
+        return static_cast<std::uint64_t>(this->textureId);
+    }
 }}}

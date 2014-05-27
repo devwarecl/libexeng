@@ -73,6 +73,14 @@ namespace exeng { namespace graphics {
          * @brief Get the size, in texels, of the texture.
          */
         virtual exeng::math::Vector3i getSize() const = 0;
+        
+        /**
+         * @brief Get the native handle of the underlying graphics API.
+         * 
+         * For graphics devices implemented for the exeng library, it just return 
+         * the 'this' pointer, casted to std::uint64_t.
+         */
+        virtual std::uint64_t getHandle() const = 0;
     };
 }}
 

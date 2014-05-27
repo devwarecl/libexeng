@@ -21,7 +21,7 @@ endif()
 
 add_subdirectory(src)
 
- if (WIN32)
+if (WIN32)
     set_property(TARGET exeng.raytracer PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
     set_property(TARGET exeng.tests PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
     set_property(TARGET exeng PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)

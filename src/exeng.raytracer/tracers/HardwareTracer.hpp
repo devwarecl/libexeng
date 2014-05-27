@@ -9,10 +9,12 @@
 #include <exeng/Exeng.hpp>
 #include <memory>
 
+#include "Tracer.hpp"
+
 namespace raytracer { namespace tracers {
-    class HardwareTracer {
+    class HardwareTracer : public Tracer {
     public:
-        HardwareTracer( exeng::graphics::Texture &renderTarget, const exeng::scenegraph::Scene &scene );
+        HardwareTracer( exeng::graphics::Texture *renderTarget, const exeng::scenegraph::Scene *scene );
         virtual void render(const exeng::scenegraph::Camera *camera);
         ~HardwareTracer();
         

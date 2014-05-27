@@ -3,96 +3,141 @@
  * @brief Interfaz del objeto trazador de rayos
  */
 
-
 #include "HardwareTracer.hpp"
-#include <CL/cl.h>
+
+#include <CL/cl.hpp>
+#include <GLFW/glfw3.h>
+#include <GL/glx.h>
 
 using namespace exeng;
 using namespace exeng::graphics;
 using namespace exeng::scenegraph;
 
 namespace raytracer { namespace tracers {
-
+    
     struct HardwareTracer::Private {
         Texture *renderTarget;
         const Scene *scene;
-        cl_platform_id platformId;    
-        cl_device_id deviceId;
-        cl_context context;
-        cl_command_queue queue;
         
-        Private() {
-            this->renderTarget = nullptr;
-            this->scene = nullptr;
-            this->platformId = 0;
-            this->deviceId = 0;
-            this->context = nullptr;
-            this->queue = nullptr;
-        }
+        cl::Platform platform;
+        cl::Device device;
+        cl::Context context;
+        cl::Program program;
+        cl::Image2DGL image2D;
+        cl::Kernel kernel;
+        cl::CommandQueue queue;
         
-        ~Private() {
-            this->renderTarget = nullptr;
-            this->scene = nullptr;
-            
-            if (this->queue != nullptr) {
-                ::clReleaseCommandQueue(this->queue);
-            }
-            
-            if (this->context != nullptr) {
-                ::clReleaseContext(this->context);
-            }
-        }
+        Private() : renderTarget(nullptr), scene(nullptr) {}
     };
-
-
-    HardwareTracer::HardwareTracer( Texture &renderTarget, const Scene &scene ) : impl(new HardwareTracer::Private()) {
-        cl_platform_id platformId = 0;
-        cl_uint platformIdCount = 1;
-        cl_int errorCode = 0;
+    
+    HardwareTracer::HardwareTracer( Texture *renderTarget, const Scene *scene ) : Tracer(renderTarget, scene, sampler), impl(new HardwareTracer::Private())  {
+        std::vector<cl::Platform> platforms;
+        cl::Platform::get(&platforms);
         
-        // Obtener la primera plataforma
-        errorCode = ::clGetPlatformIDs(1, &platformId, &platformIdCount);
-        
-        if (errorCode != CL_SUCCESS) {
-            throw std::runtime_error("HardwareTracer::HardwareTracer: Error al obtener las plataformas disponibles.");
+        if (platforms.size() == 0) {
+            throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL platforms available");
         }
         
-        // Obtener el primer device
-        cl_device_id deviceId = 0;
-        errorCode = ::clGetDeviceIDs(platformId, CL_DEVICE_TYPE_GPU, 1, &deviceId, nullptr);
+        // Select the first platform
+        cl::Platform platform = platforms[0];
         
-        if (errorCode != CL_SUCCESS) {
-            throw std::runtime_error("HardwareTracer::HardwareTracer: Error al obtener un dispositivo.");
+        // Select the first GPU device of the first platform.
+        std::vector<cl::Device> devices;
+        platform.getDevices(CL_DEVICE_TYPE_GPU, &devices);
+        if (devices.size() == 0) {
+            throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL GPU devices available");
         }
         
-        // Crear un contexto
-        cl_context context = nullptr;
-        context = ::clCreateContext(nullptr, 1, &deviceId, nullptr, nullptr, &errorCode);
+        cl::Device device = devices[0];
         
-        if (errorCode != CL_SUCCESS) {
-            throw std::runtime_error("HardwareTracer::HardwareTracer: Error al crear un contexto");
+        // Set context properties for GL/CL interop.
+        cl_context_properties properties[] = {
+            // We need to add information about the OpenGL context with
+            // which we want to exchange information with the OpenCL context.
+#if defined (WIN32)
+            // We should first check for cl_khr_gl_sharing extension.
+            CL_GL_CONTEXT_KHR , (cl_context_properties) wglGetCurrentContext() ,
+            CL_WGL_HDC_KHR , (cl_context_properties) wglGetCurrentDC() ,
+#elif defined (__linux__)
+            // We should first check for cl_khr_gl_sharing extension.
+            CL_GL_CONTEXT_KHR , (cl_context_properties) glXGetCurrentContext() ,
+            CL_GLX_DISPLAY_KHR , (cl_context_properties) glXGetCurrentDisplay() ,
+#elif defined (__APPLE__)
+            CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE , (cl_context_properties) CGLGetShareGroup( CGLGetCurrentContext() ) ,
+#endif
+            CL_CONTEXT_PLATFORM , (cl_context_properties) platform(),
+            0 , 0 ,  
+        };
+        
+        cl::Context context({device}, properties);
+        
+        // Create a OpenCL 2D image  from the render target Texture
+        GLuint textureId = renderTarget->getHandle();
+        if (textureId <= 0) {
+            throw std::runtime_error("Invalid render target texture id (non positive)");
         }
         
-        // Crear una cola de comandos
-        cl_command_queue queue = nullptr;
-        queue = ::clCreateCommandQueue(context, deviceId, 0, nullptr);
+        cl::Image2DGL image2D(context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, renderTarget->getHandle());
         
-        this->impl->renderTarget = &renderTarget;
-        this->impl->scene = &scene;
-        this->impl->platformId = platformId;
-        this->impl->deviceId = deviceId;
+        // Create a Program object
+        std::string programSource = "";
+        programSource += "__kernel void tracerKernel(__write_only image2d_t bmp) { ";
+        programSource += "  int2 coords = (int2)(get_global_id(0), get_global_id(1)); ";
+        programSource += "  float4 color = (float4)(0.0f, 0.0f, 1.0f, 1.0f); ";
+        programSource += "  write_imagef(bmp, coords, color); ";
+        programSource += "}";
+        
+        cl::Program::Sources programSources;
+        programSources.push_back({programSource.c_str(), programSource.size()});
+        
+        // Compile 
+        cl::Program program(context, programSources);
+        program.build({device});
+        if (program.build({device}) != CL_SUCCESS) {
+            std::string msg("");
+            msg += "Error al compilar un programa OpenCL: ";
+            msg += program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
+            msg += "\n";
+            
+            throw std::runtime_error(msg);
+        }
+        
+        cl::Kernel kernel(program, "tracerKernel");
+        
+        // Command queue
+        cl::CommandQueue queue(context, device);
+        
+        // Save the final variables
+        this->impl->renderTarget = renderTarget;
+        this->impl->scene = scene;
+        this->impl->platform = platform;
+        this->impl->device = device;
         this->impl->context = context;
+        this->impl->program = program;
+        this->impl->kernel = kernel;
+        this->impl->image2D = image2D;
         this->impl->queue = queue;
     }
     
-    
-    HardwareTracer::~HardwareTracer() {
-        
-    }
-    
+    HardwareTracer::~HardwareTracer() {}
     
     void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
         const Scene *scene = this->impl->scene;
-        Texture *renderTarget = this->impl->renderTarget;
+        const Texture *texture = this->impl->renderTarget;
+        
+        int w = texture->getSize().data[0];
+        int h = texture->getSize().data[1];
+        
+        cl::Image2DGL &image2D = this->impl->image2D;
+        
+        cl::KernelFunctor tracerKernel( 
+            cl::Kernel(this->impl->program, "tracerKernel"),
+            this->impl->queue,
+            cl::NullRange,
+            cl::NDRange(w, h),
+            cl::NullRange
+        );
+        
+        tracerKernel(image2D);
     }
 }}

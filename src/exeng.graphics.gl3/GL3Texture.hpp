@@ -50,6 +50,8 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual TypeInfo getTypeInfo() const;
         
+        virtual std::uint64_t getHandle() const;
+        
     private:
         GLuint textureId;
         TextureType::Enum type;
