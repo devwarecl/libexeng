@@ -2,6 +2,7 @@
 #include <exeng.raytracer/RayTracerApp.hpp>
 #include <exeng.raytracer/samplers/JitteredSampler.hpp>
 #include <exeng.raytracer/tracers/HardwareTracer.hpp>
+#include <exeng.raytracer/tracers/SoftwareTracer.hpp>
 #include <exeng.main/Main.hpp>
 
 #include <algorithm>
@@ -123,7 +124,7 @@ namespace raytracer {
         this->camera->setPosition(Vector3f(0.0f, 2.0f, -75.0f));
         this->camera->setUp(Vector3f(0.0f, 1.0f, 0.0f));
         
-        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), this->sampler.get()));
+        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
         this->tracer.reset(new raytracer::tracers::HardwareTracer(this->scene.get()));
         this->tracer->setRenderTarget(this->texture.get());
     }

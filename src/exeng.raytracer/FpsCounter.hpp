@@ -12,14 +12,16 @@ namespace raytracer {
         
         void update(double seconds);
         
-        int getCurrentFps() const;
+        double getCurrentFps() const;
+        double getAverageFps() const;
         
         double getCurrentTime() const;
         
     private:
-        double currentSeconds;
-        int framesDrawn;
-        int currentFps;
+        double currentSeconds;  //! Total ellapsed time for the current frame.
+        double seconds;         //! Total ellapsed time.
+        double framesDrawn;     //! Total frames drawn.
+        double framesPerSecond; //! Current frames per second total.
     };
 }
 
