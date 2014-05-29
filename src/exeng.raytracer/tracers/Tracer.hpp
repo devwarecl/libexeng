@@ -15,19 +15,26 @@
 namespace raytracer { namespace tracers {
     class Tracer {
     public:
-        Tracer(exeng::graphics::Texture *renderTarget, const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
+        Tracer(const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
         
         virtual ~Tracer();
+        
+        virtual void setRenderTarget(exeng::graphics::Texture *renderTarget);
+        virtual exeng::graphics::Texture* getRenderTarget();
+        virtual const exeng::graphics::Texture* getRenderTarget() const;
+        
+        virtual const exeng::scenegraph::Scene* getScene();
+        virtual const raytracer::samplers::Sampler* getSampler();
+        
+        virtual const exeng::scenegraph::Scene* getScene() const;
+        virtual const raytracer::samplers::Sampler* getSampler() const;
+        
         virtual void render(const exeng::scenegraph::Camera *camera) = 0;
         
-        const exeng::scenegraph::Scene *getScene() const;
-        const exeng::scenegraph::Camera *getcamera;
-        const raytracer::samplers::Sampler *sampler;
-        
-    protected:
+    private:
         exeng::graphics::Texture *renderTarget;
         const exeng::scenegraph::Scene *scene;
-        const exeng::scenegraph::Camera *camera;
+        const raytracer::samplers::Sampler* sampler;
     };
 }}
 

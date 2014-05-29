@@ -14,9 +14,11 @@
 namespace raytracer { namespace tracers {
     class HardwareTracer : public Tracer {
     public:
-        HardwareTracer( exeng::graphics::Texture *renderTarget, const exeng::scenegraph::Scene *scene );
+        HardwareTracer(const exeng::scenegraph::Scene *scene );
         virtual void render(const exeng::scenegraph::Camera *camera);
         ~HardwareTracer();
+        
+        virtual void setRenderTarget(exeng::graphics::Texture *renderTarget);
         
     private:
         struct Private;

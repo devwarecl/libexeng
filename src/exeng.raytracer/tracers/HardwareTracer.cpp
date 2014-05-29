@@ -16,9 +16,6 @@ using namespace exeng::scenegraph;
 namespace raytracer { namespace tracers {
     
     struct HardwareTracer::Private {
-        Texture *renderTarget;
-        const Scene *scene;
-        
         cl::Platform platform;
         cl::Device device;
         cl::Context context;
@@ -26,11 +23,9 @@ namespace raytracer { namespace tracers {
         cl::Image2DGL image2D;
         cl::Kernel kernel;
         cl::CommandQueue queue;
-        
-        Private() : renderTarget(nullptr), scene(nullptr) {}
     };
     
-    HardwareTracer::HardwareTracer( Texture *renderTarget, const Scene *scene ) : Tracer(renderTarget, scene, sampler), impl(new HardwareTracer::Private())  {
+    HardwareTracer::HardwareTracer(const Scene *scene ) : Tracer(scene, nullptr), impl(new HardwareTracer::Private())  {
         std::vector<cl::Platform> platforms;
         cl::Platform::get(&platforms);
         
@@ -71,14 +66,6 @@ namespace raytracer { namespace tracers {
         
         cl::Context context({device}, properties);
         
-        // Create a OpenCL 2D image  from the render target Texture
-        GLuint textureId = renderTarget->getHandle();
-        if (textureId <= 0) {
-            throw std::runtime_error("Invalid render target texture id (non positive)");
-        }
-        
-        cl::Image2DGL image2D(context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, renderTarget->getHandle());
-        
         // Create a Program object
         std::string programSource = "";
         programSource += "__kernel void tracerKernel(__write_only image2d_t bmp) { ";
@@ -108,25 +95,31 @@ namespace raytracer { namespace tracers {
         cl::CommandQueue queue(context, device);
         
         // Save the final variables
-        this->impl->renderTarget = renderTarget;
-        this->impl->scene = scene;
         this->impl->platform = platform;
         this->impl->device = device;
         this->impl->context = context;
         this->impl->program = program;
         this->impl->kernel = kernel;
-        this->impl->image2D = image2D;
         this->impl->queue = queue;
+    }
+    
+    void HardwareTracer::setRenderTarget(exeng::graphics::Texture *renderTarget) {
+        // Create a OpenCL 2D image  from the render target Texture
+        GLuint textureId = renderTarget->getHandle();
+        if (textureId <= 0) {
+            throw std::runtime_error("Invalid render target texture id (non positive)");
+        }
+        
+        cl::Image2DGL image2D(this->impl->context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureId);
+        this->impl->image2D = image2D;
+        
+        Tracer::setRenderTarget(renderTarget);
     }
     
     HardwareTracer::~HardwareTracer() {}
     
     void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
-        const Scene *scene = this->impl->scene;
-        const Texture *texture = this->impl->renderTarget;
-        
-        int w = texture->getSize().data[0];
-        int h = texture->getSize().data[1];
+        auto size = this->getRenderTarget()->getSize();
         
         cl::Image2DGL &image2D = this->impl->image2D;
         
@@ -134,7 +127,7 @@ namespace raytracer { namespace tracers {
             cl::Kernel(this->impl->program, "tracerKernel"),
             this->impl->queue,
             cl::NullRange,
-            cl::NDRange(w, h),
+            cl::NDRange(size.x, size.y),
             cl::NullRange
         );
         

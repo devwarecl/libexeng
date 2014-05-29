@@ -14,7 +14,7 @@
 namespace raytracer { namespace tracers {
     class SoftwareTracer : public Tracer {
     public:
-        SoftwareTracer(exeng::graphics::Texture *renderTarget, const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
+        SoftwareTracer(const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
         virtual ~SoftwareTracer();
         virtual void render(const exeng::scenegraph::Camera *camera);
         

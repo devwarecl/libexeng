@@ -17,7 +17,6 @@
 #include <exeng/scenegraph/TSolidGeometry.hpp>
 
 namespace raytracer {
-    
     using namespace exeng;
     using namespace exeng::math;
     using namespace exeng::scenegraph;
@@ -36,11 +35,9 @@ namespace raytracer {
         }
     }
     
-    
     RayTracerApp::~RayTracerApp() {
         this->terminate();
     }
-    
     
     void RayTracerApp::initialize(int argc, char **argv) {
         // Initialize the exeng root class and plugins.
@@ -127,19 +124,17 @@ namespace raytracer {
         this->camera->setUp(Vector3f(0.0f, 1.0f, 0.0f));
         
         // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->texture.get(), this->scene.get(), this->sampler.get()));
-        this->tracer.reset(new raytracer::tracers::HardwareTracer(this->texture.get(), this->scene.get()));
+        this->tracer.reset(new raytracer::tracers::HardwareTracer(this->scene.get()));
+        this->tracer->setRenderTarget(this->texture.get());
     }
-    
     
     void RayTracerApp::pollEvents() {
         this->driver->pollEvents();
     }
     
-    
     ApplicationStatus::Enum RayTracerApp::getStatus() const {
         return this->applicationStatus;
     }
-    
     
     void RayTracerApp::update(double seconds) {
         // Actualizar los cuadros por segundo
@@ -204,7 +199,7 @@ namespace raytracer {
     void RayTracerApp::loadScene() {
         this->scene.reset( this->sceneLoader.loadScene("scene.xml") );
     }
-        
+    
     void RayTracerApp::handleEvent(const EventData &data) {
         if (data.eventType == TypeId<InputEventData>()) {
             const InputEventData &inputEventData = data.cast<InputEventData>();

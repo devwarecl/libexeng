@@ -12,41 +12,41 @@ namespace raytracer { namespace tracers {
     using namespace raytracer::samplers;
     
     inline uint32_t SoftwareTracer::getOffset(const Vector2i &point) const {
+        auto size = this->getRenderTarget()->getSize();
+        
 #ifdef EXENG_DEBUG
         if (point.x < 0 || point.y < 0) {
             throw std::invalid_argument("");
         }
         
-        if (point.x >= this->renderTarget->getSize().x) {
+        if (point.x >= size.x) {
             throw std::invalid_argument("");
         }
         
-        if (point.y >= this->renderTarget->getSize().y) {
+        if (point.y >= size.y) {
             throw std::invalid_argument("");
         }
 #endif  
-        int offset = point.y * this->renderTarget->getSize().x + point.x;
+        int offset = point.y * size.x + point.x;
         return static_cast<uint32_t>(offset);
     }
-    
     
     inline void SoftwareTracer::putPixel(std::uint32_t *backbuffer, const Vector2i &point, const std::uint32_t color) {
         backbuffer += this->getOffset(point);
         *backbuffer = color;
     }
     
-    
     inline std::uint32_t SoftwareTracer::getPixel(std::uint32_t *backbuffer, const Vector2i &point) const {
         backbuffer += this->getOffset(point);
         return *backbuffer;
     }
     
-    
     inline Ray SoftwareTracer::castRay(const Vector2f &pixel, const Camera *camera) const {
         // trazar el rayo usando una proyeccion ortografica
+        const auto size = this->getRenderTarget()->getSize();
         const float pixelSize = 1.0f;
-        const float halfWidth = (this->renderTarget->getSize().x - 1) * 0.5f;
-        const float halfHeight = (this->renderTarget->getSize().y - 1) * 0.5f;
+        const float halfWidth = (size.x - 1) * 0.5f;
+        const float halfHeight = (size.y - 1) * 0.5f;
         const float d = -150.0f;    // arbitrario
         
         // Trazar un rayo
@@ -57,16 +57,15 @@ namespace raytracer { namespace tracers {
         Ray ray;
         ray.setPoint(camera->getPosition());
         ray.setDirection(Vector3f(x, y, z));
-    
+        
         return ray;
     }
     
-    
     inline Ray SoftwareTracer::castRay(const Vector2f &pixel, const Camera *camera, const Vector2f &sample) const {
-        
+        const auto size = this->getRenderTarget()->getSize();
         const float pixelSize = 1.0f;
-        const float halfWidth = (this->renderTarget->getSize().x - 1) * 0.5f;
-        const float halfHeight = (this->renderTarget->getSize().y - 1) * 0.5f;
+        const float halfWidth = (size.x - 1) * 0.5f;
+        const float halfHeight = (size.y - 1) * 0.5f;
         const float d = -150.0f;    // arbitrario
         
         // Trazar un rayo
@@ -80,7 +79,6 @@ namespace raytracer { namespace tracers {
     
         return ray;
     }
-    
     
     inline IntersectInfo SoftwareTracer::intersectRay(const std::list<const SceneNode*> &nodes, const Ray &ray) const {
         IntersectInfo currentInfo, info;
@@ -105,14 +103,13 @@ namespace raytracer { namespace tracers {
         return info;
     }
     
-    
     inline Color SoftwareTracer::traceRayMultisampled(const std::list<const SceneNode*> &nodeList, const Vector2i &pixel, const Camera* camera) const {
         Color color(0.0f, 0.0f, 0.0f, 1.0f);
         Vector2f pixelSample = static_cast<Vector2f>(pixel);
         
-        for (int i=0; i<this->sampler->getSampleCount(); ++i) {
+        for (int i=0; i<this->getSampler()->getSampleCount(); ++i) {
             // Trazar un rayo
-            Vector2f sample = this->sampler->sampleUnitSquare();
+            Vector2f sample = this->getSampler()->sampleUnitSquare();
             Ray ray = this->castRay(pixelSample, camera, sample);
             
             // Intersectarlo con los objetos de la escena
@@ -123,11 +120,11 @@ namespace raytracer { namespace tracers {
                 auto vcolor = info.material->getProperty4f("diffuse");
                 color += Color(vcolor);
             } else {
-                color += this->scene->getBackColor();
+                color += this->getScene()->getBackColor();
             }
         }
         
-        float sampleCountf = static_cast<float>(this->sampler->getSampleCount());
+        float sampleCountf = static_cast<float>(this->getSampler()->getSampleCount());
         return color / sampleCountf;
     }
     
@@ -151,7 +148,7 @@ namespace raytracer { namespace tracers {
             if (color.alpha < 0.0f) {color.alpha = 0.0f;}
             
         } else {
-            color = this->scene->getBackColor();
+            color = this->getScene()->getBackColor();
         }
     
         return color;
@@ -172,23 +169,21 @@ namespace raytracer { namespace tracers {
     }
     
     
-    SoftwareTracer::SoftwareTracer(Texture *renderTarget, const Scene *scene, const Sampler *sampler) : Tracer(renderTarget, scene, sampler) {
+    SoftwareTracer::SoftwareTracer(const Scene *scene, const Sampler *sampler) : Tracer(scene, sampler) {
     }
     
-    SoftwareTracer::~SoftwareTracer() {
-    }
-    
+    SoftwareTracer::~SoftwareTracer() {}
     
     void SoftwareTracer::render(const Camera *camera) {
-        uint32_t *backbuffer = static_cast<uint32_t*>(this->renderTarget->lock());
+        uint32_t *backbuffer = static_cast<uint32_t*>(this->getRenderTarget()->lock());
         
         std::list<const SceneNode*> nodeList;
-        this->flattenHierarchy(nodeList, this->scene->getRootNode());
+        this->flattenHierarchy(nodeList, this->getScene()->getRootNode());
         
         Vector2i pixel(0);
-        Vector2i screenSize = Vector2i(this->renderTarget->getSize());
+        Vector2i screenSize = Vector2i(this->getRenderTarget()->getSize());
         
-        if (this->sampler == nullptr) {
+        if (this->getSampler() == nullptr) {
             // no usar sampler
             for(pixel.y=0; pixel.y<screenSize.y; ++pixel.y) {
                 for(pixel.x=0; pixel.x<screenSize.x; ++pixel.x) {
@@ -206,7 +201,7 @@ namespace raytracer { namespace tracers {
             }
         }
         
-        this->renderTarget->unlock();
+        this->getRenderTarget()->unlock();
         backbuffer = nullptr;
     }
 }}
