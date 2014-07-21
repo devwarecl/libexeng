@@ -135,7 +135,9 @@ namespace exeng { namespace scenegraph {
             case Primitive::TriangleList:
                 return vertexCount / 3;
                 
-            default: assert(false);
+            default: 
+                assert(false);
+                return 0;
         }
     }
     
@@ -158,7 +160,7 @@ namespace exeng { namespace scenegraph {
                 case 0: return triangleIndex;
                 case 1: return triangleIndex + 2;
                 case 2: return triangleIndex + 1;
-                default: assert(false);
+                default: assert(false); return 0;
             }
         }
     }

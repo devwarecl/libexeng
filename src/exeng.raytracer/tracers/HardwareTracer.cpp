@@ -3,13 +3,16 @@
  * @brief Interfaz del objeto trazador de rayos
  */
 
+#define __CL_ENABLE_EXCEPTIONS
+
 #include "HardwareTracer.hpp"
 
+#include <boost/lexical_cast.hpp>
 #include <CL/cl.hpp>
 #include <GLFW/glfw3.h>
-#include <GL/glx.h>
 
 using namespace exeng;
+using namespace exeng::math;
 using namespace exeng::graphics;
 using namespace exeng::scenegraph;
 
@@ -20,7 +23,7 @@ namespace raytracer { namespace tracers {
         cl::Device device;
         cl::Context context;
         cl::Program program;
-        cl::Image2DGL image2D;
+        cl::Image2DGL image;
         cl::Kernel kernel;
         cl::CommandQueue queue;
     };
@@ -64,7 +67,7 @@ namespace raytracer { namespace tracers {
             0 , 0 ,  
         };
         
-        cl::Context context({device}, properties);
+        cl::Context context(device, properties);
         
         // Create a Program object
         std::string programSource = "";
@@ -110,27 +113,44 @@ namespace raytracer { namespace tracers {
             throw std::runtime_error("Invalid render target texture id (non positive)");
         }
         
-        cl::Image2DGL image2D(this->impl->context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureId);
-        this->impl->image2D = image2D;
+        cl_int errorCode = 0;
         
+        cl::Image2DGL image(this->impl->context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureId, &errorCode);
+        if (errorCode != CL_SUCCESS) {
+            std::string str;
+            str += "Invalid render target texture. Error code: ";
+            str += boost::lexical_cast<std::string>(errorCode);
+            
+            throw std::runtime_error(str);
+        }
+        
+        this->impl->image = image;
         Tracer::setRenderTarget(renderTarget);
     }
     
     HardwareTracer::~HardwareTracer() {}
     
     void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
-        auto size = this->getRenderTarget()->getSize();
+        Vector3i size = this->getRenderTarget()->getSize();
+        cl::Image2DGL &image = this->impl->image;
+        cl::CommandQueue &queue = this->impl->queue;
         
-        cl::Image2DGL &image2D = this->impl->image2D;
+        cl::size_t<3> origin;
+        origin[0] = 0;
+        origin[1] = 0;
+        origin[2] = 0;
         
-        cl::KernelFunctor tracerKernel( 
-            cl::Kernel(this->impl->program, "tracerKernel"),
-            this->impl->queue,
-            cl::NullRange,
-            cl::NDRange(size.x, size.y),
-            cl::NullRange
-        );
+        cl::size_t<3> region;
+        region[0] = size.x;
+        region[1] = size.y;
+        region[2] = 1;
         
-        tracerKernel(image2D);
+        // The C++ OpenCL wrapper pass this param as 'void*' instead.
+        void* ptr = const_cast<void*>(this->getRenderTarget()->getDataPtr());
+        if (queue.enqueueWriteImage(image, CL_TRUE, origin, region, 0, 0, ptr) != CL_SUCCESS) {
+            throw std::runtime_error("HardwareTracer::render: Error at writing the image buffer to the execution queue.");
+        }
+        
+        cl::KernelFunctor tracerKernel(this->impl->program, "tracerKernel");
     }
 }}

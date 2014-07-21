@@ -1,12 +1,8 @@
-project (exeng.test)
-project (exeng.raytracer)
-project (exeng.graphics.gl3)
-project (exeng.ui.demo)
-project (exeng.main)
-project (exeng)
+project (libexeng)
 
 cmake_minimum_required(VERSION 2.6)
 
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 set (EXENG_VERSION_MAJOR 0)
 set (EXENG_VERSION_MINOR 1)

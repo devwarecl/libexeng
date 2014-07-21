@@ -88,7 +88,7 @@ namespace exeng { namespace graphics {
     /**
      * @brief Describe the format of a vertex. Used in the VertexBuffer class.
      */
-    struct EXENGAPI VertexFormat {
+    struct VertexFormat {
     public:
         static const int FieldCount = 16;
         static const int InvalidOffset = -1;
@@ -142,6 +142,82 @@ namespace exeng { namespace graphics {
         exeng::math::Vector3f coord;
         exeng::math::Vector2f texCoord;
     };
+
+    inline VertexFormat::VertexFormat() {
+        this->packaging = VertexPackaging::SingleBuffer;
+        
+        for (int i=0; i<VertexFormat::FieldCount; ++i) {
+            this->fields[i] = VertexField(VertexAttrib::Unused, 0, DataType::Float32);
+        }
+    }
+    
+    inline int VertexFormat::getSize() const {
+        int size = 0;
+                
+        for (auto &field : this->fields) {
+            size += field.getSize();
+        }
+                
+        return size;
+    }
+    
+    inline int VertexFormat::getAttribOffset(VertexAttrib::Enum attrib) const {
+        if (this->packaging == VertexPackaging::MultiBuffer) {
+            return VertexFormat::InvalidOffset;
+        }
+        
+        int offset = 0;
+        
+        for (const VertexField &field : this->fields) {
+            if (field.attribute == VertexAttrib::Unused) {
+                offset = VertexFormat::InvalidOffset;
+                break;
+            }
+            
+            offset += field.getSize();
+            
+            if (field.attribute == attrib) {
+                break;
+            }
+        }
+        
+        return offset;
+    }
+    
+    inline VertexField VertexFormat::getAttrib(VertexAttrib::Enum attrib) const {
+        VertexField resultField = VertexField(VertexAttrib::Unused, 0, DataType::Float32);
+        
+        for (const VertexField &field : this->fields) {
+            if (field.attribute == VertexAttrib::Unused) {
+                break;
+            }
+            
+            if (field.attribute == attrib) {
+                resultField = field;
+            }
+        }
+        
+        return resultField;
+    }
+    
+    inline VertexFormat VertexFormat::makeVertex() {
+        VertexFormat format;
+        
+        format.fields[0] = VertexField(VertexAttrib::Position, 3, DataType::Float32);
+        format.fields[1] = VertexField(VertexAttrib::Normal, 3, DataType::Float32);
+        format.fields[2] = VertexField(VertexAttrib::TexCoord, 2, DataType::Float32);
+        
+        return format;
+    }
+    
+    inline VertexFormat VertexFormat::makeVertex2D() {
+        VertexFormat format;
+    
+        format.fields[0] = VertexField(VertexAttrib::Position, 3, DataType::Float32);
+        format.fields[1] = VertexField(VertexAttrib::TexCoord, 2, DataType::Float32);
+        
+        return format;
+    }
 }}
 
 #endif  //__EXENG_GRAPHICS_VERTEXFORMAT_HPP__

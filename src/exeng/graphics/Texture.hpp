@@ -43,7 +43,12 @@ namespace exeng { namespace graphics {
         Texture(ResourceManager *factory);
         
         virtual ~Texture();
-
+        
+        /**
+         * @brief Get a direct pointer to the 
+         */
+        virtual const void* getDataPtr() const = 0;
+        
         /**
          * @brief Locks the texture
          */

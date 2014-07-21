@@ -82,6 +82,10 @@ namespace raytracer {
         }
         this->vertexBuffer.reset(vertexBuffer);
         
+        // Create the tracer before the render target texture.
+        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
+        this->tracer.reset(new raytracer::tracers::HardwareTracer(this->scene.get()));
+        
         // create a texture for the render targets
         auto texture = this->driver->createTexture(
             TextureType::Tex2D, 
@@ -89,6 +93,8 @@ namespace raytracer {
             static_cast<float>(mode.size.height)), 
             ColorFormat::getColorFormatR8G8B8A8()
         );
+        
+        this->tracer->setRenderTarget(texture);
         
         struct Texel {
             std::uint8_t red;
@@ -123,10 +129,6 @@ namespace raytracer {
         this->camera->setLookAt(Vector3f(0.0f, 0.0f, 0.0f));
         this->camera->setPosition(Vector3f(0.0f, 2.0f, -75.0f));
         this->camera->setUp(Vector3f(0.0f, 1.0f, 0.0f));
-        
-        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
-        this->tracer.reset(new raytracer::tracers::HardwareTracer(this->scene.get()));
-        this->tracer->setRenderTarget(this->texture.get());
     }
     
     void RayTracerApp::pollEvents() {
@@ -213,10 +215,14 @@ namespace raytracer {
 
 namespace exeng { namespace main {
 	int main(int argc, char **argv) {
+        int exitCode = -1;
+
         try {
-            return exeng::framework::Application::execute<raytracer::RayTracerApp>(argc, argv);
+            exitCode = exeng::framework::Application::execute<raytracer::RayTracerApp>(argc, argv);
         } catch (std::exception &exp) {
             std::cout << exp.what() << std::endl;
         }
+
+        return exitCode;
 	}
 }}

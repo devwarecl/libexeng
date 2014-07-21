@@ -52,6 +52,8 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual std::uint64_t getHandle() const;
         
+        virtual const void* getDataPtr() const;
+        
     private:
         GLuint textureId;
         TextureType::Enum type;

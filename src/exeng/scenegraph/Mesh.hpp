@@ -17,8 +17,7 @@
 #include <exeng/scenegraph/Geometry.hpp>
 
 namespace exeng { namespace scenegraph {
-        
-    class EXENGAPI MeshPart;
+    struct EXENGAPI MeshPart;
 
     /**
      * @brief Holds the geometric information about a object, composed of different MeshParts.

@@ -166,4 +166,8 @@ namespace exeng { namespace graphics { namespace gl3 {
 	std::uint64_t GL3Texture::getHandle() const {
         return static_cast<std::uint64_t>(this->textureId);
     }
+    
+    const void* GL3Texture::getDataPtr() const {
+        return this->textureData;
+    }
 }}}

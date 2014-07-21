@@ -9,12 +9,14 @@ set (Boost_USE_STATIC_LIBS OFF)
 set (Boost_USE_MULTITHREADED ON)
 set (Boost_USE_STATIC_RUNTIME OFF)
 
+find_package(OpenCL REQUIRED)
 find_package(Boost COMPONENTS system timer REQUIRED)
 find_package(glfw REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${GLFW_INCLUDE_DIR})
+include_directories(${OPENCL_INCLUDE_DIRS})
 
 link_directories(${Boost_LIBRARY_DIRS})
 link_directories(${GLFW_LIBRARY_DIR})
@@ -41,7 +43,7 @@ set ( Samplers
 
 add_executable(exeng.raytracer WIN32 ${BaseFiles} ${Tracers} ${Samplers} )
 
-target_link_libraries(exeng.raytracer exeng exeng.main ${Boost_LIBRARIES} OpenCL GL)
+target_link_libraries(exeng.raytracer exeng exeng.main GL ${Boost_LIBRARIES} ${OPENCL_LIBRARIES})
 
 source_group(root		FILES ${BaseFiles})
 source_group(tracers	FILES ${Tracers})
