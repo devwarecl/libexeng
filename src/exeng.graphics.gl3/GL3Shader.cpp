@@ -3,14 +3,12 @@
  * @brief Definition of the GL3Shader class.
  */
 
-
 /*
  * Copyright (c) 2013 Felipe Apablaza.
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution.
  */
-
 
 #include "GL3.hpp"
 #include "GL3Utils.hpp"
@@ -32,7 +30,6 @@ namespace exeng  { namespace graphics { namespace gl3 {
         GL3_CHECK();
     }
 
-
     GL3Shader::~GL3Shader() {
         if (this->name != 0) {
             //! TODO: Remove the shader from the parent shader program.
@@ -41,36 +38,30 @@ namespace exeng  { namespace graphics { namespace gl3 {
         }
     }
 
-
     TypeInfo GL3Shader::getTypeInfo() const {
         return TypeId<GL3Shader>();
     }
-
 
     void GL3Shader::setSourceCode(const std::string &sourceCode) {
         this->sourceCode = sourceCode;
         this->modified = true;
     }
 
-
     std::string GL3Shader::getSourceCode() const {
         return this->sourceCode;
     }
-
 
     bool GL3Shader::isSourceModified() const {
         return this->modified;
     }
 
-
     void GL3Shader::compile() {
         if (this->sourceCode.empty() == true) {
-            throw std::runtime_error("GL3Shader::compile: "
-                                    "The source code must be non empty.");
+            throw std::runtime_error("GL3Shader::compile: The source code must be non empty.");
         }
         
-        if (this->modified == true || this->compiled == false ) {
-            const char* shaderSource = this->sourceCode.c_str( );
+        if (this->modified == true || this->compiled == false) {
+            const char* shaderSource = this->sourceCode.c_str();
             ::glShaderSource( this->name, 1, &shaderSource, NULL );
             ::glCompileShader( this->name );
             
@@ -100,24 +91,19 @@ namespace exeng  { namespace graphics { namespace gl3 {
         }
     }
 
-
     bool GL3Shader::isCompiled() const {
         return this->compiled;
     }
-
 
     ShaderType GL3Shader::getType() const {
         return this->type;
     }
 
-
     GLuint GL3Shader::getName() const {
         return this->name;
     }
 
-
     void GL3Shader::release() {
         std::cout << "GL3Shader::release: Not implemented." << std::endl;
     }
-
 }}}

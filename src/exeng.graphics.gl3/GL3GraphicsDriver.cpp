@@ -123,11 +123,9 @@ namespace exeng { namespace graphics { namespace gl3 {
         this->terminate();
     }
 
-
     void GL3GraphicsDriver::initialize() {
         this->initialize(DisplayMode());
     }
-
 
     void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) {
         if (initializedCount > 0) {
@@ -229,7 +227,7 @@ namespace exeng { namespace graphics { namespace gl3 {
     }
 
     void GL3GraphicsDriver::beginFrame(const Color &color, ClearFlags::Flags flags) {
-    #if defined(EXENG_DEBUG)
+#if defined(EXENG_DEBUG)
         if (this->renderingFrame == true) {
             std::string msg;
             
@@ -238,13 +236,13 @@ namespace exeng { namespace graphics { namespace gl3 {
             
             throw std::logic_error(msg);
         }       
-    #endif
+#endif
         GLenum clearFlags = 0L;
         clearFlags |= flags.getFlag(ClearFlags::Color) ? GL_COLOR_BUFFER_BIT : 0;
         clearFlags |= flags.getFlag(ClearFlags::Depth) ? GL_DEPTH_BUFFER_BIT : 0;
         clearFlags |= flags.getFlag(ClearFlags::Stencil) ? GL_STENCIL_BUFFER_BIT : 0;
         
-    #if defined(EXENG_DEBUG)
+#if defined(EXENG_DEBUG)
         if (!clearFlags) {
             std::string msg;
             
@@ -253,7 +251,7 @@ namespace exeng { namespace graphics { namespace gl3 {
             
             throw std::invalid_argument(msg);
         }
-    #endif
+#endif
         
         ::glClearColor(color.red, color.green, color.blue, color.alpha);
         ::glClear(clearFlags);
@@ -265,7 +263,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 
 
     void GL3GraphicsDriver::endFrame() {
-    #if defined(EXENG_DEBUG)
+#if defined(EXENG_DEBUG)
         if (this->renderingFrame == false) {
             std::string msg;
             
@@ -274,7 +272,7 @@ namespace exeng { namespace graphics { namespace gl3 {
             
             throw std::logic_error(msg);
         }       
-    #endif
+#endif
         ::glFlush();
         ::glfwSwapBuffers(this->window);
         
@@ -285,7 +283,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 
 
     void GL3GraphicsDriver::setVertexBuffer(const VertexBuffer* vertexBuffer) {
-    #if defined(EXENG_DEBUG)
+#if defined(EXENG_DEBUG)
         if (vertexBuffer->getResourceManager() != this) {
             std::string msg;
             
@@ -303,7 +301,7 @@ namespace exeng { namespace graphics { namespace gl3 {
             
             throw std::invalid_argument(msg);
         }
-    #endif
+#endif
         if (this->vertexBuffer == vertexBuffer) {
             return;
         }
@@ -365,7 +363,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 
 
     void  GL3GraphicsDriver::setMaterial(const Material* material) {
-    #if defined (EXENG_DEBUG)
+#if defined (EXENG_DEBUG)
         // Check texture type info
         
         if (material->checkTextureType(TypeId<GL3Texture>()) == false) {
@@ -409,7 +407,7 @@ namespace exeng { namespace graphics { namespace gl3 {
                 throw std::logic_error(msg);
             }
         }
-    #endif
+#endif
         if (this->material != nullptr && this->material != material) {
             this->postRenderMaterial(this->material);
         }
