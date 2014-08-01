@@ -33,11 +33,7 @@ namespace gl {
 
 namespace util {
     std::string getMediaPath() {
-#if defined(EXENG_WINDOWS)
-        return "../../../../src/exeng.sandbox/";
-#else 
-        throw std::runtime_error("util::getMediaPath: Platform not supported yet.");
-#endif
+        return std::string(SANDBOX_ROOT_FOLDER);
     }
 
     std::string loadFile(const std::string &filename) {

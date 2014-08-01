@@ -3,7 +3,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "-std=c++0x")
 endif()
 
-add_definitions(-DBOOST_ALL_DYN_LINK)
+add_definitions(-DBOOST_ALL_DYN_LINK -DSANDBOX_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.sandbox/")
 
 # Boost Configuration
 set (Boost_USE_STATIC_LIBS OFF)

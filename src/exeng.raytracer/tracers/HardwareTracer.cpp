@@ -4,11 +4,15 @@
  */
 
 #define __CL_ENABLE_EXCEPTIONS
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS 
 
 #include "HardwareTracer.hpp"
 
 #include <boost/lexical_cast.hpp>
+#include <CL/cl.h>
 #include <CL/cl_gl.h>
+
+#undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 #include <GLFW/glfw3.h>
 
