@@ -1,4 +1,4 @@
-
+add_subdirectory(exeng.sandbox)
 add_subdirectory(exeng.tests)
 add_subdirectory(exeng.raytracer)
 # add_subdirectory(exeng.audio.al)

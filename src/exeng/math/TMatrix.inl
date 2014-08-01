@@ -409,9 +409,9 @@ void TMatrix<Type, RowCount, ColumnCount>::lookAt(const TVector<Type, 3> &Eye, c
     foward = At - Eye;
 
     foward.normalize();
-    side = TVector<Type, 3>::cross(foward, up);
+    side = foward.cross(up);
     side.normalize();
-    up = TVector<Type, 3>::cross(side, foward);
+    up = side.cross(foward);
 
     this->identity();
 
@@ -441,8 +441,8 @@ void TMatrix<Type, RowCount, ColumnCount>::lookAt(const TVector<Type, 3> &Eye, c
     this->at(2, 1) = -foward.y;
     this->at(2, 2) = -foward.z;
     
-    transMat.Identity();
-    transMat.Translation(-Eye);
+    transMat.identity();
+    transMat.translation(-Eye);
 
     (*this) *= transMat;
 }

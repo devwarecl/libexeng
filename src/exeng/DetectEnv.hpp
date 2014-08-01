@@ -38,7 +38,7 @@
 #    define EXENG_LITTLE_ENDIAN
 #  endif
 
-//Detec compiler wide
+// Detect compiler
 #if defined(EXENG_IA32) || defined(EXENG_SPARC) || defined(EXENG_SPARC) || defined(EXENG_POWERPC)
 #  define EXENG_32
 #elif defined(EXENG_IA64) || defined(EXENG_AMD64)
@@ -51,11 +51,14 @@
 #  elif defined(__unix__) || defined(unix)
 #    define EXENG_UNIX
 #  elif defined(__gnu_linux__) || defined(__linux) || defined(linux)
+#    define EXENG_UNIX
 #    define EXENG_LINUX
 #  elif defined(__APPLE__)
 #    define EXENG_MACOS
 #  elif defined(MSDOS) || defined(__MSDOS__) || defined(_MSDOS) || defined(__DOS__)
 #    define EXENG_DOS
+#  else 
+#    error Unsupported platform
 #  endif
 
 //Detect current compiler

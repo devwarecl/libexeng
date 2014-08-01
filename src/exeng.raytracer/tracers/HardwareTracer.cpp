@@ -8,8 +8,13 @@
 #include "HardwareTracer.hpp"
 
 #include <boost/lexical_cast.hpp>
+#include <CL/cl_gl.h>
 #include <CL/cl.hpp>
 #include <GLFW/glfw3.h>
+
+#if defined (EXENG_UNIX)
+  #include <GL/glx.h>
+#endif
 
 using namespace exeng;
 using namespace exeng::math;
@@ -67,7 +72,7 @@ namespace raytracer { namespace tracers {
             0 , 0 ,  
         };
         
-        cl::Context context(device, properties);
+        cl::Context context({device}, properties);
         
         // Create a Program object
         std::string programSource = "";
@@ -108,7 +113,7 @@ namespace raytracer { namespace tracers {
     
     void HardwareTracer::setRenderTarget(exeng::graphics::Texture *renderTarget) {
         // Create a OpenCL 2D image  from the render target Texture
-        GLuint textureId = renderTarget->getHandle();
+        GLuint textureId = static_cast<GLuint>(renderTarget->getHandle());
         if (textureId <= 0) {
             throw std::runtime_error("Invalid render target texture id (non positive)");
         }
@@ -151,6 +156,6 @@ namespace raytracer { namespace tracers {
             throw std::runtime_error("HardwareTracer::render: Error at writing the image buffer to the execution queue.");
         }
         
-        cl::KernelFunctor tracerKernel(this->impl->program, "tracerKernel");
+        // cl::KernelFunctor tracerKernel(this->impl->program, "tracerKernel");
     }
 }}
