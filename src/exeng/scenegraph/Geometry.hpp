@@ -23,7 +23,7 @@ class Ray;
 struct IntersectInfo;
 
 /**
- * @brief Geometria abstracta.
+ * @brief Abstract Geometry class.
  */
 class EXENGAPI Geometry : public SceneNodeData {
 public:

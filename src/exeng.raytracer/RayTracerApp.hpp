@@ -44,11 +44,12 @@ namespace raytracer {
         
     private:
         //! El color por defecto a usar en caso de que ningun rayo colisione con la escena.
-        boost::scoped_ptr<exeng::graphics::Material> material;
+        exeng::graphics::Material material;
+        exeng::scenegraph::Camera camera;
+
         boost::scoped_ptr<exeng::graphics::GraphicsDriver> driver;
         boost::scoped_ptr<exeng::graphics::VertexBuffer> vertexBuffer;
         boost::scoped_ptr<exeng::graphics::Texture> texture;
-        boost::scoped_ptr<exeng::scenegraph::Scene> scene;
         boost::scoped_ptr<raytracer::samplers::Sampler> sampler;
         
         exeng::framework::ApplicationStatus::Enum applicationStatus;
@@ -58,10 +59,11 @@ namespace raytracer {
         FpsCounter frameCounter;
         
         boost::scoped_ptr<raytracer::tracers::Tracer> tracer;
-        boost::scoped_ptr<exeng::scenegraph::Camera> camera;
         
         SceneLoader sceneLoader;
-        
+
+        std::unique_ptr<exeng::scenegraph::Scene> scene;
+
         exeng::graphics::ButtonStatus::Enum buttonStatus[exeng::graphics::ButtonCode::Count];
     };
 }

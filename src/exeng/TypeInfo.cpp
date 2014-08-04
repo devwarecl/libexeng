@@ -18,20 +18,17 @@
 #include <exeng/TypeInfo.hpp>
 
 namespace exeng {
-	const std::string invalidTypePtr = "TypeInfo: Debe asignar primero un objeto std::type_info";
+	const std::string invalidTypePtr = "TypeInfo: Empty TypeInfo value.";
 
 	TypeInfo::TypeInfo() : typeInfo(nullptr) {}
-
 
 	TypeInfo::TypeInfo(const std::type_info& info) : typeInfo(nullptr) {
 		this->setStdTypeInfo(info);
 	}
 
-
 	void TypeInfo::setStdTypeInfo(const std::type_info& info) {
 		this->typeInfo = const_cast<std::type_info*>(&info);
 	}
-
 
 	const std::type_info& TypeInfo::getStdTypeInfo() const {
 		if (this->isEmpty() == true) {
@@ -41,36 +38,29 @@ namespace exeng {
 		return *this->typeInfo;
 	}
 
-
 	bool TypeInfo::operator== (const TypeInfo& other) const {
-        return this->typeInfo == other.typeInfo;
+        return *this->typeInfo == *other.typeInfo;
 	}
-
 
 	bool TypeInfo::operator!= (const TypeInfo& other) const {
         return ! (*this == other);
 	}
 
-
 	bool TypeInfo::operator< (const TypeInfo& other) const {
 		return this->typeInfo->before(*other.typeInfo);
 	}
-
 
 	bool TypeInfo::operator> (const TypeInfo& other) const {
 		return !(*this <= other);
 	}
 
-
 	bool TypeInfo::operator<= (const TypeInfo& other) const {
 		return (*this == other) || (*this < other);
 	}
 
-
 	bool TypeInfo::operator>= (const TypeInfo& other) const {
 		return !(*this < other);
 	}
-
 
 	bool TypeInfo::isEmpty() const {
 		return this->typeInfo == nullptr;

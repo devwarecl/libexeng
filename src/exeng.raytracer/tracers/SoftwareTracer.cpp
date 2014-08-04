@@ -168,13 +168,21 @@ namespace raytracer { namespace tracers {
         }
     }
     
-    
     SoftwareTracer::SoftwareTracer(const Scene *scene, const Sampler *sampler) : Tracer(scene, sampler) {
     }
     
     SoftwareTracer::~SoftwareTracer() {}
     
     void SoftwareTracer::render(const Camera *camera) {
+#if defined(EXENG_DEBUG)
+        if (!this->getScene()) {
+            throw std::runtime_error("SoftwareTracer::render: The 'scene' attribute can't be a nullptr.");
+        }
+
+        if (!camera) {
+            throw std::runtime_error("SoftwareTracer::render: The camera parameter can't be a nullptr.");
+        }
+#endif
         uint32_t *backbuffer = static_cast<uint32_t*>(this->getRenderTarget()->lock());
         
         std::list<const SceneNode*> nodeList;
@@ -183,8 +191,8 @@ namespace raytracer { namespace tracers {
         Vector2i pixel(0);
         Vector2i screenSize = Vector2i(this->getRenderTarget()->getSize());
         
-        if (this->getSampler() == nullptr) {
-            // no usar sampler
+        if (!this->getSampler()) {
+            // No sampler rendering
             for(pixel.y=0; pixel.y<screenSize.y; ++pixel.y) {
                 for(pixel.x=0; pixel.x<screenSize.x; ++pixel.x) {
                     Color pixelColor = this->traceRay(nodeList, pixel, camera);
@@ -192,7 +200,7 @@ namespace raytracer { namespace tracers {
                 }
             }
         } else {
-            // usar un sampler (aumenta la calidad de la imagen, pero aumenta el tiempo de procesamiento)
+            // Sampler based rendering.
             for(pixel.y=0; pixel.y<screenSize.y; ++pixel.y) {
                 for(pixel.x=0; pixel.x<screenSize.x; ++pixel.x) {
                     Color pixelColor = this->traceRayMultisampled(nodeList, pixel, camera);
@@ -202,6 +210,5 @@ namespace raytracer { namespace tracers {
         }
         
         this->getRenderTarget()->unlock();
-        backbuffer = nullptr;
     }
 }}

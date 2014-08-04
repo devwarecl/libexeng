@@ -17,6 +17,21 @@
 #include <exeng/graphics/Material.hpp>
 #include <exeng/scenegraph/TSolidGeometry.hpp>
 
+/**
+ * @brief Get the path where the interface implementations are located.
+ */
+std::string getPluginPath() {
+#ifdef EXENG_WINDOWS
+#  ifdef EXENG_DEBUG
+    return "../../bin/Debug/";
+#  else
+    return "../../bin/Release/";
+#  endif
+#else 
+    return "../exeng.graphics.gl3/";
+#endif
+}
+
 namespace raytracer {
     using namespace exeng;
     using namespace exeng::math;
@@ -24,7 +39,6 @@ namespace raytracer {
     using namespace exeng::graphics;
     using namespace exeng::framework;
     using namespace exeng::input;
-    
     using namespace raytracer::samplers;
     
     RayTracerApp::RayTracerApp() {
@@ -42,18 +56,8 @@ namespace raytracer {
     
     void RayTracerApp::initialize(int argc, char **argv) {
         // Initialize the exeng root class and plugins.
-        std::string path;
+        std::string path = getPluginPath();
     
-#ifdef EXENG_WINDOWS
-#  ifdef EXENG_DEBUG
-        path = "../../bin/Debug/";
-#  else
-        path = "../../bin/Release/";
-#  endif
-#else 
-        path = "../exeng.graphics.gl3/";
-#endif
-        
         this->getRoot()->getPluginManager()->load("exeng.graphics.gl3", path);
         
         // initialize the gl3 driver, in windowed mode
@@ -67,24 +71,24 @@ namespace raytracer {
         auto vertexBuffer = this->driver->createVertexBuffer(VertexFormat::makeVertex2D(), 4);
         {        
             VertexArray<Vertex2D> array(vertexBuffer);
-            
-            array[0].coord = Vector3f(-1.0f,  1.0f, 0.0f);
-            array[0].texCoord = Vector2f(0.0f,  1.0f);
-            
-            array[1].coord = Vector3f( 1.0f,  1.0f, 0.0f);
-            array[1].texCoord = Vector2f(1.0f,  1.0f);
-            
-            array[2].coord = Vector3f(-1.0f, -1.0f, 0.0f);
-            array[2].texCoord = Vector2f(0.0f,  0.0f);
-            
-            array[3].coord = Vector3f( 1.0f, -1.0f, 0.0f);
-            array[3].texCoord = Vector2f(1.0f,  0.0f);
+
+            array[0] = {{-1.0f,  1.0f, 0.0f}, {0.0f,  1.0f}};
+            array[1] = {{ 1.0f,  1.0f, 0.0f}, {1.0f,  1.0f}};
+            array[2] = {{-1.0f, -1.0f, 0.0f}, {0.0f,  0.0f}};
+            array[3] = {{ 1.0f, -1.0f, 0.0f}, {1.0f,  0.0f}};
         }
         this->vertexBuffer.reset(vertexBuffer);
         
-        // Create the tracer before the render target texture.
-        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
-        this->tracer.reset(new raytracer::tracers::HardwareTracer(this->scene.get()));
+        // Initialize the scene.
+        this->loadScene();
+        this->scene->setBackColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
+
+        // Create the tracer before the render target texture AND the scene.
+        this->sampler.reset(new JitteredSampler(25));
+        this->sampler->generateSamples();
+
+        this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
+        // this->tracer.reset(new raytracer::tracers::HardwareTracer(&this->scene));
         
         // create a texture for the render targets
         auto texture = this->driver->createTexture(
@@ -97,38 +101,23 @@ namespace raytracer {
         this->tracer->setRenderTarget(texture);
         
         struct Texel {
-            std::uint8_t red;
-            std::uint8_t green;
-            std::uint8_t blue;
-            std::uint8_t alpha;
+            std::uint8_t red, green, blue, alpha;
         };
         
         Texel *textureData = reinterpret_cast<Texel*>(texture->lock());
         for (int i=0; i<mode.size.width * mode.size.height; ++i) {
-            textureData[i].red      = 0;
-            textureData[i].green    = 0;
-            textureData[i].blue     = 0;
-            textureData[i].alpha    = 255;
+            textureData[i] = {0, 0, 0, 255};
         }
+
         texture->unlock();
         
         this->texture.reset(texture);
         
-        this->material.reset( new exeng::graphics::Material() );
-        this->material->getLayer(0)->setTexture(texture);
+        this->material.getLayer(0)->setTexture(texture);
         
-        this->sampler.reset(new JitteredSampler(25));
-        this->sampler->generateSamples();
-        
-        this->scene.reset(new Scene());
-        this->scene->setBackColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
-        
-        this->loadScene();
-        
-        this->camera.reset( new Camera() );
-        this->camera->setLookAt(Vector3f(0.0f, 0.0f, 0.0f));
-        this->camera->setPosition(Vector3f(0.0f, 2.0f, -75.0f));
-        this->camera->setUp(Vector3f(0.0f, 1.0f, 0.0f));
+        this->camera.setLookAt({0.0f, 0.0f, 0.0f});
+        this->camera.setPosition({0.0f, 2.0f, -75.0f});
+        this->camera.setUp({0.0f, 1.0f, 0.0f});
     }
     
     void RayTracerApp::pollEvents() {
@@ -150,33 +139,33 @@ namespace raytracer {
         }
     
         if (this->buttonStatus[ButtonCode::KeyUp]) {
-            auto cameraPosition = this->camera->getPosition();
+            auto cameraPosition = this->camera.getPosition();
             cameraPosition.z += 2.5f;
-            this->camera->setPosition(cameraPosition);
+            this->camera.setPosition(cameraPosition);
         }
     
         if (this->buttonStatus[ButtonCode::KeyDown]) {
-            auto cameraPosition = this->camera->getPosition();
+            auto cameraPosition = this->camera.getPosition();
             cameraPosition.z -= 2.5f;
-            this->camera->setPosition(cameraPosition);
+            this->camera.setPosition(cameraPosition);
         }
     
         if (this->buttonStatus[ButtonCode::KeyRight]) {
-            auto cameraPosition = this->camera->getPosition();
+            auto cameraPosition = this->camera.getPosition();
             cameraPosition.x += 2.5f;
-            this->camera->setPosition(cameraPosition);
+            this->camera.setPosition(cameraPosition);
         }
     
         if (this->buttonStatus[ButtonCode::KeyLeft]) {
-            auto cameraPosition = this->camera->getPosition();
+            auto cameraPosition = this->camera.getPosition();
             cameraPosition.x -= 2.5f;
-            this->camera->setPosition(cameraPosition);
+            this->camera.setPosition(cameraPosition);
         }
     }
     
     void RayTracerApp::render() {
         this->clear();
-        this->tracer->render(this->camera.get());
+        this->tracer->render(&this->camera);
         this->present();
     }
     
@@ -189,11 +178,11 @@ namespace raytracer {
     }
     
     void RayTracerApp::clear() {
-        this->driver->beginFrame(Color(0.0f, 0.0f, 0.0f, 1.0f));
+        this->driver->beginFrame({0.0f, 0.0f, 0.0f, 1.0f});
     }
     
     void RayTracerApp::present() {
-        this->driver->setMaterial(this->material.get());
+        this->driver->setMaterial(&this->material);
         this->driver->setVertexBuffer(this->vertexBuffer.get());
         this->driver->render(Primitive::TriangleStrip, 4);
         this->driver->endFrame();
@@ -213,14 +202,31 @@ namespace raytracer {
     }
 }
 
+
+#if defined(EXENG_WINDOWS)
+#include <Windows.h>
+#endif
+
+void showMsgBox(const std::string &msg, const std::string &title) {
+#if defined(EXENG_WINDOWS)
+    ::MessageBox(NULL, msg.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
+#else
+    std::cout << exp.what() << std::endl;
+#endif
+}
+
 namespace exeng { namespace main {
 	int main(int argc, char **argv) {
+        using namespace raytracer;
+        using namespace exeng;
+        using namespace exeng::framework;
+
         int exitCode = -1;
 
         try {
-            exitCode = exeng::framework::Application::execute<raytracer::RayTracerApp>(argc, argv);
+            exitCode = Application::execute<RayTracerApp>(argc, argv);
         } catch (std::exception &exp) {
-            std::cout << exp.what() << std::endl;
+            showMsgBox(exp.what(), "Runtime error");
         }
 
         return exitCode;
