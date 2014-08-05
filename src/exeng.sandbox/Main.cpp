@@ -96,12 +96,8 @@ namespace simple {
             return true;
         }
 
-        virtual void update(GLdouble seconds) {
-
-        }
-
-        virtual void render() {
-        }
+        virtual void update(GLdouble seconds) {}
+        virtual void render() {}
 
         int getExitCode() {
             return 0;
@@ -172,14 +168,13 @@ namespace simple {
 
     class ImageProcessor {
     public:
-        ImageProcessor() {
+        ImageProcessor() {}
+
+        ImageProcessor(GLuint bufferId, GLsizei bufferSize, int width, int height) {
+            this->initialize(bufferId, bufferSize, width, height);
         }
 
-        ImageProcessor(GLuint bufferId, GLsizei bufferSize) {
-            this->initialize(bufferId, bufferSize);
-        }
-
-        void initialize(GLuint bufferId, GLsizei bufferSize) {
+        void initialize(GLuint bufferId, GLsizei bufferSize, int width, int height) {
             cl_int errorCode = 0;
 
             // Obtener la primera plataforma OpenCL (implementacion de OpenCL)
@@ -198,7 +193,6 @@ namespace simple {
 
             // Crear un contexto en el dispostivo. El contexto es una coleccion de recursos (que veremos posteriormente).
             cl_context_properties properties [] = {
-                
 #if defined (WIN32)
                 // We should first check for cl_khr_gl_sharing extension.
                 CL_GL_CONTEXT_KHR , (cl_context_properties) ::wglGetCurrentContext() ,
@@ -216,10 +210,11 @@ namespace simple {
 
             // cl_context context = ::clCreateContext(properties, 1, &deviceId, nullptr, nullptr, &errorCode);
             cl::Context context({device}, &properties[0]);
-            
+
+            cl::Image2DGL image = cl::Image2DGL(context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, bufferId, &errorCode);
             // Crear un buffer de datos y copiarlo a un buffer instanciado en la memoria de video.
             // cl_mem buffer = ::clCreateFromGLBuffer(context, CL_MEM_READ_WRITE, bufferId, &errorCode);
-            cl::BufferGL buffer(context, CL_MEM_READ_WRITE, bufferId, &errorCode);
+            // cl::BufferGL buffer(context, CL_MEM_READ_WRITE, bufferId, &errorCode);
             if (errorCode != CL_SUCCESS) {
                 throw std::runtime_error("No se pudo crear el buffer CL a partir del buffer GL.");
             }
@@ -230,30 +225,40 @@ namespace simple {
             // const char* kernelSourcePtr = kernelSource.c_str();
             // cl_program program = ::clCreateProgramWithSource(context, 1, &kernelSourcePtr, &kernelSourceSize, &errorCode);
             // errorCode = ::clBuildProgram(program, 1, &deviceId, nullptr, nullptr, nullptr);
-            cl::Program::Sources sources = {
-                {kernelSource.c_str(), kernelSource.size() + 1}
-            };
+            cl::Program::Sources sources = {{kernelSource.c_str(), kernelSource.size() + 1}};
 
             cl::Program program(context, sources, &errorCode);
             errorCode = program.build({device}, nullptr, nullptr, nullptr);
+            if (errorCode != CL_SUCCESS) {
+                std::string msg = std::string("Error al compilar el programa OpenCL.") + program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device) + ".";
+                throw std::runtime_error(msg.c_str());
+            }
 
             // Crear el kernel a partir del programa (el kernel es una instancia del programa para un cierto device).
             // cl_kernel kernel = ::clCreateKernel(program, "VertexDisplacer", &errorCode);
             cl::Kernel kernel(program, "VertexDisplacer", &errorCode);
+            if (errorCode != CL_SUCCESS) {
+                throw std::runtime_error("Error al crear un kernel para OpenCL.");
+            }
 
             // Crear la cola de comandos, que permitira 
             // cl_command_queue queue = ::clCreateCommandQueue(context, deviceId, 0, &errorCode);
             cl::CommandQueue queue(context, device, 0, &errorCode);
+            if (errorCode != CL_SUCCESS) {
+                throw std::runtime_error("Error al crear el command queue de OpenCL.");
+            }
 
             this->platform = platform;
             this->device = device;
             this->context = context;
-            this->buffer = buffer;
+            this->image = image;
             this->program = program;
             this->kernel = kernel;
             this->queue = queue;
             this->bufferId = bufferId;
             this->bufferSize = bufferSize;
+            this->width = width;
+            this->height = height;
         }
 
         void process() {
@@ -263,26 +268,38 @@ namespace simple {
             const float displace = 0.01f;
             // ::clSetKernelArg(kernel, 0, sizeof(cl_mem), &this->buffer);
             // ::clSetKernelArg(kernel, 1, sizeof(float), &displace);
-            this->kernel.setArg(0, this->buffer);
+            this->kernel.setArg(0, this->image);
             this->kernel.setArg(1, displace);
 
             // Bloquear el buffer GL
             // clEnqueueAcquireGLObjects(this->queue, 1, &this->buffer, 0, nullptr, nullptr);
-            std::vector<cl::Memory> buffers = { cl::Memory(this->buffer) };
+            std::vector<cl::Memory> buffers = { cl::Memory(this->image) };
             errorCode = this->queue.enqueueAcquireGLObjects(&buffers, nullptr, nullptr);
+            if (errorCode != CL_SUCCESS) {
+                throw std::runtime_error("Error durante la ejecucion del kernel.");
+            }
 
             // Especificar el rango en el que vamos a ejecutar el kernel.
             // const size_t globalWorkSize[] = {bufferSize, 0, 0};
             // errorCode = ::clEnqueueNDRangeKernel(queue, this->kernel, 1, nullptr, globalWorkSize, nullptr, 0, nullptr, nullptr);
-            errorCode = this->queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(bufferSize), cl::NullRange, nullptr, nullptr);
+            errorCode = this->queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(width, height), cl::NullRange, nullptr, nullptr);
+            if (errorCode != CL_SUCCESS) {
+                throw std::runtime_error("Error durante la ejecucion del kernel.");
+            }
 
             // Desbloquear el buffer GL
             // ::clEnqueueReleaseGLObjects(this->queue, 1, &this->buffer, 0, nullptr, nullptr);
             errorCode = this->queue.enqueueReleaseGLObjects(&buffers, nullptr, nullptr);
+            if (errorCode != CL_SUCCESS) {
+                throw std::runtime_error("Error durante la ejecucion del kernel.");
+            }
 
             // Esperar que se completen todas las operaciones de OpenCL
             // ::clFinish(this->queue);
             errorCode = this->queue.finish();
+            if (errorCode != CL_SUCCESS) {
+                throw std::runtime_error("Error durante la ejecucion del kernel.");
+            }
         }
 
         ~ImageProcessor() {}
@@ -291,11 +308,13 @@ namespace simple {
         cl::Platform platform;
         cl::Device device;
         cl::Context context;
-        cl::BufferGL buffer;
+        cl::Image2DGL image;
         cl::Program program;
         cl::Kernel kernel;
         cl::CommandQueue queue;
-        
+
+        int width = 0, height = 0;
+
         GLuint bufferId = 0;
         GLsizei bufferSize = 0;
     };
@@ -372,7 +391,11 @@ namespace simple {
             ::glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * this->indexData.size(), this->indexData.data(), GL_STATIC_DRAW);
 
             // Crear una textura en blanco
-            GLubyte textureData[256*256*4] = {255};
+            GLubyte textureData[256*256*4] = {0};
+            for (int i=0; i<256*256*4; ++i) {
+                textureData[i] = 255;
+            }
+
             ::glGenTextures(1, &this->textureId);
             ::glBindTexture(GL_TEXTURE_2D, this->textureId);
             ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
@@ -382,7 +405,7 @@ namespace simple {
             gl::check();
 
             this->programId = this->loadProgram();
-            this->processor.initialize(this->vertexBuffer, this->vertexData.size());
+            this->processor.initialize(this->textureId, 256*256*4, 256, 256);
         }
 
         virtual void terminate() {
@@ -390,21 +413,24 @@ namespace simple {
         }
 
         virtual void update(GLdouble seconds) {
-            // this->processor.process();
+            float speed = 2.0f * static_cast<float>(seconds);
+
+            this->processor.process();
+
             if (::glfwGetKey(this->getWindow(), GLFW_KEY_LEFT) == GLFW_PRESS) {
-                this->objPos -= Vector3f(1.0f, 0.0f, 0.0f) * 2.0f * static_cast<float>(seconds);
+                this->objPos += Vector3f(1.0f, 0.0f, 0.0f) * speed;
             }
 
             if (::glfwGetKey(this->getWindow(), GLFW_KEY_RIGHT) == GLFW_PRESS) {
-                this->objPos += Vector3f(1.0f, 0.0f, 0.0f) * 2.0f * static_cast<float>(seconds);
+                this->objPos -= Vector3f(1.0f, 0.0f, 0.0f) * speed;
             }
 
             if (::glfwGetKey(this->getWindow(), GLFW_KEY_UP) == GLFW_PRESS) {
-                this->objPos += Vector3f(0.0f, 0.0f, 1.0f) * 2.0f * static_cast<float>(seconds);
+                this->objPos += Vector3f(0.0f, 0.0f, 1.0f) * speed;
             }
 
             if (::glfwGetKey(this->getWindow(), GLFW_KEY_DOWN) == GLFW_PRESS) {
-                this->objPos -= Vector3f(0.0f, 0.0f, 1.0f) * 2.0f * static_cast<float>(seconds);
+                this->objPos -= Vector3f(0.0f, 0.0f, 1.0f) * speed;
             }
         }
 
