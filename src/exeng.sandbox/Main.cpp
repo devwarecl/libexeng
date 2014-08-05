@@ -371,6 +371,14 @@ namespace simple {
             ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indexBuffer);
             ::glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * this->indexData.size(), this->indexData.data(), GL_STATIC_DRAW);
 
+            // Crear una textura en blanco
+            GLubyte textureData[256*256*4] = {255};
+            ::glGenTextures(1, &this->textureId);
+            ::glBindTexture(GL_TEXTURE_2D, this->textureId);
+            ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+            ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
             gl::check();
 
             this->programId = this->loadProgram();
@@ -382,7 +390,22 @@ namespace simple {
         }
 
         virtual void update(GLdouble seconds) {
-//            this->processor.process();
+            // this->processor.process();
+            if (::glfwGetKey(this->getWindow(), GLFW_KEY_LEFT) == GLFW_PRESS) {
+                this->objPos -= Vector3f(1.0f, 0.0f, 0.0f) * 2.0f * static_cast<float>(seconds);
+            }
+
+            if (::glfwGetKey(this->getWindow(), GLFW_KEY_RIGHT) == GLFW_PRESS) {
+                this->objPos += Vector3f(1.0f, 0.0f, 0.0f) * 2.0f * static_cast<float>(seconds);
+            }
+
+            if (::glfwGetKey(this->getWindow(), GLFW_KEY_UP) == GLFW_PRESS) {
+                this->objPos += Vector3f(0.0f, 0.0f, 1.0f) * 2.0f * static_cast<float>(seconds);
+            }
+
+            if (::glfwGetKey(this->getWindow(), GLFW_KEY_DOWN) == GLFW_PRESS) {
+                this->objPos -= Vector3f(0.0f, 0.0f, 1.0f) * 2.0f * static_cast<float>(seconds);
+            }
         }
 
         virtual void render() {
@@ -391,41 +414,44 @@ namespace simple {
 
             projMatrix.identity();
             projMatrix.perspective(60.0f, 640.0f/480.0f, 0.1f, 100.0f);
-            projMatrix.transpose();
 
             modelMatrix.identity();
-            modelMatrix.translation({0.0f, 0.0f, -2.5f});
-            modelMatrix.transpose();
+            modelMatrix.translation(this->objPos);
 
             ::glClearColor(0.1f, 0.2f, 0.8f, 1.0f);
             ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             ::glUseProgram(this->programId);
             
+            int currentTextureLocation = ::glGetUniformLocation(this->programId, "currentTexture");
+            ::glActiveTexture(GL_TEXTURE0);
+            ::glBindTexture(GL_TEXTURE_2D, this->textureId);
+            ::glUniform1i(currentTextureLocation, 0);   // Usa la textura activa en la unidad de textura '0'.
+
             ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indexBuffer);
             ::glBindBuffer(GL_ARRAY_BUFFER, this->vertexBuffer);
 
             int projMatrixLocation = ::glGetUniformLocation(this->programId, "projMatrix");
             int modelMatrixLocation = ::glGetUniformLocation(this->programId, "modelMatrix");
 
-            ::glUniformMatrix4fv(projMatrixLocation, 1, GL_FALSE, projMatrix.getPtr());
-            ::glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, modelMatrix.getPtr());
+            ::glUniformMatrix4fv(projMatrixLocation, 1, GL_TRUE, projMatrix.getPtr());
+            ::glUniformMatrix4fv(modelMatrixLocation, 1, GL_TRUE, modelMatrix.getPtr());
 
             int vertexCoordLocation = ::glGetAttribLocation(this->programId, "vertexCoord");    gl::check();
             // int vertexNormalLocation = ::glGetAttribLocation(this->programId, "vertexNormal");  gl::check();
-            // int vertexTexCoordLocation = ::glGetAttribLocation(this->programId, "vertexTexCoord");  gl::check();
+            int vertexTexCoordLocation = ::glGetAttribLocation(this->programId, "vertexTexCoord");  gl::check();
 
             ::glEnableVertexAttribArray(vertexCoordLocation);
             // ::glEnableVertexAttribArray(vertexNormalLocation);
-            // ::glEnableVertexAttribArray(vertexTexCoordLocation);
+            ::glEnableVertexAttribArray(vertexTexCoordLocation);
 
             ::glVertexAttribPointer(vertexCoordLocation,    3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
             // ::glVertexAttribPointer(vertexNormalLocation,   3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(3 * sizeof(float)));
-            // ::glVertexAttribPointer(vertexTexCoordLocation, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(6 * sizeof(float)));
+            ::glVertexAttribPointer(vertexTexCoordLocation, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(6 * sizeof(float)));
             ::glDrawElements(GL_TRIANGLES, this->indexData.size(), GL_UNSIGNED_INT, (void*)0);
 
             ::glDisableVertexAttribArray(vertexCoordLocation);
             // ::glDisableVertexAttribArray(vertexNormalLocation);
-            // ::glDisableVertexAttribArray(vertexTexCoordLocation);
+            ::glDisableVertexAttribArray(vertexTexCoordLocation);
 
             ::glFinish();
 
@@ -449,6 +475,9 @@ namespace simple {
         GLuint vertexBuffer = 0;
         GLuint indexBuffer = 0;
         GLuint programId = 0;
+        GLuint textureId = 0;
+
+        Vector3f objPos = {0.0f, 0.0f, 0.0f};
 
         ImageProcessor processor;
     };

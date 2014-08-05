@@ -1,6 +1,9 @@
 #version 330 core
-out vec3 color;
- 
+
+varying vec2 fVertexTexCoord;
+
+uniform sampler2D currentTexture;
+
 void main(){
-    color = vec3(1,0,0);
+	gl_FragColor = texture2D(currentTexture, fVertexTexCoord);
 }
