@@ -45,15 +45,19 @@ namespace exeng { namespace framework {
     
     
     int Application::execute(Application *app, int argc, char** argv) {
+        if (!app) {
+            throw std::logic_error("Application::execute: The application cannot be 'nullptr'.");
+        }
+
+        return app->run(argc, argv);
+        /*
         try {
-            if (!app) {
-                throw std::logic_error("Application::execute: The application cannot be 'nullptr'.");
-            }
-            return app->run(argc, argv);
+            
         } catch(const std::exception &exp) {
             std::cout << "Unexcepted exception thrown:" << std::endl ;
             std::cout << "    " << exp.what() << std::endl;
             return -1;
         }
+        */
     }
 }}
