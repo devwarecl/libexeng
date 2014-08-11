@@ -26,12 +26,12 @@ namespace exeng { namespace graphics { namespace gl3 {
 
 	GL3Texture::GL3Texture(ResourceManager *factory,  TextureType::Enum type, Vector3i size, const ColorFormat &colorFormat) : Texture(factory) {
 		GLuint textureId = 0;
-    
+        
 		// check for a valid type
 		if (convTextureType(type) == GL_FALSE) {
 			throw std::invalid_argument("GL3Texture::GL3Texture: Unsupported texture type");
 		}
-    
+        
 		// check the pixel format
 		if (colorFormat.isValid() == false) {
 			throw std::invalid_argument("GL3Texture::GL3Texture: Unsupported texture color format");
@@ -43,10 +43,11 @@ namespace exeng { namespace graphics { namespace gl3 {
 				coord = 1;
 			}
 		}
-    
+        
 		// get the corresponding OpenGL states
 		GLenum textureTarget = convTextureType(type);
 		GLenum internalFormat = convFormat(colorFormat);
+        GLenum dataType = GL_UNSIGNED_BYTE;
     
 		// allocate size for the texture
 		::glGenTextures(1, &textureId);
@@ -55,17 +56,19 @@ namespace exeng { namespace graphics { namespace gl3 {
 		GL3_CHECK();
     
 		if (textureTarget == GL_TEXTURE_1D) {
-			::glTexImage1D(textureTarget, 0, internalFormat, size.x, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
+			::glTexImage1D(textureTarget, 0, internalFormat, size.x, 0, internalFormat, dataType, nullptr);
 		} else if (textureTarget == GL_TEXTURE_2D) {
-			::glTexImage2D(textureTarget, 0, internalFormat, size.x, size.y, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
+			::glTexImage2D(textureTarget, 0, internalFormat, size.x, size.y, 0, internalFormat, dataType, nullptr);
 		} else if (textureTarget == GL_TEXTURE_3D) {
-			::glTexImage3D(textureTarget, 0, internalFormat, size.x, size.y, size.z, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
+			::glTexImage3D(textureTarget, 0, internalFormat, size.x, size.y, size.z, 0, internalFormat, dataType, nullptr);
 		} else {
 			assert(false);
 		}
     
 		GL3_CHECK();
-    
+
+        ::glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        ::glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		::glTexParameteri(textureTarget, GL_TEXTURE_BASE_LEVEL, 0);
 		::glTexParameteri(textureTarget, GL_TEXTURE_MAX_LEVEL, 0);
 		::glBindTexture(textureTarget, 0);

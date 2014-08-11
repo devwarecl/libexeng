@@ -4,6 +4,8 @@
 
 #include <exeng/Exeng.hpp>
 #include <exeng/framework/GraphicsApplication.hpp>
+#include <exeng/graphics/Texture.hpp>
+#include <exeng/math/TVector.hpp>
 #include <exeng/scenegraph/SceneManager.hpp>
 #include <vector>
 #include <list>
@@ -32,18 +34,21 @@ namespace raytracer {
         virtual int getExitCode() const;
         virtual void terminate();
         
-        /* exeng::input::IEventHandler overrides */
+        /* exeng::input::IEventHandler*/
         virtual void handleEvent(const exeng::input::EventData &data);
         
     private:
+        exeng::graphics::Texture* RayTracerApp::createTexture (
+               exeng::graphics::GraphicsDriver *driver, 
+               const exeng::math::Vector3f& size, 
+               const exeng::math::Vector4f &color
+        );
+
         void clear();
-        
         void present();
-        
         void loadScene();
         
     private:
-        //! El color por defecto a usar en caso de que ningun rayo colisione con la escena.
         exeng::graphics::Material material;
         exeng::scenegraph::Camera camera;
 

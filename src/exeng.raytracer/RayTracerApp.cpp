@@ -40,6 +40,7 @@ namespace raytracer {
     using namespace exeng::framework;
     using namespace exeng::input;
     using namespace raytracer::samplers;
+    using namespace raytracer::tracers;
     
     RayTracerApp::RayTracerApp() {
         this->applicationStatus = ApplicationStatus::Running;
@@ -54,22 +55,43 @@ namespace raytracer {
         this->terminate();
     }
     
+    /**
+     * Create a texture with a default color
+     */
+    Texture* RayTracerApp::createTexture(GraphicsDriver *driver, const Vector3f& size, const Vector4f &color) {
+        Texture *texture = driver->createTexture(TextureType::Tex2D, size, ColorFormat::getColorFormatR8G8B8A8());
+        
+        struct Texel { std::uint8_t red, green, blue, alpha; };
+        
+        Texel *textureData = reinterpret_cast<Texel*>(texture->lock());
+        for (int i=0; i<size.x * size.y; ++i) {
+            textureData[i] = {
+                static_cast<std::uint8_t>(color.x * 255), 
+                static_cast<std::uint8_t>(color.y * 255), 
+                static_cast<std::uint8_t>(color.z * 255), 
+                static_cast<std::uint8_t>(color.w * 255)
+            };
+        }
+        texture->unlock();
+
+        return texture;
+    }
+
     void RayTracerApp::initialize(int argc, char **argv) {
         // Initialize the exeng root class and plugins.
         std::string path = getPluginPath();
-    
+        
         this->getRoot()->getPluginManager()->load("exeng.graphics.gl3", path);
         
         // initialize the gl3 driver, in windowed mode
         this->driver.reset(this->getRoot()->getGraphicsManager()->createDriver());
         this->driver->addEventHandler(this);
-        
         this->driver->initialize();
         DisplayMode mode = this->driver->getDisplayMode();
         
         // create the geometry (a single triangle)
         auto vertexBuffer = this->driver->createVertexBuffer(VertexFormat::makeVertex2D(), 4);
-        {        
+        {
             VertexArray<Vertex2D> array(vertexBuffer);
 
             array[0] = {{-1.0f,  1.0f, 0.0f}, {0.0f,  1.0f}};
@@ -87,31 +109,19 @@ namespace raytracer {
         this->sampler.reset(new JitteredSampler(25));
         this->sampler->generateSamples();
 
-        this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
-        // this->tracer.reset(new raytracer::tracers::HardwareTracer(&this->scene));
+        // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
+        Tracer *tracer = new raytracer::tracers::HardwareTracer(this->scene.get(), this->sampler.get());
+        this->tracer.reset(tracer);
         
-        // create a texture for the render targets
-        auto texture = this->driver->createTexture(
-            TextureType::Tex2D, 
-            Vector3f(static_cast<float>(mode.size.width), 
-            static_cast<float>(mode.size.height)), 
-            ColorFormat::getColorFormatR8G8B8A8()
+        // Create a base texture.
+        Texture *texture = this->createTexture (
+            this->driver.get(), 
+            {static_cast<float>(mode.size.width), static_cast<float>(mode.size.height)},
+            {0.0f, 0.5f, 1.0f, 1.0f}
         );
-        
-        this->tracer->setRenderTarget(texture);
-        
-        struct Texel {
-            std::uint8_t red, green, blue, alpha;
-        };
-        
-        Texel *textureData = reinterpret_cast<Texel*>(texture->lock());
-        for (int i=0; i<mode.size.width * mode.size.height; ++i) {
-            textureData[i] = {0, 0, 0, 255};
-        }
 
-        texture->unlock();
-        
         this->texture.reset(texture);
+        this->tracer->setRenderTarget(texture);
         
         this->material.getLayer(0)->setTexture(texture);
         

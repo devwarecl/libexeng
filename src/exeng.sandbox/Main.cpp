@@ -10,7 +10,6 @@
 #include <fstream>
 #include <sstream>
 #include <CL/cl.hpp>
-// #include <exeng/graphics/Vertex.hpp>
 #include <exeng/Config.hpp>
 #include <exeng/math/TVector.hpp>
 #include <exeng/math/TMatrix.hpp>
@@ -211,14 +210,6 @@ namespace simple {
             // cl_context context = ::clCreateContext(properties, 1, &deviceId, nullptr, nullptr, &errorCode);
             cl::Context context({device}, &properties[0]);
 
-            cl::Image2DGL image = cl::Image2DGL(context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, bufferId, &errorCode);
-            // Crear un buffer de datos y copiarlo a un buffer instanciado en la memoria de video.
-            // cl_mem buffer = ::clCreateFromGLBuffer(context, CL_MEM_READ_WRITE, bufferId, &errorCode);
-            // cl::BufferGL buffer(context, CL_MEM_READ_WRITE, bufferId, &errorCode);
-            if (errorCode != CL_SUCCESS) {
-                throw std::runtime_error("No se pudo crear el buffer CL a partir del buffer GL.");
-            }
-
             // Compilar el programa
             std::string kernelSource = util::loadFile(util::getMediaPath() + "VertexDisplacer.cl");
             // const size_t kernelSourceSize = kernelSource.size() + 1;
@@ -251,17 +242,32 @@ namespace simple {
             this->platform = platform;
             this->device = device;
             this->context = context;
-            this->image = image;
+            
             this->program = program;
             this->kernel = kernel;
             this->queue = queue;
-            this->bufferId = bufferId;
             this->bufferSize = bufferSize;
             this->width = width;
             this->height = height;
         }
 
+        void setRenderTexture(GLuint textureId) {
+            cl_int errorCode = 0;
+
+            cl::Image2DGL image = cl::Image2DGL(this->context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureId, &errorCode);
+            // Crear un buffer de datos y copiarlo a un buffer instanciado en la memoria de video.
+            // cl_mem buffer = ::clCreateFromGLBuffer(context, CL_MEM_READ_WRITE, bufferId, &errorCode);
+            // cl::BufferGL buffer(context, CL_MEM_READ_WRITE, bufferId, &errorCode);
+            if (errorCode != CL_SUCCESS) {
+                throw std::runtime_error("No se pudo crear el buffer CL a partir del buffer GL.");
+            }
+
+            this->bufferId = textureId;
+            this->image = image;
+        }
+
         void process() {
+            cl::Event event;
             cl_int errorCode = 0;
 
             // Especificar los datos de entrada
@@ -274,7 +280,8 @@ namespace simple {
             // Bloquear el buffer GL
             // clEnqueueAcquireGLObjects(this->queue, 1, &this->buffer, 0, nullptr, nullptr);
             std::vector<cl::Memory> buffers = { cl::Memory(this->image) };
-            errorCode = this->queue.enqueueAcquireGLObjects(&buffers, nullptr, nullptr);
+            errorCode = this->queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
+            event.wait();
             if (errorCode != CL_SUCCESS) {
                 throw std::runtime_error("Error durante la ejecucion del kernel.");
             }
@@ -282,14 +289,16 @@ namespace simple {
             // Especificar el rango en el que vamos a ejecutar el kernel.
             // const size_t globalWorkSize[] = {bufferSize, 0, 0};
             // errorCode = ::clEnqueueNDRangeKernel(queue, this->kernel, 1, nullptr, globalWorkSize, nullptr, 0, nullptr, nullptr);
-            errorCode = this->queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(width, height), cl::NullRange, nullptr, nullptr);
+            errorCode = this->queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(width, height), cl::NullRange, nullptr, &event);
+            event.wait();
             if (errorCode != CL_SUCCESS) {
                 throw std::runtime_error("Error durante la ejecucion del kernel.");
             }
 
             // Desbloquear el buffer GL
             // ::clEnqueueReleaseGLObjects(this->queue, 1, &this->buffer, 0, nullptr, nullptr);
-            errorCode = this->queue.enqueueReleaseGLObjects(&buffers, nullptr, nullptr);
+            errorCode = this->queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
+            event.wait();
             if (errorCode != CL_SUCCESS) {
                 throw std::runtime_error("Error durante la ejecucion del kernel.");
             }
@@ -330,6 +339,10 @@ namespace simple {
 
         virtual void initialize() {
             GraphicsApplication::initialize();
+
+            // Conf. varias
+            ::glEnable(GL_DEPTH_TEST);
+            ::glFrontFace(GL_CCW);
 
             // Buffer de vertices
             ::glGenVertexArrays(1, &this->vao);
@@ -390,22 +403,19 @@ namespace simple {
             ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indexBuffer);
             ::glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * this->indexData.size(), this->indexData.data(), GL_STATIC_DRAW);
 
-            // Crear una textura en blanco
-            GLubyte textureData[256*256*4] = {0};
-            for (int i=0; i<256*256*4; ++i) {
-                textureData[i] = 255;
-            }
-
-            ::glGenTextures(1, &this->textureId);
-            ::glBindTexture(GL_TEXTURE_2D, this->textureId);
-            ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
-            ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
             gl::check();
 
             this->programId = this->loadProgram();
             this->processor.initialize(this->textureId, 256*256*4, 256, 256);
+
+            // Crear una textura en blanco
+            ::glGenTextures(1, &this->textureId);
+            ::glBindTexture(GL_TEXTURE_2D, this->textureId);
+            ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_FLOAT, nullptr);
+            ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+            this->processor.setRenderTexture(this->textureId);
         }
 
         virtual void terminate() {
@@ -414,8 +424,6 @@ namespace simple {
 
         virtual void update(GLdouble seconds) {
             float speed = 2.0f * static_cast<float>(seconds);
-
-            this->processor.process();
 
             if (::glfwGetKey(this->getWindow(), GLFW_KEY_LEFT) == GLFW_PRESS) {
                 this->objPos += Vector3f(1.0f, 0.0f, 0.0f) * speed;
@@ -443,6 +451,8 @@ namespace simple {
 
             modelMatrix.identity();
             modelMatrix.translation(this->objPos);
+
+            this->processor.process();
 
             ::glClearColor(0.1f, 0.2f, 0.8f, 1.0f);
             ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -509,7 +519,89 @@ namespace simple {
     };
 }
 
+
+float lerp(float a, float b, float t) {
+	return a*(1.0 - t) + b*t;
+}
+
+float clerp(float a, float b, float t) {
+	t = t * 3.1415926535;
+	t = (1.0 - ::cos(t)) * 0.5;
+
+	return lerp(a, b, t);
+}
+
+float slerp(float a, float b, float c, float d, float t) {
+	float p = (d - c) - (b - a);
+	float q = (b - a) - p;
+	float r = c - a;
+	float s = b;
+	float t_2 = t*t;
+	float t_3 = t_2*t;
+
+	return p*t_3 + q*t_2 + r*t + s;
+}
+
+float noise2d (int x, int y) {
+	int n  = x *+ y * 57;
+	n = (n << 13) ^ n;
+
+	return ( 1.0 - ( (n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);    
+}
+
+float snoise2d(int x, int y) {
+	float corners = (noise2d(x - 1, y - 1)	+ noise2d(x + 1, y - 1) + noise2d(x - 1, y + 1) + noise2d(x + 1, y + 1)) / 16.0;
+	float sides	=	(noise2d(x - 1, y	 )	+ noise2d(x + 1, y	  ) + noise2d(x	   , y - 1) + noise2d(x    , y + 1)) / 8.0;
+	float center =	noise2d(x, y) / 4.0;
+
+	return corners + sides + center;
+}
+
+float lerp_noise2d(float x, float y) {
+	int intX = (int)x;
+	int intY = (int)y;
+
+	float tX = x - intX;
+	float tY = y - intY;
+
+	float v1 = snoise2d(intX + 0, intY + 0);
+	float v2 = snoise2d(intX + 1, intY + 0);
+	float v3 = snoise2d(intX + 0, intY + 1);
+	float v4 = snoise2d(intX + 1, intY + 1);
+
+	float a = lerp(v1, v2, tX);
+	float b = lerp(v3, v4, tX);
+
+	return lerp(a, b, tY);
+}
+
+float pown(float base, int exp) {
+    return pow(base, exp);
+}
+
+float perlin_noise2d(float x, float y) {
+	float total = 0.0;
+
+	int n = 4; /*octaves*/
+	float p = 0.25; /*persistence*/
+
+	int freq = 0;
+	int amp = 0;
+
+	for (int i=0; i<n; ++i) {
+		freq = pown(2.0, i);
+		amp = pow(p, i);
+
+		total += lerp_noise2d(x * freq, y * freq) * amp;
+	}
+
+	return total;
+}
+
 int main(int argc, char **argv) {
+    // std::cout <<  (perlin_noise2d(0.0f, 0.1f) + 1.0f) * 0.5f << std::endl;
+    // return 0;
+
     using simple::SimpleApplication;
     
     SimpleApplication app;

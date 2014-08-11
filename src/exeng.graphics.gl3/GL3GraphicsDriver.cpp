@@ -273,7 +273,7 @@ namespace exeng { namespace graphics { namespace gl3 {
             throw std::logic_error(msg);
         }       
 #endif
-        ::glFlush();
+        ::glFinish();
         ::glfwSwapBuffers(this->window);
         
         this->renderingFrame = false;

@@ -10,11 +10,12 @@
 #include <memory>
 
 #include "Tracer.hpp"
+#include "../samplers/Sampler.hpp"
 
 namespace raytracer { namespace tracers {
     class HardwareTracer : public Tracer {
     public:
-        HardwareTracer(const exeng::scenegraph::Scene *scene );
+        HardwareTracer(const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
         virtual void render(const exeng::scenegraph::Camera *camera);
         ~HardwareTracer();
         

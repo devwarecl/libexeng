@@ -3,8 +3,10 @@
  * @brief Interfaz del objeto trazador de rayos
  */
 
-#define __CL_ENABLE_EXCEPTIONS
+// #define __CL_ENABLE_EXCEPTIONS
 #define CL_USE_DEPRECATED_OPENCL_1_1_APIS 
+
+#include <fstream>
 
 #include "HardwareTracer.hpp"
 
@@ -37,7 +39,30 @@ namespace raytracer { namespace tracers {
         cl::CommandQueue queue;
     };
     
-    HardwareTracer::HardwareTracer(const Scene *scene ) : Tracer(scene, nullptr), impl(new HardwareTracer::Private())  {
+    std::string getRootPath() {
+        return std::string(RAYTRACER_ROOT_FOLDER);
+    }
+
+    std::string loadFile(const std::string &file) {
+        std::ifstream fs;
+        fs.open(file.c_str(), std::ios_base::in);
+
+        if (!fs.is_open()) {
+            throw std::runtime_error("File '" + file + "' couldn't be loaded.");
+        }
+
+        std::string content;
+        std::string line;
+
+        while (!fs.eof()) {
+            std::getline(fs, line);
+            content += line + "\n";
+        }
+
+        return content;
+    }
+
+    HardwareTracer::HardwareTracer(const Scene *scene, const raytracer::samplers::Sampler *sampler) : Tracer(scene, nullptr), impl(new HardwareTracer::Private())  {
         std::vector<cl::Platform> platforms;
         cl::Platform::get(&platforms);
         
@@ -79,13 +104,13 @@ namespace raytracer { namespace tracers {
         cl::Context context({device}, properties);
         
         // Create a Program object
-        std::string programSource = "";
-        programSource += "__kernel void tracerKernel(__write_only image2d_t bmp) { ";
-        programSource += "  int2 coords = (int2)(get_global_id(0), get_global_id(1)); ";
-        programSource += "  float4 color = (float4)(0.0f, 0.0f, 1.0f, 1.0f); ";
-        programSource += "  write_imagef(bmp, coords, color); ";
-        programSource += "}";
-        
+        std::string programSource = loadFile(getRootPath() + "kernels/TraceRay.cl");
+//            "__kernel void tracerKernel(__write_only image2d_t image) { "
+//            "  int2 coords = (int2)(get_global_id(0), get_global_id(1)); "
+//            "  float4 color = (float4)(0.0f, 0.0f, 0.0f, 1.0f); "
+//            "  write_imagef (image, coords, color); "
+//            "}";
+
         cl::Program::Sources programSources;
         programSources.push_back({programSource.c_str(), programSource.size()});
         
@@ -138,28 +163,38 @@ namespace raytracer { namespace tracers {
     }
     
     HardwareTracer::~HardwareTracer() {}
-    
+
     void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
         Vector3i size = this->getRenderTarget()->getSize();
         cl::Image2DGL &image = this->impl->image;
         cl::CommandQueue &queue = this->impl->queue;
-        
-        cl::size_t<3> origin;
-        origin[0] = 0;
-        origin[1] = 0;
-        origin[2] = 0;
-        
-        cl::size_t<3> region;
-        region[0] = size.x;
-        region[1] = size.y;
-        region[2] = 1;
-        
-        // The C++ OpenCL wrapper pass this param as 'void*' instead.
-        void* ptr = const_cast<void*>(this->getRenderTarget()->getDataPtr());
-        if (queue.enqueueWriteImage(image, CL_TRUE, origin, region, 0, 0, ptr) != CL_SUCCESS) {
-            throw std::runtime_error("HardwareTracer::render: Error at writing the image buffer to the execution queue.");
+        cl::Event event;
+        cl_int errCode = 0;
+
+        this->impl->kernel.setArg(0, image);
+        std::vector<cl::Memory> buffers = {image};
+
+        errCode = queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
+        if (errCode != CL_SUCCESS) {
+            throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
         }
-        
-        // cl::KernelFunctor tracerKernel(this->impl->program, "tracerKernel");
+        event.wait();
+
+        errCode = queue.enqueueNDRangeKernel(this->impl->kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
+        if (errCode != CL_SUCCESS) {
+            throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
+        }
+        event.wait();
+
+        errCode = queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
+        if (errCode != CL_SUCCESS) {
+            throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
+        }
+        event.wait();
+
+        errCode = queue.finish();
+        if (errCode != CL_SUCCESS) {
+            throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
+        }
     }
 }}

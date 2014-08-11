@@ -2,7 +2,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "-std=c++0x")
 endif()
 
-add_definitions(-DBOOST_ALL_DYN_LINK)
+add_definitions(-DBOOST_ALL_DYN_LINK -DRAYTRACER_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.raytracer/")
 
 # Boost Configuration
 set (Boost_USE_STATIC_LIBS OFF)
@@ -31,6 +31,10 @@ set (BaseFiles
     SceneLoader.hpp                 SceneLoader.cpp 
 )
 
+set (Kernels
+	kernels/TraceRay.cl
+)
+
 set ( Tracers
 	tracers/Tracer.hpp              tracers/Tracer.cpp 
     tracers/SoftwareTracer.hpp      tracers/SoftwareTracer.cpp 
@@ -42,13 +46,14 @@ set ( Samplers
     samplers/JitteredSampler.hpp    samplers/JitteredSampler.cpp 
 )
 
-add_executable(exeng.raytracer WIN32 ${BaseFiles} ${Tracers} ${Samplers} )
+add_executable(exeng.raytracer WIN32 ${BaseFiles} ${Tracers} ${Samplers} ${Kernels} )
 
 target_link_libraries(exeng.raytracer exeng exeng.main ${Boost_LIBRARIES} ${OPENCL_LIBRARIES} ${OPENGL_LIBRARIES})
 
 source_group(root		FILES ${BaseFiles})
 source_group(tracers	FILES ${Tracers})
 source_group(samplers	FILES ${Samplers})
+source_group(kernels	FILES ${Kernels})
 
 add_subdirectory(samplers)
 add_subdirectory(tracers)
