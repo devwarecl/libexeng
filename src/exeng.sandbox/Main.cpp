@@ -9,10 +9,13 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <CL/cl.hpp>
 #include <exeng/Config.hpp>
 #include <exeng/math/TVector.hpp>
 #include <exeng/math/TMatrix.hpp>
+
+
+#undef CL_VERSION_1_2
+#include <CL/cl.hpp>
 
 using namespace exeng::math;
 
