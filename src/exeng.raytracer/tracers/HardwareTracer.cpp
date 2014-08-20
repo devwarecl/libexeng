@@ -180,9 +180,14 @@ namespace raytracer { namespace tracers {
         cl::Event event;
         cl_int errCode = 0;
 
+        auto cam = camera->getPosition();
+
         this->impl->kernel.setArg(0, image);
         this->impl->kernel.setArg(1, samplesBuffer);
         this->impl->kernel.setArg(2, this->impl->samplesCount);
+        this->impl->kernel.setArg(3, cam.x);
+        this->impl->kernel.setArg(4, cam.y);
+        this->impl->kernel.setArg(5, cam.z);
 
         std::vector<cl::Memory> buffersGL = {image};
         

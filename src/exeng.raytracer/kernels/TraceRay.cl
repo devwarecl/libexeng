@@ -67,61 +67,45 @@ bool intersect_triangle(intersect_info_t *info, ray_t ray, float3 p1, float3 p2,
 }
 
 constant vertex_t vertices[] =  {
-	// {{0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-	// {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-	// {{1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}}
-
 	// Cara trasera
-	{
-		{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f},  // Izquierda,  Arriba,  Atras
-		{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f},  // Derecha,    Arriba,  Atras
-		{-0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 0.0f},  // Izquierda,  Abajo,   Atras
-		{ 0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 0.0f}   // Derecha,    Abajo,   Atras
-	},
+	{{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},  // Izquierda,  Arriba,  Atras
+	{{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f}},  // Derecha,    Arriba,  Atras
+	{{-0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 0.0f}},  // Izquierda,  Abajo,   Atras
+	{{ 0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 0.0f}},  // Derecha,    Abajo,   Atras
 
 	// Cara derecha
-	{
-		{0.5f,   0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}, // Derecha,     Arriba, Atras
-		{0.5f,   0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}, // Derecha,     Arriba, Adelante
-		{0.5f,  -0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}, // Derecha,     Abajo,  Atras
-		{0.5f,  -0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}  // Derecha,     Abajo,  Adelante 
-	},
+	{{0.5f,   0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}}, // Derecha,     Arriba, Atras
+	{{0.5f,   0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}}, // Derecha,     Arriba, Adelante
+	{{0.5f,  -0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}}, // Derecha,     Abajo,  Atras
+	{{0.5f,  -0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}}, // Derecha,     Abajo,  Adelante 
 
 	// Cara delantera
-	{
-		{ 0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 1.0f},  // Derecha,     Arriba, Adelante
-		{-0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 1.0f},  // Izquierda,   Arriba, Adelante
-		{ 0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 0.0f},  // Derecha,     Abajo,  Adelante
-		{-0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 0.0f}   // Izquierda,   Abajo,  Adelante
-	},
-
+	{{ 0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 1.0f}},  // Derecha,     Arriba, Adelante
+	{{-0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 1.0f}},  // Izquierda,   Arriba, Adelante
+	{{ 0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 0.0f}},  // Derecha,     Abajo,  Adelante
+	{{-0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 0.0f}},  // Izquierda,   Abajo,  Adelante
+	
 	// Cara Izquierda
-	{
-		{-0.5f,   0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}, // Izquierda,   Arriba, Adelante
-		{-0.5f,   0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}, // Izquierda,   Arriba, Atras
-		{-0.5f,  -0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}, // Izquierda,   Abajo,  Adelante 
-		{-0.5f,  -0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}  // Izquierda,   Abajo,  Atras
-	},
-
+	{{-0.5f,   0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}}, // Izquierda,   Arriba, Adelante
+	{{-0.5f,   0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}}, // Izquierda,   Arriba, Atras
+	{{-0.5f,  -0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}}, // Izquierda,   Abajo,  Adelante 
+	{{-0.5f,  -0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}}, // Izquierda,   Abajo,  Atras
+	
 	// Cara de Arriba
-	{
-		{-0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 1.0f}, // Izquierda,   Arriba, Adelante
-		{ 0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 1.0f}, // Derecha,     Arriba, Adelante
-		{-0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 0.0f}, // Izquierda,   Arriba, Atras
-		{ 0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 0.0f}  // Derecha,     Arriba, Atras
-	},
-
+	{{-0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 1.0f}}, // Izquierda,   Arriba, Adelante
+	{{ 0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 1.0f}}, // Derecha,     Arriba, Adelante
+	{{-0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 0.0f}}, // Izquierda,   Arriba, Atras
+	{{ 0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 0.0f}},  // Derecha,     Arriba, Atras
+	
 	// Cara Inferior
-	{
-		{ 0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {1.0f, 1.0f}, // Derecha,     Abajo, Adelante
-		{-0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 1.0f}, // Izquierda,   Abajo, Adelante
-		{ 0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {1.0f, 0.0f}, // Derecha,     Abajo, Atras
-		{-0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 0.0f}  // Izquierda,   Abajo, Atras
-	}
+	{{ 0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {1.0f, 1.0f}}, // Derecha,     Abajo, Adelante
+	{{-0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 1.0f}}, // Izquierda,   Abajo, Adelante
+	{{ 0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {1.0f, 0.0f}}, // Derecha,     Abajo, Atras
+	{{-0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 0.0f}}  // Izquierda,   Abajo, Atras
 };
 
 constant int indices[] = {
-	0 + 0,  0 + 1,  0 + 2,  0 + 1,  0 + 3,  0 + 2, 
+	0 + 0,  0 + 1,  0 + 2,  0 + 1,  0 + 3,  0 + 2,
     4 + 0,  4 + 1,  4 + 2,  4 + 1,  4 + 3,  4 + 2, 
     8 + 0,  8 + 1,  8 + 2,  8 + 1,  8 + 3,  8 + 2, 
     12 + 0, 12 + 1, 12 + 2, 12 + 1, 12 + 3, 12 + 2, 
@@ -156,13 +140,13 @@ ray_t cast_ray(int2 coords, float3 eye_coord, float2 sample) {
 	return ray;
 }
 
-float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant int *indices, int triangle_count) {
+float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant int *indices, int index_count) {
 	intersect_info_t prev_info;
 	intersect_info_t info;
 
 	prev_info.distance = FLT_MAX;
 
-	for (int i=0; i<triangle_count*3; i+=3) {
+	for (int i=3; i<index_count; i+=3) {
 		float3 p1 = vertices[indices[i + 0]].coord;
 		float3 p2 = vertices[indices[i + 1]].coord;
 		float3 p3 = vertices[indices[i + 2]].coord;
@@ -182,24 +166,30 @@ float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant 
 /**
  * @brief Main ray tracer kernel.
  */
-__kernel void tracerKernel(__write_only image2d_t image, global float2 *samples, int sample_count) {
+__kernel void tracerKernel (
+	__write_only image2d_t image, 
+	global float2 *samples, 
+	int sample_count, 
+	float cam_x,
+	float cam_y, 
+	float cam_z) 
+{
 	// pixel coordinate.
 	int2 coords = (int2)(get_global_id(0), get_global_id(1));
 
 	// default background color
 	float4 background_color = (float4)(0.0f, 0.0f, 1.0f, 1.0f);
 	float4 color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	const int triangle_count = 3;
-
-	float inv_sample_count = 1.0f / (float)sample_count;
+	const int index_count = 6;
 
 	// cast multisampled ray
 	for (int i=0; i<sample_count; ++i) {
-		ray_t ray = cast_ray(coords, (float3)(0.0, 0.0, -2.0), samples[i]);
-		color += trace_ray(ray, background_color, vertices, indices, triangle_count);
+		// ray_t ray = cast_ray(coords, (float3)(cam_pos[0], cam_pos[1], cam_pos[2]), samples[i]);
+		ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), samples[i]);
+		color += trace_ray(ray, background_color, vertices, indices, index_count);
 	}
 
-	color *= inv_sample_count;
+	color /= (float)sample_count;
 
 	write_imagef (image, coords, color);
 }

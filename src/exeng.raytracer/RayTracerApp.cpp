@@ -126,7 +126,7 @@ namespace raytracer {
         this->material.getLayer(0)->setTexture(texture);
         
         this->camera.setLookAt({0.0f, 0.0f, 0.0f});
-        this->camera.setPosition({0.0f, 2.0f, -75.0f});
+        this->camera.setPosition({0.0f, 0.0f, -2.0f});
         this->camera.setUp({0.0f, 1.0f, 0.0f});
     }
     
@@ -143,34 +143,39 @@ namespace raytracer {
         this->frameCounter.update(seconds);
         std::cout << this->frameCounter.getCurrentFps() << std::endl;
         
+        Vector3f delta(0.0f);
+
         // actualiza la camara en funcion de la entrada por teclado
         if (this->buttonStatus[ButtonCode::KeyEsc]) {
             this->applicationStatus = ApplicationStatus::Terminated;
         }
-    
+        
         if (this->buttonStatus[ButtonCode::KeyUp]) {
-            auto cameraPosition = this->camera.getPosition();
-            cameraPosition.z += 2.5f;
-            this->camera.setPosition(cameraPosition);
+            delta.z += 0.25f;
         }
-    
+        
         if (this->buttonStatus[ButtonCode::KeyDown]) {
-            auto cameraPosition = this->camera.getPosition();
-            cameraPosition.z -= 2.5f;
-            this->camera.setPosition(cameraPosition);
+            delta.z -= 0.25f;
         }
-    
+        
+        if (this->buttonStatus[ButtonCode::KeySpace]) {
+            delta.y += 0.25;
+        }
+        
+        if (this->buttonStatus[ButtonCode::KeyEnter]) {
+            delta.y -= 0.25;
+        }
+
         if (this->buttonStatus[ButtonCode::KeyRight]) {
-            auto cameraPosition = this->camera.getPosition();
-            cameraPosition.x += 2.5f;
-            this->camera.setPosition(cameraPosition);
+            delta.x += 0.25;
         }
-    
+        
         if (this->buttonStatus[ButtonCode::KeyLeft]) {
-            auto cameraPosition = this->camera.getPosition();
-            cameraPosition.x -= 2.5f;
-            this->camera.setPosition(cameraPosition);
+            delta.x -= 0.25;
         }
+
+        this->camera.setPosition(delta + this->camera.getPosition());
+        this->camera.setLookAt(delta + this->camera.getLookAt());
     }
     
     void RayTracerApp::render() {
