@@ -1,6 +1,5 @@
 
 #include <exeng.raytracer/tracers/SoftwareTracer.hpp>
-
 #include <exeng/scenegraph/Geometry.hpp>
 
 namespace raytracer { namespace tracers {

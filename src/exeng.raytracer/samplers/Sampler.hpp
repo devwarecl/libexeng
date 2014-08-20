@@ -46,6 +46,11 @@ namespace raytracer { namespace samplers {
          */
         int getSampleCount() const;
         
+        /**
+         * @brief Get a pointer to the sample data (read-only)
+         */
+        const exeng::math::Vector2f* getSampleData() const;
+
     protected:
         /**
          *  @brief Numero de puntos de muestra en un patron determinado.

@@ -37,6 +37,8 @@ namespace raytracer { namespace tracers {
         cl::Image2DGL image;
         cl::Kernel kernel;
         cl::CommandQueue queue;
+        cl::Buffer samplesBuffer;
+        cl_int samplesCount;
     };
     
     std::string getRootPath() {
@@ -101,35 +103,38 @@ namespace raytracer { namespace tracers {
             0 , 0 ,  
         };
         
-        cl::Context context({device}, properties);
+        // initialize the OpenCL context
+        cl::Context context = cl::Context({device}, properties);
         
+        // pass the samples to OpenCL
+        size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
+        cl_mem_flags bufferFlags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
+        void* bufferData = (void*)(sampler->getSampleData());
+
+        cl::Buffer samplesBuffer = cl::Buffer(context, bufferFlags, bufferSize, bufferData);
+
         // Create a Program object
         std::string programSource = loadFile(getRootPath() + "kernels/TraceRay.cl");
-//            "__kernel void tracerKernel(__write_only image2d_t image) { "
-//            "  int2 coords = (int2)(get_global_id(0), get_global_id(1)); "
-//            "  float4 color = (float4)(0.0f, 0.0f, 0.0f, 1.0f); "
-//            "  write_imagef (image, coords, color); "
-//            "}";
 
         cl::Program::Sources programSources;
         programSources.push_back({programSource.c_str(), programSource.size()});
         
         // Compile 
-        cl::Program program(context, programSources);
+        cl::Program program = cl::Program(context, programSources);
         program.build({device});
         if (program.build({device}) != CL_SUCCESS) {
-            std::string msg("");
-            msg += "Error al compilar un programa OpenCL: ";
+            std::string msg;
+            msg += "OpenCL program compile error: ";
             msg += program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
             msg += "\n";
             
             throw std::runtime_error(msg);
         }
         
-        cl::Kernel kernel(program, "tracerKernel");
+        cl::Kernel kernel = cl::Kernel(program, "tracerKernel");
         
         // Command queue
-        cl::CommandQueue queue(context, device);
+        cl::CommandQueue queue = cl::CommandQueue(context, device);
         
         // Save the final variables
         this->impl->platform = platform;
@@ -138,9 +143,12 @@ namespace raytracer { namespace tracers {
         this->impl->program = program;
         this->impl->kernel = kernel;
         this->impl->queue = queue;
+        this->impl->samplesBuffer = samplesBuffer;
+        this->impl->samplesCount = sampler->getSampleCount();
     }
     
     void HardwareTracer::setRenderTarget(exeng::graphics::Texture *renderTarget) {
+
         // Create a OpenCL 2D image  from the render target Texture
         GLuint textureId = static_cast<GLuint>(renderTarget->getHandle());
         if (textureId <= 0) {
@@ -152,7 +160,7 @@ namespace raytracer { namespace tracers {
         cl::Image2DGL image(this->impl->context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureId, &errorCode);
         if (errorCode != CL_SUCCESS) {
             std::string str;
-            str += "Invalid render target texture. Error code: ";
+            str += "HardwareTracer::setRenderTarget: Invalid render target texture. Error code: ";
             str += boost::lexical_cast<std::string>(errorCode);
             
             throw std::runtime_error(str);
@@ -167,14 +175,18 @@ namespace raytracer { namespace tracers {
     void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
         Vector3i size = this->getRenderTarget()->getSize();
         cl::Image2DGL &image = this->impl->image;
+        cl::Buffer &samplesBuffer = this->impl->samplesBuffer;
         cl::CommandQueue &queue = this->impl->queue;
         cl::Event event;
         cl_int errCode = 0;
 
         this->impl->kernel.setArg(0, image);
-        std::vector<cl::Memory> buffers = {image};
+        this->impl->kernel.setArg(1, samplesBuffer);
+        this->impl->kernel.setArg(2, this->impl->samplesCount);
 
-        errCode = queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
+        std::vector<cl::Memory> buffersGL = {image};
+        
+        errCode = queue.enqueueAcquireGLObjects(&buffersGL, nullptr, &event);
         if (errCode != CL_SUCCESS) {
             throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
         }
@@ -186,7 +198,7 @@ namespace raytracer { namespace tracers {
         }
         event.wait();
 
-        errCode = queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
+        errCode = queue.enqueueReleaseGLObjects(&buffersGL, nullptr, &event);
         if (errCode != CL_SUCCESS) {
             throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
         }

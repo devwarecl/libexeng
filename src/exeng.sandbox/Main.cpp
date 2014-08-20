@@ -1,6 +1,8 @@
 
 // #define __CL_ENABLE_EXCEPTIONS
 
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
+
 #include "gl_core_3_3.h"
 #include <GLFW/glfw3.h>
 #include <CL/cl_gl.h>
@@ -9,7 +11,11 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+
+#undef CL_VERSION_1_2
+
 #include <CL/cl.hpp>
+
 #include <exeng/Config.hpp>
 #include <exeng/math/TVector.hpp>
 #include <exeng/math/TMatrix.hpp>
@@ -208,7 +214,9 @@ namespace simple {
             };
 
             // cl_context context = ::clCreateContext(properties, 1, &deviceId, nullptr, nullptr, &errorCode);
-            cl::Context context({device}, &properties[0]);
+            std::vector<cl::Device> selectedDevices = {device};
+            
+            cl::Context context = cl::Context(selectedDevices, &properties[0], nullptr, nullptr, nullptr);
 
             // Compilar el programa
             std::string kernelSource = util::loadFile(util::getMediaPath() + "VertexDisplacer.cl");
@@ -519,7 +527,7 @@ namespace simple {
     };
 }
 
-
+/*
 float lerp(float a, float b, float t) {
 	return a*(1.0 - t) + b*t;
 }
@@ -582,8 +590,8 @@ float pown(float base, int exp) {
 float perlin_noise2d(float x, float y) {
 	float total = 0.0;
 
-	int n = 4; /*octaves*/
-	float p = 0.25; /*persistence*/
+	int n = 4;      //octaves
+	float p = 0.25; //persistence
 
 	int freq = 0;
 	int amp = 0;
@@ -597,6 +605,7 @@ float perlin_noise2d(float x, float y) {
 
 	return total;
 }
+*/
 
 int main(int argc, char **argv) {
     // std::cout <<  (perlin_noise2d(0.0f, 0.1f) + 1.0f) * 0.5f << std::endl;
