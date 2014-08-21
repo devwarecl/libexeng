@@ -226,7 +226,7 @@ void showMsgBox(const std::string &msg, const std::string &title) {
 #if defined(EXENG_WINDOWS)
     ::MessageBox(NULL, msg.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
 #else
-    std::cout << exp.what() << std::endl;
+    std::cout << "[" << title << "]" << std::endl << msg << std::endl;
 #endif
 }
 

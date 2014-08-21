@@ -130,25 +130,31 @@ constant float3 half_size = (float3)(639.0f * 0.5f, 479.0f * 0.5f, 0.0f);
 */
 
 ray_t cast_ray(int2 coords, float3 eye_coord, float2 sample) {
-	float3 coordf = {(float)coords.x, (float)coords.y, 0.0f};
 
+    float3 coordsf = (float3)((float)coords.x, (float)coords.y, 0.0f) + (float3)(sample.x, sample.y, 0.0f);
+
+    /*
 	ray_t ray = {
 		eye_coord, 
 		normalize(coordf - half_size + (float3)(0.5f, 0.5f, 150.0f) + (float3)(sample.x, sample.y, 0.0f))
 	};
+    */
+    
+    float3 cam_pos = eye_coord;
+    float3 cam_right = (float3)(1.0f, 0.0f, 0.0f);
+    float3 cam_up = (float3)(0.0f, 1.0f, 0.0f);
+    float3 cam_dir = (float3)(0.0f, 0.0f, 1.0f);
+    
+    float3 normalized_coords = (coordsf / screen_size) - (float3)(0.5f, 0.5f, 0.0f);
+    float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
 
+    ray_t ray = {
+        cam_pos, 
+        normalize(image_point - cam_pos) // + (float3)(sample.x, sample.y, 0.0f)
+    };
+    
 	return ray;
 }
-
-/*
-float _absf(float value) {
-	if (value < 0.0f) {
-		value = -value;
-	}
-
-	return value;
-}
-*/
 
 float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant int *indices, int index_count) {
 	intersect_info_t prev_info;
@@ -166,7 +172,8 @@ float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant 
 			
 			// TODO: select the material of the mesh
 			// 
-			color = (float4)(1.0f, 1.0f, 1.0f, 1.0f) * fabs(dot(ray.direction, vertices[indices[i + 1]].normal));
+			// color = (float4)(1.0f, 1.0f, 1.0f, 1.0f) * fabs(dot(ray.direction, vertices[indices[i + 1]].normal));
+            color = (float4)(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 	}
 

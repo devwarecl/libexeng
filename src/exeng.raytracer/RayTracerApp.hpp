@@ -38,7 +38,7 @@ namespace raytracer {
         virtual void handleEvent(const exeng::input::EventData &data);
         
     private:
-        exeng::graphics::Texture* RayTracerApp::createTexture (
+        exeng::graphics::Texture* createTexture (
                exeng::graphics::GraphicsDriver *driver, 
                const exeng::math::Vector3f& size, 
                const exeng::math::Vector4f &color
