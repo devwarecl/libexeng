@@ -184,7 +184,7 @@ namespace raytracer { namespace tracers {
 
         this->impl->kernel.setArg(0, image);
         this->impl->kernel.setArg(1, samplesBuffer);
-        this->impl->kernel.setArg(2, this->impl->samplesCount);
+        this->impl->kernel.setArg(2, 16);
         this->impl->kernel.setArg(3, cam.x);
         this->impl->kernel.setArg(4, cam.y);
         this->impl->kernel.setArg(5, cam.z);

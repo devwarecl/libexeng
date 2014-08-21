@@ -23,7 +23,7 @@ typedef struct {
 bool intersect_plane(intersect_info_t *info, ray_t ray, plane_t plane) {
 	float distance = dot(plane.normal, plane.point - ray.point) / dot(plane.normal, ray.direction);
 	
-	if (distance > 0.0) {
+	if (distance > 0.0f) {
 		info->distance = distance;
 		info->normal = plane.normal;
 
@@ -59,7 +59,7 @@ bool intersect_triangle(intersect_info_t *info, ray_t ray, float3 p1, float3 p2,
 	float v = triple(pq, pa, pc);
 	float w = triple(pq, pb, pa);
 
-	if (u > 0.0 && v > 0.0 && w > 0.0 || u < 0.0 && v < 0.0 && w < 0.0) {
+	if ((u > 0.0f && v > 0.0f && w > 0.0f) /* || (u < 0.0f && v < 0.0f && w < 0.0f)*/) {
 		return true;
 	} else {
 		return false;
@@ -113,12 +113,12 @@ constant int indices[] = {
     20 + 0, 20 + 1, 20 + 2, 20 + 1, 20 + 3, 20 + 2
 };
 
-constant float3 screen_size = {640.0, 480.0, 0.0};
-constant float3 half_size = (float3)(639.0 * 0.5, 479.0 * 0.5, 0.0);
+constant float3 screen_size = {640.0f, 480.0f, 0.0f};
+constant float3 half_size = (float3)(639.0f * 0.5f, 479.0f * 0.5f, 0.0f);
 
 /*
 	ray_t cast_ray(int2 coords, float3 eye_coord) {
-		float3 coordf = {(float)coords.x, (float)coords.y, 0.0};
+		float3 coordf = {(float)coords.x, (float)coords.y, 0.0f};
 
 		ray_t ray = {
 			eye_coord, 
@@ -130,15 +130,25 @@ constant float3 half_size = (float3)(639.0 * 0.5, 479.0 * 0.5, 0.0);
 */
 
 ray_t cast_ray(int2 coords, float3 eye_coord, float2 sample) {
-	float3 coordf = {(float)coords.x, (float)coords.y, 0.0};
+	float3 coordf = {(float)coords.x, (float)coords.y, 0.0f};
 
 	ray_t ray = {
 		eye_coord, 
-		normalize(coordf - half_size + (float3)(0.5f, 0.5f, 150.0f) + (float3)(sample.x, sample.y, 0.0))
+		normalize(coordf - half_size + (float3)(0.5f, 0.5f, 150.0f) + (float3)(sample.x, sample.y, 0.0f))
 	};
 
 	return ray;
 }
+
+/*
+float _absf(float value) {
+	if (value < 0.0f) {
+		value = -value;
+	}
+
+	return value;
+}
+*/
 
 float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant int *indices, int index_count) {
 	intersect_info_t prev_info;
@@ -146,17 +156,17 @@ float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant 
 
 	prev_info.distance = FLT_MAX;
 
-	for (int i=3; i<index_count; i+=3) {
+	for (int i=0; i<index_count; i+=3) {
 		float3 p1 = vertices[indices[i + 0]].coord;
 		float3 p2 = vertices[indices[i + 1]].coord;
 		float3 p3 = vertices[indices[i + 2]].coord;
 
-		if (intersect_triangle(&info, ray, p1, p2, p3) && info.distance < prev_info.distance && info.distance > 0.0f) {
+		if (intersect_triangle(&info, ray, p1, p2, p3) && info.distance < prev_info.distance) {
 			prev_info = info;
 			
 			// TODO: select the material of the mesh
 			// 
-			color = (float4)(1.0, 1.0, 1.0, 1.0);
+			color = (float4)(1.0f, 1.0f, 1.0f, 1.0f) * fabs(dot(ray.direction, vertices[indices[i + 1]].normal));
 		}
 	}
 
@@ -180,12 +190,12 @@ __kernel void tracerKernel (
 	// default background color
 	float4 background_color = (float4)(0.0f, 0.0f, 1.0f, 1.0f);
 	float4 color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	const int index_count = 6;
+	const int index_count = 36;
 
 	// cast multisampled ray
 	for (int i=0; i<sample_count; ++i) {
-		// ray_t ray = cast_ray(coords, (float3)(cam_pos[0], cam_pos[1], cam_pos[2]), samples[i]);
 		ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), samples[i]);
+		// ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), (float2)(0.0f, 0.0f));
 		color += trace_ray(ray, background_color, vertices, indices, index_count);
 	}
 
