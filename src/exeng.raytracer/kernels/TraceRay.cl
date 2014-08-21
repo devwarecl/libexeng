@@ -170,7 +170,7 @@ float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant 
 		if (intersect_triangle(&info, ray, p1, p2, p3) && info.distance < prev_info.distance) {
 			prev_info = info;
 			
-			// TODO: select the material of the mesh
+			// TODO: select the material for the triangle
 			// 
 			// color = (float4)(1.0f, 1.0f, 1.0f, 1.0f) * fabs(dot(ray.direction, vertices[indices[i + 1]].normal));
             color = (float4)(1.0f, 1.0f, 1.0f, 1.0f);
@@ -197,16 +197,19 @@ __kernel void tracerKernel (
 	// default background color
 	float4 background_color = (float4)(0.0f, 0.0f, 1.0f, 1.0f);
 	float4 color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	const int index_count = 36;
+	const int index_count = 6;
 
 	// cast multisampled ray
-	for (int i=0; i<sample_count; ++i) {
-		ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), samples[i]);
-		// ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), (float2)(0.0f, 0.0f));
-		color += trace_ray(ray, background_color, vertices, indices, index_count);
-	}
+	// for (int i=0; i<sample_count; ++i) {
+	// 	ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), samples[i]);
+	// 	color += trace_ray(ray, background_color, vertices, indices, index_count);
+	// }
 
-	color /= (float)sample_count;
+	// color /= (float)sample_count;
 
+	// cast no multisampled ray
+	ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), (float2)(0.0f, 0.0f));
+	color += trace_ray(ray, background_color, vertices, indices, index_count);
+	
 	write_imagef (image, coords, color);
 }

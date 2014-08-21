@@ -121,7 +121,7 @@ namespace raytracer { namespace tracers {
         
         // Compile 
         cl::Program program = cl::Program(context, programSources);
-        program.build({device});
+        program.build({device}, "-Werror -cl-opt-disable -g -s\"C:\\Users\\fapablaza\\Desktop\\Projects\\libexeng\\src\\exeng.raytracer\\kernels\\TraceRay.cl\"");
         if (program.build({device}) != CL_SUCCESS) {
             std::string msg;
             msg += "OpenCL program compile error: ";
@@ -197,7 +197,7 @@ namespace raytracer { namespace tracers {
         }
         event.wait();
 
-        errCode = queue.enqueueNDRangeKernel(this->impl->kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
+        errCode = queue.enqueueNDRangeKernel(this->impl->kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(32, 16), nullptr, &event);
         if (errCode != CL_SUCCESS) {
             throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
         }

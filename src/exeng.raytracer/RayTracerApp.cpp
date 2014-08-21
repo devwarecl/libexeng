@@ -144,6 +144,9 @@ namespace raytracer {
         std::cout << this->frameCounter.getCurrentFps() << std::endl;
         
         Vector3f delta(0.0f);
+        const float speed = 3.0f;
+
+        float displace = speed * static_cast<float>(seconds);
 
         // actualiza la camara en funcion de la entrada por teclado
         if (this->buttonStatus[ButtonCode::KeyEsc]) {
@@ -151,27 +154,27 @@ namespace raytracer {
         }
         
         if (this->buttonStatus[ButtonCode::KeyUp]) {
-            delta.z += 0.25f;
+            delta.z += displace;
         }
         
         if (this->buttonStatus[ButtonCode::KeyDown]) {
-            delta.z -= 0.25f;
+            delta.z -= displace;
         }
         
         if (this->buttonStatus[ButtonCode::KeySpace]) {
-            delta.y += 0.25;
+            delta.y += displace;
         }
         
         if (this->buttonStatus[ButtonCode::KeyEnter]) {
-            delta.y -= 0.25;
+            delta.y -= displace;
         }
 
         if (this->buttonStatus[ButtonCode::KeyRight]) {
-            delta.x += 0.25;
+            delta.x += displace;
         }
         
         if (this->buttonStatus[ButtonCode::KeyLeft]) {
-            delta.x -= 0.25;
+            delta.x -= displace;
         }
 
         this->camera.setPosition(delta + this->camera.getPosition());
