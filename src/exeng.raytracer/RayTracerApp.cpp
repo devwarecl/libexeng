@@ -13,9 +13,22 @@
 #include <list>
 #include <array>
 
+#if defined(EXENG_UNIX)
+#  include <unistd.h>
+#endif
+
 #include <exeng/graphics/HeapVertexBuffer.hpp>
 #include <exeng/graphics/Material.hpp>
+
 #include <exeng/scenegraph/TSolidGeometry.hpp>
+
+void displayCurrentPath() {
+#if defined(EXENG_UNIX)
+	char buffer[1024] = {0};
+	::getcwd(buffer, 1024);
+	std::cout << "Working directory: " << buffer << std::endl;
+#endif
+}
 
 /**
  * @brief Get the path where the interface implementations are located.
@@ -56,7 +69,7 @@ namespace raytracer {
     }
     
     /**
-     * Create a texture with a default color
+     * @brief Create a texture with a default color
      */
     Texture* RayTracerApp::createTexture(GraphicsDriver *driver, const Vector3f& size, const Vector4f &color) {
         Texture *texture = driver->createTexture(TextureType::Tex2D, size, ColorFormat::getColorFormatR8G8B8A8());
@@ -76,7 +89,7 @@ namespace raytracer {
 
         return texture;
     }
-
+    
     void RayTracerApp::initialize(int argc, char **argv) {
         // Initialize the exeng root class and plugins.
         std::string path = getPluginPath();
@@ -108,7 +121,7 @@ namespace raytracer {
         // Create the tracer before the render target texture AND the scene.
         this->sampler.reset(new JitteredSampler(25));
         this->sampler->generateSamples();
-
+        
         // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
         Tracer *tracer = new raytracer::tracers::HardwareTracer(this->scene.get(), this->sampler.get());
         this->tracer.reset(tracer);
@@ -144,39 +157,24 @@ namespace raytracer {
         std::cout << this->frameCounter.getCurrentFps() << std::endl;
         
         Vector3f delta(0.0f);
-        const float speed = 3.0f;
-
+        const float speed = 1.5f;
+        
         float displace = speed * static_cast<float>(seconds);
-
+        
         // actualiza la camara en funcion de la entrada por teclado
         if (this->buttonStatus[ButtonCode::KeyEsc]) {
             this->applicationStatus = ApplicationStatus::Terminated;
         }
         
-        if (this->buttonStatus[ButtonCode::KeyUp]) {
-            delta.z += displace;
-        }
+        if (this->buttonStatus[ButtonCode::KeyUp])      delta.z += displace;
+        if (this->buttonStatus[ButtonCode::KeyDown])    delta.z -= displace;
         
-        if (this->buttonStatus[ButtonCode::KeyDown]) {
-            delta.z -= displace;
-        }
+        if (this->buttonStatus[ButtonCode::KeySpace])   delta.y += displace;
+        if (this->buttonStatus[ButtonCode::KeyEnter])   delta.y -= displace;
         
-        if (this->buttonStatus[ButtonCode::KeySpace]) {
-            delta.y += displace;
-        }
+        if (this->buttonStatus[ButtonCode::KeyRight])   delta.x += displace;
+        if (this->buttonStatus[ButtonCode::KeyLeft])    delta.x -= displace;
         
-        if (this->buttonStatus[ButtonCode::KeyEnter]) {
-            delta.y -= displace;
-        }
-
-        if (this->buttonStatus[ButtonCode::KeyRight]) {
-            delta.x += displace;
-        }
-        
-        if (this->buttonStatus[ButtonCode::KeyLeft]) {
-            delta.x -= displace;
-        }
-
         this->camera.setPosition(delta + this->camera.getPosition());
         this->camera.setLookAt(delta + this->camera.getLookAt());
     }

@@ -56,8 +56,11 @@ set (GraphicsFiles
   graphics/Image.hpp                graphics/Image.cpp 
   graphics/Material.hpp             graphics/Material.cpp 
   graphics/PixelFormat.hpp          graphics/PixelFormat.cpp 
+  graphics/Vertex.hpp               graphics/Vertex.cpp
   graphics/VertexFormat.hpp         graphics/VertexFormat.cpp
   graphics/VertexBuffer.hpp         graphics/VertexBuffer.cpp 
+  graphics/VertexBuffer.hpp         graphics/VertexBuffer.cpp 
+  graphics/IBufferFactory.hpp       graphics/IBufferFactory.cpp
   graphics/HeapVertexBuffer.hpp     graphics/HeapVertexBuffer.cpp 
   graphics/HeapIndexBuffer.hpp      graphics/HeapIndexBuffer.cpp 
   graphics/IndexBuffer.hpp          graphics/IndexBuffer.cpp

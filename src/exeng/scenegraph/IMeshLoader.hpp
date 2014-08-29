@@ -16,31 +16,31 @@
 #define __EXENG_SCENEGRAPH_IMESHLOADER_HPP__
 
 #include <exeng/Config.hpp>
+#include <string>
+#include <memory>
 
-namespace exeng {
-    namespace scenegraph {
-        class EXENGAPI Mesh;    
+namespace exeng { namespace scenegraph {
+    class EXENGAPI Mesh;    
+    
+    /**
+     * @brief Mesh loader interface.
+     */
+    class EXENGAPI IMeshLoader{
+    public:
+        virtual ~IMeshLoader();
         
         /**
-         * @brief Mesh loader interface.
+         * @brief Check if the specified filename extension is supported by the current loader.
+         * @param filename Raw string to the filename to check. 
          */
-        class EXENGAPI IMeshLoader{
-        public:
-            virtual ~IMeshLoader();
-            
-            /**
-             * @brief Check if the specified filename extension is supported by the current loader.
-             * @param filename Raw string to the filename to check. 
-             */
-            virtual bool isSupported(const char* extension) = 0;
-            
-            /**
-             * @brief Load the mesh contained in the specified file.
-             */
-            virtual Mesh* loadMesh(const char* filename) = 0;
-        };
-    }
-}
+        virtual bool isSupported(const std::string &filename) = 0;
+        
+        /**
+         * @brief Load the mesh contained in the specified file.
+         */
+        virtual Mesh* loadMesh(const std::string &filename) = 0;
+    };
+}}
         
 
 #endif // __EXENG_SCENEGRAPH_IMESHLOADER_HPP__

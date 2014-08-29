@@ -181,25 +181,27 @@ namespace exeng { namespace scenegraph {
         
         return triangleIndex*3 + pointIndex;
     }
-    
+}}
+  
+
+/*
+ * Mesh implementation
+ */
+namespace exeng { namespace scenegraph {
     
     struct Mesh::Private {
-        MeshPartVector  parts;  //! Vector of MeshPart pointers
-        Boxf box;               //! General collision box for the mesh.
+        MeshPartVector parts;   //! Vector of MeshPart pointers
+        Boxf box;               //! Mesh collision box.
     };
-    
     
     Mesh::Mesh(int partCount) : impl(new Mesh::Private()) {
         // Make space for the parts...
-        this->impl->parts.reserve(partCount);
         this->impl->parts.resize(partCount);
     }
-    
     
     Mesh::~Mesh() {
         boost::checked_delete(this->impl);
     }
-    
     
     Boxf Mesh::getBox() const {
         assert(this->impl != nullptr);
@@ -227,7 +229,7 @@ namespace exeng { namespace scenegraph {
         }
         
         Primitive::Enum type = meshPart.primitiveType;
-        VertexBuffer *vertexBuffer = meshPart.vertexBuffer;
+        VertexBuffer *vertexBuffer = meshPart.vertexBuffer.get();
         
         const VertexFormat &vertexFormat = vertexBuffer->getFormat();
         void* vertexData = vertexBuffer->lock();

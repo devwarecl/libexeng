@@ -1,8 +1,6 @@
 /**
  * @file
- *
- * @brief Implement the Root class.
- *
+ * @brief Root class implementation
  */
 
 /*
@@ -12,9 +10,9 @@
  * found in the file LICENSE in this distribution.
  */
 
-
 #include <cassert>
 #include <boost/checked_delete.hpp>
+#include <memory>
 #include <iostream>
 #include <exeng/Root.hpp>
 #include <exeng/system/PluginManager.hpp>
@@ -28,43 +26,30 @@ using namespace exeng::scenegraph;
 using namespace exeng::graphics;
 
 namespace exeng {
-#if defined (EXENG_DEBUG)
+#if defined(EXENG_DEBUG)
     extern int count;
 #endif
     
     struct Root::Private {
-    public:
-        Private() {
-            this->pluginManager = nullptr;
-            this->meshManager = nullptr;
-            this->graphicsManager = nullptr;
-        }
-        
-        ~Private() {
-            boost::checked_delete(this->pluginManager);
-            boost::checked_delete(this->meshManager);
-            boost::checked_delete(this->graphicsManager);
-            boost::checked_delete(this->sceneManager);
-        }            
-    public:
-        PluginManager *pluginManager;
-        MeshManager *meshManager;
-        GraphicsManager *graphicsManager;
-        SceneManager *sceneManager;
+        std::unique_ptr<PluginManager> pluginManager;
+        std::unique_ptr<MeshManager> meshManager;
+        std::unique_ptr<GraphicsManager> graphicsManager;
+        std::unique_ptr<SceneManager> sceneManager;
     };
 
+    static const char licenseMsg[] = 
+            "The C++ Multimedia Engine\n"
+            "Copyright (c) 2013 Felipe Apablaza\n\n"
+            "The license and distribution terms for this library may be\n"
+            "found in the file LICENSE in this distribution\n";
+    
     Root::Root() : impl(new Root::Private()) {
-        std::cout << "The C++ Multimedia Engine" << std::endl;
-        std::cout << "Copyright (c) 2013 Felipe Apablaza" << std::endl;
-        std::cout << std::endl;
-        std::cout << "The license and distribution terms for this library may be" << std::endl;
-        std::cout << "found in the file LICENSE in this distribution" << std::endl;
-        std::cout << "" << std::endl;
+        std::cout << licenseMsg << std::endl;
         
-        this->impl->graphicsManager = new GraphicsManager();
-        this->impl->pluginManager = new PluginManager(this);
-        this->impl->meshManager = new MeshManager();
-        this->impl->sceneManager = new SceneManager(this);
+        this->impl->graphicsManager.reset(new GraphicsManager());
+        this->impl->pluginManager.reset(new PluginManager(this));
+        this->impl->meshManager.reset(new MeshManager());
+        this->impl->sceneManager.reset(new SceneManager(this));
     }
 
     Root::~Root() {
@@ -79,32 +64,32 @@ namespace exeng {
 
     PluginManager* Root::getPluginManager() {
         assert(this->impl != nullptr);
-        return this->impl->pluginManager;
+        return this->impl->pluginManager.get();
     }
 
     const PluginManager* Root::getPluginManager() const {
         assert(this->impl != nullptr);
-        return this->impl->pluginManager;
+        return this->impl->pluginManager.get();
     }
 
     MeshManager* Root::getMeshManager() {
         assert(this->impl != nullptr);
-        return this->impl->meshManager;
+        return this->impl->meshManager.get();
     }
 
     const MeshManager* Root::getMeshManager() const {
         assert(this->impl != nullptr);
-        return this->impl->meshManager;
+        return this->impl->meshManager.get();
     }
 
     GraphicsManager* Root::getGraphicsManager() {
         assert(this->impl != nullptr);
-        return this->impl->graphicsManager;
+        return this->impl->graphicsManager.get();
     }
 
     const GraphicsManager* Root::getGraphicsManager() const {
         assert(this->impl != nullptr);
-        return this->impl->graphicsManager;
+        return this->impl->graphicsManager.get();
     }
 
     Version Root::getVersion() const {
@@ -113,11 +98,11 @@ namespace exeng {
         
     exeng::scenegraph::SceneManager* Root::getSceneManager() {
         assert(this->impl != nullptr);
-        return this->impl->sceneManager;
+        return this->impl->sceneManager.get();
     }
 
     const exeng::scenegraph::SceneManager* Root::getSceneManager() const {
         assert(this->impl != nullptr);
-        return this->impl->sceneManager;
+        return this->impl->sceneManager.get();
     }
 }

@@ -43,7 +43,7 @@ namespace raytracer {
                const exeng::math::Vector3f& size, 
                const exeng::math::Vector4f &color
         );
-
+        
         void clear();
         void present();
         void loadScene();

@@ -11,7 +11,6 @@
  * found in the file LICENSE in this distribution.
  */
 
-
 #ifndef __EXENG_GRAPHICS_HEAPINDEXBUFFER_HPP__
 #define __EXENG_GRAPHICS_HEAPINDEXBUFFER_HPP__
 

@@ -23,11 +23,11 @@ namespace exeng { namespace graphics {
 
 	struct HeapVertexBuffer::Private {
 	public:
-		Private() : count(0) {}
+		Private() {}
 		~Private() { }
 
 	public:
-		int count;              //! Number of vertices 
+		int count = 0;          //! Number of vertices 
 		VertexFormat format;    //! The vertex format of the vertex buffer.
 		HeapBuffer buffer;      //! The buffer storing the data.
 	};

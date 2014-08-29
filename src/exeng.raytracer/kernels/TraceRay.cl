@@ -26,7 +26,7 @@ bool intersect_plane(intersect_info_t *info, ray_t ray, plane_t plane) {
 	if (distance > 0.0f) {
 		info->distance = distance;
 		info->normal = plane.normal;
-
+        
 		return true;
 	} else {
 		return false;
@@ -130,24 +130,23 @@ constant float3 half_size = (float3)(639.0f * 0.5f, 479.0f * 0.5f, 0.0f);
 */
 
 ray_t cast_ray(int2 coords, float3 eye_coord, float2 sample) {
-
     float3 coordsf = (float3)((float)coords.x, (float)coords.y, 0.0f) + (float3)(sample.x, sample.y, 0.0f);
-
-    /*
+    
+/*
 	ray_t ray = {
 		eye_coord, 
 		normalize(coordf - half_size + (float3)(0.5f, 0.5f, 150.0f) + (float3)(sample.x, sample.y, 0.0f))
 	};
-    */
+*/
     
     float3 cam_pos = eye_coord;
     float3 cam_right = (float3)(1.0f, 0.0f, 0.0f);
     float3 cam_up = (float3)(0.0f, 1.0f, 0.0f);
     float3 cam_dir = (float3)(0.0f, 0.0f, 1.0f);
-    
+        
     float3 normalized_coords = (coordsf / screen_size) - (float3)(0.5f, 0.5f, 0.0f);
     float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
-
+    
     ray_t ray = {
         cam_pos, 
         normalize(image_point - cam_pos) // + (float3)(sample.x, sample.y, 0.0f)
@@ -159,21 +158,21 @@ ray_t cast_ray(int2 coords, float3 eye_coord, float2 sample) {
 float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant int *indices, int index_count) {
 	intersect_info_t prev_info;
 	intersect_info_t info;
-
+    
 	prev_info.distance = FLT_MAX;
-
+    
 	for (int i=0; i<index_count; i+=3) {
 		float3 p1 = vertices[indices[i + 0]].coord;
 		float3 p2 = vertices[indices[i + 1]].coord;
 		float3 p3 = vertices[indices[i + 2]].coord;
-
+        
 		if (intersect_triangle(&info, ray, p1, p2, p3) && info.distance < prev_info.distance) {
 			prev_info = info;
 			
 			// TODO: select the material for the triangle
 			// 
-			// color = (float4)(1.0f, 1.0f, 1.0f, 1.0f) * fabs(dot(ray.direction, vertices[indices[i + 1]].normal));
-            color = (float4)(1.0f, 1.0f, 1.0f, 1.0f);
+			color = (float4)(1.0f, 1.0f, 1.0f, 1.0f) * fabs(dot(ray.direction, vertices[indices[i + 1]].normal));
+            // color = (float4)(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 	}
 
@@ -193,23 +192,22 @@ __kernel void tracerKernel (
 {
 	// pixel coordinate.
 	int2 coords = (int2)(get_global_id(0), get_global_id(1));
-
+	
 	// default background color
 	float4 background_color = (float4)(0.0f, 0.0f, 1.0f, 1.0f);
 	float4 color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	const int index_count = 6;
-
+	const int index_count = 36;
+    
 	// cast multisampled ray
 	// for (int i=0; i<sample_count; ++i) {
 	// 	ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), samples[i]);
 	// 	color += trace_ray(ray, background_color, vertices, indices, index_count);
 	// }
-
-	// color /= (float)sample_count;
-
+	color /= (float)sample_count;
+    
 	// cast no multisampled ray
 	ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), (float2)(0.0f, 0.0f));
-	color += trace_ray(ray, background_color, vertices, indices, index_count);
+	color = trace_ray(ray, background_color, vertices, indices, index_count);
 	
 	write_imagef (image, coords, color);
 }

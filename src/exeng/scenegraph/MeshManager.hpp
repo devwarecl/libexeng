@@ -17,16 +17,16 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <exeng/Config.hpp>
 
 namespace exeng { namespace scenegraph {
-
     class EXENGAPI Mesh;    
     class EXENGAPI IMeshLoader;
 
     /**
-    * @brief Mesh manager class. Load meshes
+    * @brief Mesh manager class.
     */
     class EXENGAPI MeshManager {
     public:
@@ -34,17 +34,19 @@ namespace exeng { namespace scenegraph {
         ~MeshManager();
         
         /**
-        * @brief Add a new mesh loader in the mesh manager.
-        * @param loader
-        */
+         * @brief Add a new mesh loader in the mesh manager.
+         */
         void addMeshLoader(IMeshLoader *loader);
         
         /**
-        * @brief loadMesh
-        * @param filename
-        * @return 
-        */
-        Mesh* loadMesh(const char* filename);
+         * @brief Remove a mesh loader in the mesh manager
+         */
+        void removeMeshLoader(IMeshLoader *loader);
+        
+        /**
+         * @brief Load a mesh from the specified file.
+         */
+        Mesh* getMesh(const std::string &filename);
         
     private:
         struct Private;

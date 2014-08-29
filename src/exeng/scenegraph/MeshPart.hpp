@@ -14,8 +14,7 @@
 #ifndef __EXENG_SCENEGRAPH_MESHPART_HPP__
 #define __EXENG_SCENEGRAPH_MESHPART_HPP__
 
-#include <cstdint>
-#include <vector>
+#include <memory>
 
 #include <exeng/math/TVector.hpp>
 #include <exeng/math/TBoundary.hpp>
@@ -28,13 +27,11 @@ namespace exeng { namespace scenegraph {
     /**
      * @brief Component for the Mesh class.
      */
-    struct EXENGAPI MeshPart {
-        const exeng::graphics::Material *material;
-        exeng::graphics::VertexBuffer *vertexBuffer;
-        exeng::graphics::IndexBuffer *indexBuffer;
-        exeng::graphics::Primitive::Enum primitiveType;
-        
-        MeshPart();
+    struct MeshPart {
+        const exeng::graphics::Material *material = nullptr;
+        std::unique_ptr<exeng::graphics::VertexBuffer> vertexBuffer;
+        std::unique_ptr<exeng::graphics::IndexBuffer> indexBuffer;
+        exeng::graphics::Primitive::Enum primitiveType = exeng::graphics::Primitive::TriangleList;
     };
 }}
 

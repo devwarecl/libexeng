@@ -14,10 +14,4 @@
 #include <exeng/scenegraph/MeshPart.hpp>
 
 namespace exeng { namespace scenegraph {
-    MeshPart::MeshPart() {
-        this->material = nullptr;
-        this->vertexBuffer = nullptr;
-        this->indexBuffer = nullptr;
-        this->primitiveType = exeng::graphics::Primitive::TriangleList;
-    }
 }}

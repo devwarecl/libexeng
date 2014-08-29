@@ -13,8 +13,6 @@
 
 #include <exeng/scenegraph/IMeshLoader.hpp>
 
-namespace exeng {
-    namespace scenegraph {
-        IMeshLoader::~IMeshLoader() {}
-    }
-}
+namespace exeng { namespace scenegraph {
+    IMeshLoader::~IMeshLoader() {}
+}}

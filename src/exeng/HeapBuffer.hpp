@@ -59,7 +59,6 @@ namespace exeng {
         void* getPtr();
         const void* getPtr() const;
         
-        
     private:
         void* data;				//! The buffer raw data.
         int size;				//! The size of the buffer, in bytes.

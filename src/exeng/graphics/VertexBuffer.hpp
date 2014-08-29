@@ -36,43 +36,43 @@ namespace exeng { namespace graphics {
 		 * @brief Allocate memory to store a set of vertices.
 		 */
 		virtual void allocate(const VertexFormat &format, int count) = 0;
-    
+        
 		/**
 		 * @brief Frees the memory allocated by the vertex buffer, 
 		 * making it empty.
 		 */
 		virtual void release() = 0;
-    
+        
 		/**
 		 * @brief Check if the buffer is empty.
 		 */
 		virtual bool isEmpty() const = 0;
-    
+        
 		/**
 		 * @brief Locks the buffer. Throws exception if already locked.
 		 */
 		virtual void* lock() = 0;
-    
+        
 		/**
 		 * @brief Check if the vertex buffer is locked.
 		 */
 		virtual bool isLocked() const = 0;
-    
+        
 		/**
 		 * @brief Unlocks the vertex buffer.
 		 */
 		virtual void unlock() = 0;
-    
+        
 		/**
 		 * @brief Get the count of vertices stored in the vertex buffer.
 		 */
 		virtual int getCount() const = 0;
-    
+        
 		/**
 		 * @brief Get the total allocated size for the vertex buffer
 		 */
 		virtual int getSize() const = 0;
-    
+        
 		/**
 		 * @brief Get the current vertex format
 		 */
