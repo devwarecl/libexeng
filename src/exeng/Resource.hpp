@@ -50,6 +50,8 @@ namespace exeng {
         friend class ResourceManager;
         
     public:
+        Resource();
+
         explicit Resource(ResourceManager *resourceFactory);
         
         virtual ~Resource();

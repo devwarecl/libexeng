@@ -4,8 +4,8 @@
 
 namespace exeng { namespace graphics {
     
-typedef exeng::math::SequenceTypeTraits<Color> ColorSequenceTraits;
-typedef exeng::math::Unroller<ColorSequenceTraits> ColorUnroller;
+typedef exeng::SequenceTypeTraits<Color> ColorSequenceTraits;
+typedef exeng::Unroller<ColorSequenceTraits> ColorUnroller;
 
 inline Color::Color() : red(0.0f), green(0.0f), blue(0.0f), alpha(1.0f) {
 }
@@ -36,59 +36,59 @@ inline Color Color::operator-() const {
 
 inline Color Color::operator+(const Color &other) const {
     Color result;
-    ColorUnroller::unroll<exeng::math::BinaryOperators::Add>(result, *this, other);
+    ColorUnroller::unroll<exeng::BinaryOperators::Add>(result, *this, other);
     return result;
 }
 
 
 inline Color Color::operator-(const Color &other) const {
     Color result;
-    ColorUnroller::unroll<exeng::math::BinaryOperators::Sub>(result, *this, other);
+    ColorUnroller::unroll<exeng::BinaryOperators::Sub>(result, *this, other);
     return result;
 }
 
 
 inline Color Color::operator*(const Color &other) const {
     Color result;
-    ColorUnroller::unroll<exeng::math::BinaryOperators::Mul>(result, *this, other);
+    ColorUnroller::unroll<exeng::BinaryOperators::Mul>(result, *this, other);
     return result;
 }
 
 
 inline Color Color::operator/(const Color &other) const {
     Color result;
-    ColorUnroller::unroll<exeng::math::BinaryOperators::Div>(result, *this, other);
+    ColorUnroller::unroll<exeng::BinaryOperators::Div>(result, *this, other);
     return result;
 }
 
 
 inline Color& Color::operator+=(const Color &other) {
-    ColorUnroller::unrollAssign<exeng::math::BinaryOperators::AddAssign>(*this, other);
+    ColorUnroller::unrollAssign<exeng::BinaryOperators::AddAssign>(*this, other);
     return *this;
 }
 
 
 inline Color& Color::operator-=(const Color &other) {
-    ColorUnroller::unrollAssign<exeng::math::BinaryOperators::SubAssign>(*this, other);
+    ColorUnroller::unrollAssign<exeng::BinaryOperators::SubAssign>(*this, other);
     return *this;
 }
 
 
 inline Color& Color::operator*=(const Color &other) {
-    ColorUnroller::unrollAssign<exeng::math::BinaryOperators::MulAssign>(*this, other);
+    ColorUnroller::unrollAssign<exeng::BinaryOperators::MulAssign>(*this, other);
     return *this;
 }
 
 
 inline Color& Color::operator/=(const Color &other) {
-    ColorUnroller::unrollAssign<exeng::math::BinaryOperators::DivAssign>(*this, other);
+    ColorUnroller::unrollAssign<exeng::BinaryOperators::DivAssign>(*this, other);
     return *this;
 }
 
 
 inline Color Color::operator*( float scale ) {
     Color result;
-    ColorUnroller::unrollScalar< exeng::math::BinaryOperators::Mul >(result, *this, scale);
+    ColorUnroller::unrollScalar< exeng::BinaryOperators::Mul >(result, *this, scale);
     return result;
     
 }
@@ -96,19 +96,19 @@ inline Color Color::operator*( float scale ) {
 
 inline Color Color::operator/( float scale) {
     Color result;
-    ColorUnroller::unrollScalar< exeng::math::BinaryOperators::Div >(result, *this, scale);
+    ColorUnroller::unrollScalar< exeng::BinaryOperators::Div >(result, *this, scale);
     return result;
 }
 
 
 inline Color& Color::operator*=( float scale ) {
-    ColorUnroller::unrollScalar< exeng::math::BinaryOperators::Mul >(*this, *this, scale);
+    ColorUnroller::unrollScalar< exeng::BinaryOperators::Mul >(*this, *this, scale);
     return *this;
 }
 
 
 inline Color& Color::operator/=( float scale) {
-    ColorUnroller::unrollScalar< exeng::math::BinaryOperators::Div >(*this, *this, scale);
+    ColorUnroller::unrollScalar< exeng::BinaryOperators::Div >(*this, *this, scale);
     return *this;
 }
 

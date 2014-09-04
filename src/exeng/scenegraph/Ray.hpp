@@ -17,7 +17,7 @@
 #include <iosfwd>
 
 #include <exeng/Config.hpp>
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 
 namespace exeng { namespace scenegraph { 
     
@@ -34,42 +34,42 @@ public:
     /**
      * @brief Initialize the ray, orientated around a arbitrary origin and direction.
      */
-    Ray(const exeng::math::Vector3f& point, const exeng::math::Vector3f& direction);
+    Ray(const exeng::Vector3f& point, const exeng::Vector3f& direction);
 
     /**
      * @brief Set the starting point of the ray.
      */
-    void setPoint(const exeng::math::Vector3f& point);
+    void setPoint(const exeng::Vector3f& point);
 
     /**
      * @brief Get the starting point of the ray.
      */
-    exeng::math::Vector3f getPoint() const;
+    exeng::Vector3f getPoint() const;
     
     /**
      * @brief Set the direction of the ray. The vector of direction is normalized before mutates the Ray object.
      */
-    void setDirection(const exeng::math::Vector3f& direction);
+    void setDirection(const exeng::Vector3f& direction);
     
     /**
      * @brief Get the direction of the ray. This vector is always normalized.
      */
-    exeng::math::Vector3f getDirection() const;
+    exeng::Vector3f getDirection() const;
     
     /**
      * @brief Computes the point of the ray at 't' distance from the starting point, to the 
      * direction of the ray.
      */
-    exeng::math::Vector3f getPointAt(float t) const;
+    exeng::Vector3f getPointAt(float t) const;
     
     /**
      * @brief Set the starting point and the direction of the ray in one method call.
      */
-    void set(const exeng::math::Vector3f& point, const exeng::math::Vector3f& direction);
+    void set(const exeng::Vector3f& point, const exeng::Vector3f& direction);
     
 private:
-    exeng::math::Vector3f point;
-    exeng::math::Vector3f direction;
+    exeng::Vector3f point;
+    exeng::Vector3f direction;
 };
 
 }}

@@ -20,8 +20,8 @@
 #include <exeng/ResourceManager.hpp>
 #include <exeng/Enum.hpp>
 #include <exeng/TFlags.hpp>
-#include <exeng/math/TBoundary.hpp>
-#include <exeng/math/TMatrix.hpp>
+#include <exeng/Boundary.hpp>
+#include <exeng/Matrix.hpp>
 
 #include <exeng/input/IEventRaiser.hpp>
 
@@ -72,7 +72,7 @@ namespace exeng { namespace graphics {
     * @brief Encapsulate a display mode.
     */
     struct DisplayMode {
-        exeng::math::Size2i size;                       //! Width and height, in pixels.
+        exeng::Size2i size;                       //! Width and height, in pixels.
         int redBits, greenBits, blueBits, alphaBits;    //! Frame buffer colors.
         int depthBits, stencilBits;                     //! Frame buffer support
         DisplayStatus::Enum status;                     //! Fullscreen or window?
@@ -83,7 +83,7 @@ namespace exeng { namespace graphics {
             this->status = DisplayStatus::Window;
         }
         
-        inline DisplayMode(exeng::math::Size2i size, int redBits, int greenBits, int blueBits, int alphaBits) {
+        inline DisplayMode(exeng::Size2i size, int redBits, int greenBits, int blueBits, int alphaBits) {
             this->size = size;
             this->redBits = redBits;
             this->greenBits = greenBits;
@@ -94,7 +94,7 @@ namespace exeng { namespace graphics {
             this->status = DisplayStatus::Window;
         }
         
-        inline DisplayMode(exeng::math::Size2i size, 
+        inline DisplayMode(exeng::Size2i size, 
                         int redBits, int greenBits, int blueBits, int alphaBits,
                         int depthBits, int stencilBits, DisplayStatus::Enum status) {
             this->size = size;
@@ -249,39 +249,39 @@ namespace exeng { namespace graphics {
         /**
          * @brief Create a new hardware-based vertex buffer. 
          */
-        virtual VertexBuffer* createVertexBuffer(const VertexFormat &vertexFormat, int vertexCount) = 0;
+        virtual VertexBuffer* createVertexBuffer(const VertexFormat &vertexFormat, int vertexCount, const void* data) = 0;
         
         /**
          * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
          */
-        virtual IndexBuffer* createIndexBuffer( IndexFormat indexFormat, int indexCount) = 0;
+        virtual IndexBuffer* createIndexBuffer( IndexFormat::Enum indexFormat, int indexCount, const void* data) = 0;
         
         /**
          * @brief Create a new texture object.
          */
         virtual Texture* createTexture(TextureType::Enum textureType, 
-                                    const exeng::math::Vector3f& textureSize,
+                                    const exeng::Vector3f& textureSize,
                                     const ColorFormat &format) = 0;
         
         /**
          * @brief Set the current transformation matrix
          */
-        virtual void setTransform(Transform::Enum transform, const exeng::math::Matrix4f& matrix) = 0;
+        virtual void setTransform(Transform::Enum transform, const exeng::Matrix4f& matrix) = 0;
         
         /**
          * @brief Get the current transformation applied on the device.
          */
-        virtual exeng::math::Matrix4f getTransform(Transform::Enum transform) = 0;
+        virtual exeng::Matrix4f getTransform(Transform::Enum transform) = 0;
         
         /**
          * @brief Set the area of the screen that can be rendered
          */
-        virtual void setViewport(const exeng::math::Rectf& viewport) = 0;
+        virtual void setViewport(const exeng::Rectf& viewport) = 0;
         
         /**
          * @brief Return the currently setted viewport.
          */
-        virtual exeng::math::Rectf getViewport() const = 0;
+        virtual exeng::Rectf getViewport() const = 0;
         
         /**
          * @brief Render, using the specified primitive and the currently setted material, 

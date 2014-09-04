@@ -1102,8 +1102,8 @@ extern void (CODEGEN_FUNCPTR *_ptrc_glHint)(GLenum , GLenum );
 #define glHint _ptrc_glHint
 extern void (CODEGEN_FUNCPTR *_ptrc_glLineWidth)(GLfloat );
 #define glLineWidth _ptrc_glLineWidth
-extern void (CODEGEN_FUNCPTR *_ptrc_glPointSize)(GLfloat );
-#define glPointSize _ptrc_glPointSize
+extern void (CODEGEN_FUNCPTR *_ptrc_glPoinSize)(GLfloat );
+#define glPoinSize _ptrc_glPoinSize
 extern void (CODEGEN_FUNCPTR *_ptrc_glPolygonMode)(GLenum , GLenum );
 #define glPolygonMode _ptrc_glPolygonMode
 extern void (CODEGEN_FUNCPTR *_ptrc_glScissor)(GLint , GLint , GLsizei , GLsizei );

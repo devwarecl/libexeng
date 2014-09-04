@@ -17,8 +17,9 @@
 #include <exeng/ResourceManager.hpp>
 
 namespace exeng {
-    Resource::Resource(ResourceManager *resourceManager_) : resourceManager(resourceManager_) {
-    }
+    Resource::Resource() {}
+
+    Resource::Resource(ResourceManager *resourceManager_) : resourceManager(resourceManager_) {}
     
     Resource::~Resource() {
         if (this->resourceManager != nullptr) {
@@ -26,16 +27,13 @@ namespace exeng {
         }
     }
     
-
     ResourceManager* Resource::getResourceManager() {
         return this->resourceManager;
     }
 
-
     const ResourceManager* Resource::getResourceManager() const {
         return this->resourceManager;
     }
-
 
     void Resource::restore() {
         throw std::logic_error("Resource::restore: Is not implemented.");

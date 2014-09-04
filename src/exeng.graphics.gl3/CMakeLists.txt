@@ -21,7 +21,7 @@ link_directories(${OpenGL_LIBRARY_DIR})
 #   endif()
 # endif()
 
-add_library(exeng.graphics.gl3 SHARED
+set (GL3Files
 	Locker.hpp Locker.cpp
 	GL3VertexBuffer.hpp GL3VertexBuffer.cpp
 	GL3Texture.hpp GL3Texture.cpp
@@ -37,5 +37,9 @@ add_library(exeng.graphics.gl3 SHARED
 	GL3.hpp 
 	gl_core_3_3.h gl_core_3_3.c
 )
+
+source_group(\\ FILES ${GL3Files})
+
+add_library(exeng.graphics.gl3 SHARED ${GL3Files})
 
 target_link_libraries(exeng.graphics.gl3 exeng ${GLFW_LIBRARY} ${OPENGL_LIBRARIES} ${Boost_LIBRARIES})

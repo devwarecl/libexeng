@@ -16,7 +16,7 @@ namespace exeng { namespace scenegraph {
         TSolidGeometry(const Solid &solid_, const exeng::graphics::Material* material_);
         
         virtual bool hit(const Ray &ray, IntersectInfo *intersectInfo);
-        virtual exeng::math::Boxf getBox() const;
+        virtual Boxf getBox() const;
     
     public:
         Solid solid;

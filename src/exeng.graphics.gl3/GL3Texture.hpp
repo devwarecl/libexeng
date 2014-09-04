@@ -25,7 +25,7 @@ namespace exeng { namespace graphics { namespace gl3 {
     public:
         GL3Texture( ResourceManager *factory, 
                     TextureType::Enum type, 
-                    exeng::math::Vector3i size, 
+                    exeng::Vector3i size, 
                     const ColorFormat &colorFormat);
         
         virtual ~GL3Texture();
@@ -40,7 +40,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual ColorFormat getColorFormat() const;
         
-        virtual exeng::math::Vector3i getSize() const;
+        virtual exeng::Vector3i geSize() const;
         
         virtual void release();
         
@@ -58,7 +58,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         GLuint textureId;
         TextureType::Enum type;
         ColorFormat colorFormat;
-        exeng::math::Vector3i size;
+        exeng::Vector3i size;
         HeapBuffer buffer;
         void* textureData;
         GLenum textureTarget;

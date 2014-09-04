@@ -16,7 +16,7 @@
 
 #include <cstdint>
 #include <stdexcept>
-#include <exeng/math/Operations.hpp>
+#include <exeng/Operations.hpp>
 
 namespace exeng {
     namespace graphics {
@@ -25,14 +25,12 @@ namespace exeng {
 }
 
 namespace exeng {
-    namespace math {
-        template<>
-        struct SequenceTypeTraits< exeng::graphics::Color > {
-            typedef exeng::graphics::Color  SequenceType;
-            typedef float                   SequenceValueType;
-            static const int                Dimension=4;
-        };
-    }
+    template<>
+    struct SequenceTypeTraits< exeng::graphics::Color > {
+        typedef exeng::graphics::Color  SequenceType;
+        typedef float                   SequenceValueType;
+        static const int                Dimension=4;
+    };
 }
 
 

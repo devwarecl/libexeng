@@ -40,7 +40,7 @@ struct Name {								\
 	}										\
 }
 
-namespace exeng { namespace math {
+namespace exeng { 
     namespace BinaryOperators {
         EXENG_DECLARE_BIN_OP(Add, +);
         EXENG_DECLARE_BIN_OP(Sub, -);
@@ -114,6 +114,6 @@ namespace exeng { namespace math {
             out[0] = BinaryOperator<Type>::eval(arr[0], scalar);
         }
     };
-}}
+}
 
 #endif // __EXENG_MATH_OPERATIONS_HPP__

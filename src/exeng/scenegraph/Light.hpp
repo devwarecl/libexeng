@@ -3,7 +3,6 @@
  * @brief 
  */
 
-
 /*
  * Copyright (c) 2013 Felipe Apablaza.
  *
@@ -11,90 +10,76 @@
  * found in the file LICENSE in this distribution.
  */
 
-
 #ifndef __EXENG_SCENEGRAPH_LIGHT_HPP__
 #define __EXENG_SCENEGRAPH_LIGHT_HPP__
 
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
+#include <exeng/Enum.hpp>
 #include <exeng/scenegraph/SceneNodeData.hpp>
 
-namespace exeng {
-    namespace scenegraph {
-        /**
-         * @brief Available instanciable light types.
-         */
-        enum class LightType {
+namespace exeng { namespace scenegraph {
+    /**
+     * @brief Available instanciable light types.
+     */
+    struct LightType : public Enum {
+        enum Enum {
             Directional,
             Point,
             Spot
         };
-        
+    };
+
+    class EXENGAPI Light : public SceneNodeData {
+        friend class Scene;
+
+    public:
+        Light();
+        virtual ~Light();
+
         /**
-         * @brief Documentacion pendiente
+         * @brief 
          */
-        class EXENGAPI Light : public SceneNodeData {
-        public:
-            Light();
+        LightType::Enum getLightType() const;
             
-            virtual ~Light();
+        /**
+         * @brief 
+         */
+        void setLightType(LightType::Enum lightType);
             
-            /**
-             * @brief Devuelve el tipo de luz actual de esta luz.
-             * @return Miembro de la enumeracion Exeng::SceneGraph::LightType::Enum
-             */
-            LightType getLightType() const;
+        /**
+         * @brief 
+         */
+        void setPosition(const exeng::Vector3f& pos);
             
-            /**
-             * @brief Establece el tipo de luz actual de la luz.
-             * @param lightType El tipo de luz a actual, miembro de la enumeracion Exeng::SceneGraph::LightType::Enum
-             */
-            void setLightType(LightType lightType);
+        /**
+         * @brief 
+         */
+        exeng::Vector3f getPosition() const;
             
-            /**
-             * @brief Establece la posicion en coordenadas locales de la luz.
-             * @param pos La posicion de la luz, en coordenadas locales, como un Vector3f
-             */
-            void setPosition(const exeng::math::Vector3f& pos);
+        /**
+         * @brief 
+         */
+        void setTarget(const exeng::Vector3f& target);
             
-            /**
-             * @brief Devuelve la posicion actual de la luz.
-             * @return La posicion actual de la luz, en coordenadas locales, sin ningun tipo 
-             * de transformacion
-             */
-            exeng::math::Vector3f getPosition() const;
+        /**
+         * @brief 
+         */
+        exeng::Vector3f getTarget() const;
             
-            /**
-             * @brief Establece el punto hacia el cual la luz apunta. Aplicacble solo si la luz es de tipo SpotLight.
-             * @param El punto hacia el cual la luz apunta, en coordenadas locales
-             */
-            void setTarget(const exeng::math::Vector3f& target);
+        /**
+         * @brief 
+         */
+        void setRange(float range);
             
-            /**
-             * @brief Devuelve el punto hacia el cual la luz apunta. Por defecto es la posicion (0.0, -1.0, 0.0)
-             * Solo aplicable si la luz es de tipo SpotLight.
-             * @return El punto hacia el cual la luz apunta, como un objeto de tipo Vector3f
-             */
-            exeng::math::Vector3f getTarget() const;
+        /**
+         * @brief 
+         */
+        float getRange() const;
             
-            /**
-             * @brief Establece el rango de la luz
-             * @param range El rango de la luz. El rango de la luz corresponde al radio de influencia que tiene 
-             * la luz desde su posicion en la escena. Objetos que esten fuera del rango no se veran afectados por 
-             * la luz
-             */
-            void setRange(float range);
-            
-            /**
-             * @brief Devuelve el rango de la luz actual. Solo aplicable para luces puntuales.
-             * @return El rango actual de la luz, en unidades del Mundo.
-             */
-            float getRange() const;
-            
-        private:
-            struct Private;
-            Private *impl;
-        };
-    }
-}
+    private:
+        struct Private;
+        Private *impl;
+    };
+}}
 
 #endif // __EXENG_SCENEGRAPH_LIGHT_HPP__

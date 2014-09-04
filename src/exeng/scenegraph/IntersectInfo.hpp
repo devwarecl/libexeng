@@ -15,7 +15,7 @@
 #ifndef __EXENG_SCENEGRAPH_INTERSECTINFO_HPP__
 #define __EXENG_SCENEGRAPH_INTERSECTINFO_HPP__
 
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/graphics/Material.hpp>
 
 namespace exeng { namespace scenegraph {
@@ -31,10 +31,10 @@ namespace exeng { namespace scenegraph {
         float distance;                                 
         
         //! Surface normal at the intersection point.
-        exeng::math::Vector3f normal;                   
+        exeng::Vector3f normal;                   
         
         //! Ray - surface intersection point.
-        exeng::math::Vector3f point;                    
+        exeng::Vector3f point;                    
         
         //! Surface material.
         const exeng::graphics::Material* material;   
@@ -48,8 +48,8 @@ namespace exeng { namespace scenegraph {
     inline IntersectInfo::IntersectInfo() {
         this->intersect = false;
         this->distance = 0.0f;
-        this->normal = exeng::math::Vector3f(0.0f);
-        this->point = exeng::math::Vector3f(0.0f);
+        this->normal = exeng::Vector3f(0.0f);
+        this->point = exeng::Vector3f(0.0f);
         this->material = nullptr;
     } 
 }}

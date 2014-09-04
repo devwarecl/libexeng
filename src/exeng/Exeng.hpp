@@ -24,6 +24,12 @@
 #include <exeng/TypeInfo.hpp>
 #include <exeng/Timer.hpp>
 
+#include <exeng/Common.hpp>
+#include <exeng/Size.hpp>
+#include <exeng/Vector.hpp>
+#include <exeng/Matrix.hpp>
+#include <exeng/Boundary.hpp>
+
 #include <exeng/input/IEventHandler.hpp>
 
 #include <exeng/system/PluginManager.hpp>
@@ -62,11 +68,7 @@
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/Segment.hpp>
 
-#include <exeng/math/Common.hpp>
-#include <exeng/math/TSize.hpp>
-#include <exeng/math/TVector.hpp>
-#include <exeng/math/TMatrix.hpp>
-#include <exeng/math/TBoundary.hpp>
+
 
 /**
  * @brief The common namespace for the engine.

@@ -8,19 +8,26 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 set (BaseFiles 
   Exeng.hpp DetectEnv.hpp Config.hpp 
-  Enum.hpp                Enum.cpp
-  DataType.hpp            DataType.inl
-  Object.hpp              Object.cpp 
-  Version.hpp             Version.cpp 
-  Root.hpp                Root.cpp
-  TypeInfo.hpp            TypeInfo.cpp
-  TFlags.hpp              TFlags.inl
-  Buffer.hpp              Buffer.cpp 
-  HeapBuffer.hpp          HeapBuffer.cpp 
-  Resource.hpp            Resource.cpp 
-  ResourceManager.hpp     ResourceManager.cpp 
-  ISerializable.hpp       ISerializable.cpp 
-  Timer.hpp               Timer_Win.cpp Timer_Unix.cpp 
+  Enum.hpp              Enum.cpp
+  DataType.hpp          DataType.inl
+  Object.hpp            Object.cpp 
+  Version.hpp           Version.cpp 
+  Root.hpp              Root.cpp
+  TypeInfo.hpp          TypeInfo.cpp
+  TFlags.hpp            TFlags.inl
+  Buffer.hpp            Buffer.cpp 
+  HeapBuffer.hpp        HeapBuffer.cpp 
+  Resource.hpp          Resource.cpp 
+  ResourceManager.hpp   ResourceManager.cpp 
+  ISerializable.hpp     ISerializable.cpp 
+  Timer.hpp				Timer_Win.cpp Timer_Unix.cpp 
+
+  Operations.hpp		Operations.inl
+  Common.hpp			Common.inl 
+  Boundary.hpp			Boundary.inl 
+  Matrix.hpp			Matrix.inl 
+  Size.hpp				Size.inl 
+  Vector.hpp			Vector.inl 
 )
 
 set (IoFiles 
@@ -128,15 +135,6 @@ set (SystemFiles
   system/LibraryPrivate.hpp system/LibraryPrivatePosix.cpp system/LibraryPrivateWin32.cpp
 )
 
-set (MathFiles
-  math/Operations.hpp   math/Operations.inl
-  math/Common.hpp       math/Common.inl 
-  math/TBoundary.hpp    math/TBoundary.inl 
-  math/TMatrix.hpp      math/TMatrix.inl 
-  math/TSize.hpp        math/TSize.inl 
-  math/TVector.hpp      math/TVector.inl 
-)
-
 add_library(exeng SHARED 
   ${BaseFiles}
   ${IoFiles}
@@ -148,10 +146,9 @@ add_library(exeng SHARED
   ${InputFiles}
   ${ScenegraphFiles}
   ${SystemFiles}
-  ${MathFiles}
 )
 
-source_group(base       FILES ${BaseFiles})
+source_group(\\			FILES ${BaseFiles})
 source_group(io         FILES ${IoFiles})
 source_group(audio      FILES ${AudioFiles})
 source_group(framework  FILES ${FrameworkFiles})
@@ -161,9 +158,8 @@ source_group(ui         FILES ${UiFiles})
 source_group(input      FILES ${InputFiles})
 source_group(scenegraph FILES ${ScenegraphFiles})
 source_group(system	    FILES ${SystemFiles})
-source_group(math       FILES ${MathFiles})
 
-if (UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
   target_link_libraries(exeng dl rt)
 endif()
 

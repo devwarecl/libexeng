@@ -37,7 +37,7 @@ namespace exeng { namespace graphics {
                 throw std::runtime_error("VertexArray::VertexArray: The buffer can't be null");
             }
     
-            if (buffer->getFormat().getSize() != sizeof(VertexType)) {
+            if (buffer->getFormat().geSize() != sizeof(VertexType)) {
                 throw std::runtime_error("VertexArray::VertexArray: Invalid supplied VertexType: must be equal to the size reported by the vertexBuffer's format.");
             }
     #endif

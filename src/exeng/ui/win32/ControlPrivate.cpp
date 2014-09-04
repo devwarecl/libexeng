@@ -106,25 +106,25 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	void ControlPrivateWin32::setSize( const exeng::math::Size2i &size) {
+	void ControlPrivateWin32::seSize( const exeng::Size2i &size) {
 		if (! ::SetWindowPos(this->hWnd, HWND_NOTOPMOST, 0, 0, size.width, size.height, SWP_NOMOVE)) {
 			throw WindowsException( ::GetLastError() );
 		}
 	}
 
 
-	exeng::math::Size2i ControlPrivateWin32::getSize() const {
+	exeng::Size2i ControlPrivateWin32::geSize() const {
 		RECT rect = {0};
 
 		if (! ::GetClientRect(this->hWnd, &rect)) {
 			throw WindowsException( ::GetLastError() );
 		}
 
-		return exeng::math::Size2i(rect.right-rect.left, rect.bottom-rect.top);
+		return exeng::Size2i(rect.right-rect.left, rect.bottom-rect.top);
 	}
 
 
-	void ControlPrivateWin32::setPosition( const exeng::math::Vector2i &pos) {
+	void ControlPrivateWin32::setPosition( const exeng::Vector2i &pos) {
 		if (this->getParent() == nullptr) {
 			if (! ::SetWindowPos(this->hWnd, HWND_NOTOPMOST, pos.x, pos.y, 0, 0, SWP_NOSIZE)) {
 				throw WindowsException( ::GetLastError() );
@@ -135,14 +135,14 @@ namespace exeng { namespace ui { namespace win32 {
 	}
 
 
-	exeng::math::Vector2i ControlPrivateWin32::getPosition() const {
+	exeng::Vector2i ControlPrivateWin32::getPosition() const {
 		RECT rc = {0};
 
 		if (! ::GetClientRect(this->hWnd, &rc) ) {
 			throw WindowsException( ::GetLastError() );
 		}
 
-		return exeng::math::Vector2i(rc.left, rc.top);
+		return exeng::Vector2i(rc.left, rc.top);
 	}
 }}}
 

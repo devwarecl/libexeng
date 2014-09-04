@@ -19,7 +19,6 @@
 #include <exeng/scenegraph/SceneNode.hpp>
 
 using namespace exeng;
-using namespace exeng::math;
 using namespace exeng::scenegraph;
 
 namespace exeng { namespace scenegraph {
@@ -108,7 +107,7 @@ namespace exeng { namespace scenegraph {
     }
 
 
-    void SceneNode::setTransform(const math::Matrix4f& transform) {
+    void SceneNode::setTransform(const Matrix4f& transform) {
         assert(this->impl != nullptr);
         this->impl->transform = transform;
     }

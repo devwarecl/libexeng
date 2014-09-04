@@ -20,7 +20,6 @@
 #include <cassert>
 
 using namespace exeng;
-using namespace exeng::math;
 
 namespace exeng { namespace graphics { namespace gl3 {
 
@@ -85,14 +84,12 @@ namespace exeng { namespace graphics { namespace gl3 {
 		this->internalFormat = internalFormat;
 	}
 
-
 	GL3Texture::~GL3Texture() {
 		if (this->textureId != 0) {
 			::glDeleteTextures(1, &this->textureId);
 			this->textureId = 0;
 		}
 	}
-
 
 	void* GL3Texture::lock() {
 		assert(this->textureId != 0);
@@ -101,12 +98,10 @@ namespace exeng { namespace graphics { namespace gl3 {
 		return this->textureData;
 	}
 
-
 	void* GL3Texture::lock(TextureCubeMapFace::Enum face) {
 		assert(this->textureId != 0);
 		throw std::runtime_error("GL3Texture::lock(TextureCubeMapFace): Not yet implemented.");
 	}
-
 
 	void GL3Texture::unlock() {
 		assert(this->textureId != 0);
@@ -141,26 +136,21 @@ namespace exeng { namespace graphics { namespace gl3 {
 		this->buffer.unlock();
 	}
 
-
 	TextureType::Enum GL3Texture::getType() const {
 		return this->type;
 	}
-
 
 	ColorFormat GL3Texture::getColorFormat() const {
 		return this->colorFormat;
 	}
 
-
-	Vector3i GL3Texture::getSize() const {
+	Vector3i GL3Texture::geSize() const {
 		return this->size;
 	}
-
 
 	TypeInfo GL3Texture::getTypeInfo() const {
 		return TypeId<GL3Texture>();
 	}
-
 
 	void GL3Texture::release() {
 		std::cout << "GL3Texture::release: TODO: Not implemented." << std::endl;

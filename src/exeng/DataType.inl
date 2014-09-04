@@ -19,7 +19,7 @@ namespace exeng {
     
     inline DataType::DataType(bool sign, DataType::Kind kind, int size) {
         this->value = 0;
-        this->setSize(size);
+        this->seSize(size);
         this->setSign(sign);
         this->setKind(kind);
     }
@@ -49,7 +49,7 @@ namespace exeng {
     }
     
     
-    inline int DataType::getSize() const {
+    inline int DataType::geSize() const {
         //! FIXME: Reimplement this based on bit operations instead.
         int size = 0;
         
@@ -65,7 +65,7 @@ namespace exeng {
     }
     
     
-    inline void DataType::setSize(int size) {
+    inline void DataType::seSize(int size) {
         //! FIXME: Reimplement this based on bit operations instead.
         int binSize = 0;
         

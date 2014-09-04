@@ -1,6 +1,6 @@
 
 
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/scenegraph/Box.hpp>
 #include <exeng/graphics/Material.hpp>
 #include <exeng/scenegraph/TSolidGeometry.hpp>
@@ -9,7 +9,6 @@
 
 namespace raytracer {
     using namespace exeng;
-    using namespace exeng::math;
     using namespace exeng::scenegraph;
     using namespace exeng::graphics;
     
@@ -20,7 +19,7 @@ namespace raytracer {
         // For now, just create a simple scene, boxed scene.
         Scene *scene = new Scene();
         
-        Material *boxMaterial = scene->addMaterial("boxMaterial");
+        Material *boxMaterial = scene->createMaterial("boxMaterial");
         boxMaterial->setProperty("diffuse", Vector4f(1.0f, 0.3f, 0.2f, 1.0f));
         
         Geometry* boxGeometry = new TSolidGeometry<Boxf>(

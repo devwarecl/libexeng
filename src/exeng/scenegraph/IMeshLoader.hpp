@@ -19,8 +19,13 @@
 #include <string>
 #include <memory>
 
+namespace exeng { namespace graphics {
+    class EXENGAPI GraphicsDriver;
+}}
+
 namespace exeng { namespace scenegraph {
     class EXENGAPI Mesh;    
+    
     
     /**
      * @brief Mesh loader interface.
@@ -38,7 +43,7 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Load the mesh contained in the specified file.
          */
-        virtual Mesh* loadMesh(const std::string &filename) = 0;
+        virtual Mesh* loadMesh(const std::string &filename, exeng::graphics::GraphicsDriver *graphicsDriver) = 0;
     };
 }}
         

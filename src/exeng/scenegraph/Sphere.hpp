@@ -14,7 +14,7 @@
 #ifndef __EXENG_SCENEGRAPH_SPHERE_HPP__
 #define __EXENG_SCENEGRAPH_SPHERE_HPP__
 
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 
 namespace exeng { namespace scenegraph {
 
@@ -38,12 +38,12 @@ public:
      * @param radius El radio de la esfera, en unidades de mundo.
      * @param center La posicion en el espacio, en donde estara ubicado el centro de la esfera.
      */
-    explicit Sphere(float radius, const exeng::math::Vector3f &center);
+    explicit Sphere(float radius, const exeng::Vector3f &center);
     
     /**
      * @brief Inicializa todos los atributos de la esfera de una sola vez.
      */
-    void setAttributes(float radius, const exeng::math::Vector3f &center);
+    void setAttributes(float radius, const exeng::Vector3f &center);
     
     /**
      * @brief Establece el radio de la esfera
@@ -53,7 +53,7 @@ public:
     /**
      * @brief Establece la posicion en donde estara ubicado el centro de la esfera.
      */
-    void setCenter(const exeng::math::Vector3f &center);
+    void setCenter(const exeng::Vector3f &center);
     
     /**
      * @brief Devuelve el radio actual de la esfera
@@ -63,7 +63,7 @@ public:
     /**
      * @brief Devuelve la posicion en donde esta ubicado el centro de la esfera
      */
-    exeng::math::Vector3f getCenter() const;
+    exeng::Vector3f getCenter() const;
     
     /**
      * @brief Calcula la interseccion entre el rayo indicado, y la esfera.
@@ -81,7 +81,7 @@ public:
     bool operator!= (const Sphere &sphere) const;
     
 private:
-    exeng::math::Vector3f center;
+    exeng::Vector3f center;
     float radius;
 };
 

@@ -1,16 +1,13 @@
 
-
 namespace exeng { namespace scenegraph {
     template<typename Type>
     Segment<Type>::Segment()  {}
     
-    
     template<typename Type>
-    Segment<Type>::Segment(const exeng::math::TVector<Type, 3> &p1, const exeng::math::TVector<Type, 3> &p2) {
+    Segment<Type>::Segment(const Vector<Type, 3> &p1, const Vector<Type, 3> &p2) {
         this->setPoint(0, p1);
         this->setPoint(2, p2);
     }
-    
     
     template<typename Type>
     Type Segment<Type>::getLength() const {
@@ -26,36 +23,30 @@ namespace exeng { namespace scenegraph {
         return length;
     }
     
-    
     template<typename Type>
-    const exeng::math::TVector<Type, 3>& Segment<Type>::operator[](int index) const {
+    const Vector<Type, 3>& Segment<Type>::operator[](int index) const {
         return this->points[index];
     }
     
-    
     template<typename Type>
-    exeng::math::TVector<Type, 3>& Segment<Type>::operator[](int index) {
+    Vector<Type, 3>& Segment<Type>::operator[](int index) {
         return this->points[index];
     }
     
-    
     template<typename Type>
-    void Segment<Type>::setPoint(int index, const exeng::math::TVector<Type, 3>& point) {
+    void Segment<Type>::setPoint(int index, const Vector<Type, 3>& point) {
         this->points[index] = point;
     }
     
-    
     template<typename Type> 
-    exeng::math::TVector<Type, 3> Segment<Type>::getPoint(int index) const {
+    Vector<Type, 3> Segment<Type>::getPoint(int index) const {
         return this->points[index];
     }
 
-    
     template<typename Type> 
-    exeng::math::TVector<Type, 3> Segment<Type>::getPointAt(Type t) const {
-        return exeng::math::TVector<Type, 3>();
+    Vector<Type, 3> Segment<Type>::getPointAt(Type t) const {
+        return Vector<Type, 3>();
     }
-    
     
     template<typename Type>
     int Segment<Type>::getPointCount() const {

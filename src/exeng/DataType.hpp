@@ -101,14 +101,14 @@ namespace exeng {
         /**
          * @brief Get the size, in bytes, of the data type
          */
-        int getSize() const;
+        int geSize() const;
         
         /**
          * @brief Set the size, in bytes, of the current data type.
          * @param size The size in bytes, of the current data type. Only power of two
          * values are accepted.
          */
-        void setSize(int size);
+        void seSize(int size);
         
         /**
          * @brief Check if the current state of the data type is valid.

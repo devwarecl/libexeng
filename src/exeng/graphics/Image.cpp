@@ -18,7 +18,6 @@
 #include <exeng/graphics/Image.hpp>
 
 using namespace exeng;
-using namespace exeng::math;
 using namespace exeng::graphics;
 
 namespace exeng {
@@ -42,7 +41,7 @@ namespace exeng {
         }
         
         
-        Image::Image(const math::Vector3i& size, ColorFormat format, PixelType type) : Data(nullptr) {
+        Image::Image(const Vector3i& size, ColorFormat format, PixelType type) : Data(nullptr) {
             this->initialize(size, format, type);
         }
         
@@ -79,13 +78,13 @@ namespace exeng {
         }
         
         
-        exeng::math::Vector3i Image::getSize() const {
+        exeng::Vector3i Image::geSize() const {
             assert(this->Data != nullptr);
             return this->Data->size;
         }
         
         
-        void Image::initialize(const exeng::math::Vector3i& size, ColorFormat format, PixelType type) {
+        void Image::initialize(const exeng::Vector3i& size, ColorFormat format, PixelType type) {
             std::uint32_t imageSize;
             
             //Validar el formato y el tipo de datos
@@ -121,7 +120,7 @@ namespace exeng {
         }
         
         
-        std::uint32_t Image::getPixel(const math::Vector2i& position) const {
+        std::uint32_t Image::getPixel(const Vector2i& position) const {
             assert( this->Data != nullptr );
             assert( position.x <  this->Data->size.x );
             assert( position.y <  this->Data->size.y );
@@ -132,7 +131,7 @@ namespace exeng {
         }
         
             
-        void Image::setPixel(const math::Vector2i& position, std::uint32_t color) {
+        void Image::setPixel(const Vector2i& position, std::uint32_t color) {
             assert( this->Data != nullptr );
             assert( position.x <  this->Data->size.x );
             assert( position.y <  this->Data->size.y );
@@ -143,7 +142,7 @@ namespace exeng {
         }
 
 
-        int Image::getOffset(const math::Vector2i& position) const {
+        int Image::getOffset(const Vector2i& position) const {
             assert(this->Data != nullptr);
             assert( position.x <  this->Data->size.x );
             assert( position.y <  this->Data->size.y );

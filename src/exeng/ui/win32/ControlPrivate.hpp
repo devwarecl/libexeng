@@ -65,11 +65,11 @@ namespace exeng { namespace ui { namespace win32 {
 		virtual void setVisible(bool visible);
 		virtual bool getVisible() const;
 
-		virtual void setSize( const exeng::math::Size2i &size);
-		virtual exeng::math::Size2i getSize() const;
+		virtual void seSize( const exeng::Size2i &size);
+		virtual exeng::Size2i geSize() const;
 
-		virtual void setPosition( const exeng::math::Vector2i &pos);
-		virtual exeng::math::Vector2i getPosition() const;
+		virtual void setPosition( const exeng::Vector2i &pos);
+		virtual exeng::Vector2i getPosition() const;
         
 	public:
 		HINSTANCE hInstance;

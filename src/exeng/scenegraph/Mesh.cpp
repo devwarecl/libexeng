@@ -11,7 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/scenegraph/MeshPart.hpp>
 #include <exeng/scenegraph/Plane.hpp>
@@ -23,12 +23,11 @@
 #include <map>
 
 using namespace exeng;
-using namespace exeng::math;
 using namespace exeng::scenegraph;
 using namespace exeng::graphics;
 
-typedef boost::ptr_vector<MeshPart> MeshPartVector;
-typedef MeshPartVector::iterator MeshPartVectorIt;
+typedef boost::ptr_vector<MeshPart> MeshParVector;
+typedef MeshParVector::iterator MeshParVectorIt;
 
 namespace exeng { namespace scenegraph {
     
@@ -49,8 +48,8 @@ namespace exeng { namespace scenegraph {
         FieldType& getField();
         
     private:
-        VertexBuffer *vertexBuffer;
-        void *data;
+        VertexBuffer *vertexBuffer = nullptr;
+        void *data = nullptr;
     };
     
     /**
@@ -181,49 +180,11 @@ namespace exeng { namespace scenegraph {
         
         return triangleIndex*3 + pointIndex;
     }
-}}
-  
 
-/*
- * Mesh implementation
- */
-namespace exeng { namespace scenegraph {
-    
-    struct Mesh::Private {
-        MeshPartVector parts;   //! Vector of MeshPart pointers
-        Boxf box;               //! Mesh collision box.
-    };
-    
-    Mesh::Mesh(int partCount) : impl(new Mesh::Private()) {
-        // Make space for the parts...
-        this->impl->parts.resize(partCount);
-    }
-    
-    Mesh::~Mesh() {
-        boost::checked_delete(this->impl);
-    }
-    
-    Boxf Mesh::getBox() const {
-        assert(this->impl != nullptr);
-        
-        /*
-        MeshPartVector &parts = this->impl->parts;
-        Boxf box = parts[0].getBox();
-    
-        for(MeshPart &part : parts) {
-            box.expand(part. );
-        }
-        
-        return box;
-        */
-        
-        return Boxf();
-    }
-    
     /**
      * @brief Detect intersection between a Ray and a MeshPart.
      */
-    bool meshSubsetIntersect(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectInfo=nullptr) {
+    inline bool meshSubsetIntersect(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectInfo=nullptr) {
         if (Primitive::isTriangle(meshPart.primitiveType) == false) {
             return false;
         }
@@ -235,7 +196,7 @@ namespace exeng { namespace scenegraph {
         void* vertexData = vertexBuffer->lock();
         
         int vertexOffset = vertexFormat.getAttribOffset(VertexAttrib::Position);
-        int vertexStride = vertexFormat.getSize();
+        int vertexStride = vertexFormat.geSize();
         
         // TODO: Handle properly the vertex format
         IntersectInfo info;
@@ -243,7 +204,7 @@ namespace exeng { namespace scenegraph {
         int triangleCount = getTriangleCount(vertexBuffer->getCount(), meshPart.primitiveType);
         
         for (int triangleIndex=0; triangleIndex<triangleCount; triangleIndex++) {
-            
+
             IntersectInfo localInfo;
             
             // Get the triangle points, based on the triangle type and the vertex format
@@ -286,7 +247,7 @@ namespace exeng { namespace scenegraph {
             }
         }
         
-        if (intersectInfo != nullptr) {
+        if (intersectInfo) {
             *intersectInfo = info;
         }
         
@@ -294,7 +255,48 @@ namespace exeng { namespace scenegraph {
         
         return info.intersect;
     }
+}}
+
+/*
+ * Mesh implementation
+ */
+namespace exeng { namespace scenegraph {
+    struct Mesh::Private {
+        MeshParVector parts;   //! Vector of MeshPart pointers
+        Boxf box;               //! Mesh collision box.
+    };
     
+    Mesh::Mesh() : impl(new Mesh::Private()) {}
+    
+    Mesh::Mesh(int partCount) : impl(new Mesh::Private()) {
+        this->allocate(partCount);
+    }
+    
+    Mesh::~Mesh() {
+        boost::checked_delete(this->impl);
+    }
+    
+    void Mesh::allocate(int partCount) {
+        // Make space for the parts...
+        this->impl->parts.resize(partCount);
+    }
+
+    Boxf Mesh::getBox() const {
+        assert(this->impl != nullptr);
+        
+        /*
+        MeshParVector &parts = this->impl->parts;
+        Boxf box = parts[0].getBox();
+    
+        for(MeshPart &part : parts) {
+            box.expand(part. );
+        }
+        
+        return box;
+        */
+        
+        return Boxf();
+    }
     
     bool Mesh::hit(const Ray &ray, IntersectInfo *intersectInfo) {
         assert(this->impl != nullptr);
@@ -309,24 +311,21 @@ namespace exeng { namespace scenegraph {
             }
         }
         
-        if (intersectInfo != nullptr) {
+        if (intersectInfo) {
             *intersectInfo = bestInfo;
         }
         
         return bestInfo.intersect;
     }
     
-    
     int Mesh::getPartCount() const {
         assert(this->impl != nullptr);
         return static_cast<int>(this->impl->parts.size());
     }
     
-    
     MeshPart* Mesh::getPart(int index) {
         return &this->impl->parts[index];
     }
-    
     
     const MeshPart* Mesh::getPart(int index) const {
         return &this->impl->parts[index];

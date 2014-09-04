@@ -121,22 +121,22 @@ namespace exeng { namespace ui {
     }
     
 
-	Control* Control::setSize( const exeng::math::Size2i &size) {
+	Control* Control::seSize( const exeng::Size2i &size) {
 		assert(this->impl != nullptr);
 		
-		this->impl->setSize(size);
+		this->impl->seSize(size);
 		return this;
 	}
 	
 
-	exeng::math::Size2i Control::getSize() const {
+	exeng::Size2i Control::geSize() const {
 		assert(this->impl != nullptr);
 
-		return this->impl->getSize();
+		return this->impl->geSize();
 	}
 
 
-	Control* Control::setPosition( const exeng::math::Vector2i &pos) {
+	Control* Control::setPosition( const exeng::Vector2i &pos) {
 		assert(this->impl != nullptr);
 
 		this->impl->setPosition(pos);
@@ -145,7 +145,7 @@ namespace exeng { namespace ui {
 	}
 
 
-	exeng::math::Vector2i Control::getPosition() const {
+	exeng::Vector2i Control::getPosition() const {
 		assert(this->impl != nullptr);
 
 		return this->impl->getPosition();

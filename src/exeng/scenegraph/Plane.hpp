@@ -15,7 +15,7 @@
 #ifndef __EXENG_SCENEGRAPH_PLANE_HPP__
 #define __EXENG_SCENEGRAPH_PLANE_HPP__
 
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/scenegraph/Ray.hpp>
 #include <exeng/scenegraph/IntersectInfo.hpp>
 
@@ -34,42 +34,42 @@ public:
      */
     Plane();
     
-    Plane(const exeng::math::Vector3f& point, const exeng::math::Vector3f& normal);
+    Plane(const exeng::Vector3f& point, const exeng::Vector3f& normal);
     
     /**
      * @brief Initialize a plane from three coplanar points.
      */
-    Plane(const exeng::math::Vector3f& p1, const exeng::math::Vector3f& p2, const exeng::math::Vector3f& p3);
+    Plane(const exeng::Vector3f& p1, const exeng::Vector3f& p2, const exeng::Vector3f& p3);
     
     /**
      * @brief Rebuild a plane from a central point and a normal vector.
      */
-    void set(const exeng::math::Vector3f& point, const exeng::math::Vector3f& normal);
+    void set(const exeng::Vector3f& point, const exeng::Vector3f& normal);
     
     /**
      * @brief Rebuild the current plane from three coplanar points.
      */
-    void set(const exeng::math::Vector3f& p1, const exeng::math::Vector3f& p2, const exeng::math::Vector3f& p3);
+    void set(const exeng::Vector3f& p1, const exeng::Vector3f& p2, const exeng::Vector3f& p3);
     
     /**
      * @brief Change the normal of the current plane, and normalizes the incoming vector before mutating it.
      */
-    void setNormal(const exeng::math::Vector3f& normal);
+    void setNormal(const exeng::Vector3f& normal);
     
     /**
      * @brief Get the current normal of the current plane. This vector is always normalized.
      */
-    exeng::math::Vector3f getNormal() const;
+    exeng::Vector3f getNormal() const;
     
     /**
      * @brief Changes the base point of the current plane.
      */
-    void setPoint(const exeng::math::Vector3f& point);
+    void setPoint(const exeng::Vector3f& point);
     
     /**
      * @brief Get the current point of the current plane.
      */
-    exeng::math::Vector3f getPoint() const;
+    exeng::Vector3f getPoint() const;
     
     /**
      * @brief Check if the current plane intersects with the 
@@ -77,8 +77,8 @@ public:
     bool intersect(const Ray& ray, IntersectInfo* intersectInfo=nullptr) const;
     
 private:
-    exeng::math::Vector3f point;
-    exeng::math::Vector3f normal;
+    exeng::Vector3f point;
+    exeng::Vector3f normal;
 };
 
 }}

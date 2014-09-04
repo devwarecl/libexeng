@@ -4,7 +4,7 @@
 #define __EXENG_UI_CONTROL_HPP__
 
 #include <exeng/Object.hpp>
-#include <exeng/math/TSize.hpp>
+#include <exeng/Size.hpp>
 
 namespace exeng { namespace ui {
 
@@ -43,18 +43,18 @@ namespace exeng { namespace ui {
         virtual void* getHandle();
         virtual const void* getHandle() const;
 
-		inline Control* setSize( int width, int height ) {
-			return this->setSize(exeng::math::Size2i(width, height));
+		inline Control* seSize( int width, int height ) {
+			return this->seSize(exeng::Size2i(width, height));
 		}
-		virtual Control* setSize( const exeng::math::Size2i &size);
-		virtual exeng::math::Size2i getSize() const;
+		virtual Control* seSize( const exeng::Size2i &size);
+		virtual exeng::Size2i geSize() const;
 
 
 		inline Control* setPosition( int x, int y) {
-			return this->setPosition(exeng::math::Vector2i(x, y));
+			return this->setPosition(exeng::Vector2i(x, y));
 		}
-		virtual Control* setPosition( const exeng::math::Vector2i &pos);
-		virtual exeng::math::Vector2i getPosition() const;
+		virtual Control* setPosition( const exeng::Vector2i &pos);
+		virtual exeng::Vector2i getPosition() const;
 
     protected:
         template<typename PrivateImpl>

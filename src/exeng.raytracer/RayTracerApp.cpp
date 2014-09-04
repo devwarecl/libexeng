@@ -103,15 +103,14 @@ namespace raytracer {
         DisplayMode mode = this->driver->getDisplayMode();
         
         // create the geometry (a single triangle)
-        auto vertexBuffer = this->driver->createVertexBuffer(VertexFormat::makeVertex2D(), 4);
-        {
-            VertexArray<Vertex2D> array(vertexBuffer);
-
-            array[0] = {{-1.0f,  1.0f, 0.0f}, {0.0f,  1.0f}};
-            array[1] = {{ 1.0f,  1.0f, 0.0f}, {1.0f,  1.0f}};
-            array[2] = {{-1.0f, -1.0f, 0.0f}, {0.0f,  0.0f}};
-            array[3] = {{ 1.0f, -1.0f, 0.0f}, {1.0f,  0.0f}};
-        }
+        Vertex2D screenVertices[] = {
+            {{-1.0f,  1.0f, 0.0f}, {0.0f,  1.0f}},
+            {{ 1.0f,  1.0f, 0.0f}, {1.0f,  1.0f}},
+            {{-1.0f, -1.0f, 0.0f}, {0.0f,  0.0f}},
+            {{ 1.0f, -1.0f, 0.0f}, {1.0f,  0.0f}}
+        };
+        VertexBuffer *vertexBuffer = this->driver->createVertexBuffer(VertexFormat::makeVertex2D(), 4, screenVertices);
+        
         this->vertexBuffer.reset(vertexBuffer);
         
         // Initialize the scene.

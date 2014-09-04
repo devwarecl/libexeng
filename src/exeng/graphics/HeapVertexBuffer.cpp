@@ -53,7 +53,7 @@ namespace exeng { namespace graphics {
 
 	void HeapVertexBuffer::allocate(const VertexFormat &format, int count)  {
 		assert(this->impl != nullptr);
-		this->impl->buffer.allocate(format.getSize() * count);
+		this->impl->buffer.allocate(format.geSize() * count);
 		this->impl->count = count;
 		this->impl->format = format;
 	}
@@ -67,7 +67,7 @@ namespace exeng { namespace graphics {
 
 	bool HeapVertexBuffer::isEmpty() const {   
 		assert(this->impl != nullptr);
-		return this->isEmpty();
+		return this->impl->count == 0;
 	}
 
 
@@ -95,9 +95,9 @@ namespace exeng { namespace graphics {
 	}
 
 
-	int HeapVertexBuffer::getSize() const {
+	int HeapVertexBuffer::geSize() const {
 		assert(this->impl != nullptr);
-		return this->getCount() * this->getFormat().getSize();
+		return this->getCount() * this->getFormat().geSize();
 	}
 
 	const VertexFormat& HeapVertexBuffer::getFormat() const {

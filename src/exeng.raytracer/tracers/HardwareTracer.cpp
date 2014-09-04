@@ -173,7 +173,7 @@ namespace raytracer { namespace tracers {
     HardwareTracer::~HardwareTracer() {}
 
     void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
-        Vector3i size = this->getRenderTarget()->getSize();
+        Vector3i size = this->getRenderTarget()->geSize();
         cl::Image2DGL &image = this->impl->image;
         cl::Buffer &samplesBuffer = this->impl->samplesBuffer;
         cl::CommandQueue &queue = this->impl->queue;

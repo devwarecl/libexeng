@@ -3,10 +3,10 @@
 #define __RAYTRACER_SAMPLERS_SAMPLER_HPP__
 
 #include <vector>
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 
 namespace raytracer { namespace samplers {
-    typedef std::vector< exeng::math::Vector2f > Vector2fArray;
+    typedef std::vector< exeng::Vector2f > Vector2fArray;
     typedef std::vector<int> IntArray;
     
     /**
@@ -39,7 +39,7 @@ namespace raytracer { namespace samplers {
         /**
          *  @brief Obtiene la siguiente muestra en el cuadrano unitario
          */
-        exeng::math::Vector2f sampleUnitSquare() const;
+        exeng::Vector2f sampleUnitSquare() const;
         
         /**
          *  @brief Devuelve la cantidad de muestras
@@ -49,7 +49,7 @@ namespace raytracer { namespace samplers {
         /**
          * @brief Get a pointer to the sample data (read-only)
          */
-        const exeng::math::Vector2f* getSampleData() const;
+        const exeng::Vector2f* getSampleData() const;
 
     protected:
         /**

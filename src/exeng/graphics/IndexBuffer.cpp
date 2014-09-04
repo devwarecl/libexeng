@@ -13,13 +13,8 @@
 
 #include <exeng/graphics/IndexBuffer.hpp>
 
-namespace exeng {
-namespace graphics {
-
-IndexBuffer::IndexBuffer(ResourceManager* factory) : Resource(factory) {
-}
-
-IndexBuffer::~IndexBuffer() {   
-}
-}
-}
+namespace exeng { namespace graphics {
+    IndexBuffer::IndexBuffer() {}
+    IndexBuffer::IndexBuffer(ResourceManager* factory) : Resource(factory) {}
+    IndexBuffer::~IndexBuffer() {}
+}}

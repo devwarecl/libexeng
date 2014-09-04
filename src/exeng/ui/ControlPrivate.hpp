@@ -4,8 +4,8 @@
 
 #include <string>
 #include <exeng/Config.hpp>
-#include <exeng/math/TVector.hpp>
-#include <exeng/math/TSize.hpp>
+#include <exeng/Vector.hpp>
+#include <exeng/Size.hpp>
 
 namespace exeng { namespace ui {
     class Control;
@@ -28,11 +28,11 @@ namespace exeng { namespace ui {
         virtual void setVisible(bool visible) = 0;
         virtual bool getVisible() const = 0;
 
-        virtual void setSize( const exeng::math::Size2i &size) = 0;
-        virtual exeng::math::Size2i getSize() const = 0;
+        virtual void seSize( const exeng::Size2i &size) = 0;
+        virtual exeng::Size2i geSize() const = 0;
 
-        virtual void setPosition( const exeng::math::Vector2i &pos) = 0;
-        virtual exeng::math::Vector2i getPosition() const = 0;
+        virtual void setPosition( const exeng::Vector2i &pos) = 0;
+        virtual exeng::Vector2i getPosition() const = 0;
         
     public:
         static ControlPrivate* new_();

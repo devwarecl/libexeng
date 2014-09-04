@@ -15,73 +15,77 @@
 #define __EXENG_GRAPHICS_INDEXBUFFER_HPP__
 
 #include <exeng/Resource.hpp>
+#include <exeng/Enum.hpp>
 #include <stdexcept>
 
-namespace exeng {
-    namespace graphics {
-        
-        /**
-         *  @brief Valid formats for a IndexBuffer
-         */
-        enum class IndexFormat {
+namespace exeng { namespace graphics {
+    /**
+     *  @brief Valid formats for a IndexBuffer
+     */
+    struct IndexFormat : public Enum {
+        enum Enum {
             Index16=16,
             Index32=32
         };
         
+        inline static std::size_t geSize(IndexFormat::Enum format)  {
+            return format;
+        }
+    };
+    
+    /**
+     * @brief Memory area dedicated for Index data
+     */
+    class EXENGAPI IndexBuffer : public Resource {
+    public:
+        IndexBuffer();
+        IndexBuffer(ResourceManager* factory);
+        
         /**
-         * @brief Memory area dedicated for IndexData
+         * @brief 
          */
-        class EXENGAPI IndexBuffer : public Resource {
-        public:
-            IndexBuffer(ResourceManager* factory);
+        virtual ~IndexBuffer();
+        
+        /**
+         * @brief 
+         */
+        virtual void allocate(IndexFormat::Enum indexFormat, int indexCount) = 0;
             
-            /**
-             * @brief 
-             */
-            virtual ~IndexBuffer();
+        /**
+         * @brief 
+         */
+        virtual void release() = 0;
             
-            /**
-             * @brief 
-             */
-            virtual void allocate(IndexFormat indexFormat, int indexCount) = 0;
+        /**
+         * @brief 
+         */
+        virtual bool isEmpty() const = 0;
             
-            /**
-             * @brief 
-             */
-            virtual void release() = 0;
+        /**
+         * @brief 
+         */
+        virtual void* lock() = 0;
             
-            /**
-             * @brief 
-             */
-            virtual bool isEmpty() const = 0;
+        /**
+         * @brief 
+         */
+        virtual bool isLocked() const = 0;
             
-            /**
-             * @brief 
-             */
-            virtual void* lock() = 0;
+        /**
+         * @brief 
+         */
+        virtual void unlock() = 0;
+        
+        /**
+         * @brief 
+         */
+        virtual int getCount() const = 0;
             
-            /**
-             * @brief 
-             */
-            virtual bool isLocked() const = 0;
-            
-            /**
-             * @brief 
-             */
-            virtual void unlock() = 0;
-            
-            
-            /**
-             * @brief 
-             */
-            virtual int getCount() const = 0;
-            
-            /**
-             * @brief 
-             */
-            virtual IndexFormat getFormat() const = 0;
-        };
-    }
-}
+        /**
+         * @brief 
+         */
+        virtual IndexFormat::Enum getFormat() const = 0;
+    };
+}}
 
 #endif  // __EXENG_GRAPHICS_INDEXBUFFER_HPP__

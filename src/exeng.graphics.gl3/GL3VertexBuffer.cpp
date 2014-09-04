@@ -31,11 +31,9 @@ namespace exeng { namespace graphics { namespace gl3 {
 		this->allocate(format, count);
 	}
 
-
 	GL3VertexBuffer::~GL3VertexBuffer() {
 		this->release();
 	}
-
 
 	void GL3VertexBuffer::allocate(const VertexFormat &format, int count) {
 	#if defined(EXENG_DEBUG)
@@ -43,55 +41,48 @@ namespace exeng { namespace graphics { namespace gl3 {
 			const char *msg = "GL3VertexBuffer::allocate: "
 							  "GL3VertexBuffer object is locked.";
 			throw std::runtime_error(msg);
-		} else {
+		} 
 	#endif
-			int size = 0;
+		int size = 0;
         
-			this->release();
+		this->release();
         
-			this->format = format;
-			this->count = count;
+		this->format = format;
+		this->count = count;
         
-			size = this->getSize();
+		size = this->geSize();
         
-			this->buffer.allocate(size);
-			{
-				BufferStatus<GL_ARRAY_BUFFER> status;
+		this->buffer.allocate(size);
+		{
+			BufferStatus<GL_ARRAY_BUFFER> status;
             
-				::glGenVertexArrays(1, &this->vertexArrayId);
-				::glBindVertexArray(this->vertexArrayId);
+			::glGenVertexArrays(1, &this->vertexArrayId);
+			::glBindVertexArray(this->vertexArrayId);
             
-				::glGenBuffers(1, &this->name); 
-				::glBindBuffer(GL_ARRAY_BUFFER, this->name); 
-				::glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STATIC_DRAW);
+			::glGenBuffers(1, &this->name); 
+			::glBindBuffer(GL_ARRAY_BUFFER, this->name); 
+			::glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STATIC_DRAW);
             
-				::glBindVertexArray(0);
+			::glBindVertexArray(0);
             
-				GL3_CHECK();
-			}
-	#if defined(EXENG_DEBUG)
+			GL3_CHECK();
 		}
-	#endif
 	}
-
 
 	void GL3VertexBuffer::release() {
 	#if defined(EXENG_DEBUG)
 		if (this->locked == true) {
 			throw std::runtime_error("GL3VertexBuffer::allocate: "
 									 "GL3VertexBuffer object is locked.");
-		} else {
-	#endif
-			if (this->name != 0) {
-				::glDeleteBuffers(1, &this->name);
-				this->name = 0;
-				GL3_CHECK();
-			}
-	#if defined(EXENG_DEBUG)
 		}
 	#endif
-	}
 
+		if (this->name != 0) {
+			::glDeleteBuffers(1, &this->name);
+			this->name = 0;
+			GL3_CHECK();
+		}
+	}
 
 	bool GL3VertexBuffer::isEmpty() const {
 		return this->name == 0;
@@ -124,7 +115,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 			BufferStatus<GL_ARRAY_BUFFER> status;
         
 			::glBindBuffer(GL_ARRAY_BUFFER, this->name);
-			::glBufferSubData(GL_ARRAY_BUFFER, 0, this->getSize(), this->buffer.getPtr());
+			::glBufferSubData(GL_ARRAY_BUFFER, 0, this->geSize(), this->buffer.getPtr());
 
 	#if defined(EXENG_DEBUG)
 		}
@@ -139,8 +130,8 @@ namespace exeng { namespace graphics { namespace gl3 {
 	}
 
 
-	int GL3VertexBuffer::getSize() const {
-		return this->count * this->format.getSize();
+	int GL3VertexBuffer::geSize() const {
+		return this->count * this->format.geSize();
 	}
 
 

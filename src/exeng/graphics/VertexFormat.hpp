@@ -21,7 +21,7 @@
 #include <exeng/Enum.hpp>
 #include <exeng/Config.hpp>
 #include <exeng/DataType.hpp>
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 
 namespace exeng { namespace graphics {
 
@@ -70,8 +70,8 @@ namespace exeng { namespace graphics {
         /**
          * @brief Get the size, in bytes, of the field.
          */
-        int getSize() const {
-            return this->count * this->dataType.getSize();
+        int geSize() const {
+            return this->count * this->dataType.geSize();
         }
     };
     
@@ -102,7 +102,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Get the size, in bytes, for each vertex of this format.
          */
-        int getSize() const;
+        int geSize() const;
         
         /**
          * @brief Get the offset for the specified attrib.
@@ -133,14 +133,14 @@ namespace exeng { namespace graphics {
     };
     
     struct Vertex {
-        exeng::math::Vector3f coord;
-        exeng::math::Vector3f normal;
-        exeng::math::Vector2f texCoord;
+        exeng::Vector3f coord;
+        exeng::Vector3f normal;
+        exeng::Vector2f texCoord;
     };
     
     struct Vertex2D {
-        exeng::math::Vector3f coord;
-        exeng::math::Vector2f texCoord;
+        exeng::Vector3f coord;
+        exeng::Vector2f texCoord;
     };
 
     inline VertexFormat::VertexFormat() {
@@ -151,11 +151,11 @@ namespace exeng { namespace graphics {
         }
     }
     
-    inline int VertexFormat::getSize() const {
+    inline int VertexFormat::geSize() const {
         int size = 0;
                 
         for (auto &field : this->fields) {
-            size += field.getSize();
+            size += field.geSize();
         }
                 
         return size;
@@ -174,7 +174,7 @@ namespace exeng { namespace graphics {
                 break;
             }
             
-            offset += field.getSize();
+            offset += field.geSize();
             
             if (field.attribute == attrib) {
                 break;

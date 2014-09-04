@@ -16,7 +16,7 @@
 #define __EXENG_GRAPHICS_IMAGE_HPP__
 
 #include <cstdint>
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/PixelType.hpp>
 #include <exeng/graphics/ColorFormat.hpp>
@@ -28,7 +28,7 @@ namespace exeng { namespace graphics {
     class EXENGAPI Image {
     public:
         Image();
-        Image(const exeng::math::Vector3i& size, 
+        Image(const exeng::Vector3i& size, 
                 ColorFormat format, 
                 PixelType type=PixelType::Integer);
         
@@ -57,25 +57,25 @@ namespace exeng { namespace graphics {
         /**
             * @brief 
             */
-        math::Vector3i getSize() const;
+        Vector3i geSize() const;
         
         /**
             * @brief 
             */
-        void initialize( const math::Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
+        void initialize( const Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
         
         /**
             * @brief 
             */
-        std::uint32_t getPixel(const math::Vector2i& position) const;
+        std::uint32_t getPixel(const Vector2i& position) const;
         
         /**
             * @brief 
             */
-        void setPixel(const math::Vector2i& position, std::uint32_t color);
+        void setPixel(const Vector2i& position, std::uint32_t color);
         
     private:
-        int getOffset(const math::Vector2i& position) const;
+        int getOffset(const Vector2i& position) const;
         
     private:
         struct Private;

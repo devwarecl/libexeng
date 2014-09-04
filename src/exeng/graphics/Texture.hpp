@@ -17,7 +17,7 @@
 
 #include <exeng/Enum.hpp>
 #include <exeng/Resource.hpp>
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/graphics/TextureType.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/ColorFormat.hpp>
@@ -77,7 +77,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Get the size, in texels, of the texture.
          */
-        virtual exeng::math::Vector3i getSize() const = 0;
+        virtual exeng::Vector3i geSize() const = 0;
         
         /**
          * @brief Get the native handle of the underlying graphics API.

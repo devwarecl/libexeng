@@ -12,18 +12,17 @@
 #include <fstream>
 #include <sstream>
 #include <exeng/Config.hpp>
-#include <exeng/math/TVector.hpp>
-#include <exeng/math/TMatrix.hpp>
-
+#include <exeng/Vector.hpp>
+#include <exeng/Matrix.hpp>
 
 #undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 
-using namespace exeng::math;
-
 #if defined(EXENG_UNIX)
 #  include <GL/glx.h>
 #endif
+
+using namespace exeng;
 
 namespace gl {
     void check() {

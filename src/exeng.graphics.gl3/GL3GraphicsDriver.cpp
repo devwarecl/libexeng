@@ -21,6 +21,7 @@
 #include "GL3Shader.hpp"
 #include "GL3Texture.hpp"
 #include "GL3VertexBuffer.hpp"
+#include "GL3IndexBuffer.hpp"
 #include "GL3Shader.hpp"
 #include "GL3ShaderProgram.hpp"
 
@@ -31,7 +32,6 @@
 #include <map>
 
 using namespace exeng;
-using namespace exeng::math;
 using namespace exeng::graphics;
 using namespace exeng::input;
 
@@ -345,10 +345,10 @@ namespace exeng { namespace graphics { namespace gl3 {
             
             ::glEnableVertexAttribArray(baseAttrib);
             ::glVertexAttribPointer(baseAttrib, field.count, 
-                                    dataType, GL_FALSE, format.getSize(), 
+                                    dataType, GL_FALSE, format.geSize(), 
                                     reinterpret_cast<const void*>(offset));
             
-            offset += field.count * field.dataType.getSize();
+            offset += field.count * field.dataType.geSize();
             ++baseAttrib;
         }
         
@@ -421,26 +421,38 @@ namespace exeng { namespace graphics { namespace gl3 {
     }
 
 
-    VertexBuffer* GL3GraphicsDriver::createVertexBuffer(const VertexFormat &format, int count) {
-        auto* vbuffer = new GL3VertexBuffer(this, format, count);
-        this->addResource(vbuffer);
-        
-        return vbuffer;
+    VertexBuffer* GL3GraphicsDriver::createVertexBuffer(const VertexFormat &format, int count, const void* data) {
+        VertexBuffer *vertexBuffer = new GL3VertexBuffer(this, format, count);
+        this->addResource(vertexBuffer);
+
+        if (data) {
+            void* destPtr = vertexBuffer->lock();
+            std::memcpy(destPtr, data, count * format.geSize());
+            vertexBuffer->unlock();
+        }
+
+        return vertexBuffer;
     }
 
+    IndexBuffer* GL3GraphicsDriver::createIndexBuffer(IndexFormat::Enum format, int count, const void* data) {
+        IndexBuffer *indexBuffer = new GL3IndexBuffer(format, count);
+        this->addResource(indexBuffer);
 
-    IndexBuffer* GL3GraphicsDriver::createIndexBuffer(IndexFormat format, int count) {
-        throw std::runtime_error("GL3GraphicsDriver::createIndexBuffer: Not yet implemented");
+        if (data) {
+            void* destPtr = indexBuffer->lock();
+            std::memcpy(destPtr, data, count * IndexFormat::geSize(format));
+            indexBuffer->unlock();
+        }
+
+        return indexBuffer;
     }
-
 
     Texture* GL3GraphicsDriver::createTexture(TextureType::Enum type, const Vector3f& size, const ColorFormat &format) {
-        auto *texture = new GL3Texture(this, type, size, format);
+        Texture *texture = new GL3Texture(this, type, size, format);
         this->addResource(texture);
         
         return texture;
     }
-
 
     void GL3GraphicsDriver::setTransform(Transform::Enum transform, const Matrix4f& transformMatrix) {
         const int index = static_cast<const int>(transform);
@@ -449,10 +461,9 @@ namespace exeng { namespace graphics { namespace gl3 {
         this->updateTransforms();
     }
 
-
     void GL3GraphicsDriver::setViewport(const Rectf& viewport) {
         auto minEdge = viewport.getMin();
-        auto size = viewport.getSize();
+        auto size = viewport.geSize();
         
         int x = static_cast<int>(minEdge.x);
         int y = static_cast<int>(minEdge.y);
@@ -468,7 +479,6 @@ namespace exeng { namespace graphics { namespace gl3 {
         ::glViewport(x, y, w, h);
         GL3_CHECK();
     }
-
 
     void GL3GraphicsDriver::render(Primitive::Enum ptype, int count) {
         if (this->vertexBuffer == nullptr) {
@@ -489,23 +499,19 @@ namespace exeng { namespace graphics { namespace gl3 {
         GL3_CHECK();
     }
 
-
     void GL3GraphicsDriver::pollEvents() {
         ::glfwPollEvents();
         
         //! TODO: notify the event handlers for events
     }
 
-
     void GL3GraphicsDriver::addEventHandler(IEventHandler *handler) {
         this->eventHandlers.push_back(handler);
     }
 
-
     void GL3GraphicsDriver::removeEventHandler(IEventHandler *handler) {
         this->eventHandlers.remove(handler);
     }
-
 
     void GL3GraphicsDriver::setDisplayMode(const DisplayMode &displayMode) {
         throw std::runtime_error("GL3GraphicsDriver::setDisplayMode: Not implemented yet.");
@@ -610,7 +616,6 @@ namespace exeng { namespace graphics { namespace gl3 {
         GL3_CHECK();
     }
 
-
     void GL3GraphicsDriver::postRenderMaterial(const Material *material) {
         const MaterialLayer *layer = nullptr;
         const GL3Texture *texture = nullptr;
@@ -631,9 +636,9 @@ namespace exeng { namespace graphics { namespace gl3 {
 
     void GL3GraphicsDriver::updateTransforms() {
         const GLint programId = this->shaderProgram->getProgramId();
+        const int transformCount = 3;
         
-        // TODO: Remove the magic number '3'
-        for (int i=0; i<3; ++i) {
+        for (int i=0; i<transformCount; ++i) {
             const std::string &name = this->transformNames[i];
             const Matrix4f &matrix  = this->transforms[i];
             

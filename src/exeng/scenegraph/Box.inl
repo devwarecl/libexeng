@@ -1,11 +1,11 @@
 
 namespace exeng { namespace scenegraph {
     template<typename OtherSolid>
-    inline exeng::math::Boxf box(const OtherSolid &solid) {
-        return exeng::math::Boxf();
+    inline exeng::Boxf box(const OtherSolid &solid) {
+        return exeng::Boxf();
     }
     
-    inline exeng::math::Boxf box(const exeng::math::Boxf &solid) {
+    inline exeng::Boxf box(const exeng::Boxf &solid) {
         return solid;
     }
 }}

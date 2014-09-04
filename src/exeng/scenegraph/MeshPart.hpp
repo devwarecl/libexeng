@@ -16,8 +16,8 @@
 
 #include <memory>
 
-#include <exeng/math/TVector.hpp>
-#include <exeng/math/TBoundary.hpp>
+#include <exeng/Vector.hpp>
+#include <exeng/Boundary.hpp>
 #include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/IndexBuffer.hpp>
 #include <exeng/graphics/VertexBuffer.hpp>

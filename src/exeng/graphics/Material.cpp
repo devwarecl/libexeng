@@ -18,7 +18,6 @@
 #include <exeng/io/Stream.hpp>
 
 using namespace exeng;
-using namespace exeng::math;
 
 namespace exeng { namespace graphics {
 
@@ -64,7 +63,6 @@ namespace exeng { namespace graphics {
 
 // Material implementation
 namespace exeng { namespace graphics {
-	using namespace exeng::math;
 
 	static const int LayerCount = 4;
 

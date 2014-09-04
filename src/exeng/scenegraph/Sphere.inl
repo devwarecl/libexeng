@@ -18,21 +18,21 @@
 namespace exeng { namespace scenegraph {
     
 inline Sphere::Sphere() {
-    this->setAttributes(1.0f, exeng::math::Vector3f(0.0));
+    this->setAttributes(1.0f, exeng::Vector3f(0.0));
 }
 
 
 inline Sphere::Sphere(float radius) {
-    this->setAttributes(radius, exeng::math::Vector3f(0.0));
+    this->setAttributes(radius, exeng::Vector3f(0.0));
 }
 
 
-inline Sphere::Sphere(float radius, const exeng::math::Vector3f &center) {
+inline Sphere::Sphere(float radius, const exeng::Vector3f &center) {
     this->setAttributes(radius, center);
 }
 
 
-inline void Sphere::setAttributes(float radius, const exeng::math::Vector3f &center){
+inline void Sphere::setAttributes(float radius, const exeng::Vector3f &center){
     this->setRadius(radius);
     this->setCenter(center);
 }
@@ -47,7 +47,7 @@ inline auto Sphere::setRadius(float radius) -> void {
 }
 
 
-inline void Sphere::setCenter(const exeng::math::Vector3f &center) {
+inline void Sphere::setCenter(const exeng::Vector3f &center) {
     this->center = center;
 }
 
@@ -57,13 +57,12 @@ inline float Sphere::getRadius() const {
 }
 
 
-inline exeng::math::Vector3f Sphere::getCenter() const{
+inline exeng::Vector3f Sphere::getCenter() const{
     return this->center;
 }
 
 
 inline bool Sphere::intersect(const Ray& ray, IntersectInfo *intersectInfo) const {
-    using namespace exeng::math;
     
     // Variables de apoyo al algoritmo
     float t;

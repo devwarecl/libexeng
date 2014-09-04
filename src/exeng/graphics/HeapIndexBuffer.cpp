@@ -25,7 +25,7 @@ namespace exeng {
         struct HeapIndexBuffer::Private {
             HeapBuffer buffer;
             int count;
-            IndexFormat format;
+            IndexFormat::Enum format;
             
             Private() : count(0) {}
             ~Private() {}
@@ -38,7 +38,7 @@ namespace exeng {
         }
         
         
-        HeapIndexBuffer::HeapIndexBuffer(ResourceManager *factory, IndexFormat indexFormat, int indexCount) : 
+        HeapIndexBuffer::HeapIndexBuffer(ResourceManager *factory, IndexFormat::Enum indexFormat, int indexCount) : 
             IndexBuffer(factory), impl(nullptr)  {
             this->impl = new HeapIndexBuffer::Private();
             this->allocate(indexFormat, indexCount);
@@ -50,7 +50,7 @@ namespace exeng {
         }
         
         
-        void HeapIndexBuffer::allocate(IndexFormat indexFormat, int indexCount)  {
+        void HeapIndexBuffer::allocate(IndexFormat::Enum indexFormat, int indexCount)  {
             assert(this->impl != nullptr);
             
             int indexSize = static_cast<int>(indexFormat);
@@ -97,7 +97,7 @@ namespace exeng {
         }
         
         
-        IndexFormat HeapIndexBuffer::getFormat() const {
+        IndexFormat::Enum HeapIndexBuffer::getFormat() const {
             assert(this->impl != nullptr);
             return this->impl->format;
         }

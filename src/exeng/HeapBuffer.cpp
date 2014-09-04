@@ -124,7 +124,7 @@ void HeapBuffer::release() {
 }
 
 
-int HeapBuffer::getSize() const {
+int HeapBuffer::geSize() const {
     return this->size;
 }
 

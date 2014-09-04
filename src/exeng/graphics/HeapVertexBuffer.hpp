@@ -44,7 +44,7 @@ namespace exeng { namespace graphics {
             
         virtual int getCount() const;
             
-        virtual int getSize() const;
+        virtual int geSize() const;
             
         virtual const VertexFormat& getFormat() const;
             

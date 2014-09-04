@@ -1,7 +1,6 @@
 
 namespace exeng { namespace scenegraph {
-    inline bool intersect(const Ray &ray, const exeng::math::Boxf &box, IntersectInfo *info) {
-        using namespace exeng::math;
+    inline bool intersect(const Ray &ray, const exeng::Boxf &box, IntersectInfo *info) {
         
         Vector3f minEdge = box.getMin();
         Vector3f maxEdge = box.getMax();

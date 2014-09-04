@@ -9,7 +9,7 @@
 
 #include "JitteredSampler.hpp"
 
-using exeng::math::Vector2f;
+using exeng::Vector2f;
 
 namespace raytracer { namespace samplers {
         

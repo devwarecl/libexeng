@@ -16,7 +16,7 @@
 
 #include <vector>
 #include <exeng/Object.hpp>
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/graphics/Color.hpp>
 
 namespace exeng { namespace graphics {
@@ -69,14 +69,14 @@ namespace exeng { namespace graphics {
         virtual ~Material();
         
         void setProperty(const std::string &name, float value);
-        void setProperty(const std::string &name, const exeng::math::Vector2f &value);
-        void setProperty(const std::string &name, const exeng::math::Vector3f &value);
-        void setProperty(const std::string &name, const exeng::math::Vector4f &value);
+        void setProperty(const std::string &name, const exeng::Vector2f &value);
+        void setProperty(const std::string &name, const exeng::Vector3f &value);
+        void setProperty(const std::string &name, const exeng::Vector4f &value);
         
         float getPropertyf(const std::string &name) const;
-        exeng::math::Vector2f getProperty2f(const std::string &name) const;
-        exeng::math::Vector3f getProperty3f(const std::string &name) const;
-        exeng::math::Vector4f getProperty4f(const std::string &name) const;
+        exeng::Vector2f getProperty2f(const std::string &name) const;
+        exeng::Vector3f getProperty3f(const std::string &name) const;
+        exeng::Vector4f getProperty4f(const std::string &name) const;
         
         void setShaderProgram(const ShaderProgram *shader);
         

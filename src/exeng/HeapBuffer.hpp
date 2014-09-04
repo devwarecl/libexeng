@@ -40,7 +40,7 @@ namespace exeng {
         
         virtual bool isEmpty() const;
         
-        virtual int getSize() const;
+        virtual int geSize() const;
         
         /**
          * @brief Change the size of the buffer.

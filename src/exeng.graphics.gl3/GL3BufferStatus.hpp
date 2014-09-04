@@ -25,6 +25,11 @@ namespace exeng { namespace graphics { namespace gl3 {
     struct BufferTargetMap<GL_ARRAY_BUFFER> {
         enum {Enum = GL_ARRAY_BUFFER_BINDING };
     };
+
+    template<>
+    struct BufferTargetMap<GL_ELEMENT_ARRAY_BUFFER> {
+        enum {Enum = GL_ELEMENT_ARRAY_BUFFER_BINDING };
+    };
     
     /**
         * @brief Preserves the name of the currently used buffer, and 
@@ -33,7 +38,6 @@ namespace exeng { namespace graphics { namespace gl3 {
     template<GLenum BufferTarget>
     struct BufferStatus {
         GLint oldName;
-        
         
         inline BufferStatus() {
             GLenum Enum = 0;

@@ -15,10 +15,9 @@
 #define __EXENG_SCENEGRAPH_MESH_HPP__
 
 #include <exeng/scenegraph/Geometry.hpp>
+#include <exeng/scenegraph/MeshPart.hpp>
 
 namespace exeng { namespace scenegraph {
-    struct EXENGAPI MeshPart;
-
     /**
      * @brief Holds the geometric information about a object, composed of different MeshParts.
      * 
@@ -26,14 +25,18 @@ namespace exeng { namespace scenegraph {
      */
     class EXENGAPI Mesh : public Geometry {
     public:
+        Mesh();
+
         explicit Mesh(int meshPartCount);
         
         virtual ~Mesh();
         
+        void allocate(int partCount);
+
         /**
          * @brief Computes and returns the corresponding bounding box of the mesh.
          */
-        virtual exeng::math::Boxf getBox() const;
+        virtual exeng::Boxf getBox() const;
         
         /**
          * @brief Checks if the specified ray intersects with the Mesh.

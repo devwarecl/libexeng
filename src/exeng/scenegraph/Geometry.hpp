@@ -14,7 +14,7 @@
 #ifndef __EXENG_SCENEGRAPH_GEOMETRY_HPP__
 #define __EXENG_SCENEGRAPH_GEOMETRY_HPP__
 
-#include <exeng/math/TBoundary.hpp>
+#include <exeng/Boundary.hpp>
 #include <exeng/scenegraph/SceneNodeData.hpp>
 
 namespace exeng { namespace scenegraph {
@@ -31,9 +31,9 @@ public:
 
     /**
      * @brief Calcula la caja de colision asociada con los ejes.
-     * @return Un objeto de tipo Exeng::Math::Boxf, con la caja de colision
+     * @return Un objeto de tipo Exeng::Boxf, con la caja de colision
      */
-    virtual exeng::math::Boxf getBox() const = 0;
+    virtual exeng::Boxf getBox() const = 0;
          
     /**
      * @brief Detecta la interseccion del objeto geometrico con el rayo indicado.

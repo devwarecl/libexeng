@@ -29,70 +29,62 @@ namespace exeng { namespace graphics { namespace gl3 {
     * @brief GraphicsDriver implemented using OpenGL 3.x
     */
     class GL3GraphicsDriver : public GraphicsDriverBase {    
-    public:  
+    public:
         GL3GraphicsDriver();
         
         virtual ~GL3GraphicsDriver();
         
-        virtual void initialize();
+        virtual void initialize() override;
         
-        virtual void initialize(const DisplayMode &displayMode);
+        virtual void initialize(const DisplayMode &displayMode) override;
         
-        virtual void terminate();
+        virtual void terminate() override;
         
-        virtual bool isInitialized() const;
+        virtual bool isInitialized() const override;
         
-        virtual void beginFrame(const Color &color, ClearFlags::Flags flags) ;
+        virtual void beginFrame(const Color &color, ClearFlags::Flags flags)  override;
         
-        virtual void endFrame();
+        virtual void endFrame() override;
         
-        virtual void setVertexBuffer(const VertexBuffer* vertexBuffer);
+        virtual void setVertexBuffer(const VertexBuffer* vertexBuffer) override;
         
-        virtual void setIndexBuffer(const IndexBuffer* indexBuffer);
+        virtual void setIndexBuffer(const IndexBuffer* indexBuffer) override;
         
-        virtual void setMaterial(const Material* material);
+        virtual void setMaterial(const Material* material) override;
         
-        virtual 
-        VertexBuffer* 
-        createVertexBuffer(const VertexFormat &vertexFormat, int vertexCount);
+        virtual VertexBuffer* createVertexBuffer(const VertexFormat &vertexFormat, int vertexCount, const void* data) override;
         
-        virtual 
-        IndexBuffer* 
-        createIndexBuffer(IndexFormat indexFormat, int indexCount);
+        virtual IndexBuffer* createIndexBuffer(IndexFormat::Enum indexFormat, int indexCount, const void* data) override;
         
-        virtual 
-        Texture* 
-        createTexture(TextureType::Enum TextureType, const exeng::math::Vector3f& TextureSize, const ColorFormat &format);
+        virtual Texture* createTexture(TextureType::Enum TextureType, const exeng::Vector3f& TextureSize, const ColorFormat &format) override;
         
-        virtual 
-        void 
-        setTransform(Transform::Enum transform, const exeng::math::Matrix4f& matrix);
+        virtual void setTransform(Transform::Enum transform, const exeng::Matrix4f& matrix) override;
         
-        virtual void setViewport(const exeng::math::Rectf& viewport);
+        virtual void setViewport(const exeng::Rectf& viewport) override;
         
-        virtual void render(exeng::graphics::Primitive::Enum primitiveType, int vertexCount);
+        virtual void render(exeng::graphics::Primitive::Enum primitiveType, int vertexCount) override;
         
-        virtual void pollEvents();
+        virtual void pollEvents() override;
         
-        virtual void addEventHandler(exeng::input::IEventHandler *handler);
+        virtual void addEventHandler(exeng::input::IEventHandler *handler) override;
         
-        virtual void removeEventHandler(exeng::input::IEventHandler *handler);
+        virtual void removeEventHandler(exeng::input::IEventHandler *handler) override;
         
-        virtual void setDisplayMode(const DisplayMode &displayMode);
+        virtual void setDisplayMode(const DisplayMode &displayMode) override;
         
-        virtual DisplayMode getDisplayMode() const;
+        virtual DisplayMode getDisplayMode() const override;
         
-        virtual void restoreDisplayMode();
+        virtual void restoreDisplayMode() override;
         
-        virtual const VertexBuffer* getVertexBuffer() const;
+        virtual const VertexBuffer* getVertexBuffer() const override;
         
-        virtual const IndexBuffer* getIndexBuffer() const;
+        virtual const IndexBuffer* getIndexBuffer() const override;
         
-        virtual Shader* createShader( ShaderType type );
+        virtual Shader* createShader( ShaderType type ) override;
         
-        virtual ShaderProgram* createShaderProgram( );
+        virtual ShaderProgram* createShaderProgram( ) override;
         
-        virtual void raiseEvent(exeng::input::EventData &data);
+        virtual void raiseEvent(exeng::input::EventData &data) override;
         
     public:
         inline const GLFWwindow* getGLFWwindow() const {

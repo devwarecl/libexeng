@@ -24,11 +24,11 @@ namespace exeng { namespace graphics {
     public:            
         HeapIndexBuffer(ResourceManager *factory);
             
-        HeapIndexBuffer(ResourceManager *factory, IndexFormat indexFormat, int indexCount);
+        HeapIndexBuffer(ResourceManager *factory, IndexFormat::Enum indexFormat, int indexCount);
             
         virtual ~HeapIndexBuffer();
             
-        virtual void allocate(IndexFormat indexFormat, int indexCount);
+        virtual void allocate(IndexFormat::Enum indexFormat, int indexCount);
             
         virtual void release();
             
@@ -42,7 +42,7 @@ namespace exeng { namespace graphics {
             
         virtual int getCount() const;
             
-        virtual IndexFormat getFormat() const;
+        virtual IndexFormat::Enum getFormat() const;
             
     private:
         struct Private;

@@ -20,28 +20,28 @@ namespace raytracer { namespace tracers {
         
     private:
         uint32_t 
-        getOffset(const exeng::math::Vector2i &point) const;
+        getOffset(const exeng::Vector2i &point) const;
         
         void 
-        putPixel(std::uint32_t *backbuffer, const exeng::math::Vector2i &point, const std::uint32_t color);
+        putPixel(std::uint32_t *backbuffer, const exeng::Vector2i &point, const std::uint32_t color);
         
         std::uint32_t 
-        getPixel(std::uint32_t *backbuffer, const exeng::math::Vector2i &point) const;
+        getPixel(std::uint32_t *backbuffer, const exeng::Vector2i &point) const;
         
         exeng::scenegraph::Ray 
-        castRay(const exeng::math::Vector2f &pixel, const exeng::scenegraph::Camera *camera) const;
+        castRay(const exeng::Vector2f &pixel, const exeng::scenegraph::Camera *camera) const;
         
         exeng::scenegraph::Ray 
-        castRay(const exeng::math::Vector2f &pixel, const exeng::scenegraph::Camera *camera, const exeng::math::Vector2f &sample) const;
+        castRay(const exeng::Vector2f &pixel, const exeng::scenegraph::Camera *camera, const exeng::Vector2f &sample) const;
         
         exeng::scenegraph::IntersectInfo 
         intersectRay(const std::list<const exeng::scenegraph::SceneNode*> &nodes, const exeng::scenegraph::Ray &ray) const;
         
         exeng::graphics::Color 
-        traceRay(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::math::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
+        traceRay(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
         
         exeng::graphics::Color 
-        traceRayMultisampled(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::math::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
+        traceRayMultisampled(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
         
         void 
         flattenHierarchy(std::list<const exeng::scenegraph::SceneNode*> &out, const exeng::scenegraph::SceneNode* node) const;

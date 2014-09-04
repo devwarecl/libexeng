@@ -9,7 +9,7 @@
 #define __EXENG_SCENEGRAPH_SCENE_HPP__
 
 #include <exeng/Object.hpp>
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/Material.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
@@ -19,7 +19,7 @@
 
 namespace exeng { namespace scenegraph {    
     /**
-     *  @brief Clase de grafos de escena
+     * @brief Scenegraph 
      */
     class EXENGAPI Scene : public Object {
     public:
@@ -27,41 +27,31 @@ namespace exeng { namespace scenegraph {
         virtual ~Scene();
         
         /**
-         * @brief Devuelven el nodo raiz de la escena
+         * @brief 
          */
         SceneNode* getRootNode();
         const SceneNode* getRootNode() const;
-        
+
         /**
-         * @brief Add the specified camera to the root node of the scene.
+         * @brief Create a new camera. 
          */
-        SceneNode* addCamera(Camera *camera, const std::string &name);
-        
+        Camera* createCamera();
+
         /**
-         * @brief Add the specified camera to the scene graph.
+         * @brief 
          */
-        SceneNode* addCamera(Camera *camera, const std::string &name, SceneNode *parent);
-        
+        Light* createLight();
+
         /**
-         * @brief Get all camera scene nodes of the scene graph.
+         * @brief 
          */
-        const SceneNodes& getCameraSceneNodes() const;
-        
+        exeng::graphics::Material* createMaterial(const std::string &materialName);
+
         /**
-         * @brief Add the specified light to the root node of the scene graph.
+         * @brief 
          */
-        SceneNode* addLight(Light *light, const std::string &name);
-        
-        /**
-         * @brief Add the specified light to the scenegraph
-         */
-        SceneNode* addLight(Light *light, const std::string &name, SceneNode *parent);
-        
-        /**
-         * @brief Get all camera of the scene graph.
-         */
-        const SceneNodes& getLightSceneNodes() const;
-        
+        SceneNode* createSceneNode(const std::string &nodeName, SceneNodeData* nodeData);
+
         /**
          * @brief Sets the scene background color.
          */
@@ -71,22 +61,10 @@ namespace exeng { namespace scenegraph {
          * @brief Gets the scene background color.
          */
         exeng::graphics::Color getBackColor() const;
-        
-        /**
-         * @brief Add a new material to the scene.
-         */
-        exeng::graphics::Material* addMaterial(const std::string &name);
-        
-        /**
-         * @brief Add a new Geometry to the scene. 
-         * 
-         * The Scene object takes ownership of the recently added object.
-         */
-        exeng::scenegraph::Geometry* addGeometry(exeng::scenegraph::Geometry* geometry);
-        
+
     private:
         struct Private;
-        Private* impl;
+        Private* impl = nullptr;
     };
 }}
 

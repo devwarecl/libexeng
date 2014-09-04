@@ -18,8 +18,11 @@
 #include <string>
 #include <vector>
 #include <memory>
-
 #include <exeng/Config.hpp>
+
+namespace exeng { namespace graphics {
+    class EXENGAPI GraphicsDriver; 
+}}
 
 namespace exeng { namespace scenegraph {
     class EXENGAPI Mesh;    
@@ -46,11 +49,11 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Load a mesh from the specified file.
          */
-        Mesh* getMesh(const std::string &filename);
-        
+        Mesh* getMesh(const std::string &filename, exeng::graphics::GraphicsDriver *graphicsDriver);
+
     private:
         struct Private;
-        Private *impl;
+        Private *impl = nullptr;
     };
 }}
 

@@ -41,7 +41,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual int getCount() const;
         
-        virtual int getSize() const;
+        virtual int geSize() const;
         
         virtual const VertexFormat& getFormat() const;
         
@@ -52,16 +52,16 @@ namespace exeng { namespace graphics { namespace gl3 {
         inline int getVertexArrayId() const {
             return this->vertexArrayId;
         }
-                        
+        
         virtual TypeInfo getTypeInfo() const;
         
     private:
-        ::GLuint vertexArrayId;
-        ::GLuint name;
-        bool locked;
-        int count;
+        ::GLuint vertexArrayId = 0;
+        ::GLuint name = 0;
+        bool locked = false;
+        int count = 0;
+
         VertexFormat format;
-        
         HeapBuffer buffer;
     };
 }}}

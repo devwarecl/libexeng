@@ -20,38 +20,36 @@
 #include <boost/shared_ptr.hpp>
 
 namespace exeng { namespace graphics {
-
-/**
- * @brief Base common functionality for easing the process 
- * of implementing graphics drivers
- */
-class GraphicsDriverBase : public GraphicsDriver {
-public:
-    GraphicsDriverBase();
+    /**
+     * @brief Base common functionality for easing the process 
+     * of implementing graphics drivers
+     */
+    class GraphicsDriverBase : public GraphicsDriver {
+    public:
+        GraphicsDriverBase();
     
-    virtual ~GraphicsDriverBase();
+        virtual ~GraphicsDriverBase();
     
-    virtual exeng::math::Matrix4f getTransform( Transform::Enum transform );
+        virtual exeng::Matrix4f getTransform( Transform::Enum transform ) override;
     
-    virtual exeng::math::Rectf getViewport( ) const;
+        virtual exeng::Rectf getViewport( ) const override;
     
-    virtual const exeng::graphics::Material* getMaterial( ) const;
+        virtual const exeng::graphics::Material* getMaterial( ) const override;
     
-    virtual VertexBuffer* createVertexBuffer( const VertexFormat &vertexFormat, int vertexCount );
+        virtual VertexBuffer* createVertexBuffer( const VertexFormat &vertexFormat, int vertexCount, const void* data) override;
     
-    virtual IndexBuffer* createIndexBuffer( IndexFormat IndexFormat, int IndexCount );
+        virtual IndexBuffer* createIndexBuffer( IndexFormat::Enum IndexFormat, int IndexCount, const void* data) override;
     
-    virtual void setTransformName(Transform::Enum transform, const std::string &name);
+        virtual void setTransformName(Transform::Enum transform, const std::string &name) override;
     
-    virtual std::string getTransformName(Transform::Enum transform) const;
+        virtual std::string getTransformName(Transform::Enum transform) const  override;
     
-protected:
-    const exeng::graphics::Material* material;
-    exeng::math::Rectf viewport;
-    exeng::math::Matrix4f transforms[3];
-    std::string transformNames[3];
-};
-
+    protected:
+        const exeng::graphics::Material* material;
+        exeng::Rectf viewport;
+        exeng::Matrix4f transforms[3];
+        std::string transformNames[3];
+    };
 }}
 
 #include "GraphicsDriverBase.inl"

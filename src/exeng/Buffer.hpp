@@ -59,7 +59,7 @@ namespace exeng {
         /**
          * @brief Gets the size of the buffer, in bytes.
          */
-        virtual int getSize() const = 0;
+        virtual int geSize() const = 0;
     };
 }
 

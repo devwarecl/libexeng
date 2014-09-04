@@ -23,7 +23,6 @@
 
 using namespace exeng;
 using namespace exeng::graphics;
-using namespace exeng::math;
 
 namespace exeng { namespace graphics {
 
@@ -32,51 +31,50 @@ namespace exeng { namespace graphics {
         this->material = nullptr;
     }
 
-
     inline GraphicsDriverBase::~GraphicsDriverBase() {}
     
-
     inline Matrix4f GraphicsDriverBase::getTransform(Transform::Enum transform) {
         return this->transforms[static_cast<const int>(transform)];
     }
-
 
     inline const Material* GraphicsDriverBase::getMaterial() const {
         return this->material;
     }
 
-
     inline Rectf GraphicsDriverBase::getViewport() const {
         return this->viewport;
     }
 
+    inline VertexBuffer* GraphicsDriverBase::createVertexBuffer( const VertexFormat &format, int count, const void *data)  {
+        VertexBuffer *vertexBuffer = new HeapVertexBuffer(this, format, count);
 
-    inline 
-    VertexBuffer* 
-    GraphicsDriverBase::createVertexBuffer( const VertexFormat &format, int count ) {
-        auto *vbuffer = new HeapVertexBuffer(this, format, count);
-//        this->addResource(vbuffer);
-        return vbuffer;
+        if (data) {
+            void* destPtr = vertexBuffer->lock();
+            std::memcpy(destPtr, data, count * format.geSize());
+            vertexBuffer->unlock();
+        }
+
+        return vertexBuffer;
     }
 
-
-    inline 
-    IndexBuffer* 
-    GraphicsDriverBase::createIndexBuffer(IndexFormat indexFormat, int indexCount) {
-        auto *indexBuffer = new HeapIndexBuffer(this);
+    inline IndexBuffer* GraphicsDriverBase::createIndexBuffer(IndexFormat::Enum indexFormat, int indexCount, const void *data) {
+        IndexBuffer *indexBuffer = new HeapIndexBuffer(this);
         indexBuffer->allocate(indexFormat, indexCount);
-//        this->addResource(indexBuffer);
+
+        if (data) {
+            void* destPtr = indexBuffer->lock();
+            std::memcpy(destPtr, data, indexCount * IndexFormat::geSize(indexFormat));
+            indexBuffer->unlock();
+        }
+
         return indexBuffer;
     }
-
 
     inline void GraphicsDriverBase::setTransformName(Transform::Enum transform, const std::string &name) {
         this->transformNames[static_cast<int>(transform)] = name;
     }
 
-
     inline std::string GraphicsDriverBase::getTransformName(Transform::Enum transform) const {
         return this->transformNames[static_cast<int>(transform)];
     }
-
 }}

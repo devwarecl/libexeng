@@ -18,7 +18,7 @@
 #include <stdexcept>
 
 #include <exeng/Resource.hpp>
-#include <exeng/math/TVector.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
 
 namespace exeng { namespace graphics {
@@ -71,7 +71,7 @@ namespace exeng { namespace graphics {
 		/**
 		 * @brief Get the total allocated size for the vertex buffer
 		 */
-		virtual int getSize() const = 0;
+		virtual int geSize() const = 0;
         
 		/**
 		 * @brief Get the current vertex format

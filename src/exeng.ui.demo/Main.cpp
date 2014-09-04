@@ -17,19 +17,19 @@ namespace exeng { namespace main {
 		Button button(&mainWindow);
 
 		mainWindow.setText("exeng.ui.demo Application")
-			->setSize(400, 400)
+			->seSize(400, 400)
 			->setPosition(100, 100)
 			->setVisible(true);
 
-		exeng::math::Size2i size;
-		exeng::math::Vector2i pos;
+		exeng::Size2i size;
+		exeng::Vector2i pos;
 
 		label.setText("Hello, world!")
-			->setSize(400, 400)
+			->seSize(400, 400)
 			->setPosition(100, 100)
 			->setVisible(true);
 
-		size = label.getSize();
+		size = label.geSize();
 		pos = label.getPosition();
 
 // 		button->setText("Push me!")->setWidth(250)->setHeight(45)->setLeft(20)->setTop(120);

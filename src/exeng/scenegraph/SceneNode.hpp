@@ -18,7 +18,7 @@
 #include <vector>
 
 #include <exeng/Object.hpp>
-#include <exeng/math/TMatrix.hpp>
+#include <exeng/Matrix.hpp>
 
 namespace exeng { namespace scenegraph {
     class EXENGAPI SceneNode;
@@ -45,9 +45,9 @@ namespace exeng { namespace scenegraph {
 
         virtual std::string toString() const;
         
-        exeng::math::Matrix4f getTransform() const;
+        exeng::Matrix4f getTransform() const;
         
-        void setTransform(const exeng::math::Matrix4f& transform);
+        void setTransform(const exeng::Matrix4f& transform);
         
         std::string getName() const;
         
