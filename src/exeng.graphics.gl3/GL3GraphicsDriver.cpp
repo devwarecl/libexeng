@@ -534,7 +534,7 @@ namespace exeng { namespace graphics { namespace gl3 {
     }
 
 
-    Shader* GL3GraphicsDriver::createShader( ShaderType type ) {
+    Shader* GL3GraphicsDriver::createShader( ShaderType::Enum type ) {
         auto *resource = new GL3Shader(this, type);
         this->addResource(resource);
         

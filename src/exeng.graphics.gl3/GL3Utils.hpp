@@ -42,7 +42,7 @@ namespace exeng { namespace graphics { namespace gl3 {
                             ColorChannel( ColorComponent::Red, 8 ), 
                             ColorChannel( ColorComponent::Green, 8 ))) {
             return GL_RG;
-        }else if (format == ColorFormat(24, 
+        } else if (format == ColorFormat(24, 
                             ColorChannel( ColorComponent::Red, 8 ), 
                             ColorChannel( ColorComponent::Green, 8 ), 
                             ColorChannel( ColorComponent::Blue, 8 ))) {
@@ -59,7 +59,7 @@ namespace exeng { namespace graphics { namespace gl3 {
     }
 
 
-    inline GLenum convShaderType(ShaderType type) {
+    inline GLenum convShaderType(ShaderType::Enum type) {
         switch (type) {
         case ShaderType::Vertex:    return GL_VERTEX_SHADER;
         case ShaderType::Fragment:  return GL_FRAGMENT_SHADER;
@@ -69,7 +69,7 @@ namespace exeng { namespace graphics { namespace gl3 {
     }
 
 
-    inline std::string shaderTypeStr(ShaderType type) {
+    inline std::string shaderTypeStr(ShaderType::Enum type) {
         switch (type) {
         case ShaderType::Vertex:    return "vertex";
         case ShaderType::Fragment:  return "fragment";

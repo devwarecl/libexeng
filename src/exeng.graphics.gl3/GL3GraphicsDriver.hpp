@@ -80,7 +80,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual const IndexBuffer* getIndexBuffer() const override;
         
-        virtual Shader* createShader( ShaderType type ) override;
+        virtual Shader* createShader( ShaderType::Enum type ) override;
         
         virtual ShaderProgram* createShaderProgram( ) override;
         

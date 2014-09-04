@@ -193,7 +193,7 @@ namespace raytracer {
     }
     
     void RayTracerApp::clear() {
-        this->driver->beginFrame({0.0f, 0.0f, 0.0f, 1.0f});
+        this->driver->beginFrame({0.0f, 0.0f, 0.0f, 1.0f}, ClearFlags::Color | ClearFlags::Depth);
     }
     
     void RayTracerApp::present() {

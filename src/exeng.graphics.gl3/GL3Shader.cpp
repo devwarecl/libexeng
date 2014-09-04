@@ -20,7 +20,7 @@
 #include <stdexcept>
 
 namespace exeng  { namespace graphics { namespace gl3 {
-    GL3Shader::GL3Shader(ResourceManager* factory, ShaderType type) : Shader(factory) {
+    GL3Shader::GL3Shader(ResourceManager* factory, ShaderType::Enum type) : Shader(factory) {
         this->name = 0;
         this->modified = false;
         this->compiled = false;
@@ -95,7 +95,7 @@ namespace exeng  { namespace graphics { namespace gl3 {
         return this->compiled;
     }
 
-    ShaderType GL3Shader::getType() const {
+    ShaderType::Enum GL3Shader::getType() const {
         return this->type;
     }
 

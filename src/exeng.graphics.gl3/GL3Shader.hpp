@@ -24,25 +24,25 @@ namespace exeng { namespace graphics { namespace gl3 {
     */
     class GL3Shader : public Shader {
     public:
-        GL3Shader(ResourceManager* factory, ShaderType type);
+        GL3Shader(ResourceManager* factory, ShaderType::Enum type);
         
         virtual ~GL3Shader();
         
-        virtual TypeInfo getTypeInfo() const;
+        virtual TypeInfo getTypeInfo() const override;
         
-        virtual void setSourceCode(const std::string &sourceCode);
+        virtual void setSourceCode(const std::string &sourceCode) override;
         
-        virtual std::string getSourceCode() const;
+        virtual std::string getSourceCode() const override;
         
-        virtual bool isSourceModified() const;
+        virtual bool isSourceModified() const override;
         
-        virtual void compile();
+        virtual void compile() override;
         
-        virtual bool isCompiled() const;
+        virtual bool isCompiled() const override;
         
-        virtual ShaderType getType() const;
+        virtual ShaderType::Enum getType() const override;
 
-        virtual void release();
+        virtual void release() override;
         
         /**
         * @brief Get the gl3 identifier of the shader.
@@ -54,7 +54,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         std::string sourceCode;
         bool modified;
         bool compiled;
-        ShaderType type;
+        ShaderType::Enum type;
     };
 
 }}}

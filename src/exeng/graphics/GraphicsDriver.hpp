@@ -208,8 +208,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Start the rendering of a new frame, clearing the previous one
          */
-        virtual void beginFrame(const Color &color, 
-                                ClearFlags::Flags flags = ClearFlags::Color | ClearFlags::Depth) = 0;
+        virtual void beginFrame(const Color &color, ClearFlags::Flags flags) = 0;
         
         /**
          * @brief Flip the backbuffer and the front buffer
@@ -296,7 +295,7 @@ namespace exeng { namespace graphics {
          * @param type
          * @return 
          */
-        virtual Shader* createShader( ShaderType type ) = 0;
+        virtual Shader* createShader( ShaderType::Enum type ) = 0;
         
         /**
          * @brief Create a new shader program, specific to the current graphics driver.

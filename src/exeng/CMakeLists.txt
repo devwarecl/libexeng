@@ -77,6 +77,7 @@ set (GraphicsFiles
   graphics/IndexArray.hpp           graphics/VertexArray.hpp
   graphics/Shader.hpp               graphics/Shader.cpp
   graphics/ShaderProgram.hpp        graphics/ShaderProgram.cpp
+  graphics/MeshSubset.hpp			graphics/MeshSubset.cpp
 )
 
 set (UiFiles
