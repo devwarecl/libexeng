@@ -23,7 +23,7 @@ using namespace exeng;
 
 namespace exeng { namespace graphics { namespace gl3 {
 
-	GL3Texture::GL3Texture(ResourceManager *factory,  TextureType::Enum type, Vector3i size, const ColorFormat &colorFormat) : Texture(factory) {
+	GL3Texture::GL3Texture(TextureType::Enum type, Vector3i size, const ColorFormat &colorFormat) {
 		GLuint textureId = 0;
         
 		// check for a valid type
@@ -93,8 +93,8 @@ namespace exeng { namespace graphics { namespace gl3 {
 
 	void* GL3Texture::lock() {
 		assert(this->textureId != 0);
-    
-		this->textureData = this->buffer.lock();
+        
+		this->textureData = this->buffer.getDataPtr();
 		return this->textureData;
 	}
 
@@ -112,28 +112,24 @@ namespace exeng { namespace graphics { namespace gl3 {
     
 		switch (this->textureTarget) {
 		case GL_TEXTURE_1D:
-			::glTexSubImage1D(textureTarget, 0,  0, this->size.x, 
-							  GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
+			::glTexSubImage1D(textureTarget, 0, 0, this->size.x, GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
 			break;
         
 		case GL_TEXTURE_2D:
-			::glTexSubImage2D(textureTarget, 0,  0, 0, this->size.x, this->size.y, 
-							  GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
+			::glTexSubImage2D(textureTarget, 0, 0, 0, this->size.x, this->size.y, GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
 			break;
         
 		case GL_TEXTURE_3D:
-			::glTexSubImage3D(textureTarget, 0,  0, 0, 0, this->size.x, this->size.y, this->size.z, 
-							  GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
+			::glTexSubImage3D(textureTarget, 0, 0, 0, 0, this->size.x, this->size.y, this->size.z, GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
 			break;
         
 		default: assert(false); break;
 		}
     
 		::glBindTexture(this->textureTarget, 0);
-    
 		GL3_CHECK();
     
-		this->buffer.unlock();
+		this->buffer.write();
 	}
 
 	TextureType::Enum GL3Texture::getType() const {

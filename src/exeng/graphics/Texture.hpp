@@ -40,7 +40,7 @@ namespace exeng { namespace graphics {
      */
     class EXENGAPI Texture : public Resource {
     public:
-        Texture(ResourceManager *factory);
+        Texture();
         
         virtual ~Texture();
         

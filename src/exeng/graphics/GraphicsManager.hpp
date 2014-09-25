@@ -30,22 +30,12 @@ namespace exeng {
          * @brief 
          */
         struct GraphicsDriverInfo {
-            std::string name;
-            Version version;
-            bool hardware;
-            bool supportsVertexShaders;
-            bool supportsPixelShader;
-            bool supportGeometryShaders;
-            
-            inline GraphicsDriverInfo() {
-                this->name = "";
-                this->version = Version(1, 0, 0, 0);
-                this->hardware = false;
-                this->supportsVertexShaders = false;
-                this->supportsPixelShader = false;
-                this->supportGeometryShaders = false;
-            }
-            
+            std::string name = "";
+            Version version = {1, 0, 0, 0};
+            bool hardware = false;
+            bool supportsVertexShaders = false;
+            bool supportsPixelShader = false;
+            bool supportsGeometryShaders = false;
             
             inline bool operator== (const GraphicsDriverInfo &other) const {
                 if (this->name != other.name) {
@@ -59,11 +49,9 @@ namespace exeng {
                 return true;
             }
             
-            
             inline bool operator!= (const GraphicsDriverInfo &other) const {
                 return !(*this == other);
             }
-            
             
             inline bool operator< (const GraphicsDriverInfo &other) const {
                 return this->name < other.name && this->version < other.version;
@@ -115,7 +103,7 @@ namespace exeng {
             
         private:
             struct Private;
-            Private *impl;
+            Private *impl = nullptr;
         };
     }
 }

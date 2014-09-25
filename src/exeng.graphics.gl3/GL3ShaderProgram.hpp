@@ -25,25 +25,25 @@ namespace exeng { namespace graphics { namespace gl3 {
     class GL3Shader;
     class GL3ShaderProgram : public ShaderProgram {
     public:
-        GL3ShaderProgram(ResourceManager *factory);
+        GL3ShaderProgram();
         
         virtual ~GL3ShaderProgram();
 
-        virtual TypeInfo getTypeInfo() const;
+        virtual TypeInfo getTypeInfo() const override;
         
-        virtual void addShader(Shader *shader);
+        virtual void addShader(Shader *shader) override;
         
-        virtual void removeShader(Shader *shader);
+        virtual void removeShader(Shader *shader) override;
         
-        virtual void link();
+        virtual void link() override;
         
-        virtual bool isLinked() const;
+        virtual bool isLinked() const override;
         
-        virtual bool mustRelink() const;
+        virtual bool mustRelink() const override;
         
         GLuint getProgramId() const;
         
-        virtual void release();
+        virtual void release() override;
         
     private:
         GLuint programId;
@@ -52,8 +52,6 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         std::list< GL3Shader* > shaders;
     };
-
-
 }}}
 
 #endif // __EXENG_GRAPHICS_GL3_GL3SHADERPROGRAM_HPP__

@@ -109,16 +109,22 @@ namespace raytracer {
             {{-1.0f, -1.0f, 0.0f}, {0.0f,  0.0f}},
             {{ 1.0f, -1.0f, 0.0f}, {1.0f,  0.0f}}
         };
-        VertexBuffer *vertexBuffer = this->driver->createVertexBuffer(VertexFormat::makeVertex2D(), 4, screenVertices);
-        
-        this->vertexBuffer.reset(vertexBuffer);
+
+        VertexFormat screenVertexFormat = VertexFormat::makeVertex2D();
+
+        auto vertexBuffer = std::unique_ptr<Buffer>(this->driver->createVertexBuffer(4*screenVertexFormat.getSize(), screenVertices));
+
+        std::vector<std::unique_ptr<Buffer>> vertexBuffers;
+        vertexBuffers.push_back(std::move(vertexBuffer));
+
+        this->screenMeshSubset = std::unique_ptr<MeshSubset>(this->driver->createMeshSubset(std::move(vertexBuffers), screenVertexFormat));
         
         // Initialize the scene.
         this->loadScene();
         this->scene->setBackColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
 
         // Create the tracer before the render target texture AND the scene.
-        this->sampler.reset(new JitteredSampler(25));
+        this->sampler = std::unique_ptr<Sampler>(new JitteredSampler(25));
         this->sampler->generateSamples();
         
         // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
@@ -132,10 +138,10 @@ namespace raytracer {
             {0.0f, 0.5f, 1.0f, 1.0f}
         );
 
-        this->texture.reset(texture);
         this->tracer->setRenderTarget(texture);
         
-        this->material.getLayer(0)->setTexture(texture);
+        this->screenMaterial = std::unique_ptr<Material>(new Material());
+        this->screenMaterial->getLayer(0)->setTexture(texture);
         
         this->camera.setLookAt({0.0f, 0.0f, 0.0f});
         this->camera.setPosition({0.0f, 0.0f, -2.0f});
@@ -197,8 +203,8 @@ namespace raytracer {
     }
     
     void RayTracerApp::present() {
-        this->driver->setMaterial(&this->material);
-        this->driver->setVertexBuffer(this->vertexBuffer.get());
+        this->driver->setMaterial(this->screenMaterial.get());
+        this->driver->setMeshSubset( this->screenMeshSubset.get());
         this->driver->render(Primitive::TriangleStrip, 4);
         this->driver->endFrame();
     }
@@ -217,9 +223,8 @@ namespace raytracer {
     }
 }
 
-
 #if defined(EXENG_WINDOWS)
-#include <Windows.h>
+#  include <Windows.h>
 #endif
 
 void showMsgBox(const std::string &msg, const std::string &title) {
@@ -231,7 +236,69 @@ void showMsgBox(const std::string &msg, const std::string &title) {
 }
 
 namespace exeng { namespace main {
+
+    using namespace exeng;
+    using namespace exeng::framework;
+    using namespace exeng::input;
+    using namespace exeng::graphics;
+
+    class TestApp : public IEventHandler {
+    public:
+        TestApp() {
+            this->root = std::unique_ptr<Root>(new Root());
+            this->root->getPluginManager()->load("exeng.graphics.gl3", getPluginPath());
+
+            this->graphicsDriver = std::unique_ptr<GraphicsDriver>(root->getGraphicsManager()->createDriver());
+            this->graphicsDriver->addEventHandler(this);
+            this->graphicsDriver->initialize();
+            
+            this->isRunning = true;
+        }
+
+        ~TestApp() {
+
+        }
+
+        virtual void handleEvent(const EventData &data) override {
+            if (data.eventType == TypeId<InputEventData>()) {
+                if (data.cast<InputEventData>().check(ButtonStatus::Press, ButtonCode::KeyEsc)) {
+                    this->isRunning = false;
+                }
+            }
+        }
+
+        void run() {
+            while (this->isRunning) {
+                this->update();
+                this->present();
+            }
+        }
+
+        int getExitCode() const {
+            return 0;
+        }
+
+    private:
+        void update() {
+            this->graphicsDriver->pollEvents();
+        }
+
+        void present() {
+            this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::Color);
+            this->graphicsDriver->endFrame();
+        }
+
+    private:
+        bool isRunning = false;
+        std::unique_ptr<Root> root;
+        std::unique_ptr<GraphicsDriver> graphicsDriver;
+    };
+
 	int main(int argc, char **argv) {
+        // TestApp app;
+        // app.run();
+        // return app.getExitCode();
+
         using namespace raytracer;
         using namespace exeng;
         using namespace exeng::framework;

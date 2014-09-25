@@ -3,7 +3,6 @@
  * @brief Definition of the GL3BufferStatus class.
  */
 
-
 /*
  * Copyright (c) 2013 Felipe Apablaza.
  *
@@ -15,39 +14,34 @@
 #ifndef __EXENG_GRAPHICS_GL3_BUFFERSTATUS_HPP__
 #define __EXENG_GRAPHICS_GL3_BUFFERSTATUS_HPP__
 
+#include <cassert>
 #include "GL3.hpp"
 
 namespace exeng { namespace graphics { namespace gl3 {
-    template<GLenum BufferTarget>
-    struct BufferTargetMap;
-    
-    template<>
-    struct BufferTargetMap<GL_ARRAY_BUFFER> {
-        enum {Enum = GL_ARRAY_BUFFER_BINDING };
-    };
+    inline GLenum targetToBinding(GLenum target) {
+        switch (target) {
+            case GL_ARRAY_BUFFER:           return GL_ARRAY_BUFFER_BINDING;
+            case GL_ELEMENT_ARRAY_BUFFER:   return GL_ELEMENT_ARRAY_BUFFER_BINDING;
+            default:                        assert(false);
+        }
 
-    template<>
-    struct BufferTargetMap<GL_ELEMENT_ARRAY_BUFFER> {
-        enum {Enum = GL_ELEMENT_ARRAY_BUFFER_BINDING };
-    };
-    
+        return 0;
+    }
+
     /**
-        * @brief Preserves the name of the currently used buffer, and 
-        * restores it after destruction.
-        */
-    template<GLenum BufferTarget>
+     * @brief Preserves the name of the currently used buffer, and 
+     * restores it after destruction.
+     */
     struct BufferStatus {
-        GLint oldName;
+        GLint bufferId = 0;
+        GLuint target = 0;
         
-        inline BufferStatus() {
-            GLenum Enum = 0;
-            Enum = BufferTargetMap<BufferTarget>::Enum;
-            ::glGetIntegerv(Enum, &oldName);
+        inline BufferStatus(GLuint target_) : target(target_) {
+            ::glGetIntegerv(targetToBinding(target), &bufferId);
         }
         
-        
         inline ~BufferStatus() {
-            ::glBindBuffer(BufferTarget, oldName);
+            ::glBindBuffer(target, bufferId);
         }
     };
 }}}

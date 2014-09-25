@@ -23,17 +23,18 @@
 #include <exeng/Boundary.hpp>
 #include <exeng/Matrix.hpp>
 
+#include <exeng/Buffer.hpp>
+
 #include <exeng/input/IEventRaiser.hpp>
 
 #include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
-#include <exeng/graphics/VertexFormat.hpp>
-#include <exeng/graphics/IndexBuffer.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/graphics/Screen.hpp>
 #include <exeng/graphics/Primitive.hpp>
 #include <exeng/graphics/Shader.hpp>
 #include <exeng/graphics/ShaderProgram.hpp>
+#include <exeng/graphics/MeshSubset.hpp>
 
 #include <memory>
 
@@ -60,8 +61,6 @@ namespace exeng { namespace graphics {
     };
     
     class EXENGAPI Texture;
-    class EXENGAPI VertexBuffer;
-    class EXENGAPI IndexBuffer;
     class EXENGAPI Material;
 
     struct DisplayStatus : public Enum {
@@ -156,7 +155,7 @@ namespace exeng { namespace graphics {
     /**
     * @brief Software interface to graphics hardware
     */
-	class EXENGAPI GraphicsDriver : public exeng::ResourceManager, public exeng::input::IEventRaiser {
+	class EXENGAPI GraphicsDriver : /*public exeng::ResourceManager, */ public exeng::input::IEventRaiser {
     public:
         virtual ~GraphicsDriver();
         
@@ -218,22 +217,22 @@ namespace exeng { namespace graphics {
         /**
          * @brief Set the currently used vertex buffer
          */
-        virtual void setVertexBuffer(const VertexBuffer* vertexBuffer) = 0;
+        // virtual void setVertexBuffer(const Buffer* vertexBuffer) = 0;
         
         /**
          * @brief Set the current index buffer
          */
-        virtual void setIndexBuffer(const IndexBuffer* indexBuffer) = 0;
+        // virtual void setIndexBuffer(const Buffer* indexBuffer) = 0;
         
         /**
          * @brief Get the vertex buffer currently used for rendering operations.
          */
-        virtual const VertexBuffer* getVertexBuffer() const = 0;
+        // virtual const Buffer* getVertexBuffer() const = 0;
         
         /**
          * @brief Get the currently used index buffer.
          */
-        virtual const IndexBuffer* getIndexBuffer() const = 0;
+        // virtual const Buffer* getIndexBuffer() const = 0;
         
         /**
          * @brief Set the currently used material
@@ -248,19 +247,37 @@ namespace exeng { namespace graphics {
         /**
          * @brief Create a new hardware-based vertex buffer. 
          */
-        virtual VertexBuffer* createVertexBuffer(const VertexFormat &vertexFormat, int vertexCount, const void* data) = 0;
+        virtual Buffer* createVertexBuffer(const std::int32_t size, const void* data) = 0;
         
         /**
          * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
          */
-        virtual IndexBuffer* createIndexBuffer( IndexFormat::Enum indexFormat, int indexCount, const void* data) = 0;
+        virtual Buffer* createIndexBuffer(const std::int32_t size, const void* data) = 0;
         
+        /**
+         * @brief Create a new mesh subset object.
+         */
+        virtual MeshSubset* createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) = 0;
+
+        /**
+         * @brief Bound the specified MeshSubset object.
+         */
+        virtual void setMeshSubset(MeshSubset *meshSubset) = 0;
+
+        /**
+         * @brief Gets the currently bound MeshSubset.
+         */
+        virtual MeshSubset* getMeshSubset() = 0;
+
+        /**
+         * @brief Gets the currently bound MeshSubset.
+         */
+        virtual const MeshSubset* getMeshSubset() const = 0;
+
         /**
          * @brief Create a new texture object.
          */
-        virtual Texture* createTexture(TextureType::Enum textureType, 
-                                    const exeng::Vector3f& textureSize,
-                                    const ColorFormat &format) = 0;
+        virtual Texture* createTexture(TextureType::Enum textureType, const exeng::Vector3f& textureSize, const ColorFormat &format) = 0;
         
         /**
          * @brief Set the current transformation matrix

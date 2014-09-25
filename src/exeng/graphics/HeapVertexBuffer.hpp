@@ -17,12 +17,12 @@
 #include <exeng/graphics/VertexBuffer.hpp>
 
 namespace exeng { namespace graphics {
-        
+    
     /**
 	 * @brief VertexBuffer allocated on heap memory. Useful for
      * software-based rasterizers.
      */
-    class EXENGAPI HeapVertexBuffer : public VertexBuffer {
+/*    class EXENGAPI HeapVertexBuffer : public VertexBuffer {
     public:
         HeapVertexBuffer(ResourceManager *resourceFactory);
             
@@ -51,7 +51,7 @@ namespace exeng { namespace graphics {
     private:
         struct Private;
         Private *impl;
-    };        
+    };   */     
 }}
 
 #endif // __EXENG_GRAPHICS_HEAPVERTEXBUFFER_HPP__

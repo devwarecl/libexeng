@@ -56,7 +56,8 @@ set (ComputeFiles
 
 set (GraphicsFiles
   graphics/Primitive.hpp
-  graphics/ShaderType.hpp           graphics/TextureType.hpp 
+  graphics/ShaderType.hpp           
+  graphics/TextureType.hpp			graphics/TextureType.cpp 
   graphics/GraphicsDriver.hpp       graphics/GraphicsDriver.cpp 
   graphics/GraphicsDriverBase.hpp   graphics/GraphicsDriverBase.inl 
   graphics/GraphicsManager.hpp      graphics/GraphicsManager.cpp 
@@ -71,6 +72,7 @@ set (GraphicsFiles
   graphics/HeapVertexBuffer.hpp     graphics/HeapVertexBuffer.cpp 
   graphics/HeapIndexBuffer.hpp      graphics/HeapIndexBuffer.cpp 
   graphics/IndexBuffer.hpp          graphics/IndexBuffer.cpp
+  graphics/IndexFormat.hpp          graphics/IndexFormat.cpp
   graphics/Color.hpp                graphics/Color.inl
   graphics/Texture.hpp              graphics/Texture.cpp
   graphics/ColorFormat.hpp          graphics/ColorFormat.cpp
@@ -78,6 +80,7 @@ set (GraphicsFiles
   graphics/Shader.hpp               graphics/Shader.cpp
   graphics/ShaderProgram.hpp        graphics/ShaderProgram.cpp
   graphics/MeshSubset.hpp			graphics/MeshSubset.cpp
+  graphics/MeshSubsetBase.hpp		
 )
 
 set (UiFiles

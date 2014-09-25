@@ -36,19 +36,14 @@ namespace exeng { namespace scenegraph {
      */
     class VertexArrayAdapter {
     public:
-        VertexArrayAdapter(VertexBuffer *vertexBuffer_) : vertexBuffer(vertexBuffer_) {
-            this->vertexBuffer->lock();
-        }
-        
-        ~VertexArrayAdapter() {
-            this->vertexBuffer->unlock();
-        }
+        VertexArrayAdapter(Buffer *vertexBuffer_) : vertexBuffer(vertexBuffer_) {}
+        ~VertexArrayAdapter() {}
         
         template<typename FieldType>
         FieldType& getField();
         
     private:
-        VertexBuffer *vertexBuffer = nullptr;
+        Buffer *vertexBuffer = nullptr;
         void *data = nullptr;
     };
     
@@ -190,18 +185,18 @@ namespace exeng { namespace scenegraph {
         }
         
         Primitive::Enum type = meshPart.primitiveType;
-        VertexBuffer *vertexBuffer = meshPart.vertexBuffer.get();
+        Buffer *vertexBuffer = meshPart.vertexBuffer.get();
         
-        const VertexFormat &vertexFormat = vertexBuffer->getFormat();
-        void* vertexData = vertexBuffer->lock();
+        const VertexFormat &vertexFormat = meshPart.vertexFormat;
+        void* vertexData = vertexBuffer->getDataPtr();
         
         int vertexOffset = vertexFormat.getAttribOffset(VertexAttrib::Position);
-        int vertexStride = vertexFormat.geSize();
+        int vertexStride = vertexFormat.getSize();
         
         // TODO: Handle properly the vertex format
         IntersectInfo info;
         
-        int triangleCount = getTriangleCount(vertexBuffer->getCount(), meshPart.primitiveType);
+        int triangleCount = getTriangleCount(vertexBuffer->getSize() / vertexFormat.getSize(), meshPart.primitiveType);
         
         for (int triangleIndex=0; triangleIndex<triangleCount; triangleIndex++) {
 
@@ -251,7 +246,7 @@ namespace exeng { namespace scenegraph {
             *intersectInfo = info;
         }
         
-        vertexBuffer->unlock();
+        vertexBuffer->write();
         
         return info.intersect;
     }

@@ -19,28 +19,14 @@
 namespace exeng {
     Resource::Resource() {}
 
-    Resource::Resource(ResourceManager *resourceManager_) : resourceManager(resourceManager_) {}
+    Resource::~Resource() {}
     
-    Resource::~Resource() {
-        if (this->resourceManager != nullptr) {
-            this->resourceManager->removeResource(this);
-        }
-    }
-    
-    ResourceManager* Resource::getResourceManager() {
-        return this->resourceManager;
-    }
-
-    const ResourceManager* Resource::getResourceManager() const {
-        return this->resourceManager;
-    }
-
     void Resource::restore() {
-        throw std::logic_error("Resource::restore: Is not implemented.");
+        // throw std::logic_error("Resource::restore: Is not implemented.");
     }
 
     void Resource::release() {
-        throw std::logic_error("Resource::release: Is not implemented.");
+        // throw std::logic_error("Resource::release: Is not implemented.");
     }
     
     ResourceStatus::Flags Resource::getStatusFlags() const {

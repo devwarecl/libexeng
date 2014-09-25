@@ -14,14 +14,10 @@
 
 #include <exeng/graphics/ShaderProgram.hpp>
 
-namespace exeng {
-namespace graphics {
+namespace exeng { namespace graphics {
+    ShaderProgram::ShaderProgram() {
+    }
 
-ShaderProgram::ShaderProgram(ResourceManager *factory) : Resource(factory) {
-}
-
-ShaderProgram::~ShaderProgram() {
-}
-
-}
-}
+    ShaderProgram::~ShaderProgram() {
+    }
+}}

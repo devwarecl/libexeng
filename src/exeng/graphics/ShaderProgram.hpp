@@ -27,7 +27,7 @@ class EXENGAPI Shader;
  */
 class EXENGAPI ShaderProgram : public Resource {
 public:
-    ShaderProgram(ResourceManager *factory);
+    ShaderProgram();
     
     virtual ~ShaderProgram();
     

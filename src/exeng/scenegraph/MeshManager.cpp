@@ -42,14 +42,14 @@ namespace exeng { namespace scenegraph {
             MeshPart *part = mesh->getPart(0);
             
             part->primitiveType = Primitive::TriangleList;
-            part->vertexBuffer = std::unique_ptr<VertexBuffer>(this->generateCubeVertices(graphicsDriver));
-            part->indexBuffer = std::unique_ptr<IndexBuffer>(this->generateCubeIndices(graphicsDriver));
+            part->vertexBuffer = std::unique_ptr<Buffer>(this->generateCubeVertices(graphicsDriver));
+            part->indexBuffer = std::unique_ptr<Buffer>(this->generateCubeIndices(graphicsDriver));
             
             return mesh;
         }
 
     private:
-        VertexBuffer* generateCubeVertices(GraphicsDriver *graphicsDriver) const {
+        Buffer* generateCubeVertices(GraphicsDriver *graphicsDriver) const {
             Vertex vertices[] = {
                 {{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},
                 {{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f}},
@@ -87,10 +87,10 @@ namespace exeng { namespace scenegraph {
                 {{-0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 0.0f}}
             };
 
-            return graphicsDriver->createVertexBuffer(VertexFormat::makeVertex(), sizeof(vertices), vertices);
+            return graphicsDriver->createVertexBuffer(sizeof(vertices), vertices);
         }
         
-        IndexBuffer* generateCubeIndices(GraphicsDriver *graphicsDriver) const {
+        Buffer* generateCubeIndices(GraphicsDriver *graphicsDriver) const {
             int indices[] = {
                 0 + 0,  0 + 1,  0 + 2,      0 + 1,  0 + 3,  0 + 2,
                 4 + 0,  4 + 1,  4 + 2,      4 + 1,  4 + 3,  4 + 2, 
@@ -100,7 +100,7 @@ namespace exeng { namespace scenegraph {
                 20 + 0, 20 + 1, 20 + 2,     20 + 1, 20 + 3, 20 + 2
             };
 
-            return graphicsDriver->createIndexBuffer(IndexFormat::Index32, sizeof(indices), indices);
+            return graphicsDriver->createIndexBuffer(sizeof(indices), indices);
         }
     };
 }}

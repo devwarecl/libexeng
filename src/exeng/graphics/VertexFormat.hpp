@@ -57,20 +57,19 @@ namespace exeng { namespace graphics {
      * @brief Describe a determined field
      */
     struct VertexField {
-        VertexAttrib::Enum attribute;   //! The attribute
-        int count;                      //! The dimension
-        DataType dataType;              //! The data type for the vertex field.
+        VertexAttrib::Enum attribute = VertexAttrib::Unused;    //! The attribute
+        int count = 0;                                          //! The dimension
+        DataType dataType = DataType::Float32;                  //! The data type for the vertex field.
         
-        VertexField() : attribute(VertexAttrib::Unused), count(0), dataType(DataType::Float32) {
-        }
-                
+        VertexField() {}
+
         VertexField(VertexAttrib::Enum attrib_, int count_, DataType dataType_) : attribute(attrib_), count(count_),  dataType(dataType_) {
         }
         
         /**
          * @brief Get the size, in bytes, of the field.
          */
-        int geSize() const {
+        int getSize() const {
             return this->count * this->dataType.geSize();
         }
     };
@@ -102,7 +101,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Get the size, in bytes, for each vertex of this format.
          */
-        int geSize() const;
+        int getSize() const;
         
         /**
          * @brief Get the offset for the specified attrib.
@@ -151,11 +150,11 @@ namespace exeng { namespace graphics {
         }
     }
     
-    inline int VertexFormat::geSize() const {
+    inline int VertexFormat::getSize() const {
         int size = 0;
                 
         for (auto &field : this->fields) {
-            size += field.geSize();
+            size += field.getSize();
         }
                 
         return size;
@@ -174,7 +173,7 @@ namespace exeng { namespace graphics {
                 break;
             }
             
-            offset += field.geSize();
+            offset += field.getSize();
             
             if (field.attribute == attrib) {
                 break;

@@ -13,13 +13,8 @@
 
 #include <exeng/graphics/Texture.hpp>
 
-namespace exeng {
-namespace graphics {
+namespace exeng { namespace graphics {
+    Texture::Texture() {}
 
-Texture::Texture(ResourceManager *factory) : Resource(factory) {
-}
-
-Texture::~Texture() {
-}
-}
-}
+    Texture::~Texture() {}
+}}

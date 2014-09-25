@@ -20,9 +20,6 @@
 #include <exeng/graphics/VertexBuffer.hpp>
 
 namespace exeng { namespace graphics {
-	VertexBuffer::VertexBuffer(ResourceManager *resourceManager) : Resource(resourceManager) {
-	}
-
-	VertexBuffer::~VertexBuffer() {
-	}
+	// VertexBuffer::VertexBuffer(ResourceManager *resourceManager) : Resource(resourceManager) {}
+	// VertexBuffer::~VertexBuffer() {}
 }}

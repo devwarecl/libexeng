@@ -20,57 +20,48 @@
 #include <stdexcept>
 #include <exeng/Config.hpp>
 
-namespace exeng {
-    namespace graphics {
+namespace exeng { namespace graphics {
+    class EXENGAPI IndexBuffer;
         
-        class EXENGAPI IndexBuffer;
+    /**
+     * @brief Help to initialize values of a object of type IndexBuffer.
+     */
+    template<typename IndexType>
+    class IndexArray {
+    public:
+        IndexArray(IndexBuffer *buffer) {
+            this->bufferData = static_cast<IndexType*>(buffer->lock());
+            this->buffer = buffer;
+        }
+            
+        ~IndexArray() {
+            this->buffer->unlock();
+        }
+            
+        IndexType& operator[] (int index) {
+            if (index >= this->buffer->getCount()) {
+                throw std::out_of_range();
+            }
+                
+            return this->bufferData[index];
+        }
+            
+        const IndexType& operator[] (int index) const {
+            if (index >= this->buffer->getCount()) {
+                throw std::out_of_range();
+            }
+                
+            return this->bufferData[index];
+        }
         
-        /**
-         * @brief Help to initialize values of a object of type IndexBuffer.
-         */
-        template<typename IndexType>
-        class IndexArray {
-        public:
-            
-            IndexArray(IndexBuffer *buffer) {
-                this->bufferData = static_cast<IndexType*>(buffer->lock());
-                this->buffer = buffer;
-            }
-            
-            
-            ~IndexArray() {
-                this->buffer->unlock();
-            }
-            
-            
-            IndexType& operator[] (int index) {
-                if (index >= this->buffer->getCount()) {
-                    throw std::out_of_range();
-                }
-                
-                return this->bufferData[index];
-            }
-            
-            
-            const IndexType& operator[] (int index) const {
-                if (index >= this->buffer->getCount()) {
-                    throw std::out_of_range();
-                }
-                
-                return this->bufferData[index];
-            }
-            
-            
-            int size() const {
-                return this->buffer->getCount();
-            }
-            
-            
-        private:
-            IndexBuffer *buffer;
-            IndexType *bufferData;
-        };
-    }
-}
+        int size() const {
+            return this->buffer->getCount();
+        }
+        
+    private:
+        IndexBuffer *buffer;
+        IndexType *bufferData;
+    };
+}}
 
 #endif

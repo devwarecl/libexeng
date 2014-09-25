@@ -43,7 +43,7 @@ namespace exeng {
 		// By default, convert the direction address to a string
 		std::stringstream ss;
     
-		ss << "Object " << this->getTypeInfo().getStdTypeInfo().name() << " at " << this;
+		ss << "Object " << this->getTypeInfo().getStdTypeInfo().name() << " at " << (int*)this;
 
 		return ss.str();
 	}

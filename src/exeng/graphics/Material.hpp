@@ -57,7 +57,6 @@ namespace exeng { namespace graphics {
         Private *impl;
     };
 
-
     /**
      * @brief Describes the visual appearance of the objects.
      * @note Class interface subject to change.
@@ -69,14 +68,14 @@ namespace exeng { namespace graphics {
         virtual ~Material();
         
         void setProperty(const std::string &name, float value);
-        void setProperty(const std::string &name, const exeng::Vector2f &value);
-        void setProperty(const std::string &name, const exeng::Vector3f &value);
-        void setProperty(const std::string &name, const exeng::Vector4f &value);
+        void setProperty(const std::string &name, const Vector2f &value);
+        void setProperty(const std::string &name, const Vector3f &value);
+        void setProperty(const std::string &name, const Vector4f &value);
         
         float getPropertyf(const std::string &name) const;
-        exeng::Vector2f getProperty2f(const std::string &name) const;
-        exeng::Vector3f getProperty3f(const std::string &name) const;
-        exeng::Vector4f getProperty4f(const std::string &name) const;
+        Vector2f getProperty2f(const std::string &name) const;
+        Vector3f getProperty3f(const std::string &name) const;
+        Vector4f getProperty4f(const std::string &name) const;
         
         void setShaderProgram(const ShaderProgram *shader);
         
@@ -96,7 +95,7 @@ namespace exeng { namespace graphics {
         std::string getPropertyName(int index) const;
         TypeInfo getPropertyType(int index) const;
         void removeProperty(const std::string &name);
-                
+        
     public:
         static const int getLayerCount();
         
@@ -112,7 +111,6 @@ namespace exeng { namespace graphics {
         struct Private;
         Private *impl;
     };
-
 }}
 
 #endif

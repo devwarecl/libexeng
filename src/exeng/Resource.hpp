@@ -19,7 +19,6 @@
 #include <exeng/TFlags.hpp>
 
 namespace exeng {
-    class EXENGAPI ResourceManager;
     /**
     * @brief Resource status enumeration 
     */
@@ -42,18 +41,13 @@ namespace exeng {
         typedef TFlags<Enum> Flags;
     };
 
-
     /**
     * @brief Object with internal data asociated, dependent on another object.
     */
     class EXENGAPI Resource : public Object {    
-        friend class ResourceManager;
-        
     public:
         Resource();
 
-        explicit Resource(ResourceManager *resourceFactory);
-        
         virtual ~Resource();
         
         /**
@@ -72,13 +66,6 @@ namespace exeng {
          * @brief Get the current states of the resource.
          */
         virtual ResourceStatus::Flags getStatusFlags() const;
-        
-		virtual ResourceManager* getResourceManager();
-
-		virtual const ResourceManager* getResourceManager() const;
-
-    protected:
-        ResourceManager *resourceManager;
     };
 }
 

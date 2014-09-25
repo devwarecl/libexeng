@@ -27,27 +27,19 @@ namespace exeng { namespace graphics {
     class GraphicsDriverBase : public GraphicsDriver {
     public:
         GraphicsDriverBase();
-    
         virtual ~GraphicsDriverBase();
-    
-        virtual exeng::Matrix4f getTransform( Transform::Enum transform ) override;
-    
-        virtual exeng::Rectf getViewport( ) const override;
-    
-        virtual const exeng::graphics::Material* getMaterial( ) const override;
-    
-        virtual VertexBuffer* createVertexBuffer( const VertexFormat &vertexFormat, int vertexCount, const void* data) override;
-    
-        virtual IndexBuffer* createIndexBuffer( IndexFormat::Enum IndexFormat, int IndexCount, const void* data) override;
-    
+        virtual exeng::Matrix4f getTransform(Transform::Enum transform) override;
+        virtual exeng::Rectf getViewport() const override;
+        virtual const exeng::graphics::Material* getMaterial() const override;
+        virtual Buffer* createVertexBuffer(const std::int32_t size, const void* data) override;
+        virtual Buffer* createIndexBuffer(const std::int32_t size, const void* data) override;
         virtual void setTransformName(Transform::Enum transform, const std::string &name) override;
-    
         virtual std::string getTransformName(Transform::Enum transform) const  override;
-    
+        
     protected:
-        const exeng::graphics::Material* material;
-        exeng::Rectf viewport;
-        exeng::Matrix4f transforms[3];
+        const Material *material = nullptr;
+        Rectf viewport;
+        Matrix4f transforms[3];
         std::string transformNames[3];
     };
 }}

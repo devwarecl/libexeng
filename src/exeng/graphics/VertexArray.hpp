@@ -19,11 +19,11 @@
 #include <cassert>
 #include <stdexcept>
 #include <exeng/Config.hpp>
-#include <exeng/graphics/VertexBuffer.hpp>
+#include <exeng/Buffer.hpp>
 
 namespace exeng { namespace graphics {
 
-    class EXENGAPI VertexBuffer;
+    // class EXENGAPI VertexBuffer;
             
     /**
      * @brief Help to the initialization of vertex buffers by user code.
@@ -31,47 +31,34 @@ namespace exeng { namespace graphics {
     template<typename VertexType>
     class VertexArray {
     public:
-        VertexArray(VertexBuffer *buffer) : buffer(nullptr), bufferData(nullptr) {
+        VertexArray(Buffer *buffer_) : buffer(nullptr), bufferData(nullptr) {
     #ifdef EXENG_DEBUG
-            if (buffer == nullptr) {
+            if (buffer_ == nullptr) {
                 throw std::runtime_error("VertexArray::VertexArray: The buffer can't be null");
             }
     
-            if (buffer->getFormat().geSize() != sizeof(VertexType)) {
+            if (buffer_->getFormat().geSize() != sizeof(VertexType)) {
                 throw std::runtime_error("VertexArray::VertexArray: Invalid supplied VertexType: must be equal to the size reported by the vertexBuffer's format.");
             }
     #endif
-            this->bufferData = static_cast<VertexType*>(buffer->lock());
-            this->buffer = buffer;
+            this->buffer = buffer_;
+            this->bufferData = static_cast<VertexType*>(this->buffer->getDataPtr());
         }
         
         ~VertexArray() {
-            this->buffer->unlock();
+            this->buffer->write();
         }
         
         VertexType& operator[] (int index) {          
-    #ifdef EXENG_DEBUG
-            if (index >= this->buffer->getCount()) {
-                throw std::out_of_range("");
-            }
-    #endif
             return this->bufferData[index];
         }
         
         const VertexType& operator[] (int index) const {
-    #ifdef EXENG_DEBUG
-            if (index >= this->buffer->getCount()) {
-                throw std::out_of_range("");
-            }
-    #endif                
             return this->bufferData[index];
         }
-        
-        int size() const {
-            return this->buffer->getCount();
-        }
+
     private:
-        VertexBuffer *buffer;
+        Buffer *buffer;
         VertexType *bufferData;
     };
 }}

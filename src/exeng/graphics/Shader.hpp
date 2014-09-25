@@ -24,7 +24,7 @@ namespace exeng { namespace graphics {
      */
     class EXENGAPI Shader : public Resource {
     public:
-        Shader(ResourceManager *factory);
+        Shader();
     
         virtual ~Shader();
     

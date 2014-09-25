@@ -21,87 +21,87 @@
 
 namespace exeng { namespace graphics {
 
-	struct HeapVertexBuffer::Private {
-	public:
-		Private() {}
-		~Private() { }
+	//struct HeapVertexBuffer::Private {
+	//public:
+	//	Private() {}
+	//	~Private() { }
 
-	public:
-		int count = 0;          //! Number of vertices 
-		VertexFormat format;    //! The vertex format of the vertex buffer.
-		HeapBuffer buffer;      //! The buffer storing the data.
-	};
-
-
-	HeapVertexBuffer::HeapVertexBuffer(ResourceManager *resourceFactory) 
-		: VertexBuffer(resourceFactory), impl(nullptr) {
-		this->impl = new HeapVertexBuffer::Private();
-	}
+	//public:
+	//	int count = 0;          //! Number of vertices 
+	//	VertexFormat format;    //! The vertex format of the vertex buffer.
+	//	HeapBuffer buffer;      //! The buffer storing the data.
+	//};
 
 
-	HeapVertexBuffer::HeapVertexBuffer(ResourceManager *resourceFactory, const VertexFormat &format, int count) 
-		: VertexBuffer(resourceFactory), impl(nullptr) {
-		this->impl = new HeapVertexBuffer::Private();
-		this->allocate(format, count);
-	}
+	//HeapVertexBuffer::HeapVertexBuffer(ResourceManager *resourceFactory) 
+	//	: VertexBuffer(resourceFactory), impl(nullptr) {
+	//	this->impl = new HeapVertexBuffer::Private();
+	//}
 
 
-	HeapVertexBuffer::~HeapVertexBuffer() {   
-		boost::checked_delete(this->impl);
-	}
+	//HeapVertexBuffer::HeapVertexBuffer(ResourceManager *resourceFactory, const VertexFormat &format, int count) 
+	//	: VertexBuffer(resourceFactory), impl(nullptr) {
+	//	this->impl = new HeapVertexBuffer::Private();
+	//	this->allocate(format, count);
+	//}
 
 
-	void HeapVertexBuffer::allocate(const VertexFormat &format, int count)  {
-		assert(this->impl != nullptr);
-		this->impl->buffer.allocate(format.geSize() * count);
-		this->impl->count = count;
-		this->impl->format = format;
-	}
+	//HeapVertexBuffer::~HeapVertexBuffer() {   
+	//	boost::checked_delete(this->impl);
+	//}
 
 
-	void HeapVertexBuffer::release() {
-		assert(this->impl != nullptr);
-		this->impl->buffer.release();
-	}
+	//void HeapVertexBuffer::allocate(const VertexFormat &format, int count)  {
+	//	assert(this->impl != nullptr);
+	//	this->impl->buffer.allocate(format.geSize() * count);
+	//	this->impl->count = count;
+	//	this->impl->format = format;
+	//}
 
 
-	bool HeapVertexBuffer::isEmpty() const {   
-		assert(this->impl != nullptr);
-		return this->impl->count == 0;
-	}
+	//void HeapVertexBuffer::release() {
+	//	assert(this->impl != nullptr);
+	//	this->impl->buffer.release();
+	//}
 
 
-	void* HeapVertexBuffer::lock() {
-		assert(this->impl != nullptr);
-		return this->impl->buffer.lock();
-	}
+	//bool HeapVertexBuffer::isEmpty() const {   
+	//	assert(this->impl != nullptr);
+	//	return this->impl->count == 0;
+	//}
 
 
-	bool HeapVertexBuffer::isLocked() const {
-		assert(this->impl != nullptr);
-		return this->impl->buffer.isLocked();
-	}
+	//void* HeapVertexBuffer::lock() {
+	//	assert(this->impl != nullptr);
+	//	return this->impl->buffer.lock();
+	//}
 
 
-	void HeapVertexBuffer::unlock() {
-		assert(this->impl != nullptr);
-		this->impl->buffer.unlock();
-	}
+	//bool HeapVertexBuffer::isLocked() const {
+	//	assert(this->impl != nullptr);
+	//	return this->impl->buffer.isLocked();
+	//}
 
 
-	int HeapVertexBuffer::getCount() const {
-		assert(this->impl != nullptr);
-		return this->impl->count;
-	}
+	//void HeapVertexBuffer::unlock() {
+	//	assert(this->impl != nullptr);
+	//	this->impl->buffer.unlock();
+	//}
 
 
-	int HeapVertexBuffer::geSize() const {
-		assert(this->impl != nullptr);
-		return this->getCount() * this->getFormat().geSize();
-	}
+	//int HeapVertexBuffer::getCount() const {
+	//	assert(this->impl != nullptr);
+	//	return this->impl->count;
+	//}
 
-	const VertexFormat& HeapVertexBuffer::getFormat() const {
-		assert(this->impl != nullptr);
-		return this->impl->format;
-	}
+
+	//int HeapVertexBuffer::geSize() const {
+	//	assert(this->impl != nullptr);
+	//	return this->getCount() * this->getFormat().geSize();
+	//}
+
+	//const VertexFormat& HeapVertexBuffer::getFormat() const {
+	//	assert(this->impl != nullptr);
+	//	return this->impl->format;
+	//}
 }}

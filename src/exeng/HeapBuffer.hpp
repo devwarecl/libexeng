@@ -11,8 +11,8 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef exeng_heapbuffer_hpp
-#define exeng_heapbuffer_hpp
+#ifndef __EXENG_HEAPBUFFER_HPP__
+#define __EXENG_HEAPBUFFER_HPP__
 
 #include <exeng/Buffer.hpp>
 
@@ -23,47 +23,25 @@ namespace exeng {
     class EXENGAPI HeapBuffer : public Buffer {
     public:
         HeapBuffer();
-    
-        explicit HeapBuffer(int size);
-        
+        explicit HeapBuffer(const std::uint32_t size);
+
         virtual ~HeapBuffer();
-        
-        virtual void* lock();
-        
-        virtual void unlock();
-        
-        virtual const void* lock() const;
-        
-        virtual void unlock() const;
-        
-        virtual bool isLocked() const;
-        
-        virtual bool isEmpty() const;
-        
-        virtual int geSize() const;
-        
-        /**
-         * @brief Change the size of the buffer.
-         * @param size The new size of the current buffer, in bytes.
-         */
-        void allocate(int size);
-        
-        /**
-         * @brief Free the allocated memory.
-         */
-        void release();
-        
-        /**
-         * @brief Get a pointer to the buffer data
-         */
-        void* getPtr();
-        const void* getPtr() const;
+        virtual Buffer::Flags getFlags() const;
+        virtual void allocate(const std::uint32_t size) override;
+        virtual void release() override;
+        virtual void* getDataPtr() override;
+        virtual const void* getDataPtr() const override;
+        virtual void write() override;
+        virtual void read() override;
+        virtual std::uint64_t getHandle() const override;
+        virtual std::uint32_t getSize() const override;
+        virtual void setData(const void* dataSrc, const std::uint32_t size) override;
+        virtual void getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const override;
         
     private:
-        void* data;				//! The buffer raw data.
-        int size;				//! The size of the buffer, in bytes.
-        mutable bool locked;	//! Lock status.
+        void* data = nullptr;
+        std::uint32_t size = 0;
     };
 }
 
-#endif // exeng_heapbuffer_hpp
+#endif // __EXENG_HEAPBUFFER_HPP__

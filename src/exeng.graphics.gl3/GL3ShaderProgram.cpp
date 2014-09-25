@@ -24,7 +24,7 @@
 
 namespace exeng { namespace graphics { namespace gl3 {
 
-    GL3ShaderProgram::GL3ShaderProgram(ResourceManager *factory) : ShaderProgram(factory) {
+    GL3ShaderProgram::GL3ShaderProgram() {
         this->programId = 0;
         this->modified = false;
         this->linked = false;

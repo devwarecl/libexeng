@@ -64,7 +64,7 @@ namespace exeng {
 
     template<typename Type, int Dimension>
     Vector<Type, Dimension> Boundary<Type, Dimension>::getCenter() const {
-        return this->edges[Min] + Vector(this->geSize()) / static_cast<Type>(2);
+        return this->edges[Min] + Vector<Type, Dimension>(this->geSize()) / static_cast<Type>(2);
     }
 
     template<typename Type, int Dimension>

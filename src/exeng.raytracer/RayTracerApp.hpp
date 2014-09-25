@@ -9,6 +9,7 @@
 #include <exeng/Vector.hpp>
 #include <exeng/framework/GraphicsApplication.hpp>
 #include <exeng/graphics/Texture.hpp>
+#include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/scenegraph/SceneManager.hpp>
 #include <exeng.raytracer/SceneLoader.hpp>
 #include <exeng.raytracer/FpsCounter.hpp>
@@ -24,6 +25,7 @@ namespace raytracer {
         RayTracerApp();
         virtual ~RayTracerApp();
         
+    public:
         /* exeng::framework::GraphicsApplication */
         virtual void initialize(int argc, char **argv);
         virtual void pollEvents();
@@ -33,14 +35,15 @@ namespace raytracer {
         virtual int getExitCode() const;
         virtual void terminate();
         
+    public:
         /* exeng::input::IEventHandler*/
         virtual void handleEvent(const exeng::input::EventData &data);
         
     private:
         exeng::graphics::Texture* createTexture (
-               exeng::graphics::GraphicsDriver *driver, 
-               const exeng::Vector3f& size, 
-               const exeng::Vector4f &color
+            exeng::graphics::GraphicsDriver *driver, 
+            const exeng::Vector3f& size, 
+            const exeng::Vector4f &color
         );
         
         void clear();
@@ -48,20 +51,21 @@ namespace raytracer {
         void loadScene();
         
     private:
-        exeng::graphics::Material material;
         exeng::scenegraph::Camera camera;
         std::unique_ptr<exeng::graphics::GraphicsDriver> driver;
-        std::unique_ptr<exeng::graphics::VertexBuffer> vertexBuffer;
-        std::unique_ptr<exeng::graphics::Texture> texture;
         std::unique_ptr<raytracer::samplers::Sampler> sampler;
-        exeng::framework::ApplicationStatus::Enum applicationStatus;
         std::unique_ptr<raytracer::tracers::Tracer> tracer;
         std::unique_ptr<exeng::scenegraph::Scene> scene;
+
+        std::unique_ptr<exeng::graphics::Texture> screenTexture;
+        std::unique_ptr<exeng::graphics::Material> screenMaterial;
+        std::unique_ptr<exeng::graphics::MeshSubset> screenMeshSubset;
 
         mutable uint32_t lastTime;
         SceneLoader sceneLoader;
         FpsCounter frameCounter;
 
+        exeng::framework::ApplicationStatus::Enum applicationStatus;
         exeng::graphics::ButtonStatus::Enum buttonStatus[exeng::graphics::ButtonCode::Count];
     };
 }

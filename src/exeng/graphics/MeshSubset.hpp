@@ -5,27 +5,28 @@
 #include <vector>
 
 #include <exeng/Object.hpp>
-#include <exeng/graphics/VertexBuffer.hpp>
-#include <exeng/graphics/IndexBuffer.hpp>
+#include <exeng/Buffer.hpp>
 #include <exeng/graphics/Primitive.hpp>
+#include <exeng/graphics/VertexFormat.hpp>
+#include <exeng/graphics/IndexFormat.hpp>
 
 namespace exeng { namespace graphics {
+    /**
+     * @brief MeshSubset
+     **/
     class EXENGAPI MeshSubset : public Object {
     public:
-        MeshSubset(const std::vector<VertexBuffer*> &vertexBuffers, IndexBuffer *indexBuffer);
-
         virtual ~MeshSubset();
 
-        virtual int getVertexBufferCount() const = 0;
-        virtual VertexBuffer* getVertexBuffer(const int index) = 0;
-        virtual const VertexBuffer* getVertexBuffer(const int index) const = 0;
+        virtual VertexFormat getVertexFormat() const = 0;
+        virtual IndexFormat::Enum getIndexFormat() const = 0;
 
-        virtual IndexBuffer* getIndexBuffer() = 0;
-        virtual const IndexBuffer* getIndexBuffer() const = 0;
+        virtual int getBufferCount() const = 0;
+        virtual Buffer* getBuffer(const int index) = 0;
+        virtual const Buffer* getBuffer(const int index) const = 0;
 
-    private:
-        struct Private;
-        Private *impl;
+        virtual Buffer* getIndexBuffer() = 0;
+        virtual const Buffer* getIndexBuffer() const = 0;
     };
 }}
 

@@ -3,7 +3,6 @@
  * @brief Definition of the OpenGL 3 VertexBuffer class.
  */
 
-
 /*
  * Copyright (c) 2013 Felipe Apablaza.
  *
@@ -19,51 +18,40 @@
 #include "GL3.hpp"
 
 namespace exeng { namespace graphics { namespace gl3 {
-    class GL3GraphicsDriver;
-    
-    class GL3VertexBuffer : public VertexBuffer {
-    public:
-        GL3VertexBuffer(ResourceManager *factory, const VertexFormat &format, int count);
-        
-        virtual ~GL3VertexBuffer();
-        
-        virtual void allocate(const VertexFormat &format, int count);
-        
-        virtual void release();
-        
-        virtual bool isEmpty() const;
-        
-        virtual void* lock();
-        
-        virtual bool isLocked() const;
-        
-        virtual void unlock();
-        
-        virtual int getCount() const;
-        
-        virtual int geSize() const;
-        
-        virtual const VertexFormat& getFormat() const;
-        
-        inline int getName() const {
-            return this->name;
-        }
-        
-        inline int getVertexArrayId() const {
-            return this->vertexArrayId;
-        }
-        
-        virtual TypeInfo getTypeInfo() const;
-        
-    private:
-        ::GLuint vertexArrayId = 0;
-        ::GLuint name = 0;
-        bool locked = false;
-        int count = 0;
+    //class GL3GraphicsDriver;
+    //
+    //class GL3VertexBuffer : public Buffer {
+    //    /* VertexBuffer overrides */
+    //public:
+    //    virtual ~GL3VertexBuffer();
+    //    virtual bool isLocal() const override;
+    //    virtual void* getDataPtr() override;
+    //    virtual const void* getDataPtr() const override;
+    //    virtual void write() override;
+    //    virtual void read() override;
+    //    virtual std::uint64_t getHandle() const override;
+    //    virtual std::uint32_t getSize() const override;
+    //    virtual void setData(const void* dataSrc, const std::uint32_t size) override;
+    //    virtual void getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const override;
 
-        VertexFormat format;
-        HeapBuffer buffer;
-    };
+    //    /* Object overrides */
+    //public:
+    //    virtual TypeInfo getTypeInfo() const override;
+    //    
+    //public:
+    //    inline int getBufferId() const {
+    //        return this->bufferId;
+    //    }
+
+    //    void allocate(const VertexFormat &format, int count);
+    //    void release();
+
+    //private:
+    //    ::GLuint bufferId = 0;
+    //    int count = 0;
+
+    //    HeapBuffer cacheBuffer;
+    //};
 }}}
 
 #endif //__EXENG_GRAPHICS_GL3_GL3VERTEXBUFFER_HPP__

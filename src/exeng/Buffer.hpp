@@ -13,53 +13,86 @@
 #ifndef __EXENG_BUFFER_HPP__
 #define __EXENG_BUFFER_HPP__
 
+#include <cstdint>
 #include <exeng/Object.hpp>
+#include <exeng/Enum.hpp>
+#include <exeng/TFlags.hpp>
 
 namespace exeng {
     /**
-     * @brief Raw data container.
+     * @brief Abstract interface to a huge memory block.
      */
     class EXENGAPI Buffer : public Object {
     public:
+        enum Enum {
+            Empty = 0x00000001,
+            Local = 0x00000002,
+            __Force32 = 0xFFFFFFFF
+        };
+
+        typedef TFlags<Enum> Flags;
+        
+    public:
         virtual ~Buffer();
-        
+
         /**
-         * @brief Lock the buffer, and gets a pointer to the buffer data, 
-         * in read-write usage mode.
+         * @brief 
          */
-        virtual void* lock() = 0;
-        
+        virtual Buffer::Flags getFlags() const = 0;
+
         /**
-         * @brief Lock the buffer, and gets a pointer to the buffer data, 
-         * in read-only usage mode.
+         * @brief 
          */
-        virtual const void* lock() const = 0;
-        
+        virtual void allocate(const std::uint32_t size) = 0;
+
         /**
-         * @brief Unlocks the buffer, enabling the data to be modified again.
+         * @brief 
          */
-        virtual void unlock() = 0;
-        
+        virtual void release() = 0;
+
         /**
-         * @brief Unlocks the buffer, enabling the data to be modified again. 
-         * Used in constant instances.
+         * @brief Get a pointer to the data. 
+         * 
+         * This data exist on the address space of the local process. If the buffer points to 
+         * another address space (different from the local address space), it return a pointer 
+         * to the address space of a local cache of the data instead.
          */
-        virtual void unlock() const = 0;
-        
+        virtual void* getDataPtr() = 0;
+
         /**
-         * @brief Check if the buffer is locked.
+         * @brief 
          */
-        virtual bool isLocked() const = 0;
-        
+        virtual const void* getDataPtr() const = 0;
+
         /**
-         * @brief Check if the buffer has available data.
+         * @brief Copy the local memory to the remote one.
          */
-        virtual bool isEmpty() const = 0;
-        
+        virtual void write() = 0;
+
+        /**
+         * @brief Copy the remote memory to the local one.
+         */
+        virtual void read() = 0;
+
+        /**
+         * @brief Get the native handle of the buffer. If its a local buffer, return the value Buffer::getDataPtr
+         */
+        virtual std::uint64_t getHandle() const = 0;
+
         /**
          * @brief Gets the size of the buffer, in bytes.
          */
-        virtual int geSize() const = 0;
+        virtual std::uint32_t getSize() const = 0;
+
+        /**
+         * @brief Copy and allocate the buffer internal data.
+         */
+        virtual void setData(const void* dataSrc, const std::uint32_t size) = 0;
+
+        /**
+         * @brief Copy the data of the buffer to the specified memory location.
+         */
+        virtual void getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const = 0;
     };
 }
 

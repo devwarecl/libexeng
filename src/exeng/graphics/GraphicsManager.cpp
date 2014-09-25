@@ -18,73 +18,62 @@
 #include <map>
 #include <sstream>
 #include <cassert>
-#include <boost/ptr_container/ptr_map.hpp>
 #include <boost/range/algorithm/find_if.hpp>
 
-namespace exeng {
-namespace graphics {
-
-    typedef boost::ptr_map<GraphicsDriverInfo, IGraphicsDriverFactory> GraphicsDriverFactoryMap;
+namespace exeng { namespace graphics {
+    typedef std::map<GraphicsDriverInfo, IGraphicsDriverFactory*> GraphicsDriverFactoryMap;
     
     struct GraphicsManager::Private {
          GraphicsDriverFactoryMap factories;
     };
     
-    
     GraphicsManager::GraphicsManager() : impl(new GraphicsManager::Private()) {
     }
 
-    
     GraphicsManager::~GraphicsManager() {
-        boost::checked_delete(this->impl);
+        delete this->impl;
+        this->impl = nullptr;
     }
-    
-    
+
     void GraphicsManager::addDriverFactory(IGraphicsDriverFactory* factory) {
         assert( this->impl != nullptr );
         
         if (factory == nullptr) {
-            throw std::invalid_argument("GraphicsManager::addDriverFactory: "
-                                        "the factory can't be null");
+            throw std::invalid_argument("GraphicsManager::addDriverFactory: the factory can't be null");
         }
         
-        auto driverInfo = factory->getDriverInfo();
-        this->impl->factories.insert(driverInfo, factory);
+        GraphicsDriverInfo driverInfo = factory->getDriverInfo();
+        this->impl->factories.insert({driverInfo, factory});
     }
 
-    
     void GraphicsManager::removeDriverFactory(IGraphicsDriverFactory* factory) {
         assert( this->impl != nullptr );
         
         if (factory == nullptr) {
-            throw std::invalid_argument("GraphicsManager::addDriverFactory: "
-                                        "the factory can't be null");
+            throw std::invalid_argument("GraphicsManager::addDriverFactory -> The factory can't be a null pointer.");
         }
-        
-        auto &factories = this->impl->factories;
+
+        GraphicsDriverFactoryMap &factories = this->impl->factories;
         auto key = factory->getDriverInfo();
         auto pos = factories.find(key);
         
         if (pos == factories.end()) {
-            throw std::runtime_error("GraphicsManager::addDriverFactory: "
-                                     "the factory isn't in the graphics manager instance.");
+            throw std::runtime_error("GraphicsManager::addDriverFactory -> The factory isn't in the graphics manager instance.");
         }
         
         factories.erase(pos);
     }
-    
     
     GraphicsDriver* GraphicsManager::createDriver() {
         assert( this->impl != nullptr );
         
         //! TODO: Actually, implement the algorithm
         for (auto element : this->impl->factories) {
-            return element->second->create();
+            return element.second->create();
         }
         
         return nullptr;
     }
-    
     
     GraphicsDriver* GraphicsManager::createDriver(const GraphicsDriverInfo &info) {
         assert( this->impl != nullptr );
@@ -93,11 +82,9 @@ namespace graphics {
         auto pos = factories.find(info);
         
         if (pos == factories.end()) {
-            throw std::runtime_error("GraphicsManager::createDriver: "
-                                     "Driver with the specified info not registered.");
+            throw std::runtime_error("GraphicsManager::createDriver -> Driver with the specified info not registered.");
         }
         
         return pos->second->create();
     }
-}
-}
+}}

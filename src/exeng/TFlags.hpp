@@ -40,45 +40,15 @@ namespace exeng {
 		
 	public:
 		TFlags();
-		
-		TFlags(const TFlagsType& Other);
-
 		TFlags(EnumType FlagDetail);
-        
         TFlags(int value);
 
-		TFlags<EnumType>& operator= (EnumType enumType);
+		void activate(EnumType Flag, bool Status);
+		bool isActivated(EnumType Flag) const;
 
-		/**
-         * @brief Habilita o deshabilita la flag indicada
-		 */
-		void setFlag(EnumType Flag, bool Status);
-
-		/**
-         * @brief Devuelve el estado actual de la flag indicada
-		 */
-		bool getFlag(EnumType Flag) const;
-		
-		/**
-         * @brief Comprueba si los estados de dos contenedores de flags son exactamente los mismos
-		 */
 		bool operator== (const TFlags<EnumType>& Other) const;
-        
-		/**
-         * @brief Comprueba si los estados de dos contenedores de flags son distintos
-		 */
 		bool operator!= (const TFlags<EnumType>& Other) const;
 		
-		/**
-         * @brief Devuelve el valor actual contenido
-		 */
-		EnumType getValue() const;
-		
-		/**
-         * @brief Establece el valor actual en el contenedor de flags.
-		 */
-		void setValue(EnumType Value);
-        
         operator EnumType() const;
 	};
 }

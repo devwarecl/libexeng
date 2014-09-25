@@ -24,10 +24,12 @@
 #include "GL3IndexBuffer.hpp"
 #include "GL3Shader.hpp"
 #include "GL3ShaderProgram.hpp"
+#include "GL3MeshSubset.hpp"
 
 #include <exeng/DataType.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/input/IEventHandler.hpp>
+#include <exeng/graphics/Material.hpp>
 
 #include <map>
 
@@ -39,25 +41,25 @@ namespace exeng { namespace graphics { namespace gl3 {
 
     // TODO: Add the specific transformation variables
     static const std::string defaultVSSource = std::string(
-                "#version 330 \n"
-                "layout(location=0) in vec4 position; \n"
-                "layout(location=1) in vec2 texCoord; \n"
-                "out vec2 uv; \n"
-                "\n"
-                "void main() { \n"
-                "    gl_Position = position; \n"
-                "    uv = texCoord; \n"
-                "}\n"
+        "#version 330 \n"
+        "layout(location=0) in vec4 position; \n"
+        "layout(location=1) in vec2 texCoord; \n"
+        "out vec2 uv; \n"
+        "\n"
+        "void main() { \n"
+        "    gl_Position = position; \n"
+        "    uv = texCoord; \n"
+        "}\n"
     );
 
     static const std::string defaultFSSource = std::string(
-                "#version 330 \n"
-                "in vec2 uv; \n"
-                "out vec4 outputColor; \n"
-                "uniform sampler2D texSampler2D; \n"
-                "void main() { \n"
-                "outputColor = texture(texSampler2D, uv); \n"
-                "}\n"
+        "#version 330 \n"
+        "in vec2 uv; \n"
+        "out vec4 outputColor; \n"
+        "uniform sampler2D texSampler2D; \n"
+        "void main() { \n"
+        "outputColor = texture(texSampler2D, uv); \n"
+        "}\n"
     );
 
     static void closeEvent(GLFWwindow *window) {
@@ -102,24 +104,10 @@ namespace exeng { namespace graphics { namespace gl3 {
     int GL3GraphicsDriver::initializedCount = 0;
 
     GL3GraphicsDriver::GL3GraphicsDriver() {
-        this->vertexBuffer = nullptr;
-        this->shaderProgram = nullptr;
-        this->initialized = false;
-        this->defaultVertexShader = nullptr;
-        this->defaultFragmentShader = nullptr;
-        this->defaultProgram = nullptr;
-        this->defaultMaterial = new Material();
-        this->renderingFrame = false;
-        this->window = nullptr;
+        this->defaultMaterial = std::unique_ptr<Material>(new Material());
     }
 
     GL3GraphicsDriver::~GL3GraphicsDriver() {
-        boost::checked_delete(this->defaultMaterial);
-        
-        boost::checked_delete(this->defaultProgram);
-        boost::checked_delete(this->defaultVertexShader);
-        boost::checked_delete(this->defaultFragmentShader);
-
         this->terminate();
     }
 
@@ -137,12 +125,9 @@ namespace exeng { namespace graphics { namespace gl3 {
             throw std::runtime_error(msg);
         }
         
-        // initialize GLFW
-        if (!::glfwInit()) {
-            throw std::runtime_error("GL3GraphicsDriver::initialize: GLFW initialization error.");
-        }
-        
         // Configure and create the context
+        this->context = std::auto_ptr<GL3Context>(new GL3Context());
+
         GLFWmonitor *monitor = nullptr;
         
         switch (displayMode.status) {
@@ -158,17 +143,16 @@ namespace exeng { namespace graphics { namespace gl3 {
         int width = displayMode.size.width;
         int height = displayMode.size.height;
         
-        this->window = ::glfwCreateWindow(width, height, "exeng-graphics-gl3 Window", monitor, NULL);
-        if (this->window == nullptr) {
-            ::glfwTerminate();
+        this->context->window = ::glfwCreateWindow(width, height, "exeng-graphics-gl3 Window", monitor, NULL);
+        if (this->context->window == nullptr) {
             throw std::runtime_error("GL3GraphicsDriver::GL3GraphicsDriver: Cannot create a GLFW Window.");
         }
         
-        ::glfwMakeContextCurrent(this->window);
+        ::glfwMakeContextCurrent(this->context->window);
         
         // Set the 
-        ::glfwSetWindowCloseCallback(this->window, closeEvent);
-        ::glfwSetKeyCallback(this->window, keyEvent);
+        ::glfwSetWindowCloseCallback(this->context->window, closeEvent);
+        ::glfwSetKeyCallback(this->context->window, keyEvent);
 
         this->setTransformName(Transform::World, "WorldTransform");
         this->setTransformName(Transform::View, "ViewTransform");
@@ -178,19 +162,19 @@ namespace exeng { namespace graphics { namespace gl3 {
         ::ogl_LoadFunctions();
         
         // Default vertex shader
-        auto vertexShader = this->createShader(ShaderType::Vertex);
+        Shader *vertexShader = this->createShader(ShaderType::Vertex);
         
         vertexShader->setSourceCode(defaultVSSource);
         vertexShader->compile();
         
         // Default pixel shader
-        auto fragmentShader = this->createShader(ShaderType::Fragment);
+        Shader *fragmentShader = this->createShader(ShaderType::Fragment);
         
         fragmentShader->setSourceCode(defaultFSSource);
         fragmentShader->compile();
         
         // Default shader program
-        auto shaderProgram = this->createShaderProgram();
+        ShaderProgram *shaderProgram = this->createShaderProgram();
         
         shaderProgram->addShader(vertexShader);
         shaderProgram->addShader(fragmentShader);
@@ -200,9 +184,9 @@ namespace exeng { namespace graphics { namespace gl3 {
         this->defaultMaterial->setShaderProgram(shaderProgram);
         
         // Hold all the default objects
-        this->defaultVertexShader = vertexShader;
-        this->defaultFragmentShader = fragmentShader;
-        this->defaultProgram = shaderProgram;
+        this->defaultVertexShader = std::unique_ptr<Shader>(vertexShader);
+        this->defaultFragmentShader = std::unique_ptr<Shader>(fragmentShader);
+        this->defaultProgram = std::unique_ptr<ShaderProgram>(shaderProgram);
         
         this->displayMode = displayMode;
         
@@ -214,11 +198,18 @@ namespace exeng { namespace graphics { namespace gl3 {
         if (this->initialized == true) {
             --GL3GraphicsDriver::initializedCount;
             
+            /*
+            delete this->defaultMaterial.release();
+            delete this->defaultProgram.release();
+            delete this->defaultVertexShader.release();
+            delete this->defaultFragmentShader.release();
+
             //! TODO: Destroy all created objects
-            ::glfwDestroyWindow(this->window);
+            ::glfwDestroyWindow(this->context->window);
             ::glfwTerminate();
-            
+            this->context->window = nullptr;
             this->initialized = false;
+            */
         }
     }
 
@@ -238,9 +229,9 @@ namespace exeng { namespace graphics { namespace gl3 {
         }       
 #endif
         GLenum clearFlags = 0L;
-        clearFlags |= flags.getFlag(ClearFlags::Color) ? GL_COLOR_BUFFER_BIT : 0;
-        clearFlags |= flags.getFlag(ClearFlags::Depth) ? GL_DEPTH_BUFFER_BIT : 0;
-        clearFlags |= flags.getFlag(ClearFlags::Stencil) ? GL_STENCIL_BUFFER_BIT : 0;
+        clearFlags |= flags.isActivated(ClearFlags::Color)?GL_COLOR_BUFFER_BIT:0;
+        clearFlags |= flags.isActivated(ClearFlags::Depth)?GL_DEPTH_BUFFER_BIT:0;
+        clearFlags |= flags.isActivated(ClearFlags::Stencil)?GL_STENCIL_BUFFER_BIT:0;
         
 #if defined(EXENG_DEBUG)
         if (!clearFlags) {
@@ -251,8 +242,7 @@ namespace exeng { namespace graphics { namespace gl3 {
             
             throw std::invalid_argument(msg);
         }
-#endif
-        
+#endif  
         ::glClearColor(color.red, color.green, color.blue, color.alpha);
         ::glClear(clearFlags);
         
@@ -260,7 +250,6 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         GL3_CHECK();
     }
-
 
     void GL3GraphicsDriver::endFrame() {
 #if defined(EXENG_DEBUG)
@@ -271,69 +260,48 @@ namespace exeng { namespace graphics { namespace gl3 {
             msg += "Invalid call because must start a new frame first, via the beginFrame method.";
             
             throw std::logic_error(msg);
-        }       
+        }
 #endif
         ::glFinish();
-        ::glfwSwapBuffers(this->window);
+        ::glfwSwapBuffers(this->context->window);
         
         this->renderingFrame = false;
         
         GL3_CHECK();
     }
 
-
-    void GL3GraphicsDriver::setVertexBuffer(const VertexBuffer* vertexBuffer) {
+    void GL3GraphicsDriver::setMeshSubset(MeshSubset *meshSubset) {
 #if defined(EXENG_DEBUG)
-        if (vertexBuffer->getResourceManager() != this) {
-            std::string msg;
-            
-            msg += "GL3GraphicsDriver::setVertexBuffer: ";
-            msg += "The vertex buffer must have been created by the current graphics driver.";
-            
-            throw std::invalid_argument(msg);
+        if (meshSubset->getTypeInfo() != TypeId<GL3MeshSubset>()) {
+            throw std::runtime_error("GL3GraphicsDriver::setMeshSubset: Invalid meshSubset TypeInfo.");
         }
-        
-        if (vertexBuffer->isEmpty() == true) {
-            std::string msg;
-            
-            msg += "GL3GraphicsDriver::setVertexBuffer: ";
-            msg += "Vertex buffer can't be empty";
-            
-            throw std::invalid_argument(msg);
+
+        for (int i=0; i<meshSubset->getBufferCount(); ++i) {
+            if (meshSubset->getBuffer(i)->getTypeInfo() != TypeId<GL3Buffer>()) {
+                throw std::runtime_error("GL3GraphicsDriver::setMeshSubset: Invalid vertex buffer TypeInfo.");
+            }
+        }
+
+        //  
+        if (meshSubset->getIndexBuffer() && (meshSubset->getIndexBuffer()->getTypeInfo() != TypeId<GL3Buffer>())) {
+            throw std::runtime_error("GL3GraphicsDriver::setMeshSubset: Invalid index buffer TypeInfo.");
         }
 #endif
-        if (this->vertexBuffer == vertexBuffer) {
-            return;
+        if (meshSubset->getBufferCount() != 1) {
+            throw std::runtime_error("GL3GraphicsDriver::setMeshSubset: Only one vertex buffer is supported for now");
         }
-        
-        /*
-        // Remove render state from previous vertex buffer
-        if (this->vertexBuffer != nullptr) {
-            ::glBindBuffer(GL_ARRAY_BUFFER, this->vertexBuffer->getName());
-            int fieldCount = this->vertexBuffer->getFormat().fields.size();
-            for (int i=0; i<fieldCount; ++i) {
-                ::glDisableVertexAttribArray(i);
-            }
-            
-            GL3_CHECK();
-        }
-        */
-        
-        // Apply new render state
-        if (vertexBuffer == nullptr) {
-            this->vertexBuffer = nullptr;
-            return;
-        }
-        
-        this->vertexBuffer = static_cast<const GL3VertexBuffer*>(vertexBuffer);
-        
-        const VertexFormat &format = this->vertexBuffer->getFormat();
+
+        this->meshSubset = static_cast<GL3MeshSubset*>(meshSubset);
+        this->vertexBuffer = static_cast<GL3Buffer*>(meshSubset->getBuffer(0));
+        this->indexBuffer = static_cast<GL3Buffer*>(meshSubset->getIndexBuffer());
+
+        VertexFormat format = this->meshSubset->getVertexFormat();
         int baseAttrib = 0;
         int offset = 0;
         DataType::Enum dataTypeKey;
         
-        ::glBindVertexArray( this->vertexBuffer->getVertexArrayId() );
-        ::glBindBuffer( GL_ARRAY_BUFFER, this->vertexBuffer->getName() );
+        ::glBindVertexArray( this->meshSubset->getVertexArrayId());
+        ::glBindBuffer( GL_ARRAY_BUFFER, this->vertexBuffer->getBufferId() );
         
         for (const VertexField& field : format.fields) {
             if (field.attribute == VertexAttrib::Unused) {
@@ -345,7 +313,7 @@ namespace exeng { namespace graphics { namespace gl3 {
             
             ::glEnableVertexAttribArray(baseAttrib);
             ::glVertexAttribPointer(baseAttrib, field.count, 
-                                    dataType, GL_FALSE, format.geSize(), 
+                                    dataType, GL_FALSE, format.getSize(), 
                                     reinterpret_cast<const void*>(offset));
             
             offset += field.count * field.dataType.geSize();
@@ -353,13 +321,62 @@ namespace exeng { namespace graphics { namespace gl3 {
         }
         
         GL3_CHECK();
-        
+
     }
 
-
-    void GL3GraphicsDriver::setIndexBuffer(const IndexBuffer* indexBuffer) {
-        // TODO: Implement
+    MeshSubset* GL3GraphicsDriver::getMeshSubset() {
+        return this->meshSubset;
     }
+
+    const MeshSubset* GL3GraphicsDriver::getMeshSubset() const {
+        return this->meshSubset;
+    }
+
+//    void GL3GraphicsDriver::setVertexBuffer(const Buffer* vertexBuffer) {
+//#if defined(EXENG_DEBUG)
+//        //if (vertexBuffer->getResourceManager() != this) {
+//        //    std::string msg;
+//        //    
+//        //    msg += "GL3GraphicsDriver::setVertexBuffer: ";
+//        //    msg += "The vertex buffer must have been created by the current graphics driver.";
+//        //    
+//        //    throw std::invalid_argument(msg);
+//        //}
+//        
+//        //if (vertexBuffer->isEmpty() == true) {
+//        //    std::string msg;
+//        //    
+//        //    msg += "GL3GraphicsDriver::setVertexBuffer: ";
+//        //    msg += "Vertex buffer can't be empty";
+//        //    
+//        //    throw std::invalid_argument(msg);
+//        //}
+//#endif
+//        if (this->vertexBuffer == vertexBuffer) {
+//            return;
+//        }
+//        
+//        /*
+//        // Remove render state from previous vertex buffer
+//        if (this->vertexBuffer != nullptr) {
+//            ::glBindBuffer(GL_ARRAY_BUFFER, this->vertexBuffer->getName());
+//            int fieldCount = this->vertexBuffer->getFormat().fields.size();
+//            for (int i=0; i<fieldCount; ++i) {
+//                ::glDisableVertexAttribArray(i);
+//            }
+//            
+//            GL3_CHECK();
+//        }
+//        */
+//        
+//        // Apply new render state
+//        if (vertexBuffer == nullptr) {
+//            this->vertexBuffer = nullptr;
+//            return;
+//        }
+//        
+//        this->vertexBuffer = static_cast<const GL3Buffer*>(vertexBuffer);   
+//    }
 
 
     void  GL3GraphicsDriver::setMaterial(const Material* material) {
@@ -374,18 +391,18 @@ namespace exeng { namespace graphics { namespace gl3 {
         const int layerCount = material->getLayerCount();
         const MaterialLayer *layer = nullptr;
         
-        for (int i=0; i<layerCount; ++i) {
-            layer = material->getLayer(i);
-            
-            if (layer->hasTexture() == true && layer->getTexture()->getResourceManager() != this ) {
-                std::string msg;
-                
-                msg += "GL3GraphicsDriver::setMaterial: ";
-                msg += "The textures used by this material are not valid.";
-                
-                throw std::logic_error(msg);
-            }
-        }
+        //for (int i=0; i<layerCount; ++i) {
+        //    layer = material->getLayer(i);
+        //    
+        //    if (layer->hasTexture() == true && layer->getTexture()->getResourceManager() != this) {
+        //        std::string msg;
+        //        
+        //        msg += "GL3GraphicsDriver::setMaterial: ";
+        //        msg += "The textures used by this material are not valid.";
+        //        
+        //        throw std::logic_error(msg);
+        //    }
+        //}
         
         // Check for shader program info and status
         if ( material->getShaderProgram() != nullptr ) {
@@ -413,43 +430,36 @@ namespace exeng { namespace graphics { namespace gl3 {
         }
         
         if (material == nullptr) {
-            material = this->defaultMaterial;
+            material = this->defaultMaterial.get();
         }
         
         this->preRenderMaterial(material);
         this->material = material;
     }
 
-
-    VertexBuffer* GL3GraphicsDriver::createVertexBuffer(const VertexFormat &format, int count, const void* data) {
-        VertexBuffer *vertexBuffer = new GL3VertexBuffer(this, format, count);
-        this->addResource(vertexBuffer);
+    Buffer* GL3GraphicsDriver::createVertexBuffer(const std::int32_t size, const void* data) {
+        Buffer *vertexBuffer = new GL3Buffer(GL_ARRAY_BUFFER, size);
 
         if (data) {
-            void* destPtr = vertexBuffer->lock();
-            std::memcpy(destPtr, data, count * format.geSize());
-            vertexBuffer->unlock();
+            vertexBuffer->setData(data, size);
         }
 
         return vertexBuffer;
     }
 
-    IndexBuffer* GL3GraphicsDriver::createIndexBuffer(IndexFormat::Enum format, int count, const void* data) {
-        IndexBuffer *indexBuffer = new GL3IndexBuffer(format, count);
-        this->addResource(indexBuffer);
+    Buffer* GL3GraphicsDriver::createIndexBuffer(const std::int32_t size, const void* data) {
+        Buffer *vertexBuffer = new GL3Buffer(GL_ELEMENT_ARRAY_BUFFER, size);
 
         if (data) {
-            void* destPtr = indexBuffer->lock();
-            std::memcpy(destPtr, data, count * IndexFormat::geSize(format));
-            indexBuffer->unlock();
+            vertexBuffer->setData(data, size);
         }
 
-        return indexBuffer;
+        return vertexBuffer;
     }
 
     Texture* GL3GraphicsDriver::createTexture(TextureType::Enum type, const Vector3f& size, const ColorFormat &format) {
-        Texture *texture = new GL3Texture(this, type, size, format);
-        this->addResource(texture);
+        Texture *texture = new GL3Texture(type, size, format);
+        // this->addResource(texture);
         
         return texture;
     }
@@ -481,17 +491,18 @@ namespace exeng { namespace graphics { namespace gl3 {
     }
 
     void GL3GraphicsDriver::render(Primitive::Enum ptype, int count) {
+#if defined(EXENG_DEBUG)
         if (this->vertexBuffer == nullptr) {
-            throw std::runtime_error("GL3GraphicsDriver::render: "
-                                    "A current binded vertex buffer must be setted.");
+            throw std::runtime_error("GL3GraphicsDriver::render: A current binded vertex buffer must be setted.");
         }
-        
+
         // Check if the current setted buffer is the same
-        GLint name;
-        ::glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &name);
-        assert( name != 0 );
-        assert( name == this->vertexBuffer->getName() );
-        
+        GLint bufferId;
+        ::glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &bufferId);
+        assert( bufferId != 0 );
+        assert( bufferId == this->vertexBuffer->getBufferId() );
+#endif
+
         //! TODO: Implement rendering path with the index buffer in the future.
         GLenum primitive = convPrimitive(ptype);
         ::glDrawArrays(primitive, 0, count);
@@ -524,31 +535,20 @@ namespace exeng { namespace graphics { namespace gl3 {
     void GL3GraphicsDriver::restoreDisplayMode() {
         throw std::runtime_error("GL3GraphicsDriver::restoreDisplayMode: Not implemented yet.");
     }
-
-    const VertexBuffer* GL3GraphicsDriver::getVertexBuffer() const {
-        return this->vertexBuffer;
-    }
-
-    const IndexBuffer* GL3GraphicsDriver::getIndexBuffer() const {
-        throw std::runtime_error("GL3GraphicsDriver::getIndexBuffer: Not implemented.");
-    }
-
-
+    
     Shader* GL3GraphicsDriver::createShader( ShaderType::Enum type ) {
-        auto *resource = new GL3Shader(this, type);
-        this->addResource(resource);
+        Shader *resource = new GL3Shader(type);
+        // this->addResource(resource);
         
         return resource;
     }
-
 
     ShaderProgram* GL3GraphicsDriver::createShaderProgram( ) {
-        auto *resource = new GL3ShaderProgram(this);
-        this->addResource(resource);
+        ShaderProgram *resource = new GL3ShaderProgram();
+        // this->addResource(resource);
         
         return resource;
     }
-
 
     void GL3GraphicsDriver::preRenderMaterial(const Material *material) {
         assert(material != nullptr);
@@ -578,7 +578,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         if (material->getShaderProgram() != nullptr) {
             shaderProgram = static_cast<const GL3ShaderProgram*>(material->getShaderProgram());
         } else {
-            shaderProgram = static_cast<const GL3ShaderProgram*>(this->defaultProgram);
+            shaderProgram = static_cast<const GL3ShaderProgram*>(this->defaultProgram.get() );
         }
         
         GLint programId = shaderProgram->getProgramId();
@@ -656,5 +656,9 @@ namespace exeng { namespace graphics { namespace gl3 {
         for ( IEventHandler *handler : this->eventHandlers ) {
             handler->handleEvent(data);
         }
+    }
+
+    MeshSubset* GL3GraphicsDriver::createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) {
+        return new GL3MeshSubset( std::move(vertexBuffers) , format);
     }
 }}}

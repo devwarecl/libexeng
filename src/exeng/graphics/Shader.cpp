@@ -11,19 +11,9 @@
  * found in the file LICENSE in this distribution.
  */
 
-
 #include <exeng/graphics/Shader.hpp>
 
-
-namespace exeng {
-namespace graphics {
-
-Shader::Shader(ResourceManager *factory) : Resource(factory) {
-}
-
-Shader::~Shader()
-{
-}
-
-}
-}
+namespace exeng { namespace graphics {
+    Shader::Shader() {}
+    Shader::~Shader() {}
+}}

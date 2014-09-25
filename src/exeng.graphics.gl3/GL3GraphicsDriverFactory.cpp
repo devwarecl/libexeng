@@ -29,7 +29,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         info.hardware = true;
         info.supportsVertexShaders = true;
         info.supportsPixelShader = true;
-        info.supportGeometryShaders = true;
+        info.supportsGeometryShaders = true;
         
         return info;
     }

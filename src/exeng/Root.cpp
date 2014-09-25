@@ -31,10 +31,11 @@ namespace exeng {
 #endif
     
     struct Root::Private {
-        std::unique_ptr<PluginManager> pluginManager;
-        std::unique_ptr<MeshManager> meshManager;
+        /* The order of the declaration of the different submodules is important.*/
         std::unique_ptr<GraphicsManager> graphicsManager;
+        std::unique_ptr<MeshManager> meshManager;
         std::unique_ptr<SceneManager> sceneManager;
+        std::unique_ptr<PluginManager> pluginManager;
     };
 
     static const char licenseMsg[] = 

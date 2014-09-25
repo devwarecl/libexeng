@@ -30,29 +30,24 @@ namespace exeng { namespace graphics {
         this->impl = new MaterialLayer::Private();
     }
 
-    
 	MaterialLayer::~MaterialLayer() {
 		boost::checked_delete(this->impl);
 	}
-
 
 	const Texture* MaterialLayer::getTexture() const {
 		assert(this->impl != nullptr);
 		return this->impl->texture;
 	}
 
-
 	Texture* MaterialLayer::getTexture() {
 		assert(this->impl != nullptr);
 		return this->impl->texture;
 	}
     
-    
 	void MaterialLayer::setTexture(Texture* texture) {
 		assert(this->impl != nullptr);
 		this->impl->texture = texture;
 	}
-
 
 	bool MaterialLayer::hasTexture() const {
 		assert(this->impl != nullptr);
@@ -78,17 +73,14 @@ namespace exeng { namespace graphics {
 			::memset(rawData, sizeof(rawData), 0);
 		}
     
-    
 		inline PropertyValue(const TypeInfo &info) : typeInfo(info) {
 			::memset(rawData, sizeof(rawData), 0);
 		}
-		
-		
+	    	
 		template<typename ValueType>
 		inline bool checkType() const {
 			return typeInfo == TypeId<ValueType>();
 		}
-		
 		
 		template<typename ValueType>
 		inline void setValue( const ValueType &value ) {
@@ -111,16 +103,13 @@ namespace exeng { namespace graphics {
 		}
 	};
 
-
 	template<typename ValueType>
 	inline PropertyValue makePropertyValue(const ValueType &value) {
 		PropertyValue propertyValue( TypeId<ValueType>() );
-    
 		propertyValue.setValue(value);
     
 		return propertyValue;
 	}
-
 
 	typedef std::map<std::string, PropertyValue> PropertyMap;
 	typedef PropertyMap::iterator PropertyMapIt;
@@ -134,9 +123,8 @@ namespace exeng { namespace graphics {
 		Private() : shaderProgram(nullptr) {}
 		
 		PropertyMap::const_iterator getPosition(int index) const {
-			PropertyMap::const_iterator it = this->properties.end();
-        
-			int i=0;
+			auto it = this->properties.end();
+			int i = 0;
             
 			for(it=this->properties.begin(); it!=this->properties.end(); ++it ) {
 				if (index == i) {
@@ -147,91 +135,71 @@ namespace exeng { namespace graphics {
         
 			return it;
 		}
-    
 	};
-
 
 	Material::Material() : impl(nullptr) {
 		this->impl = new Material::Private();
 	}
 
-	
 	Material::Material(const std::string &name) : impl(nullptr) {
         this->impl = new Material::Private();
         this->setName(name);
     }
 	
-    
 	Material::~Material() {
 		boost::checked_delete(this->impl);
 	}
-
 
 	void Material::setProperty(const std::string &name, float value) {
 		assert( this->impl != nullptr );
 		this->impl->properties[name] = makePropertyValue(value);
 	}
 
-
 	void Material::setProperty(const std::string &name, const Vector2f &value) {
 		assert( this->impl != nullptr );
 		this->impl->properties[name] = makePropertyValue(value);
 	}
-
 
 	void Material::setProperty(const std::string &name, const Vector3f &value) {
 		assert( this->impl != nullptr );
 		this->impl->properties[name] = makePropertyValue(value);
 	}
 
-
 	void Material::setProperty(const std::string &name, const Vector4f &value) {
 		assert( this->impl != nullptr );
-    
 		this->impl->properties[name] = makePropertyValue(value);
 	}
 
-
 	float Material::getPropertyf(const std::string &name) const {
 		assert( this->impl != nullptr );
-    
 		return this->impl->properties[name].getValue<float>();
 	}
 
-
 	Vector2f Material::getProperty2f(const std::string &name) const {
 		assert( this->impl != nullptr );
-    
 		return this->impl->properties[name].getValue<Vector2f>();
 	}
 
-
 	Vector3f Material::getProperty3f(const std::string &name) const {
 		assert( this->impl != nullptr );
-    
 		return this->impl->properties[name].getValue<Vector3f>();
 	}
 
-
 	Vector4f Material::getProperty4f(const std::string &name) const {
 		assert( this->impl != nullptr );
-    
 		return this->impl->properties[name].getValue<Vector4f>();
 	}
-
 
 	std::string Material::getName() const {
 		assert(this->impl != nullptr);
 		return this->impl->name;
 	}
 
-
 	void Material::setName(const std::string& name) {
 		assert(this->impl != nullptr);
 		this->impl->name = name;
 	}
     
-
 	MaterialLayer* Material::getLayer(int index) {
 		assert(this->impl != nullptr);
 
@@ -243,7 +211,6 @@ namespace exeng { namespace graphics {
 
 		return &this->impl->layers[index];
 	}
-	
 	
 	const MaterialLayer* Material::getLayer(int index) const {
 		assert(this->impl != nullptr);
@@ -257,18 +224,15 @@ namespace exeng { namespace graphics {
 		return &this->impl->layers[index];
 	}
 
-
 	TypeInfo Material::getTypeInfo() const {
 		assert(this->impl != nullptr);
     
 		return TypeInfo(typeid(Material));
 	}
 
-
 	const int Material::getLayerCount() {
 		return LayerCount;
 	}
-
 
 	void Material::setShaderProgram(const ShaderProgram *shader) {
 		assert(this->impl != nullptr);
@@ -276,13 +240,11 @@ namespace exeng { namespace graphics {
 		this->impl->shaderProgram = shader;
 	}
 
-
 	const ShaderProgram* Material::getShaderProgram() const {
 		assert(this->impl != nullptr);
     
 		return this->impl->shaderProgram;
 	}
-
 
 	bool Material::checkTextureType(const TypeInfo &textureTypeInfo) const {
 		assert(this->impl != nullptr);
@@ -302,13 +264,11 @@ namespace exeng { namespace graphics {
 		return true;
 	}
 
-
 	int Material::getPropertyNameCount() const {
 		assert(this->impl != nullptr);
     
 		return static_cast<int>(this->impl->properties.size());
 	}
-
 
 	std::string Material::getPropertyName( int index ) const {
 		assert(this->impl != nullptr);
@@ -328,12 +288,10 @@ namespace exeng { namespace graphics {
 		return this->impl->getPosition( index )->first;
 	}
 
-
 	TypeInfo Material::getPropertyType(int index) const {
 		assert(this->impl != nullptr);
 		return this->impl->getPosition(index)->second.typeInfo;
 	}
-
 
 	void Material::removeProperty(const std::string &name) {
 		assert(this->impl != nullptr);
@@ -351,22 +309,17 @@ namespace exeng { namespace graphics {
 		}
 	}
 	
-	
 	bool Material::isSerializable() const {
         return true;
     }
-    
     
     void Material::serialize(exeng::io::Stream *out) const {
         // chunk based serialization
     }
     
-    
     bool Material::isDeserializable() const {
         return true;
     }
     
-    void Material::deserialize(const exeng::io::Stream *inStream) {
-        
-    }
+    void Material::deserialize(const exeng::io::Stream *inStream) {}
 }}

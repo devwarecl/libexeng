@@ -18,10 +18,11 @@
 
 #include <exeng/Vector.hpp>
 #include <exeng/Boundary.hpp>
+#include <exeng/Buffer.hpp>
 #include <exeng/graphics/Material.hpp>
-#include <exeng/graphics/IndexBuffer.hpp>
-#include <exeng/graphics/VertexBuffer.hpp>
 #include <exeng/graphics/Primitive.hpp>
+#include <exeng/graphics/VertexFormat.hpp>
+#include <exeng/graphics/IndexFormat.hpp>
 
 namespace exeng { namespace scenegraph {
     /**
@@ -29,9 +30,11 @@ namespace exeng { namespace scenegraph {
      */
     struct MeshPart {
         const exeng::graphics::Material *material = nullptr;
-        std::unique_ptr<exeng::graphics::VertexBuffer> vertexBuffer;
-        std::unique_ptr<exeng::graphics::IndexBuffer> indexBuffer;
+        std::unique_ptr<Buffer> vertexBuffer;
+        std::unique_ptr<Buffer> indexBuffer;
         exeng::graphics::Primitive::Enum primitiveType = exeng::graphics::Primitive::TriangleList;
+        exeng::graphics::VertexFormat vertexFormat;
+        exeng::graphics::IndexFormat::Enum indexFormat = exeng::graphics::IndexFormat::Index32;
     };
 }}
 

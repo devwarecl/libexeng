@@ -14,128 +14,68 @@
 #include <exeng/HeapBuffer.hpp>
 #include <cstdlib>
 #include <stdexcept>
+#include <memory>
 
 namespace exeng {
+    HeapBuffer::HeapBuffer() {}
 
-const char errLockedBuffer[] = "The buffer is locked";
-const char errUnlockedBuffer[] = "The buffer is unlocked";
-
-HeapBuffer::HeapBuffer() : data(nullptr), size(0), locked(false) {
-}
-
-
-HeapBuffer::HeapBuffer(int size) : data(nullptr), size(0), locked(false) {
-    this->allocate(size);
-}
-
-
-HeapBuffer::~HeapBuffer() {
-    this->release();
-}
-
-
-void* HeapBuffer::lock() {
-#ifdef EXENG_DEBUG
-    if (this->locked == true) {
-        throw std::runtime_error(errLockedBuffer);
+    HeapBuffer::HeapBuffer(const std::uint32_t size) {
+        this->allocate(size);
     }
-    
-    if (this->isEmpty() == true) {
-        throw std::runtime_error("HeapBuffer::lock: The buffer must not be empty");
+
+    Buffer::Flags HeapBuffer::getFlags() const {
+        if (this->data) {
+            return Buffer::Local;
+        } else {
+            return Buffer::Local | Buffer::Empty;
+        }
     }
-    
-#endif
-    this->locked = true;
-    return this->data;
-    
-}
 
+    void HeapBuffer::allocate(const std::uint32_t size) {
+        this->release();
 
-void HeapBuffer::unlock() {
-#ifdef EXENG_DEBUG
-    if (this->locked == false) {
-        throw std::runtime_error(errUnlockedBuffer);
+        this->data = std::malloc(size);
+        this->size = size;
     }
-#endif
-    this->locked = false;
-}
 
+    void HeapBuffer::release() {
+        if (this->data) {
+            std::free(this->data);
 
-const void* HeapBuffer::lock() const {
-#ifdef EXENG_DEBUG
-    if (this->locked == true) {
-        throw std::runtime_error(errLockedBuffer);
+            this->data = nullptr;
+            this->size = 0;
+        }
     }
-    
-    if (this->isEmpty() == true) {
-        throw std::runtime_error("The buffer must not be empty");
+
+    HeapBuffer::~HeapBuffer() {
+        this->release();
     }
-#endif
-    this->locked = true;
-    return this->data;
-}
 
-
-void HeapBuffer::unlock() const {
-#ifdef EXENG_DEBUG
-    if (this->locked == false) {
-        throw std::runtime_error(errUnlockedBuffer);
+    std::uint32_t HeapBuffer::getSize() const {
+        return this->size;
     }
-#endif
-    this->locked = false;
-}
 
-
-bool HeapBuffer::isLocked() const {
-    return this->locked;
-}
-
-
-bool HeapBuffer::isEmpty() const {
-    return this->size==0 || this->data==nullptr;
-}
-
-
-void HeapBuffer::allocate(int size) {
-#ifdef EXENG_DEBUG
-    if (this->locked == true) {
-        throw std::runtime_error(errLockedBuffer);
+    void* HeapBuffer::getDataPtr() {
+        return this->data;
     }
-#endif
-    this->release();      
-    this->data = std::malloc(size);
-    this->size = size;
-}
 
-
-void HeapBuffer::release() {
-#ifdef EXENG_DEBUG
-    if (this->locked == true) {
-        //! TODO: Append to the log a warning for deleting a locked resource.
+    const void* HeapBuffer::getDataPtr() const {
+        return this->data;
     }
-#endif
-    
-    if (this->data != nullptr) {
-        std::free(this->data);
-        
-        this->data = nullptr;
-        this->size = 0;
+
+    void HeapBuffer::write() {}
+    void HeapBuffer::read() {}
+
+    std::uint64_t HeapBuffer::getHandle() const {
+        return reinterpret_cast<std::uint64_t>(this->data);
     }
-}
 
+    void HeapBuffer::setData(const void* dataSrc, const std::uint32_t size) {
+        this->allocate(size);
+        std::memcpy(this->data, dataSrc, size);
+    }
 
-int HeapBuffer::geSize() const {
-    return this->size;
-}
-
-
-void* HeapBuffer::getPtr() {
-    return this->data;
-}
-
-
-const void* HeapBuffer::getPtr() const {
-    return this->data;
-}
-
+    void HeapBuffer::getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const {
+        std::memcpy(dataDst, reinterpret_cast<std::uint8_t*>(this->data) + offset, size );
+    }
 }

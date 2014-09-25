@@ -14,6 +14,7 @@
 #ifndef __EXENG_GRAPHICS_GL3_GL3PLUGIN_HPP__
 #define __EXENG_GRAPHICS_GL3_GL3PLUGIN_HPP__
 
+#include <memory>
 #include <exeng/system/Plugin.hpp>
 
 namespace exeng { namespace graphics { namespace gl3 {
@@ -27,24 +28,23 @@ namespace exeng { namespace graphics { namespace gl3 {
     public:
         GL3Plugin();
         virtual ~GL3Plugin();
-        virtual std::string getName() const;
-        virtual std::string getDescription() const;
-        virtual Version getVersion() const;
-        virtual void initialize(Root *root);
-        virtual void terminate();
+        virtual std::string getName() const override;
+        virtual std::string getDescription() const override;
+        virtual Version getVersion() const override;
+        virtual void initialize(Root *root) override;
+        virtual void terminate() override;
         
     public:
         inline GL3GraphicsDriverFactory* getFactory() {
-            return this->factory;
+            return this->factory.get();
         }
         
     private:
         Root *root;
-        GL3GraphicsDriverFactory *factory;
+        std::unique_ptr<GL3GraphicsDriverFactory> factory;
     };
 
     extern GL3Plugin *currentPlugin;
-
 }}}
 
 #endif // __EXENG_GRAPHICS_GL3_GL3PLUGIN_HPP__

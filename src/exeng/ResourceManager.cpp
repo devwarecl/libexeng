@@ -45,11 +45,11 @@ namespace exeng {
 #endif
         
         for (Resource *resource : this->impl->resources) {
-            assert(resource->resourceManager == this);
+            // assert(resource->resourceManager == this);
 #if defined (EXENG_DEBUG)
             std::cout << "    " << resource->toString() << std::endl;
 #endif
-            resource->resourceManager = nullptr;
+            // resource->resourceManager = nullptr;
             resource->release();
         }
         
@@ -60,29 +60,30 @@ namespace exeng {
 #endif
         
         delete this->impl;
+        this->impl = nullptr;
     }
     
-
     void ResourceManager::addResource(Resource* resource) {
         assert(this->impl != nullptr);
         
         this->impl->resources.push_back(resource);
     }
 
-    
     void ResourceManager::putResource(Resource* resource, const std::string &name)  {
         assert(this->impl != nullptr);
         
+        /*
         if (name == "") {
             throw std::logic_error("ResourceManager::putResource: The name cannot be \"\". ");
         }
+        */
         
         // validate previous instance
-		this->impl->namedResources[name] = resource;
+		// this->impl->namedResources[name] = resource;
     }
     
-
     void ResourceManager::removeResource(const std::string &name) {
+        /*
         assert(this->impl != nullptr);
 
 		auto &resources = this->impl->namedResources;
@@ -93,15 +94,15 @@ namespace exeng {
 			delete pos->second;
 			resources.erase(name);
 		}
+        */
     }
     
-	
 	void ResourceManager::removeResource(Resource* resource) {
         assert(this->impl != nullptr);
         
-		resource->release();
-		delete resource;
-
-        this->impl->resources.remove(resource);
+        // resource->resourceManager = nullptr;
+		// resource->release();
+		// delete resource;
+        // this->impl->resources.remove(resource);
     }
 }

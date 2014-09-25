@@ -15,19 +15,38 @@
 #define __EXENG_GRAPHICS_GL3_GRAPHICSDRIVER_HPP__
 
 #include <list>
+#include <memory>
+#include <exception>
 
 #include <GLFW/glfw3.h>
 #include <exeng/graphics/GraphicsDriverBase.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
 
+#include "GL3Buffer.hpp"
+#include "GL3MeshSubset.hpp"
+
 namespace exeng { namespace graphics { namespace gl3 {
 
-    class GL3VertexBuffer;
+    struct GL3Context {
+        GLFWwindow *window = nullptr;
+
+        inline GL3Context()  {
+            if (!::glfwInit()) {
+                throw std::runtime_error("GL3Context::GL3Context -> GLFW initialization error.");
+            }
+        }
+
+        inline ~GL3Context() {
+            ::glfwDestroyWindow(window);
+            ::glfwTerminate();
+        }
+    };
+    
     class GL3ShaderProgram;
 
     /**
-    * @brief GraphicsDriver implemented using OpenGL 3.x
-    */
+     * @brief GraphicsDriver implemented using OpenGL 3.x
+     */
     class GL3GraphicsDriver : public GraphicsDriverBase {    
     public:
         GL3GraphicsDriver();
@@ -46,15 +65,11 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual void endFrame() override;
         
-        virtual void setVertexBuffer(const VertexBuffer* vertexBuffer) override;
-        
-        virtual void setIndexBuffer(const IndexBuffer* indexBuffer) override;
-        
         virtual void setMaterial(const Material* material) override;
         
-        virtual VertexBuffer* createVertexBuffer(const VertexFormat &vertexFormat, int vertexCount, const void* data) override;
+        virtual Buffer* createVertexBuffer(const std::int32_t size, const void* data) override;
         
-        virtual IndexBuffer* createIndexBuffer(IndexFormat::Enum indexFormat, int indexCount, const void* data) override;
+        virtual Buffer* createIndexBuffer(const std::int32_t size, const void* data) override;
         
         virtual Texture* createTexture(TextureType::Enum TextureType, const exeng::Vector3f& TextureSize, const ColorFormat &format) override;
         
@@ -76,19 +91,23 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual void restoreDisplayMode() override;
         
-        virtual const VertexBuffer* getVertexBuffer() const override;
-        
-        virtual const IndexBuffer* getIndexBuffer() const override;
-        
         virtual Shader* createShader( ShaderType::Enum type ) override;
         
         virtual ShaderProgram* createShaderProgram( ) override;
         
         virtual void raiseEvent(exeng::input::EventData &data) override;
         
+        virtual MeshSubset* createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) override;
+
+        virtual void setMeshSubset(MeshSubset *meshSubset) override;
+
+        virtual MeshSubset* getMeshSubset() override;
+
+        virtual const MeshSubset* getMeshSubset() const override;
+
     public:
         inline const GLFWwindow* getGLFWwindow() const {
-            return this->window;
+            return this->context->window;
         }
         
     private:
@@ -108,20 +127,22 @@ namespace exeng { namespace graphics { namespace gl3 {
         void updateTransforms();
         
     private:
-        GLFWwindow *window;
-        
-        Material *defaultMaterial;
-        const ShaderProgram *defaultProgram;
-        const Shader *defaultVertexShader;
-        const Shader *defaultFragmentShader;
+        std::unique_ptr<GL3Context> context;
+        std::unique_ptr<Material> defaultMaterial;
+        std::unique_ptr<const ShaderProgram> defaultProgram;
+        std::unique_ptr<const Shader> defaultVertexShader;
+        std::unique_ptr<const Shader> defaultFragmentShader;
         
         std::list<exeng::input::IEventHandler*> eventHandlers;
         
-        const GL3VertexBuffer *vertexBuffer;
-        const GL3ShaderProgram *shaderProgram;
+        const GL3ShaderProgram *shaderProgram = nullptr;
         
-        bool initialized;
-        bool renderingFrame;
+        GL3Buffer *vertexBuffer = nullptr;
+        GL3Buffer *indexBuffer = nullptr;
+        GL3MeshSubset *meshSubset = nullptr;
+
+        bool initialized = false;
+        bool renderingFrame = false;
         
         DisplayMode displayMode;
         

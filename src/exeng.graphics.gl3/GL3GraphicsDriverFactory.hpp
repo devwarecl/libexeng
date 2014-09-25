@@ -27,8 +27,8 @@ namespace exeng { namespace graphics { namespace gl3 {
         GL3GraphicsDriverFactory();
         virtual ~GL3GraphicsDriverFactory();
         
-        virtual GraphicsDriverInfo getDriverInfo() const;
-        virtual GraphicsDriver* create();
+        virtual GraphicsDriverInfo getDriverInfo() const override;
+        virtual GraphicsDriver* create() override;
         
         /**
         * @brief Get the corresponding graphics driver.

@@ -17,37 +17,37 @@
 #include <exeng/graphics/IndexBuffer.hpp>
 
 namespace exeng { namespace graphics {
-    /**
-     * @brief IndexBuffer allocated on heap memory.
-     */
-    class EXENGAPI HeapIndexBuffer : public IndexBuffer {
-    public:            
-        HeapIndexBuffer(ResourceManager *factory);
-            
-        HeapIndexBuffer(ResourceManager *factory, IndexFormat::Enum indexFormat, int indexCount);
-            
-        virtual ~HeapIndexBuffer();
-            
-        virtual void allocate(IndexFormat::Enum indexFormat, int indexCount);
-            
-        virtual void release();
-            
-        virtual bool isEmpty() const;
-            
-        virtual void* lock();
-            
-        virtual bool isLocked() const;
-            
-        virtual void unlock();
-            
-        virtual int getCount() const;
-            
-        virtual IndexFormat::Enum getFormat() const;
-            
-    private:
-        struct Private;
-        Private *impl;
-    };
+    ///**
+    // * @brief IndexBuffer allocated on heap memory.
+    // */
+    //class EXENGAPI HeapIndexBuffer : public IndexBuffer {
+    //public:            
+    //    HeapIndexBuffer(ResourceManager *factory);
+    //        
+    //    HeapIndexBuffer(ResourceManager *factory, IndexFormat::Enum indexFormat, int indexCount);
+    //        
+    //    virtual ~HeapIndexBuffer();
+    //        
+    //    virtual void allocate(IndexFormat::Enum indexFormat, int indexCount);
+    //        
+    //    virtual void release();
+    //        
+    //    virtual bool isEmpty() const;
+    //        
+    //    virtual void* lock();
+    //        
+    //    virtual bool isLocked() const;
+    //        
+    //    virtual void unlock();
+    //        
+    //    virtual int getCount() const;
+    //        
+    //    virtual IndexFormat::Enum getFormat() const;
+    //        
+    //private:
+    //    struct Private;
+    //    Private *impl;
+    //};
 }}
 
 

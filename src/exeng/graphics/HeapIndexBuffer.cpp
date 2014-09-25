@@ -19,10 +19,9 @@
 #include <boost/checked_delete.hpp>
 #include <exeng/HeapBuffer.hpp>
 
-namespace exeng {
-    namespace graphics {
+namespace exeng { namespace graphics {
         
-        struct HeapIndexBuffer::Private {
+       /* struct HeapIndexBuffer::Private {
             HeapBuffer buffer;
             int count;
             IndexFormat::Enum format;
@@ -100,6 +99,5 @@ namespace exeng {
         IndexFormat::Enum HeapIndexBuffer::getFormat() const {
             assert(this->impl != nullptr);
             return this->impl->format;
-        }
-    }
-}
+        }*/
+}}
