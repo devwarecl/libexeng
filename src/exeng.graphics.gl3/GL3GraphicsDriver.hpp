@@ -67,11 +67,11 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual void setMaterial(const Material* material) override;
         
-        virtual Buffer* createVertexBuffer(const std::int32_t size, const void* data) override;
+        virtual std::unique_ptr<Buffer> createVertexBuffer(const std::int32_t size, const void* data) override;
         
-        virtual Buffer* createIndexBuffer(const std::int32_t size, const void* data) override;
+        virtual std::unique_ptr<Buffer> createIndexBuffer(const std::int32_t size, const void* data) override;
         
-        virtual Texture* createTexture(TextureType::Enum TextureType, const exeng::Vector3f& TextureSize, const ColorFormat &format) override;
+        virtual std::unique_ptr<Texture> createTexture(TextureType::Enum TextureType, const exeng::Vector3f& TextureSize, const ColorFormat &format) override;
         
         virtual void setTransform(Transform::Enum transform, const exeng::Matrix4f& matrix) override;
         
@@ -91,13 +91,13 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual void restoreDisplayMode() override;
         
-        virtual Shader* createShader( ShaderType::Enum type ) override;
+        virtual std::unique_ptr<Shader> createShader( ShaderType::Enum type ) override;
         
-        virtual ShaderProgram* createShaderProgram( ) override;
+        virtual std::unique_ptr<ShaderProgram> createShaderProgram( ) override;
         
         virtual void raiseEvent(exeng::input::EventData &data) override;
         
-        virtual MeshSubset* createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) override;
+        virtual std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) override;
 
         virtual void setMeshSubset(MeshSubset *meshSubset) override;
 
@@ -130,9 +130,6 @@ namespace exeng { namespace graphics { namespace gl3 {
         std::unique_ptr<GL3Context> context;
         std::unique_ptr<Material> defaultMaterial;
         std::unique_ptr<const ShaderProgram> defaultProgram;
-        std::unique_ptr<const Shader> defaultVertexShader;
-        std::unique_ptr<const Shader> defaultFragmentShader;
-        
         std::list<exeng::input::IEventHandler*> eventHandlers;
         
         const GL3ShaderProgram *shaderProgram = nullptr;

@@ -17,16 +17,15 @@
 #include <string>
 #include <vector>
 
+#include <memory>
+
 #include <exeng/ResourceManager.hpp>
 #include <exeng/Enum.hpp>
 #include <exeng/TFlags.hpp>
 #include <exeng/Boundary.hpp>
 #include <exeng/Matrix.hpp>
-
 #include <exeng/Buffer.hpp>
-
 #include <exeng/input/IEventRaiser.hpp>
-
 #include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/Texture.hpp>
@@ -35,8 +34,6 @@
 #include <exeng/graphics/Shader.hpp>
 #include <exeng/graphics/ShaderProgram.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
-
-#include <memory>
 
 namespace exeng { namespace graphics {
 
@@ -215,26 +212,6 @@ namespace exeng { namespace graphics {
         virtual void endFrame() = 0;
         
         /**
-         * @brief Set the currently used vertex buffer
-         */
-        // virtual void setVertexBuffer(const Buffer* vertexBuffer) = 0;
-        
-        /**
-         * @brief Set the current index buffer
-         */
-        // virtual void setIndexBuffer(const Buffer* indexBuffer) = 0;
-        
-        /**
-         * @brief Get the vertex buffer currently used for rendering operations.
-         */
-        // virtual const Buffer* getVertexBuffer() const = 0;
-        
-        /**
-         * @brief Get the currently used index buffer.
-         */
-        // virtual const Buffer* getIndexBuffer() const = 0;
-        
-        /**
          * @brief Set the currently used material
          */
         virtual void setMaterial(const Material* material) = 0;
@@ -247,17 +224,17 @@ namespace exeng { namespace graphics {
         /**
          * @brief Create a new hardware-based vertex buffer. 
          */
-        virtual Buffer* createVertexBuffer(const std::int32_t size, const void* data) = 0;
+        virtual std::unique_ptr<Buffer> createVertexBuffer(const std::int32_t size, const void* data) = 0;
         
         /**
          * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
          */
-        virtual Buffer* createIndexBuffer(const std::int32_t size, const void* data) = 0;
+        virtual std::unique_ptr<Buffer> createIndexBuffer(const std::int32_t size, const void* data) = 0;
         
         /**
          * @brief Create a new mesh subset object.
          */
-        virtual MeshSubset* createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) = 0;
+        virtual std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) = 0;
 
         /**
          * @brief Bound the specified MeshSubset object.
@@ -277,27 +254,27 @@ namespace exeng { namespace graphics {
         /**
          * @brief Create a new texture object.
          */
-        virtual Texture* createTexture(TextureType::Enum textureType, const exeng::Vector3f& textureSize, const ColorFormat &format) = 0;
+        virtual std::unique_ptr<Texture> createTexture(TextureType::Enum textureType, const Vector3f& textureSize, const ColorFormat &format) = 0;
         
         /**
          * @brief Set the current transformation matrix
          */
-        virtual void setTransform(Transform::Enum transform, const exeng::Matrix4f& matrix) = 0;
+        virtual void setTransform(Transform::Enum transform, const Matrix4f& matrix) = 0;
         
         /**
          * @brief Get the current transformation applied on the device.
          */
-        virtual exeng::Matrix4f getTransform(Transform::Enum transform) = 0;
+        virtual Matrix4f getTransform(Transform::Enum transform) = 0;
         
         /**
          * @brief Set the area of the screen that can be rendered
          */
-        virtual void setViewport(const exeng::Rectf& viewport) = 0;
+        virtual void setViewport(const Rectf& viewport) = 0;
         
         /**
          * @brief Return the currently setted viewport.
          */
-        virtual exeng::Rectf getViewport() const = 0;
+        virtual Rectf getViewport() const = 0;
         
         /**
          * @brief Render, using the specified primitive and the currently setted material, 
@@ -305,21 +282,21 @@ namespace exeng { namespace graphics {
          * @param primitive The primitive type.
          * @param count The vertex count to utilize from the currently setted buffers.
          */
-        virtual void render(exeng::graphics::Primitive::Enum primitive, int count) = 0;
+        virtual void render(Primitive::Enum primitive, int count) = 0;
         
         /**
          * @brief createShader
          * @param type
          * @return 
          */
-        virtual Shader* createShader( ShaderType::Enum type ) = 0;
+        virtual std::unique_ptr<Shader> createShader(ShaderType::Enum type) = 0;
         
         /**
          * @brief Create a new shader program, specific to the current graphics driver.
          * @return A new shader program, instance of an derived implementation class of the 
          * ShaderProgram abstract class.
          */
-        virtual ShaderProgram* createShaderProgram( ) = 0;
+        virtual std::unique_ptr<ShaderProgram> createShaderProgram() = 0;
         
         /**
          * @brief Set the name of the specified transformation matrix in shaders.

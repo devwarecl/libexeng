@@ -40,7 +40,7 @@ namespace raytracer {
         virtual void handleEvent(const exeng::input::EventData &data);
         
     private:
-        exeng::graphics::Texture* createTexture (
+        std::unique_ptr<exeng::graphics::Texture> createTexture (
             exeng::graphics::GraphicsDriver *driver, 
             const exeng::Vector3f& size, 
             const exeng::Vector4f &color
@@ -56,7 +56,7 @@ namespace raytracer {
         std::unique_ptr<raytracer::samplers::Sampler> sampler;
         std::unique_ptr<raytracer::tracers::Tracer> tracer;
         std::unique_ptr<exeng::scenegraph::Scene> scene;
-
+        
         std::unique_ptr<exeng::graphics::Texture> screenTexture;
         std::unique_ptr<exeng::graphics::Material> screenMaterial;
         std::unique_ptr<exeng::graphics::MeshSubset> screenMeshSubset;

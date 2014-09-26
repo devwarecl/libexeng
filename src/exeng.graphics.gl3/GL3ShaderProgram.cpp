@@ -23,17 +23,11 @@
 #include <iostream>
 
 namespace exeng { namespace graphics { namespace gl3 {
-
-    GL3ShaderProgram::GL3ShaderProgram() {
-        this->programId = 0;
-        this->modified = false;
-        this->linked = false;
-        
+    GL3ShaderProgram::GL3ShaderProgram() {        
         this->programId = ::glCreateProgram();
         
         GL3_CHECK();
     }
-
 
     GL3ShaderProgram::~GL3ShaderProgram() {
         if (this->programId != 0) {
@@ -44,60 +38,25 @@ namespace exeng { namespace graphics { namespace gl3 {
         GL3_CHECK();
     }
 
-
     TypeInfo GL3ShaderProgram::getTypeInfo() const {
         return TypeId<GL3ShaderProgram>();
     }
-
-
-    void GL3ShaderProgram::addShader(Shader *shader) {
+    
+    void GL3ShaderProgram::addShader(std::unique_ptr<Shader> shader) {
         assert (this->programId != 0);
         
         if (shader == nullptr) {
-            throw std::invalid_argument("GL3ShaderProgram::addShader: "
-                                        "The shader object can't be null");
+            throw std::invalid_argument("GL3ShaderProgram::addShader -> The shader object can't be null");
         }
         
         if (shader->getTypeInfo() != TypeId<GL3Shader>()) {
-            throw std::invalid_argument("GL3ShaderProgram::addShader: "
-                                        "The shader object must be of type GL3Shader.");
+            throw std::invalid_argument("GL3ShaderProgram::addShader -> The shader object must be of type GL3Shader.");
         }
         
         //! TODO: Check the creator objects too
         this->modified = true;
-        this->shaders.push_back(static_cast<GL3Shader*>(shader));
+        this->shaders.push_back(std::move(shader));
     }
-
-
-    void GL3ShaderProgram::removeShader(Shader *shader) {
-        assert (this->programId != 0);
-        
-        if (shader == nullptr) {
-            throw std::invalid_argument("GL3ShaderProgram::addShader: "
-                                        "The shader object can't be null");
-        }
-        
-        if (shader->getTypeInfo() != TypeId<GL3Shader>()) {
-            throw std::invalid_argument("GL3ShaderProgram::addShader: "
-                                        "The shader object must be of type GL3Shader.");
-        }
-        
-        //! TODO: Check the creator objects too
-        GL3Shader *shader_gl3 = static_cast<GL3Shader*>(shader);
-        auto &shaders = this->shaders;
-        auto pos = std::find(std::begin(shaders), std::end(shaders), shader_gl3);
-        
-        if (pos == shaders.end()) {
-            throw std::runtime_error("GL3ShaderProgram::addShader: "
-                                    "The shader object doesn't exist in this shader program");
-        }
-        
-        shaders.erase(pos);
-        this->modified = true;
-        
-        GL3_CHECK();
-    }
-
 
     /**
     * @brief The ProgramAttacher class uses RAII to attach the shaders. 
@@ -105,15 +64,14 @@ namespace exeng { namespace graphics { namespace gl3 {
     */
     class ProgramAttacher {            
     public:
-        ProgramAttacher(GLuint p, const std::list<GL3Shader*> &s) : 
-            programId(p), shaders(s) {
+        ProgramAttacher(GLuint p, std::list<std::unique_ptr<Shader>> shaders_) : programId(p), shaders(std::move(shaders_)) {
             
             assert(programId != 0);
             assert(shaders.size() != 0);
             
-            for ( Shader* sh : this->shaders ) {
-                GL3Shader* shader = static_cast<GL3Shader*>(sh);
-                ::glAttachShader( this->programId, shader->getName() );
+            for ( auto &shader : this->shaders ) {
+                GL3Shader* glshader = static_cast<GL3Shader*>(shader.get());
+                ::glAttachShader(this->programId, glshader->getName());
             }
             
             GL3_CHECK();
@@ -124,25 +82,23 @@ namespace exeng { namespace graphics { namespace gl3 {
             assert(shaders.size() != 0);
             
             // Detach the programs. They are not longer neccesary.
-            for ( Shader* sh : this->shaders ) {
-                GL3Shader* shader = static_cast<GL3Shader*>(sh);
-                ::glDetachShader( this->programId, shader->getName() );
+            for ( auto &shader : this->shaders ) {
+                GL3Shader* glshader = static_cast<GL3Shader*>(shader.get() );
+                ::glDetachShader( this->programId, glshader->getName() );
             }
             
             GL3_CHECK();
         }
         
-        
         GLuint programId;
-        const std::list<GL3Shader*> &shaders;
+        std::list<std::unique_ptr<Shader>> shaders;
     };
-
 
     void GL3ShaderProgram::link() {
         assert (this->programId != 0);
         
         if (this->linked == false || this->modified == true || this->shaders.size() > 0) {
-            ProgramAttacher attacher(this->programId, this->shaders);
+            ProgramAttacher attacher(this->programId, std::move(this->shaders));
             
             // Link the shaders to the program, 
             ::glLinkProgram(this->programId);
@@ -172,27 +128,22 @@ namespace exeng { namespace graphics { namespace gl3 {
         GL3_CHECK();
     }
 
-
     bool GL3ShaderProgram::isLinked() const {
         assert (this->programId != 0);
         return this->linked;
     }
-
 
     bool GL3ShaderProgram::mustRelink() const {
         assert (this->programId != 0);
         return this->modified;
     }
 
-
     GLuint GL3ShaderProgram::getProgramId() const {
         assert (this->programId != 0);
         return this->programId;
     }
 
-
     void GL3ShaderProgram::release() {
         std::cout << "GL3ShaderProgram::release: Not implemented." << std::endl;
     }
-
 }}}

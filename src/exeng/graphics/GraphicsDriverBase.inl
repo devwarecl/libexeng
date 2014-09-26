@@ -39,8 +39,8 @@ namespace exeng { namespace graphics {
         return this->viewport;
     }
 
-    inline Buffer* GraphicsDriverBase::createVertexBuffer(const std::int32_t size, const void* data)  {
-        Buffer *buffer = new HeapBuffer(size);
+    inline std::unique_ptr<Buffer> GraphicsDriverBase::createVertexBuffer(const std::int32_t size, const void* data)  {
+        auto buffer = std::unique_ptr<Buffer>(new HeapBuffer(size));
 
         if (data) {
             buffer->setData(data, size);
@@ -49,8 +49,8 @@ namespace exeng { namespace graphics {
         return buffer;
     }
 
-    inline Buffer* GraphicsDriverBase::createIndexBuffer(const std::int32_t size, const void* data) {
-        Buffer *buffer = new HeapBuffer(size);
+    inline std::unique_ptr<Buffer> GraphicsDriverBase::createIndexBuffer(const std::int32_t size, const void* data) {
+        auto buffer = std::unique_ptr<Buffer>(new HeapBuffer(size));
 
         if (data) {
             buffer->setData(data, size);

@@ -15,52 +15,45 @@
 #ifndef __EXENG_GRAPHICS_SHADERPROGRAM_HPP__
 #define __EXENG_GRAPHICS_SHADERPROGRAM_HPP__
 
+#include <memory>
 #include <exeng/Resource.hpp>
 
-namespace exeng {
-namespace graphics {
+namespace exeng { namespace graphics {
 
-class EXENGAPI Shader;
+    class EXENGAPI Shader;
 
-/**
- * @brief A shader program hold a collection of shader subprograms.
- */
-class EXENGAPI ShaderProgram : public Resource {
-public:
-    ShaderProgram();
-    
-    virtual ~ShaderProgram();
-    
     /**
-     * @brief addShader
-     * @param shader
+     * @brief A shader program hold a collection of shader subprograms.
      */
-    virtual void addShader(Shader *shader) = 0;
+    class EXENGAPI ShaderProgram : public Resource {
+    public:
+        ShaderProgram();
     
-    /**
-     * @brief removeShader
-     * @param shader
-     */
-    virtual void removeShader(Shader *shader) = 0;
+        virtual ~ShaderProgram();
+        
+        /**
+         * @brief addShader
+         * @param shader
+         */
+        virtual void addShader(std::unique_ptr<Shader> shader) = 0;
+        
+        /**
+         * @brief link
+         */
+        virtual void link() = 0;
     
-    /**
-     * @brief link
-     */
-    virtual void link() = 0;
+        /**
+         * @brief isLinked
+         * @return 
+         */
+        virtual bool isLinked() const = 0;
     
-    /**
-     * @brief isLinked
-     * @return 
-     */
-    virtual bool isLinked() const = 0;
-    
-    /**
-     * @brief Check if the shader program must be linked.
-     * @return 
-     */
-    virtual bool mustRelink() const = 0;
-};
-}
-}
+        /**
+         * @brief Check if the shader program must be linked.
+         * @return 
+         */
+        virtual bool mustRelink() const = 0;
+    };
+}}
 
 #endif // __EXENG_GRAPHICS_SHADERPROGRAM_HPP__

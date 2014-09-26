@@ -31,8 +31,8 @@ namespace exeng { namespace graphics {
         virtual exeng::Matrix4f getTransform(Transform::Enum transform) override;
         virtual exeng::Rectf getViewport() const override;
         virtual const exeng::graphics::Material* getMaterial() const override;
-        virtual Buffer* createVertexBuffer(const std::int32_t size, const void* data) override;
-        virtual Buffer* createIndexBuffer(const std::int32_t size, const void* data) override;
+        virtual std::unique_ptr<Buffer> createVertexBuffer(const std::int32_t size, const void* data) override;
+        virtual std::unique_ptr<Buffer> createIndexBuffer(const std::int32_t size, const void* data) override;
         virtual void setTransformName(Transform::Enum transform, const std::string &name) override;
         virtual std::string getTransformName(Transform::Enum transform) const  override;
         

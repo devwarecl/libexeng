@@ -49,7 +49,7 @@ namespace exeng { namespace scenegraph {
         }
 
     private:
-        Buffer* generateCubeVertices(GraphicsDriver *graphicsDriver) const {
+        std::unique_ptr<Buffer> generateCubeVertices(GraphicsDriver *graphicsDriver) const {
             Vertex vertices[] = {
                 {{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},
                 {{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f}},
@@ -90,7 +90,7 @@ namespace exeng { namespace scenegraph {
             return graphicsDriver->createVertexBuffer(sizeof(vertices), vertices);
         }
         
-        Buffer* generateCubeIndices(GraphicsDriver *graphicsDriver) const {
+        std::unique_ptr<Buffer> generateCubeIndices(GraphicsDriver *graphicsDriver) const {
             int indices[] = {
                 0 + 0,  0 + 1,  0 + 2,      0 + 1,  0 + 3,  0 + 2,
                 4 + 0,  4 + 1,  4 + 2,      4 + 1,  4 + 3,  4 + 2, 

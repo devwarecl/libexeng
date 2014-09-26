@@ -71,8 +71,8 @@ namespace raytracer {
     /**
      * @brief Create a texture with a default color
      */
-    Texture* RayTracerApp::createTexture(GraphicsDriver *driver, const Vector3f& size, const Vector4f &color) {
-        Texture *texture = driver->createTexture(TextureType::Tex2D, size, ColorFormat::getColorFormatR8G8B8A8());
+    std::unique_ptr<Texture> RayTracerApp::createTexture(GraphicsDriver *driver, const Vector3f& size, const Vector4f &color) {
+        std::unique_ptr<Texture> texture = driver->createTexture(TextureType::Tex2D, size, ColorFormat::getColorFormatR8G8B8A8());
         
         struct Texel { std::uint8_t red, green, blue, alpha; };
         
@@ -132,16 +132,16 @@ namespace raytracer {
         this->tracer.reset(tracer);
         
         // Create a base texture.
-        Texture *texture = this->createTexture (
+        this->screenTexture = this->createTexture (
             this->driver.get(), 
             {static_cast<float>(mode.size.width), static_cast<float>(mode.size.height)},
             {0.0f, 0.5f, 1.0f, 1.0f}
         );
 
-        this->tracer->setRenderTarget(texture);
+        this->tracer->setRenderTarget(screenTexture.get());
         
         this->screenMaterial = std::unique_ptr<Material>(new Material());
-        this->screenMaterial->getLayer(0)->setTexture(texture);
+        this->screenMaterial->getLayer(0)->setTexture(screenTexture.get());
         
         this->camera.setLookAt({0.0f, 0.0f, 0.0f});
         this->camera.setPosition({0.0f, 0.0f, -2.0f});

@@ -27,9 +27,11 @@
 #include "GL3MeshSubset.hpp"
 
 #include <exeng/DataType.hpp>
-#include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/input/IEventHandler.hpp>
+#include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/graphics/Material.hpp>
+
+
 
 #include <map>
 
@@ -162,31 +164,29 @@ namespace exeng { namespace graphics { namespace gl3 {
         ::ogl_LoadFunctions();
         
         // Default vertex shader
-        Shader *vertexShader = this->createShader(ShaderType::Vertex);
+        std::unique_ptr<Shader> vertexShader = this->createShader(ShaderType::Vertex);
         
         vertexShader->setSourceCode(defaultVSSource);
         vertexShader->compile();
         
         // Default pixel shader
-        Shader *fragmentShader = this->createShader(ShaderType::Fragment);
+        std::unique_ptr<Shader> fragmentShader = this->createShader(ShaderType::Fragment);
         
         fragmentShader->setSourceCode(defaultFSSource);
         fragmentShader->compile();
         
         // Default shader program
-        ShaderProgram *shaderProgram = this->createShaderProgram();
+        std::unique_ptr<ShaderProgram> shaderProgram = this->createShaderProgram();
         
-        shaderProgram->addShader(vertexShader);
-        shaderProgram->addShader(fragmentShader);
+        shaderProgram->addShader(std::move(vertexShader));
+        shaderProgram->addShader(std::move(fragmentShader));
         shaderProgram->link();
         
         // Default material
-        this->defaultMaterial->setShaderProgram(shaderProgram);
+        this->defaultMaterial->setShaderProgram(shaderProgram.get());
         
         // Hold all the default objects
-        this->defaultVertexShader = std::unique_ptr<Shader>(vertexShader);
-        this->defaultFragmentShader = std::unique_ptr<Shader>(fragmentShader);
-        this->defaultProgram = std::unique_ptr<ShaderProgram>(shaderProgram);
+        this->defaultProgram = std::move(shaderProgram);
         
         this->displayMode = displayMode;
         
@@ -437,8 +437,8 @@ namespace exeng { namespace graphics { namespace gl3 {
         this->material = material;
     }
 
-    Buffer* GL3GraphicsDriver::createVertexBuffer(const std::int32_t size, const void* data) {
-        Buffer *vertexBuffer = new GL3Buffer(GL_ARRAY_BUFFER, size);
+    std::unique_ptr<Buffer> GL3GraphicsDriver::createVertexBuffer(const std::int32_t size, const void* data) {
+        auto vertexBuffer = std::unique_ptr<Buffer>(new GL3Buffer(GL_ARRAY_BUFFER, size));
 
         if (data) {
             vertexBuffer->setData(data, size);
@@ -447,8 +447,8 @@ namespace exeng { namespace graphics { namespace gl3 {
         return vertexBuffer;
     }
 
-    Buffer* GL3GraphicsDriver::createIndexBuffer(const std::int32_t size, const void* data) {
-        Buffer *vertexBuffer = new GL3Buffer(GL_ELEMENT_ARRAY_BUFFER, size);
+    std::unique_ptr<Buffer> GL3GraphicsDriver::createIndexBuffer(const std::int32_t size, const void* data) {
+        auto vertexBuffer = std::unique_ptr<Buffer>(new GL3Buffer(GL_ARRAY_BUFFER, size));
 
         if (data) {
             vertexBuffer->setData(data, size);
@@ -457,8 +457,8 @@ namespace exeng { namespace graphics { namespace gl3 {
         return vertexBuffer;
     }
 
-    Texture* GL3GraphicsDriver::createTexture(TextureType::Enum type, const Vector3f& size, const ColorFormat &format) {
-        Texture *texture = new GL3Texture(type, size, format);
+    std::unique_ptr<Texture> GL3GraphicsDriver::createTexture(TextureType::Enum type, const Vector3f& size, const ColorFormat &format) {
+        auto texture = std::unique_ptr<Texture>(new GL3Texture(type, size, format));
         // this->addResource(texture);
         
         return texture;
@@ -536,18 +536,17 @@ namespace exeng { namespace graphics { namespace gl3 {
         throw std::runtime_error("GL3GraphicsDriver::restoreDisplayMode: Not implemented yet.");
     }
     
-    Shader* GL3GraphicsDriver::createShader( ShaderType::Enum type ) {
-        Shader *resource = new GL3Shader(type);
+    std::unique_ptr<Shader> GL3GraphicsDriver::createShader( ShaderType::Enum type ) {
+        auto shader = std::unique_ptr<Shader>(new GL3Shader(type));
         // this->addResource(resource);
         
-        return resource;
+        return shader;
     }
 
-    ShaderProgram* GL3GraphicsDriver::createShaderProgram( ) {
-        ShaderProgram *resource = new GL3ShaderProgram();
+    std::unique_ptr<ShaderProgram> GL3GraphicsDriver::createShaderProgram( ) {
+        auto shaderProgram = std::unique_ptr<ShaderProgram>(new GL3ShaderProgram());
         // this->addResource(resource);
-        
-        return resource;
+        return shaderProgram;
     }
 
     void GL3GraphicsDriver::preRenderMaterial(const Material *material) {
@@ -658,7 +657,9 @@ namespace exeng { namespace graphics { namespace gl3 {
         }
     }
 
-    MeshSubset* GL3GraphicsDriver::createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) {
-        return new GL3MeshSubset( std::move(vertexBuffers) , format);
+    std::unique_ptr<MeshSubset> GL3GraphicsDriver::createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) { 
+        auto meshSubset = std::unique_ptr<MeshSubset>(new GL3MeshSubset( std::move(vertexBuffers) , format));
+
+        return meshSubset;
     }
 }}}

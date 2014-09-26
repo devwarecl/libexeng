@@ -511,8 +511,8 @@ namespace simple {
         }
 
     private:
-        std::vector<float> vertexData = {0};
-        std::vector<int> indexData = {0};
+        std::vector<float> vertexData /*= {0}*/;
+        std::vector<int> indexData /*= {0}*/;
         GLuint vao = 0;
         GLuint vertexBuffer = 0;
         GLuint indexBuffer = 0;
