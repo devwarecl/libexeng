@@ -19,7 +19,9 @@ namespace exeng {
     /**
      * @brief Base class for 'strogly typed' enumerations
      */
-    struct Enum { private: Enum(); };
+    struct Enum { 
+        Enum() = delete; 
+    };
 }
 
 #endif // __EXENG_ENUM_HPP__

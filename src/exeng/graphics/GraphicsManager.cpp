@@ -64,7 +64,7 @@ namespace exeng { namespace graphics {
         factories.erase(pos);
     }
     
-    GraphicsDriver* GraphicsManager::createDriver() {
+    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver() {
         assert( this->impl != nullptr );
         
         //! TODO: Actually, implement the algorithm
@@ -75,7 +75,7 @@ namespace exeng { namespace graphics {
         return nullptr;
     }
     
-    GraphicsDriver* GraphicsManager::createDriver(const GraphicsDriverInfo &info) {
+    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver(const GraphicsDriverInfo &info) {
         assert( this->impl != nullptr );
         
         auto &factories = this->impl->factories;

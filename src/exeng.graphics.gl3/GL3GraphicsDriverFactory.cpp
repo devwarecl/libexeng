@@ -16,9 +16,7 @@
 #include "GL3GraphicsDriverFactory.hpp"
 
 namespace exeng { namespace graphics { namespace gl3 {
-
     GL3GraphicsDriverFactory::GL3GraphicsDriverFactory() {}
-
     GL3GraphicsDriverFactory::~GL3GraphicsDriverFactory() {}
 
     GraphicsDriverInfo GL3GraphicsDriverFactory::getDriverInfo() const {
@@ -34,13 +32,12 @@ namespace exeng { namespace graphics { namespace gl3 {
         return info;
     }
 
+    std::unique_ptr<GraphicsDriver> GL3GraphicsDriverFactory::create() {
+        auto driver = std::unique_ptr<GraphicsDriver>(new GL3GraphicsDriver());
+        this->graphicsDrivers.push_back(static_cast<GL3GraphicsDriver*>(driver.get()));
 
-    GraphicsDriver* GL3GraphicsDriverFactory::create() {
-        auto *driver = new GL3GraphicsDriver();
-        this->graphicsDrivers.push_back(driver);
         return driver;
     }
-
 
     GL3GraphicsDriver* GL3GraphicsDriverFactory::getGraphicsDriver(const GLFWwindow *window) {
         auto &drivers = this->graphicsDrivers;

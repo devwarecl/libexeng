@@ -15,6 +15,5 @@
 #include <exeng/Enum.hpp>
 
 namespace exeng {
-Enum::Enum() {
-}
+
 }

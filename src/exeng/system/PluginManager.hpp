@@ -28,6 +28,9 @@ namespace exeng { namespace system {
     class EXENGAPI PluginManager {
         friend class exeng::Root;
 
+        PluginManager(const PluginManager &other) = delete;
+        PluginManager& operator= (const PluginManager& other) = delete; 
+
     private:
         PluginManager(Root* root);
             
@@ -63,12 +66,7 @@ namespace exeng { namespace system {
 
     private:
         struct Private;
-        Private* impl;
-        
-        // Not implemented methods
-    private:
-        PluginManager(const PluginManager &other);
-        PluginManager& operator= (const PluginManager& other); 
+        Private* impl = nullptr;
     };
 }}
 

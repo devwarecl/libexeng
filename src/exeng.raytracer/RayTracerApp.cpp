@@ -97,7 +97,7 @@ namespace raytracer {
         this->getRoot()->getPluginManager()->load("exeng.graphics.gl3", path);
         
         // initialize the gl3 driver, in windowed mode
-        this->driver.reset(this->getRoot()->getGraphicsManager()->createDriver());
+        this->driver = std::unique_ptr<GraphicsDriver>(this->getRoot()->getGraphicsManager()->createDriver());
         this->driver->addEventHandler(this);
         this->driver->initialize();
         DisplayMode mode = this->driver->getDisplayMode();
