@@ -50,7 +50,7 @@ add_executable(exeng.raytracer WIN32 ${BaseFiles} ${Tracers} ${Samplers} ${Kerne
 
 target_link_libraries(exeng.raytracer exeng exeng.main ${Boost_LIBRARIES} ${OPENCL_LIBRARIES} ${OPENGL_LIBRARIES})
 
-source_group(root		FILES ${BaseFiles})
+source_group(\\			FILES ${BaseFiles})
 source_group(tracers	FILES ${Tracers})
 source_group(samplers	FILES ${Samplers})
 source_group(kernels	FILES ${Kernels})

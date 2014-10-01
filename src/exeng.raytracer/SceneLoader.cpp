@@ -1,33 +1,35 @@
 
 
-#include <exeng/Vector.hpp>
-#include <exeng/scenegraph/Box.hpp>
-#include <exeng/graphics/Material.hpp>
-#include <exeng/scenegraph/TSolidGeometry.hpp>
+#include "SceneLoader.hpp"
 
-#include <exeng.raytracer/SceneLoader.hpp>
+#include <exeng/Vector.hpp>
+#include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/graphics/Material.hpp>
 
 namespace raytracer {
     using namespace exeng;
     using namespace exeng::scenegraph;
     using namespace exeng::graphics;
     
-    SceneLoader::SceneLoader() {}
     SceneLoader::~SceneLoader() {}
     
-    Scene* SceneLoader::loadScene(const std::string &filename) {
-        // For now, just create a simple scene, boxed scene.
-        Scene *scene = new Scene();
-        
+    SceneLoader::SceneLoader(GraphicsDriver *driver_, MeshManager *meshManager_) : graphicsDriver(driver_), meshManager(meshManager_) {
+    }
+    
+    // For now, just create a simple scene, boxed scene.
+    std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename) {
+        // empty object
+        auto scene = std::unique_ptr<Scene>(new Scene());
+
+        // box material
         Material *boxMaterial = scene->createMaterial("boxMaterial");
         boxMaterial->setProperty("diffuse", Vector4f(1.0f, 0.3f, 0.2f, 1.0f));
-        
-        Geometry* boxGeometry = new TSolidGeometry<Boxf>(
-            Boxf(-Vector3f(10.0f), Vector3f(10.0f)),
-            boxMaterial
-        );
-        
-        scene->getRootNode()->addChild("boxGeometry")->setData(boxGeometry);
+
+        // box mesh
+        Mesh *boxMesh = this->meshManager->getMesh("\\cube", this->graphicsDriver);
+
+        // box scenenode
+        scene->getRootNode()->addChild("boxNode")->setData(boxMesh);
         
         return scene;
     }

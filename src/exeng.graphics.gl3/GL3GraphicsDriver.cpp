@@ -31,8 +31,6 @@
 #include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/graphics/Material.hpp>
 
-
-
 #include <map>
 
 using namespace exeng;
@@ -388,21 +386,20 @@ namespace exeng { namespace graphics { namespace gl3 {
         }
             
         // Check if the  textures were created by this GL3GraphicsDriver.
-        const int layerCount = material->getLayerCount();
-        const MaterialLayer *layer = nullptr;
-        
-        //for (int i=0; i<layerCount; ++i) {
-        //    layer = material->getLayer(i);
+        // const int layerCount = material->getLayerCount();
+        // const MaterialLayer *layer = nullptr;
+        // for (int i=0; i<layerCount; ++i) {
+        //     layer = material->getLayer(i);
         //    
-        //    if (layer->hasTexture() == true && layer->getTexture()->getResourceManager() != this) {
-        //        std::string msg;
+        //     if (layer->hasTexture() == true && layer->getTexture()->getResourceManager() != this) {
+        //         std::string msg;
         //        
-        //        msg += "GL3GraphicsDriver::setMaterial: ";
-        //        msg += "The textures used by this material are not valid.";
+        //         msg += "GL3GraphicsDriver::setMaterial: ";
+        //         msg += "The textures used by this material are not valid.";
         //        
-        //        throw std::logic_error(msg);
-        //    }
-        //}
+        //         throw std::logic_error(msg);
+        //     }
+        // }
         
         // Check for shader program info and status
         if ( material->getShaderProgram() != nullptr ) {
@@ -500,7 +497,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         GLint bufferId;
         ::glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &bufferId);
         assert( bufferId != 0 );
-        assert( bufferId == this->vertexBuffer->getBufferId() );
+        assert( bufferId == (GLint)this->vertexBuffer->getBufferId() );
 #endif
 
         //! TODO: Implement rendering path with the index buffer in the future.
@@ -538,14 +535,11 @@ namespace exeng { namespace graphics { namespace gl3 {
     
     std::unique_ptr<Shader> GL3GraphicsDriver::createShader( ShaderType::Enum type ) {
         auto shader = std::unique_ptr<Shader>(new GL3Shader(type));
-        // this->addResource(resource);
-        
         return shader;
     }
 
     std::unique_ptr<ShaderProgram> GL3GraphicsDriver::createShaderProgram( ) {
         auto shaderProgram = std::unique_ptr<ShaderProgram>(new GL3ShaderProgram());
-        // this->addResource(resource);
         return shaderProgram;
     }
 
@@ -652,13 +646,13 @@ namespace exeng { namespace graphics { namespace gl3 {
     }
 
     void GL3GraphicsDriver::raiseEvent(EventData &data) {
-        for ( IEventHandler *handler : this->eventHandlers ) {
+        for (IEventHandler *handler : this->eventHandlers) {
             handler->handleEvent(data);
         }
     }
 
-    std::unique_ptr<MeshSubset> GL3GraphicsDriver::createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) { 
-        auto meshSubset = std::unique_ptr<MeshSubset>(new GL3MeshSubset( std::move(vertexBuffers) , format));
+    std::unique_ptr<MeshSubset> GL3GraphicsDriver::createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) { 
+        auto meshSubset = std::unique_ptr<MeshSubset>(new GL3MeshSubset( std::move(vertexBuffers), std::move(indexBuffer), format));
 
         return meshSubset;
     }

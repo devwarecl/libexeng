@@ -137,12 +137,10 @@ namespace exeng { namespace graphics {
 		}
 	};
 
-	Material::Material() : impl(nullptr) {
-		this->impl = new Material::Private();
+	Material::Material() : impl(new Material::Private()) {
 	}
 
-	Material::Material(const std::string &name) : impl(nullptr) {
-        this->impl = new Material::Private();
+	Material::Material(const std::string &name) : impl(new Material::Private()) {
         this->setName(name);
     }
 	

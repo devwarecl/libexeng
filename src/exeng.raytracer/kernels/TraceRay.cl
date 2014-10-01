@@ -20,6 +20,12 @@ typedef struct {
 	float3 normal;
 } plane_t;
 
+typedef struct {
+    float3 position;
+    float3 look_at;
+    float3 up;
+} camera_t;
+
 bool intersect_plane(intersect_info_t *info, ray_t ray, plane_t plane) {
 	float distance = dot(plane.normal, plane.point - ray.point) / dot(plane.normal, ray.direction);
 	
@@ -59,11 +65,13 @@ bool intersect_triangle(intersect_info_t *info, ray_t ray, float3 p1, float3 p2,
 	float v = triple(pq, pa, pc);
 	float w = triple(pq, pb, pa);
 
-	if ((u > 0.0f && v > 0.0f && w > 0.0f) /* || (u < 0.0f && v < 0.0f && w < 0.0f)*/) {
-		return true;
-	} else {
-		return false;
-	}
+	return (u > 0.0f && v > 0.0f && w > 0.0f);
+
+	// if ((u > 0.0f && v > 0.0f && w > 0.0f) /* || (u < 0.0f && v < 0.0f && w < 0.0f)*/) {
+	//   return true;
+	//} else {
+	//	return false;
+	//}
 }
 
 constant vertex_t vertices[] =  {
@@ -116,34 +124,13 @@ constant int indices[] = {
 constant float3 screen_size = {640.0f, 480.0f, 0.0f};
 constant float3 half_size = (float3)(639.0f * 0.5f, 479.0f * 0.5f, 0.0f);
 
-/*
-	ray_t cast_ray(int2 coords, float3 eye_coord) {
-		float3 coordf = {(float)coords.x, (float)coords.y, 0.0f};
-
-		ray_t ray = {
-			eye_coord, 
-			coordf - half_size + (float3)(0.5f, 0.5f, -150.0f)
-		};
-
-		return ray;
-	}
-*/
-
-ray_t cast_ray(int2 coords, float3 eye_coord, float2 sample) {
+ray_t cast_ray(int2 coords, float3 cam_pos, float3 cam_lookat, float2 sample) {
     float3 coordsf = (float3)((float)coords.x, (float)coords.y, 0.0f) + (float3)(sample.x, sample.y, 0.0f);
     
-/*
-	ray_t ray = {
-		eye_coord, 
-		normalize(coordf - half_size + (float3)(0.5f, 0.5f, 150.0f) + (float3)(sample.x, sample.y, 0.0f))
-	};
-*/
+	float3 cam_up = (float3)(0.0f, 1.0f, 0.0f);
+	float3 cam_dir = normalize(cam_lookat - cam_pos);
+    float3 cam_right = normalize(cross(cam_up, cam_dir));
     
-    float3 cam_pos = eye_coord;
-    float3 cam_right = (float3)(1.0f, 0.0f, 0.0f);
-    float3 cam_up = (float3)(0.0f, 1.0f, 0.0f);
-    float3 cam_dir = (float3)(0.0f, 0.0f, 1.0f);
-        
     float3 normalized_coords = (coordsf / screen_size) - (float3)(0.5f, 0.5f, 0.0f);
     float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
     
@@ -186,9 +173,9 @@ __kernel void tracerKernel (
 	__write_only image2d_t image, 
 	global float2 *samples, 
 	int sample_count, 
-	float cam_x,
-	float cam_y, 
-	float cam_z) 
+	float cx, float cy, float cz,
+    float lx, float ly, float lz,
+    float ux, float uy, float uz)
 {
 	// pixel coordinate.
 	int2 coords = (int2)(get_global_id(0), get_global_id(1));
@@ -200,13 +187,13 @@ __kernel void tracerKernel (
     
 	// cast multisampled ray
 	// for (int i=0; i<sample_count; ++i) {
-	// 	ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), samples[i]);
+	// 	ray_t ray = cast_ray(coords, camera[0], samples[i]);
 	// 	color += trace_ray(ray, background_color, vertices, indices, index_count);
 	// }
-	color /= (float)sample_count;
+	// color /= (float)sample_count;
     
 	// cast no multisampled ray
-	ray_t ray = cast_ray(coords, (float3)(cam_x, cam_y, cam_z), (float2)(0.0f, 0.0f));
+	ray_t ray = cast_ray(coords, (float3)(cx, cy, cz), (float3)(lx, ly, lz), (float2)(0.0f, 0.0f));
 	color = trace_ray(ray, background_color, vertices, indices, index_count);
 	
 	write_imagef (image, coords, color);

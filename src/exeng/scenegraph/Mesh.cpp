@@ -11,26 +11,22 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include <exeng/Vector.hpp>
-#include <exeng/scenegraph/Mesh.hpp>
-#include <exeng/scenegraph/MeshPart.hpp>
-#include <exeng/scenegraph/Plane.hpp>
-#include <exeng/graphics/VertexArray.hpp>
+#include "Mesh.hpp"
 
 #include <cassert>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/checked_delete.hpp>
 #include <map>
+#include <boost/checked_delete.hpp>
+#include <exeng/Vector.hpp>
+#include <exeng/scenegraph/Plane.hpp>
+#include <exeng/graphics/VertexArray.hpp>
 
 using namespace exeng;
 using namespace exeng::scenegraph;
 using namespace exeng::graphics;
 
-typedef boost::ptr_vector<MeshPart> MeshParVector;
-typedef MeshParVector::iterator MeshParVectorIt;
-
 namespace exeng { namespace scenegraph {
-    
+    typedef std::vector<std::unique_ptr<MeshSubset>> MeshSubsetVector;
+
     /**
      * @brief 
      */
@@ -179,15 +175,15 @@ namespace exeng { namespace scenegraph {
     /**
      * @brief Detect intersection between a Ray and a MeshPart.
      */
-    inline bool meshSubsetIntersect(MeshPart &meshPart, const Ray &ray, IntersectInfo *intersectInfo=nullptr) {
-        if (Primitive::isTriangle(meshPart.primitiveType) == false) {
+    inline bool meshSubsetIntersect(MeshSubset *subset, const Ray &ray, IntersectInfo *intersectInfo=nullptr) {
+        if (Primitive::isTriangle(subset->getPrimitive()) == false) {
             return false;
         }
         
-        Primitive::Enum type = meshPart.primitiveType;
-        Buffer *vertexBuffer = meshPart.vertexBuffer.get();
+        Primitive::Enum type = subset->getPrimitive();
+        Buffer *vertexBuffer = subset->getBuffer(0);
         
-        const VertexFormat &vertexFormat = meshPart.vertexFormat;
+        VertexFormat vertexFormat = subset->getVertexFormat();
         void* vertexData = vertexBuffer->getDataPtr();
         
         int vertexOffset = vertexFormat.getAttribOffset(VertexAttrib::Position);
@@ -196,10 +192,9 @@ namespace exeng { namespace scenegraph {
         // TODO: Handle properly the vertex format
         IntersectInfo info;
         
-        int triangleCount = getTriangleCount(vertexBuffer->getSize() / vertexFormat.getSize(), meshPart.primitiveType);
+        int triangleCount = getTriangleCount(vertexBuffer->getSize() / vertexFormat.getSize(), subset->getPrimitive());
         
         for (int triangleIndex=0; triangleIndex<triangleCount; triangleIndex++) {
-
             IntersectInfo localInfo;
             
             // Get the triangle points, based on the triangle type and the vertex format
@@ -235,7 +230,7 @@ namespace exeng { namespace scenegraph {
             Vector3f n = computeNormal(p1, p2, p3);
             
             if (intersectWithTriangle(p1, p2, p3, n, ray, &localInfo) && localInfo.distance >= 0.0f ) {
-                localInfo.material = meshPart.material;
+                localInfo.material = subset->getMaterial();
                 if (localInfo.distance > info.distance) {
                     info = localInfo;
                 }
@@ -257,25 +252,22 @@ namespace exeng { namespace scenegraph {
  */
 namespace exeng { namespace scenegraph {
     struct Mesh::Private {
-        MeshParVector parts;   //! Vector of MeshPart pointers
-        Boxf box;               //! Mesh collision box.
+        MeshSubsetVector    subsets;    //! Vector of MeshPart pointers
+        Boxf                box;        //! Mesh collision box.
     };
     
-    Mesh::Mesh() : impl(new Mesh::Private()) {}
-    
-    Mesh::Mesh(int partCount) : impl(new Mesh::Private()) {
-        this->allocate(partCount);
+    Mesh::Mesh(std::unique_ptr<exeng::graphics::MeshSubset> subset) : impl(new Mesh::Private()) {
+        this->impl->subsets.push_back(std::move(subset));
+    }
+
+    Mesh::Mesh(std::vector<std::unique_ptr<exeng::graphics::MeshSubset>> subsets) : impl(new Mesh::Private()) {
+        this->impl->subsets = std::move(subsets);
     }
     
     Mesh::~Mesh() {
         boost::checked_delete(this->impl);
     }
     
-    void Mesh::allocate(int partCount) {
-        // Make space for the parts...
-        this->impl->parts.resize(partCount);
-    }
-
     Boxf Mesh::getBox() const {
         assert(this->impl != nullptr);
         
@@ -298,8 +290,8 @@ namespace exeng { namespace scenegraph {
         
         IntersectInfo info, bestInfo;
         
-        for (MeshPart &meshPart : this->impl->parts) {
-            if (meshSubsetIntersect(meshPart, ray, &info) && info.distance >= 0.0f ) {
+        for (auto &subset : this->impl->subsets) {
+            if (meshSubsetIntersect(subset.get(), ray, &info) && info.distance >= 0.0f ) {
                 if (info.distance > bestInfo.distance) {
                     bestInfo = info;
                 }
@@ -313,16 +305,16 @@ namespace exeng { namespace scenegraph {
         return bestInfo.intersect;
     }
     
-    int Mesh::getPartCount() const {
+    int Mesh::getMeshSubsetCount() const {
         assert(this->impl != nullptr);
-        return static_cast<int>(this->impl->parts.size());
+        return static_cast<int>(this->impl->subsets.size());
     }
     
-    MeshPart* Mesh::getPart(int index) {
-        return &this->impl->parts[index];
+    MeshSubset* Mesh::getMeshSubset(int index) {
+        return this->impl->subsets[index].get();
     }
     
-    const MeshPart* Mesh::getPart(int index) const {
-        return &this->impl->parts[index];
+    const MeshSubset* Mesh::getMeshSubset(int index) const {
+        return this->impl->subsets[index].get();
     }
 }}

@@ -9,6 +9,8 @@
 #include <exeng/graphics/Primitive.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/graphics/IndexFormat.hpp>
+#include <exeng/graphics/Material.hpp>
+#include <exeng/graphics/Primitive.hpp>
 
 namespace exeng { namespace graphics {
     /**
@@ -27,6 +29,12 @@ namespace exeng { namespace graphics {
 
         virtual Buffer* getIndexBuffer() = 0;
         virtual const Buffer* getIndexBuffer() const = 0;
+
+        virtual Primitive::Enum getPrimitive() const = 0;
+        virtual void setPrimitive(Primitive::Enum primitiveType) = 0;
+
+        virtual const Material* getMaterial() const = 0;
+        virtual void setMaterial(const Material *material) = 0;
     };
 }}
 

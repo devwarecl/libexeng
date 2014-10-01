@@ -61,12 +61,14 @@ namespace raytracer {
         std::unique_ptr<exeng::graphics::Material> screenMaterial;
         std::unique_ptr<exeng::graphics::MeshSubset> screenMeshSubset;
 
-        mutable uint32_t lastTime;
-        SceneLoader sceneLoader;
-        FpsCounter frameCounter;
+        std::unique_ptr<SceneLoader> sceneLoader;
 
+        mutable uint32_t lastTime;
+        FpsCounter frameCounter;
         exeng::framework::ApplicationStatus::Enum applicationStatus;
         exeng::graphics::ButtonStatus::Enum buttonStatus[exeng::graphics::ButtonCode::Count];
+        
+        float rotationAngle = 0.0f;
     };
 }
 

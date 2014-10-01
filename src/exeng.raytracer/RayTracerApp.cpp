@@ -1,9 +1,5 @@
 
-#include <exeng.raytracer/RayTracerApp.hpp>
-#include <exeng.raytracer/samplers/JitteredSampler.hpp>
-#include <exeng.raytracer/tracers/HardwareTracer.hpp>
-#include <exeng.raytracer/tracers/SoftwareTracer.hpp>
-#include <exeng.main/Main.hpp>
+#include "RayTracerApp.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -13,13 +9,16 @@
 #include <list>
 #include <array>
 
+#include <exeng.raytracer/samplers/JitteredSampler.hpp>
+#include <exeng.raytracer/tracers/HardwareTracer.hpp>
+#include <exeng.raytracer/tracers/SoftwareTracer.hpp>
+#include <exeng.main/Main.hpp>
+
 #if defined(EXENG_UNIX)
 #  include <unistd.h>
 #endif
 
-#include <exeng/graphics/HeapVertexBuffer.hpp>
 #include <exeng/graphics/Material.hpp>
-
 #include <exeng/scenegraph/TSolidGeometry.hpp>
 
 void displayCurrentPath() {
@@ -120,6 +119,7 @@ namespace raytracer {
         this->screenMeshSubset = std::unique_ptr<MeshSubset>(this->driver->createMeshSubset(std::move(vertexBuffers), screenVertexFormat));
         
         // Initialize the scene.
+        this->sceneLoader = std::unique_ptr<SceneLoader>(new SceneLoader(this->driver.get(), this->getRoot()->getMeshManager()));
         this->loadScene();
         this->scene->setBackColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
 
@@ -128,8 +128,7 @@ namespace raytracer {
         this->sampler->generateSamples();
         
         // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
-        Tracer *tracer = new raytracer::tracers::HardwareTracer(this->scene.get(), this->sampler.get());
-        this->tracer.reset(tracer);
+        this->tracer = std::unique_ptr<Tracer>(new raytracer::tracers::HardwareTracer(this->scene.get(), this->sampler.get()));
         
         // Create a base texture.
         this->screenTexture = this->createTexture (
@@ -137,7 +136,7 @@ namespace raytracer {
             {static_cast<float>(mode.size.width), static_cast<float>(mode.size.height)},
             {0.0f, 0.5f, 1.0f, 1.0f}
         );
-
+        
         this->tracer->setRenderTarget(screenTexture.get());
         
         this->screenMaterial = std::unique_ptr<Material>(new Material());
@@ -159,29 +158,37 @@ namespace raytracer {
     void RayTracerApp::update(double seconds) {
         // Actualizar los cuadros por segundo
         this->frameCounter.update(seconds);
-        std::cout << this->frameCounter.getCurrentFps() << std::endl;
+        // std::cout << this->frameCounter.getCurrentFps() << std::endl;
         
         Vector3f delta(0.0f);
-        const float speed = 1.5f;
+        const float moveSpeed = 1.5f;
+        const float rotationSpeed = 60.0f;
         
-        float displace = speed * static_cast<float>(seconds);
+        Vector3f direction = this->camera.getLookAt() - this->camera.getPosition();
+        direction.normalize();
+        
+        float displace = 0.0f;
+        float rotate = 0.0f;
         
         // actualiza la camara en funcion de la entrada por teclado
         if (this->buttonStatus[ButtonCode::KeyEsc]) {
             this->applicationStatus = ApplicationStatus::Terminated;
         }
         
-        if (this->buttonStatus[ButtonCode::KeyUp])      delta.z += displace;
-        if (this->buttonStatus[ButtonCode::KeyDown])    delta.z -= displace;
+        if (this->buttonStatus[ButtonCode::KeyUp])      displace =  moveSpeed * static_cast<float>(seconds);
+        if (this->buttonStatus[ButtonCode::KeyDown])    displace = -moveSpeed * static_cast<float>(seconds);
         
-        if (this->buttonStatus[ButtonCode::KeySpace])   delta.y += displace;
-        if (this->buttonStatus[ButtonCode::KeyEnter])   delta.y -= displace;
+        if (this->buttonStatus[ButtonCode::KeyLeft])    rotate = -rotationSpeed * static_cast<float>(seconds);
+        if (this->buttonStatus[ButtonCode::KeyRight])   rotate =  rotationSpeed * static_cast<float>(seconds);
         
-        if (this->buttonStatus[ButtonCode::KeyRight])   delta.x += displace;
-        if (this->buttonStatus[ButtonCode::KeyLeft])    delta.x -= displace;
+        Matrix4f rotationMatrix;
+        rotationMatrix.identity();
+        rotationMatrix.rotation(this->camera.getUp(), rotate);
+        direction = rotationMatrix * direction;
         
-        this->camera.setPosition(delta + this->camera.getPosition());
-        this->camera.setLookAt(delta + this->camera.getLookAt());
+        std::cout << this->rotationAngle << "  -   " << direction << std::endl;
+        
+        this->camera.setOrientation(this->camera.getPosition() + (displace * direction), this->camera.getPosition() + (10.0f * direction));
     }
     
     void RayTracerApp::render() {
@@ -210,7 +217,7 @@ namespace raytracer {
     }
     
     void RayTracerApp::loadScene() {
-        this->scene.reset( this->sceneLoader.loadScene("scene.xml") );
+        this->scene = this->sceneLoader->loadScene("scene.xml");
     }
     
     void RayTracerApp::handleEvent(const EventData &data) {
@@ -231,12 +238,11 @@ void showMsgBox(const std::string &msg, const std::string &title) {
 #if defined(EXENG_WINDOWS)
     ::MessageBox(NULL, msg.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
 #else
-    std::cout << "[" << title << "]" << std::endl << msg << std::endl;
+    std::cout << "[" << title << "] " << std::endl << msg << std::endl;
 #endif
 }
 
 namespace exeng { namespace main {
-
     using namespace exeng;
     using namespace exeng::framework;
     using namespace exeng::input;
@@ -247,18 +253,16 @@ namespace exeng { namespace main {
         TestApp() {
             this->root = std::unique_ptr<Root>(new Root());
             this->root->getPluginManager()->load("exeng.graphics.gl3", getPluginPath());
-
+            
             this->graphicsDriver = std::unique_ptr<GraphicsDriver>(root->getGraphicsManager()->createDriver());
             this->graphicsDriver->addEventHandler(this);
             this->graphicsDriver->initialize();
             
             this->isRunning = true;
         }
-
-        ~TestApp() {
-
-        }
-
+        
+        ~TestApp() {}
+        
         virtual void handleEvent(const EventData &data) override {
             if (data.eventType == TypeId<InputEventData>()) {
                 if (data.cast<InputEventData>().check(ButtonStatus::Press, ButtonCode::KeyEsc)) {
@@ -266,18 +270,18 @@ namespace exeng { namespace main {
                 }
             }
         }
-
+        
         void run() {
             while (this->isRunning) {
                 this->update();
                 this->present();
             }
         }
-
+        
         int getExitCode() const {
             return 0;
         }
-
+        
     private:
         void update() {
             this->graphicsDriver->pollEvents();

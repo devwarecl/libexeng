@@ -13,6 +13,7 @@
 
 #include <exeng/HeapBuffer.hpp>
 #include <cstdlib>
+#include <cstring>
 #include <stdexcept>
 #include <memory>
 

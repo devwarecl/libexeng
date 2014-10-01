@@ -97,7 +97,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual void raiseEvent(exeng::input::EventData &data) override;
         
-        virtual std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) override;
+        virtual std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) override;
 
         virtual void setMeshSubset(MeshSubset *meshSubset) override;
 

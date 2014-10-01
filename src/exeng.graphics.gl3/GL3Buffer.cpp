@@ -1,6 +1,8 @@
 
 #include "GL3Buffer.hpp"
+
 #include "GL3BufferStatus.hpp"
+#include <stdexcept>
 
 namespace exeng { namespace graphics { namespace gl3 {
 
@@ -57,7 +59,7 @@ namespace exeng { namespace graphics { namespace gl3 {
     }
 
     void GL3Buffer::read() {
-        throw std::bad_exception("GL3Buffer::read: Not implemented.");
+        throw std::runtime_error( "GL3Buffer::read: Not implemented." );
     }
 
     std::uint64_t GL3Buffer::getHandle() const {
@@ -72,9 +74,9 @@ namespace exeng { namespace graphics { namespace gl3 {
         this->cacheBuffer.setData(dataSrc, size);
         this->write();
     }
-
+    
     void GL3Buffer::getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const {
-        throw std::bad_exception("GL3Buffer::getData: Not implemented.");
+        throw std::runtime_error("GL3Buffer::getData: Not implemented.");
     }
 
     TypeInfo GL3Buffer::getTypeInfo() const {

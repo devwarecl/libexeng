@@ -21,11 +21,19 @@ namespace exeng { namespace graphics {
         virtual Buffer* getIndexBuffer() override;
         virtual const Buffer* getIndexBuffer() const override;
 
+        virtual Primitive::Enum getPrimitive() const override;
+        virtual void setPrimitive(Primitive::Enum primitiveType) override;
+
+        virtual const Material* getMaterial() const override;
+        virtual void setMaterial(const Material *material) override;
+
     protected:
         std::vector<std::unique_ptr<Buffer>> buffers;
         std::unique_ptr<Buffer> indexBuffer;
         VertexFormat vertexFormat;
         IndexFormat::Enum indexFormat = IndexFormat::Index32;
+        Primitive::Enum primitiveType = Primitive::TriangleList;
+        const Material *material = nullptr;
     };
 
     inline MeshSubsetBase::MeshSubsetBase(std::vector<std::unique_ptr<Buffer>> buffers_, const VertexFormat &vertexFormat_) : 
@@ -58,6 +66,22 @@ namespace exeng { namespace graphics {
 
     inline IndexFormat::Enum MeshSubsetBase::getIndexFormat() const {
         return this->indexFormat;
+    }
+
+    inline Primitive::Enum MeshSubsetBase::getPrimitive() const {
+        return this->primitiveType;
+    }
+
+    inline void MeshSubsetBase::setPrimitive(Primitive::Enum primitiveType) {
+        this->primitiveType = primitiveType;
+    }
+
+    inline const Material* MeshSubsetBase::getMaterial() const {
+        return this->material;
+    }
+
+    inline void MeshSubsetBase::setMaterial(const Material *material) {
+        this->material = material;
     }
 }}
 

@@ -50,7 +50,7 @@ namespace raytracer { namespace tracers {
         fs.open(file.c_str(), std::ios_base::in);
 
         if (!fs.is_open()) {
-            throw std::runtime_error("File '" + file + "' couldn't be loaded.");
+            throw std::runtime_error("loadFile: File '" + file + "' couldn't be loaded.");
         }
 
         std::string content;
@@ -63,7 +63,19 @@ namespace raytracer { namespace tracers {
 
         return content;
     }
-
+    
+    cl::Buffer createCLBuffer(cl::Context &context, exeng::Buffer *in) {
+        if (in == nullptr) {
+            throw std::runtime_error("[HardwareTracer.cpp] createCLBuffer -> The input buffer can't be a nullptr.");
+        }
+        
+        cl_int errCode = 0;
+        
+        cl::Buffer result /*= cl::Buffer(context, , in->getSize(), in->getDataPtr())*/;
+        
+        return result;
+    }
+    
     HardwareTracer::HardwareTracer(const Scene *scene, const raytracer::samplers::Sampler *sampler) : Tracer(scene, nullptr), impl(new HardwareTracer::Private())  {
         std::vector<cl::Platform> platforms;
         cl::Platform::get(&platforms);
@@ -179,39 +191,63 @@ namespace raytracer { namespace tracers {
         cl::CommandQueue &queue = this->impl->queue;
         cl::Event event;
         cl_int errCode = 0;
-
-        auto cam = camera->getPosition();
-
+        
+        cl_float cx, cy, cz;
+        cl_float lx, ly, lz;
+        cl_float ux, uy, uz;
+        
+        cx = camera->getPosition().x;
+        cy = camera->getPosition().y;
+        cz = camera->getPosition().z;
+        
+        lx = camera->getLookAt().x;
+        ly = camera->getLookAt().y;
+        lz = camera->getLookAt().z;
+        
+        ux = camera->getUp().x;
+        uy = camera->getUp().y;
+        uz = camera->getUp().z;
+        
         this->impl->kernel.setArg(0, image);
         this->impl->kernel.setArg(1, samplesBuffer);
         this->impl->kernel.setArg(2, 16);
-        this->impl->kernel.setArg(3, cam.x);
-        this->impl->kernel.setArg(4, cam.y);
-        this->impl->kernel.setArg(5, cam.z);
-
+        this->impl->kernel.setArg(3, cx);
+        this->impl->kernel.setArg(4, cy);
+        this->impl->kernel.setArg(5, cz);
+        this->impl->kernel.setArg(6, lx);
+        this->impl->kernel.setArg(7, ly);
+        this->impl->kernel.setArg(8, lz);
+        this->impl->kernel.setArg(9, ux);
+        this->impl->kernel.setArg(10, uy);
+        this->impl->kernel.setArg(11, uz);
+        
         std::vector<cl::Memory> buffersGL = {image};
         
         errCode = queue.enqueueAcquireGLObjects(&buffersGL, nullptr, &event);
         if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
+            std::cout << "Error Code:" << errCode << std::endl;
+            throw std::runtime_error("HardwareTracer::render: OpenCL enqueueAcquire error.");
         }
         event.wait();
         
         errCode = queue.enqueueNDRangeKernel(this->impl->kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(16, 16), nullptr, &event);
         if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
+            std::cout << "Error Code:" << errCode << std::endl;
+            throw std::runtime_error("HardwareTracer::render: OpenCL enqueueNDRange error.");
         }
         event.wait();
 
         errCode = queue.enqueueReleaseGLObjects(&buffersGL, nullptr, &event);
         if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
+            std::cout << "Error Code:" << errCode << std::endl;
+            throw std::runtime_error("HardwareTracer::render: OpenCL enqueueRelease error.");
         }
         event.wait();
 
         errCode = queue.finish();
         if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("HardwareTracer::render: OpenCL based error.");
+            std::cout << "Error Code:" << errCode << std::endl;
+            throw std::runtime_error("HardwareTracer::render: OpenCL queueFinish error.");
         }
     }
 }}

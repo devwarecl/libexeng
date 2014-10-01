@@ -9,7 +9,7 @@
 namespace exeng { namespace graphics { namespace gl3 {
     class GL3MeshSubset : public MeshSubsetBase {
     public:
-        GL3MeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format);
+        GL3MeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format);
         virtual ~GL3MeshSubset();
 
         inline GLuint getVertexArrayId() const {

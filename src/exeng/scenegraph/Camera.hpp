@@ -70,6 +70,8 @@ namespace exeng { namespace scenegraph {
         void setProjection(const CameraProjection &proj);
         CameraProjection getProjection() const;
         
+        const Vector3f* getData() const;
+        
     private:
         struct Private;
         Private *impl;

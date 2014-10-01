@@ -29,16 +29,14 @@ namespace exeng { namespace scenegraph {
             // Toda la pantalla por defecto
             this->viewport.set(1.0f);
         }
-            
+        
         Vector3f position = Vector3f(0.0f, 0.0f, 1.0f);
         Vector3f lookAt;
         Vector3f up = Vector3f(0.0, 1.0, 0.0);
         Rectf viewport;
         CameraProjection proj;
     };
-        
-    // const char *invalidArgument = "La posicion no puede ser igual al punto de vision de la camara";
-
+    
     Camera::Camera() : impl(new Camera::Private()) {}
 
     Camera::~Camera() {
@@ -57,7 +55,6 @@ namespace exeng { namespace scenegraph {
         this->impl->lookAt = lookAt;
     }
         
-        
     void Camera::setPosition(const Vector3f &pos) {
         assert(this->impl != nullptr);
 #if defined(EXENG_DEBUG)
@@ -68,13 +65,11 @@ namespace exeng { namespace scenegraph {
         this->impl->position = pos;
     }
         
-        
     Vector3f Camera::getPosition() const{
         assert(this->impl != nullptr);
             
         return this->impl->position;
     }
-        
         
     void Camera::setLookAt(const Vector3f &lookAt) {
         assert(this->impl != nullptr);
@@ -86,20 +81,17 @@ namespace exeng { namespace scenegraph {
         this->impl->lookAt = lookAt;
     }
         
-        
     Vector3f Camera::getLookAt() const {
         assert(this->impl != nullptr);
             
         return this->impl->lookAt;
     }
         
-        
     Vector3f Camera::getUp() const {
         assert(this->impl != nullptr);
             
         return this->impl->up;
     }
-        
         
     void Camera::setUp(const Vector3f &up) {
         assert(this->impl != nullptr);
@@ -114,7 +106,6 @@ namespace exeng { namespace scenegraph {
         this->impl->up.normalize();
     }
         
-        
     void Camera::setViewport(const Rectf &viewport) {
         assert(this->impl != nullptr);
 #if defined(EXENG_DEBUG)
@@ -125,22 +116,23 @@ namespace exeng { namespace scenegraph {
         this->impl->viewport = viewport;
     }
         
-        
     Rectf Camera::getViewport() const {
         assert(this->impl != nullptr);
         return this->impl->viewport;
     }
         
-        
     void Camera::setProjection(const CameraProjection &proj) {
         assert(this->impl != nullptr);
         this->impl->proj = proj;
     }
-        
-        
+    
     CameraProjection Camera::getProjection() const {
         assert(this->impl != nullptr);
             
         return this->impl->proj;
+    }
+    
+    const Vector3f* Camera::getData() const {
+        return &this->impl->position;
     }
 }}

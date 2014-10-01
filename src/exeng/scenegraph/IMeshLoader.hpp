@@ -26,7 +26,6 @@ namespace exeng { namespace graphics {
 namespace exeng { namespace scenegraph {
     class EXENGAPI Mesh;    
     
-    
     /**
      * @brief Mesh loader interface.
      */
@@ -43,9 +42,9 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Load the mesh contained in the specified file.
          */
-        virtual Mesh* loadMesh(const std::string &filename, exeng::graphics::GraphicsDriver *graphicsDriver) = 0;
+
+        virtual std::unique_ptr<Mesh> loadMesh(const std::string &filename, exeng::graphics::GraphicsDriver *graphicsDriver) = 0;
     };
 }}
         
-
 #endif // __EXENG_SCENEGRAPH_IMESHLOADER_HPP__

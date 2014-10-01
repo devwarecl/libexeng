@@ -21,10 +21,7 @@
 #include <exeng/Config.hpp>
 #include <exeng/Buffer.hpp>
 
-namespace exeng { namespace graphics {
-
-    // class EXENGAPI VertexBuffer;
-            
+namespace exeng { namespace graphics {     
     /**
      * @brief Help to the initialization of vertex buffers by user code.
      */
@@ -32,15 +29,11 @@ namespace exeng { namespace graphics {
     class VertexArray {
     public:
         VertexArray(Buffer *buffer_) : buffer(nullptr), bufferData(nullptr) {
-    #ifdef EXENG_DEBUG
+#if defined(EXENG_DEBUG)
             if (buffer_ == nullptr) {
                 throw std::runtime_error("VertexArray::VertexArray: The buffer can't be null");
             }
-    
-            if (buffer_->getFormat().geSize() != sizeof(VertexType)) {
-                throw std::runtime_error("VertexArray::VertexArray: Invalid supplied VertexType: must be equal to the size reported by the vertexBuffer's format.");
-            }
-    #endif
+#endif
             this->buffer = buffer_;
             this->bufferData = static_cast<VertexType*>(this->buffer->getDataPtr());
         }

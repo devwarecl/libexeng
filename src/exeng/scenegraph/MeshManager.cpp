@@ -12,7 +12,7 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include <exeng/scenegraph/MeshManager.hpp>
+#include "MeshManager.hpp"
 
 #include <map>
 #include <memory>
@@ -34,52 +34,50 @@ namespace exeng { namespace scenegraph {
         virtual ~CubeMeshLoader() {}
         
         virtual bool isSupported(const std::string &filename) override {
-            return filename == "$cube$";
+            return filename == "//cube";
         }
         
-        virtual Mesh* loadMesh(const std::string &filename, GraphicsDriver *graphicsDriver) override {
-            Mesh *mesh = new Mesh(1);
-            MeshPart *part = mesh->getPart(0);
-            
-            part->primitiveType = Primitive::TriangleList;
-            part->vertexBuffer = std::unique_ptr<Buffer>(this->generateCubeVertices(graphicsDriver));
-            part->indexBuffer = std::unique_ptr<Buffer>(this->generateCubeIndices(graphicsDriver));
-            
-            return mesh;
+        virtual std::unique_ptr<Mesh> loadMesh(const std::string &filename, GraphicsDriver *graphicsDriver) override {
+            auto vertexBuffer = this->generateCubeVertices(graphicsDriver);
+            auto indexBuffer = this->generateCubeIndices(graphicsDriver);
+            auto subset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), VertexFormat::makeVertex());
+
+            return std::unique_ptr<Mesh>(new Mesh(std::move(subset)));
         }
 
     private:
         std::unique_ptr<Buffer> generateCubeVertices(GraphicsDriver *graphicsDriver) const {
             Vertex vertices[] = {
+                // Cara izquierda
                 {{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},
                 {{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f}},
                 {{-0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 0.0f}},
                 {{ 0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 0.0f}},
-        
+                
                 // Cara derecha
                 {{0.5f,   0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}},
                 {{0.5f,   0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}}, 
                 {{0.5f,  -0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}}, 
                 {{0.5f,  -0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}}, 
-        
+                
                 // Cara delantera
                 {{ 0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 1.0f}},
                 {{-0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 1.0f}},
                 {{ 0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 0.0f}},
                 {{-0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 0.0f}},
-            
+                
                 // Cara Izquierda
                 {{-0.5f,   0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}},
                 {{-0.5f,   0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}},
                 {{-0.5f,  -0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}},
                 {{-0.5f,  -0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}},
-            
+                
                 // Cara de Arriba
                 {{-0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 1.0f}},
                 {{ 0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 1.0f}},
                 {{-0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 0.0f}},
                 {{ 0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 0.0f}},
-            
+                
                 // Cara Inferior
                 {{ 0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {1.0f, 1.0f}},
                 {{-0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 1.0f}},
@@ -107,8 +105,8 @@ namespace exeng { namespace scenegraph {
 
 namespace exeng { namespace scenegraph {
     struct MeshManager::Private  {
-        std::list<std::unique_ptr<IMeshLoader> > loaders;
-        std::map<std::string, std::unique_ptr<Mesh> > meshes;
+        std::list<std::unique_ptr<IMeshLoader>> loaders;
+        std::map<std::string, std::unique_ptr<Mesh>> meshes;
     };
     
     MeshManager::MeshManager() : impl(new MeshManager::Private()) {
@@ -140,7 +138,11 @@ namespace exeng { namespace scenegraph {
         // search for a suitable loader
         for (std::unique_ptr<IMeshLoader> &loader : this->impl->loaders) {
             if (loader->isSupported(filename) == true) {
-                mesh = loader->loadMesh(filename, graphicsDriver);
+                auto meshPtr = loader->loadMesh(filename, graphicsDriver);
+
+                mesh = meshPtr.get();
+
+                this->impl->meshes[filename] = std::move(meshPtr);
                 break;
             }
         }

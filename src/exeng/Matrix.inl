@@ -269,30 +269,30 @@ namespace exeng {
             V.normalize();
 
             //Iniciar S
-            MatS.At(0, 1) = -V.z;
-            MatS.At(1, 0) = V.z;
+            MatS.at(0, 1) = -V.z;
+            MatS.at(1, 0) = V.z;
         
-            MatS.At(0, 2) = V.y;
-            MatS.At(2, 0) = -V.y;
+            MatS.at(0, 2) = V.y;
+            MatS.at(2, 0) = -V.y;
         
-            MatS.At(1, 2) = -V.x;
-            MatS.At(2, 1) = V.x;
+            MatS.at(1, 2) = -V.x;
+            MatS.at(2, 1) = V.x;
 
             //Iniciar u*ut
-            MatUut.At(0, 0) = V.x * V.x;
-            MatUut.At(1, 0) = V.y * V.x;
-            MatUut.At(2, 0) = V.z * V.x;
+            MatUut.at(0, 0) = V.x * V.x;
+            MatUut.at(1, 0) = V.y * V.x;
+            MatUut.at(2, 0) = V.z * V.x;
         
-            MatUut.At(0, 1) = V.x * V.y;
-            MatUut.At(1, 1) = V.y * V.y;
-            MatUut.At(2, 1) = V.z * V.y;
-
-            MatUut.At(0, 2) = V.x * V.z;
-            MatUut.At(1, 2) = V.y * V.z;
-            MatUut.At(2, 2) = V.z * V.z;
+            MatUut.at(0, 1) = V.x * V.y;
+            MatUut.at(1, 1) = V.y * V.y;
+            MatUut.at(2, 1) = V.z * V.y;
+            
+            MatUut.at(0, 2) = V.x * V.z;
+            MatUut.at(1, 2) = V.y * V.z;
+            MatUut.at(2, 2) = V.z * V.z;
 
             //Iniciar la matriz identidad
-            MatId.Identity();
+            MatId.identity();
 
             //Calcular la matriz final
             this->identity();

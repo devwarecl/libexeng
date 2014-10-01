@@ -28,6 +28,7 @@ namespace exeng { namespace scenegraph {
     /**
      * @brief Component for the Mesh class.
      */
+    /*
     struct MeshPart {
         const exeng::graphics::Material *material = nullptr;
         std::unique_ptr<Buffer> vertexBuffer;
@@ -36,6 +37,7 @@ namespace exeng { namespace scenegraph {
         exeng::graphics::VertexFormat vertexFormat;
         exeng::graphics::IndexFormat::Enum indexFormat = exeng::graphics::IndexFormat::Index32;
     };
+    */
 }}
 
 #endif

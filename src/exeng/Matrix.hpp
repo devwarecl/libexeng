@@ -218,12 +218,13 @@ namespace exeng {
          * @brief Documentacion pendiente.
          */
         template<int OtherRowCount, int OtherColumnCount>
-        MatrixType& operator= (const Matrix<Type, OtherRowCount, OtherColumnCount> &In)
-        {
-            for(int i=0; i<OtherRowCount; ++i)
-                for(int j=0; j<OtherColumnCount; ++j)
-                    this->at(i, j) = In.At(i, j);
-        
+        MatrixType& operator= (const Matrix<Type, OtherRowCount, OtherColumnCount> &In) {
+            for(int i=0; i<OtherRowCount; ++i) {
+                for(int j=0; j<OtherColumnCount; ++j) {
+                    this->at(i, j) = In.at(i, j);
+                }
+            }
+            
             return *this;
         }
     
@@ -318,18 +319,16 @@ namespace exeng {
          * @brief Transforma un vector usando la transformacion encapsulada en esta matriz
          */
         template<int VectorSize>
-        Vector<Type, VectorSize> operator* (const Vector<Type, VectorSize>& point) const
-        {
-            Vector<Type, VectorSize> Result;
-
-            Result.setup(static_cast<Type>(0));
-        
-            for(int i=0; i<VectorSize; ++i)
-            {
-                Result[i] = Vector<Type, VectorSize>::dot(this->getRowVector(i), point);
+        Vector<Type, VectorSize> operator* (const Vector<Type, VectorSize>& point) const {
+            Vector<Type, VectorSize> result;
+            
+            result.set(static_cast<Type>(0));
+            
+            for(int i=0; i<VectorSize; ++i) {
+                result[i] =  this->getRowVector(i).dot(point);
             }
 
-            return Result;
+            return result;
         }
 
 

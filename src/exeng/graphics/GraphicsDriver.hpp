@@ -68,7 +68,7 @@ namespace exeng { namespace graphics {
     * @brief Encapsulate a display mode.
     */
     struct DisplayMode {
-        exeng::Size2i size;                       //! Width and height, in pixels.
+        exeng::Size2i size;                             //! Width and height, in pixels.
         int redBits, greenBits, blueBits, alphaBits;    //! Frame buffer colors.
         int depthBits, stencilBits;                     //! Frame buffer support
         DisplayStatus::Enum status;                     //! Fullscreen or window?
@@ -231,10 +231,23 @@ namespace exeng { namespace graphics {
          */
         virtual std::unique_ptr<Buffer> createIndexBuffer(const std::int32_t size, const void* data) = 0;
         
+        inline std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) {
+            std::unique_ptr<Buffer> indexBuffer;
+
+            return this->createMeshSubset(std::move(vertexBuffers), std::move(indexBuffer), format);
+        }
+
+        inline std::unique_ptr<MeshSubset> createMeshSubset(std::unique_ptr<Buffer> vertexBuffer, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) {
+            std::vector<std::unique_ptr<Buffer>> vertexBuffers;
+            vertexBuffers.push_back(std::move(vertexBuffer));
+
+            return this->createMeshSubset(std::move(vertexBuffers), std::move(indexBuffer), format);
+        }
+
         /**
          * @brief Create a new mesh subset object.
          */
-        virtual std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) = 0;
+        virtual std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) = 0;
 
         /**
          * @brief Bound the specified MeshSubset object.
