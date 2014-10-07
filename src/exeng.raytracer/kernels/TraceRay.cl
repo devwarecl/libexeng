@@ -166,6 +166,24 @@ float4 trace_ray(ray_t ray, float4 color, constant vertex_t *vertices, constant 
 	return color;
 }
 
+/** 
+ * @brief Populate the intersect info for the specified meshsubset
+ */
+kernel void intersectMeshSubset (
+	global intersect_info_t *intersectInfo, int2 size, 
+	global vertex_t *vertices, int vertexCount, 
+	global int *indices, int indexCount,
+	global float *materialData, 
+	read_only image2d_t texImage) {
+
+	int x = get_global_id(0);
+	int y = get_global_id(1);
+
+	int index = y * size.x + x;
+
+	/* */
+}
+
 /**
  * @brief Main ray tracer kernel.
  */
