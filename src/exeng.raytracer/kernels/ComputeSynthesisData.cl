@@ -1,7 +1,7 @@
 /**
  * @file 	ComputeSynthesisData.cl
  * @brief 	This kernel compute the synthesis data (data needed for synthesize the final image) for the ray tracer for a 
- *		    single mesh subset data.
+ *		    single mesh subset data. It must be called multiple times, one for meshSubset, to render a complete scene.
  */
 
 /** 
@@ -71,13 +71,13 @@ float triple(float3 a, float3 b, float3 c) {
 /**
  * @brief Compute a synthesis element for the specified triangle
  */
-void computeElement(SynthesisElement *out, Ray ray, float3 p1, float3 p2, float3 p3, float3 normal) {	
+void computeElement(SynthesisElement *element, Ray ray, float3 p1, float3 p2, float3 p3, float3 normal) {	
 	plane_t plane = {
 		(p1 + p2 + p3) * (1.0f/3.0f), 
 		normal
 	};
 	
-	computeElement(out, ray, plane);
+	computeElement(element, ray, plane);
 	
 	float3 p = ray.point;
 	float3 q = info->point;
@@ -90,85 +90,55 @@ void computeElement(SynthesisElement *out, Ray ray, float3 p1, float3 p2, float3
 	float u = triple(pq, pc, pb);
 	float v = triple(pq, pa, pc);
 	float w = triple(pq, pb, pa);
-
-	return (u > 0.0f && v > 0.0f && w > 0.0f);
+	
+	float result = (float)(u > 0.0f && v > 0.0f && w > 0.0f);
+	
+	element->point *= result;
+	element->distance *= result;
+	element->normal *= result;
 }
 
-float4 traceRay(Ray ray, float4 color, global Vertex *vertices, global int *indices, int indexCount) {
-	SynthesisElement prevElement;
-	SynthesisElement element;
-    
-	prevElement.distance = FLT_MAX;
-    
+/**
+ * @brief Compute a synthesis element from a mesh subset
+ */
+void computeElement(global SynthesisElement *element, Ray ray, global Vertex *vertices, global int *indices, int indexCount) {
+	SynthesisElement bestElement;
+	SynthesisElement currentElement;
+	
+	bestElement.distance = FLT_MAX;
+	
+	float factor;
+	
 	for (int i=0; i<index_count; i+=3) {
+		float3 normal = vertices[indices[i + 0]].normal;
 		float3 p1 = vertices[indices[i + 0]].coord;
 		float3 p2 = vertices[indices[i + 1]].coord;
 		float3 p3 = vertices[indices[i + 2]].coord;
 		
-		float3 normal = vertices[indices[i + 0]].normal;
+		computeElement(&currentElement, ray, p1, p2, p3, normal);
 		
-		computeElement(&element, ray, p1, p2, p3, normal);
+		bestElement.distance = (bestElement.distance<currentElement.distance) ? bestElement.distance : currentElement.distance;
 		
-		if (computeElement(&element, ray, p1, p2, p3) && element.distance < prevElement.distance) {
-			prevElement = element;
-			
-			// TODO: select the material for the triangle
-			// 
-			// color = (float4)(1.0f, 1.0f, 1.0f, 1.0f) * fabs(dot(ray.direction, vertices[indices[i + 1]].normal));
-            // color = (float4)(1.0f, 1.0f, 1.0f, 1.0f);
-		}
+		// if (computeElement(&element, ray, p1, p2, p3) && element.distance < prevElement.distance) {
+		// 	prevElement = element;
+		// }
 	}
 	
-	return color;
-}
-
-/** 
- * @brief Populate the intersect info for the specified meshsubset
- */
-kernel void intersectMeshSubset (
-	global intersect_info_t *intersectInfo, int2 size, 
-	global vertex_t *vertices, int vertexCount, 
-	global int *indices, int indexCount,
-	global float *materialData, 
-	read_only image2d_t texImage) {
-
-	int x = get_global_id(0);
-	int y = get_global_id(1);
-
-	int index = y * size.x + x;
-
-	/* */
+	*element = bestElement;
 }
 
 /**
- * @brief Main ray tracer kernel.
+ * @brief Generate all the synthesis data to render a single object
  */
-__kernel void tracerKernel (
-	__write_only image2d_t image, 
-	global float2 *samples, 
-	int sample_count, 
-	float cx, float cy, float cz,
-    float lx, float ly, float lz,
-    float ux, float uy, float uz)
-{
-	// pixel coordinate.
-	int2 coords = (int2)(get_global_id(0), get_global_id(1));
+__kernel void ComputeSynthesisData (
+	global SynthesisData *synthesisBuffer, global Ray *rays, int2 screenSize,
+	global Vertex *vertices, global int *indices, int indexCount, int materialIndex) {
 	
-	// default background color
-	float4 background_color = (float4)(0.0f, 0.0f, 1.0f, 1.0f);
-	float4 color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	const int index_count = 36;
-    
-	// cast multisampled ray
-	// for (int i=0; i<sample_count; ++i) {
-	// 	ray_t ray = cast_ray(coords, camera[0], samples[i]);
-	// 	color += trace_ray(ray, background_color, vertices, indices, index_count);
-	// }
-	// color /= (float)sample_count;
-    
-	// cast no multisampled ray
-	ray_t ray = cast_ray(coords, (float3)(cx, cy, cz), (float3)(lx, ly, lz), (float2)(0.0f, 0.0f));
-	color = trace_ray(ray, background_color, vertices, indices, index_count);
+	int x = get_global_id(0);
+	int y = get_global_id(1);
+	int i = x * screenSize.y + y;
 	
-	write_imagef (image, coords, color);
+	Ray ray = rays[i];
+	
+	computeElement(synthesisBuffer + i, ray, vertices, indices, indexCount);
 }
