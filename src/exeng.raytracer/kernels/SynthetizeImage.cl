@@ -4,16 +4,6 @@
  */
 
 /**
- * @brief Synthesis Element.
- */
-typedef struct {
-	float	distance;	// Distance from the origin of the ray.
-	float3	normal;		// Normal vector of the surface that collided with the ray.
-	float3 	point;		// Point of intersection
-	int		material;	// Material index/id (will be defined later).
-} SynthesisElement;
-
-/**
  * @brief Synthetize the final image.
  * 
  * The image is synthetized by using the different materials 

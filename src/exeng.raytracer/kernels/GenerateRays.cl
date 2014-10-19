@@ -2,19 +2,6 @@
  * @brief Ray buffer generator kernel
  */
 
-/** 
- * @brief Ray data structure.
- */
-typedef struct {
-	float3 point;		// Base point
-	float3 direction;	// Normalized direction vector
-} Ray;
-
-typedef struct {
-	float3 position;
-	float3 lookAt;
-	float3 up;
-} Camera;
 
 // constant float3 screen_size = {640.0f, 480.0f, 0.0f};
 // constant float3 half_size = (float3)(639.0f * 0.5f, 479.0f * 0.5f, 0.0f);

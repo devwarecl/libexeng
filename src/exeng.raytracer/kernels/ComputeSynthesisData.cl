@@ -4,50 +4,6 @@
  *		    single mesh subset data. It must be called multiple times, one for meshSubset, to render a complete scene.
  */
 
-/** 
- * @brief Ray data structure.
- */
-typedef struct {
-	float3 point;		// Base point
-	float3 direction;	// Normalized direction vector
-} Ray;
-
-/** 
- * @brief Vertex data.
- */
-typedef struct {
-	float3 coord;		// Vertex position
-	float3 normal;		// Vertex normalized normal vector
-	float2 tex;			// Vertex texture coordinate
-} Vertex;
-
-/**
- * @brief Synthesis Element.
- */
-typedef struct {
-	float	distance;	// Distance from the origin of the ray.
-	float3	normal;		// Normal vector of the surface that collided with the ray.
-	float3 	point;		// Point of intersection
-	int		material;	// Material index/id (will be defined later).
-} SynthesisElement;
-
-/** 
- * @brief Plane
- */
-typedef struct {
-	float3 point;
-	float3 normal;
-} Plane;
-
-/** 
- * @brief Camera definition
- */
-typedef struct {
-    float3 position;
-    float3 look_at;
-    float3 up;
-} Camera;
-
 /**
  * @brief Compute a synthesis element
  */
@@ -72,7 +28,7 @@ float triple(float3 a, float3 b, float3 c) {
  * @brief Compute a synthesis element for the specified triangle
  */
 void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float3 p2, float3 p3, float3 normal) {	
-	plane_t plane = {
+	Plane plane = {
 		(p1 + p2 + p3) * (1.0f/3.0f), 
 		normal
 	};
@@ -80,7 +36,7 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 	computeElementPlane(element, ray, plane);
 	
 	float3 p = ray.point;
-	float3 q = info->point;
+	float3 q = element->point;
 
 	float3 pq = q - p;
 	float3 pa = p1 - p;
@@ -109,7 +65,7 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
 	
 	float factor;
 	
-	for (int i=0; i<index_count; i+=3) {
+	for (int i=0; i<indexCount; i+=3) {
 		float3 normal = vertices[indices[i + 0]].normal;
 		float3 p1 = vertices[indices[i + 0]].coord;
 		float3 p2 = vertices[indices[i + 1]].coord;
@@ -131,7 +87,7 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
  * @brief Generate all the synthesis data to render a single object
  */
 __kernel void ComputeSynthesisData (
-	global SynthesisData *synthesisBuffer, global Ray *rays, int2 screenSize,
+	global SynthesisElement *synthesisBuffer, global Ray *rays, int2 screenSize,
 	global Vertex *vertices, global int *indices, int indexCount, int materialIndex) {
 	
 	int x = get_global_id(0);

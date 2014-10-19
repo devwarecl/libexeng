@@ -143,8 +143,9 @@ namespace raytracer { namespace tracers {
 
 		// Create a Program object from all the kernels
 		std::list<std::string> programSourceList = {
-            loadFile(getRootPath() + "kernels/GenerateRays.cl") //,
-			// loadFile(getRootPath() + "kernels/ComputeSynthesisData.cl") ,
+            loadFile(getRootPath() + "kernels/Common.cl"),
+            loadFile(getRootPath() + "kernels/GenerateRays.cl"),
+			loadFile(getRootPath() + "kernels/ComputeSynthesisData.cl") //,
 			// loadFile(getRootPath() + "kernels/TraceRay.cl")
 		};
 
@@ -166,7 +167,7 @@ namespace raytracer { namespace tracers {
 		}
 
 		cl::Kernel rayGeneratorKernel			= cl::Kernel(program, "GenerateRays");
-		// cl::Kernel synthesisDataComputerKernel	= cl::Kernel(program, "ComputeSynthesisData");
+		cl::Kernel synthesisDataComputerKernel	= cl::Kernel(program, "ComputeSynthesisData");
 		// cl::Kernel imageSynthetizerKernel		= cl::Kernel(program, "SynthetizeImage");
 
 		// Command queue
@@ -178,7 +179,7 @@ namespace raytracer { namespace tracers {
 		this->impl->context = context;
 		this->impl->program = program;
         this->impl->rayGeneratorKernel = rayGeneratorKernel;
-        // this->impl->synthesisDataComputerKernel = synthesisDataComputerKernel;
+        this->impl->synthesisDataComputerKernel = synthesisDataComputerKernel;
         // this->impl->imageSynthetizerKernel = imageSynthetizerKernel;
 		this->impl->queue = queue;
 		this->impl->samplesBuffer = samplesBuffer;
