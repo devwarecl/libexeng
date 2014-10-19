@@ -51,7 +51,7 @@ typedef struct {
 /**
  * @brief Compute a synthesis element
  */
-void computeElement(SynthesisElement *out, Ray ray, Plane plane) {
+void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane) {
 	float a = dot(plane.normal, plane.point - ray.point);
 	float b = dot(plane.normal, ray.direction);
 	float distance = a / b;
@@ -71,13 +71,13 @@ float triple(float3 a, float3 b, float3 c) {
 /**
  * @brief Compute a synthesis element for the specified triangle
  */
-void computeElement(SynthesisElement *element, Ray ray, float3 p1, float3 p2, float3 p3, float3 normal) {	
+void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float3 p2, float3 p3, float3 normal) {	
 	plane_t plane = {
 		(p1 + p2 + p3) * (1.0f/3.0f), 
 		normal
 	};
 	
-	computeElement(element, ray, plane);
+	computeElementPlane(element, ray, plane);
 	
 	float3 p = ray.point;
 	float3 q = info->point;
@@ -101,7 +101,7 @@ void computeElement(SynthesisElement *element, Ray ray, float3 p1, float3 p2, fl
 /**
  * @brief Compute a synthesis element from a mesh subset
  */
-void computeElement(global SynthesisElement *element, Ray ray, global Vertex *vertices, global int *indices, int indexCount) {
+void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global Vertex *vertices, global int *indices, int indexCount) {
 	SynthesisElement bestElement;
 	SynthesisElement currentElement;
 	
@@ -115,7 +115,7 @@ void computeElement(global SynthesisElement *element, Ray ray, global Vertex *ve
 		float3 p2 = vertices[indices[i + 1]].coord;
 		float3 p3 = vertices[indices[i + 2]].coord;
 		
-		computeElement(&currentElement, ray, p1, p2, p3, normal);
+		computeElementTriangle(&currentElement, ray, p1, p2, p3, normal);
 		
 		bestElement.distance = (bestElement.distance<currentElement.distance) ? bestElement.distance : currentElement.distance;
 		
@@ -140,5 +140,5 @@ __kernel void ComputeSynthesisData (
 	
 	Ray ray = rays[i];
 	
-	computeElement(synthesisBuffer + i, ray, vertices, indices, indexCount);
+	computeElementMeshSubset(synthesisBuffer + i, ray, vertices, indices, indexCount);
 }

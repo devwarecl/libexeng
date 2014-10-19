@@ -33,12 +33,16 @@ set (BaseFiles
 
 set (Kernels
 	kernels/TraceRay.cl
+	kernels/ComputeSynthesisData.cl
+	kernels/GenerateRays.cl
+	kernels/SynthetizeImage.cl
 )
 
 set ( Tracers
 	tracers/Tracer.hpp              tracers/Tracer.cpp 
     tracers/SoftwareTracer.hpp      tracers/SoftwareTracer.cpp 
     tracers/HardwareTracer.hpp      tracers/HardwareTracer.cpp 
+	tracers/MultiHardwareTracer.hpp	tracers/MultiHardwareTracer.cpp 
 )
 
 set ( Samplers
