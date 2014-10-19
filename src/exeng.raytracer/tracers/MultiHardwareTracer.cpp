@@ -220,51 +220,42 @@ namespace raytracer { namespace tracers {
 	}
 
 	MultiHardwareTracer::~MultiHardwareTracer() {
-        return;
-        std::fstream fs;
-        fs.open("output.txt", std::ios_base::out);
-
-        fs << this->impl->raysData[0].getPoint() << std::endl;
-        fs << this->impl->raysData[0].getDirection() << std::endl;
     }
 
     void MultiHardwareTracer::generateRays(const exeng::scenegraph::Camera *camera) {
+        cl::Event event;
+
         // Prepare the 'GenerateRays' kernel
-        cl_float cx = camera->getPosition().x;
-        cl_float cy = camera->getPosition().y;
-        cl_float cz = camera->getPosition().z;
-
-        cl_float lx = camera->getLookAt().x;
-        cl_float ly = camera->getLookAt().y;
-        cl_float lz = camera->getLookAt().z;
-
-        cl_float ux = camera->getUp().x;
-        cl_float uy = camera->getUp().y;
-        cl_float uz = camera->getUp().z;
-        
         cl::Kernel &kernel = this->impl->rayGeneratorKernel;
+
+        Vector3f pos = camera->getPosition(); 
+        Vector3f lookAt = camera->getLookAt(); 
+        Vector3f up = camera->getUp();
         Vector3i size = this->getRenderTarget()->geSize();
 
         kernel.setArg(0, this->impl->raysBuffer);
         
-        kernel.setArg(1, cx);
-        kernel.setArg(2, cy);
-        kernel.setArg(3, cz);
+        kernel.setArg(1, pos.x);
+        kernel.setArg(2, pos.y);
+        kernel.setArg(3, pos.z);
 
-        kernel.setArg(4, lx);
-        kernel.setArg(5, ly);
-        kernel.setArg(6, lz);
+        kernel.setArg(4, lookAt.x);
+        kernel.setArg(5, lookAt.y);
+        kernel.setArg(6, lookAt.z);
 
-        kernel.setArg(7, ux);
-        kernel.setArg(8, uy);
-        kernel.setArg(9, uz);
+        kernel.setArg(7, up.x);
+        kernel.setArg(8, up.y);
+        kernel.setArg(9, up.z);
 
         kernel.setArg(10, size.x);
         kernel.setArg(11, size.y);
 
         // Execute the kernel
-        this->impl->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(16, 16), nullptr);
-        // this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
+        this->impl->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(16, 16), nullptr, &event);
+        event.wait();
+
+        this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
+        event.wait();
 
         this->impl->queue.finish();
 	}
