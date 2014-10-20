@@ -1,7 +1,7 @@
 
 #include "GL3Buffer.hpp"
-
 #include "GL3BufferStatus.hpp"
+#include "GL3Debug.hpp"
 #include <stdexcept>
 
 namespace exeng { namespace graphics { namespace gl3 {
@@ -24,6 +24,8 @@ namespace exeng { namespace graphics { namespace gl3 {
         ::glBindBuffer(this->target, this->bufferId);
         ::glBufferData(this->target, size, nullptr, GL_DYNAMIC_DRAW);
 
+        GL3_CHECK();
+
         this->cacheBuffer.allocate(size);
     }
 
@@ -32,6 +34,8 @@ namespace exeng { namespace graphics { namespace gl3 {
             ::glDeleteBuffers(1, &this->bufferId);
             this->bufferId = 0;
         }
+
+        GL3_CHECK();
 
         this->cacheBuffer.release();
     }
@@ -56,6 +60,8 @@ namespace exeng { namespace graphics { namespace gl3 {
 
         ::glBindBuffer(this->target, this->bufferId);
         ::glBufferSubData(this->target, 0, this->cacheBuffer.getSize(), this->cacheBuffer.getDataPtr());
+
+        GL3_CHECK();
     }
 
     void GL3Buffer::read() {

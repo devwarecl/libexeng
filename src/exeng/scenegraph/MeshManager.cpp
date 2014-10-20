@@ -34,7 +34,7 @@ namespace exeng { namespace scenegraph {
         virtual ~CubeMeshLoader() {}
         
         virtual bool isSupported(const std::string &filename) override {
-            return filename == "//cube";
+            return filename == "/cube";
         }
         
         virtual std::unique_ptr<Mesh> loadMesh(const std::string &filename, GraphicsDriver *graphicsDriver) override {

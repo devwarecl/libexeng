@@ -188,9 +188,10 @@ namespace raytracer {
         rotationMatrix.rotation(this->camera.getUp(), rotate);
         direction = rotationMatrix * direction;
         
-        std::cout << this->rotationAngle << "  -   " << direction << std::endl;
-        
-        this->camera.setOrientation(this->camera.getPosition() + (displace * direction), this->camera.getPosition() + (10.0f * direction));
+        Vector3f position = this->camera.getPosition() + (displace * direction);
+        Vector3f lookAt = this->camera.getPosition() + (10.0f * direction);
+
+        this->camera.setOrientation(position, lookAt);
     }
     
     void RayTracerApp::render() {

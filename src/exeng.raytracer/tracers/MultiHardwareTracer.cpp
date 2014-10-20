@@ -255,14 +255,89 @@ namespace raytracer { namespace tracers {
         this->impl->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(16, 16), nullptr, &event);
         event.wait();
 
+        // for debugging
         this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
         event.wait();
 
         this->impl->queue.finish();
 	}
 
-	void MultiHardwareTracer::computeSynthesisData() {
+    static void linearizeSceneBranch(std::list<const SceneNode *> &nodes, const SceneNode *node) {
+        if (node == nullptr) {
+            return;
+        }
 
+        nodes.push_back(node);
+
+        if (node->getChildCount() > 0) {
+            for (auto *childNode : node->getChilds()) {
+                linearizeSceneBranch(nodes, childNode);
+            }
+        }
+    }
+
+    std::list<const SceneNode*> getSceneNodes(const Scene *scene) {
+        std::list<const SceneNode*> nodes;
+
+        linearizeSceneBranch(nodes, scene->getRootNode());
+
+        return nodes;
+    }
+
+	void MultiHardwareTracer::computeSynthesisData() {
+        std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
+
+        // Invoke the ComputeSynthesisData kernel
+        Vector2i screenSize = this->getRenderTarget()->geSize();
+
+        cl::Event event;
+        cl::Kernel &kernel = this->impl->synthesisDataComputerKernel;
+
+        for (const SceneNode* node : nodes) {
+            if (node->getData()==nullptr || node->getData()->getTypeInfo()!=TypeId<Mesh>()) {
+                continue;
+            }
+
+            Mesh *mesh = static_cast<Mesh*>(node->getData());
+
+            for (int i=0; i<mesh->getMeshSubsetCount(); ++i) {
+                // Prepare the kernel for the execution
+                MeshSubset *subset = mesh->getMeshSubset(i);
+
+                GLuint vertexBufferId = static_cast<GLuint>(subset->getBuffer(0)->getHandle());
+                GLuint indexBufferId = static_cast<GLuint>(subset->getIndexBuffer()->getHandle());
+                
+                cl::BufferGL vertexBuffer = cl::BufferGL(this->impl->context, CL_MEM_READ_WRITE, vertexBufferId);
+                cl::BufferGL indexBuffer = cl::BufferGL(this->impl->context, CL_MEM_READ_WRITE, indexBufferId);
+
+                int indexFormatSize = IndexFormat::getSize(subset->getIndexFormat());
+                int indexCount = subset->getIndexBuffer()->getSize() / indexFormatSize;
+
+                kernel.setArg(0, this->impl->synthesisBuffer);
+                kernel.setArg(1, this->impl->raysBuffer);
+                kernel.setArg(2, screenSize.x);
+                kernel.setArg(3, screenSize.y);
+                kernel.setArg(4, vertexBuffer);
+                kernel.setArg(5, indexBuffer);
+                kernel.setArg(6, indexCount);
+                kernel.setArg(7, 1);
+
+                std::vector<cl::Memory> buffers = {vertexBuffer, indexBuffer};
+
+                cl::CommandQueue &queue = this->impl->queue;
+
+                queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
+                event.wait();
+
+                queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(screenSize.x, screenSize.y), cl::NDRange(16, 16), nullptr, &event);
+                event.wait();
+
+                queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
+                event.wait();
+
+                queue.finish();
+            }
+        }
 	}
 
 	void MultiHardwareTracer::synthetizeImage() {
@@ -271,5 +346,6 @@ namespace raytracer { namespace tracers {
 
 	void MultiHardwareTracer::render(const exeng::scenegraph::Camera *camera) {
         this->generateRays(camera);
+        this->computeSynthesisData();
 	}
 }}

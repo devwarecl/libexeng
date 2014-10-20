@@ -87,12 +87,12 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
  * @brief Generate all the synthesis data to render a single object
  */
 __kernel void ComputeSynthesisData (
-	global SynthesisElement *synthesisBuffer, global Ray *rays, int2 screenSize,
+	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
 	global Vertex *vertices, global int *indices, int indexCount, int materialIndex) {
 	
 	int x = get_global_id(0);
 	int y = get_global_id(1);
-	int i = x * screenSize.y + y;
+	int i = x * screenHeight + y;
 	
 	Ray ray = rays[i];
 	
