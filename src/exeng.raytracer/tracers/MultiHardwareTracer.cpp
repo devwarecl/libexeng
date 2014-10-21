@@ -145,8 +145,8 @@ namespace raytracer { namespace tracers {
 		std::list<std::string> programSourceList = {
             loadFile(getRootPath() + "kernels/Common.cl"),
             loadFile(getRootPath() + "kernels/GenerateRays.cl"),
-			loadFile(getRootPath() + "kernels/ComputeSynthesisData.cl") //,
-			// loadFile(getRootPath() + "kernels/TraceRay.cl")
+			loadFile(getRootPath() + "kernels/ComputeSynthesisData.cl"),
+			loadFile(getRootPath() + "kernels/SynthetizeImage.cl")
 		};
 
 		cl::Program::Sources programSources;
@@ -168,7 +168,7 @@ namespace raytracer { namespace tracers {
 
 		cl::Kernel rayGeneratorKernel			= cl::Kernel(program, "GenerateRays");
 		cl::Kernel synthesisDataComputerKernel	= cl::Kernel(program, "ComputeSynthesisData");
-		// cl::Kernel imageSynthetizerKernel		= cl::Kernel(program, "SynthetizeImage");
+		cl::Kernel imageSynthetizerKernel		= cl::Kernel(program, "SynthetizeImage");
 
 		// Command queue
 		cl::CommandQueue queue = cl::CommandQueue(context, device);
@@ -180,7 +180,7 @@ namespace raytracer { namespace tracers {
 		this->impl->program = program;
         this->impl->rayGeneratorKernel = rayGeneratorKernel;
         this->impl->synthesisDataComputerKernel = synthesisDataComputerKernel;
-        // this->impl->imageSynthetizerKernel = imageSynthetizerKernel;
+        this->impl->imageSynthetizerKernel = imageSynthetizerKernel;
 		this->impl->queue = queue;
 		this->impl->samplesBuffer = samplesBuffer;
 		this->impl->samplesCount = sampler->getSampleCount();
@@ -252,12 +252,12 @@ namespace raytracer { namespace tracers {
         kernel.setArg(11, size.y);
 
         // Execute the kernel
-        this->impl->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(16, 16), nullptr, &event);
+        this->impl->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(8, 8), nullptr, &event);
         event.wait();
 
         // for debugging
-        this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
-        event.wait();
+        // this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
+        // event.wait();
 
         this->impl->queue.finish();
 	}
@@ -341,11 +341,36 @@ namespace raytracer { namespace tracers {
 	}
 
 	void MultiHardwareTracer::synthetizeImage() {
+        Vector3i size = this->getRenderTarget()->geSize();
 
+        cl::Event event;
+        cl::Kernel &kernel = this->impl->imageSynthetizerKernel;
+
+        kernel.setArg(0, this->impl->image);
+        kernel.setArg(1, this->impl->synthesisBuffer);
+        kernel.setArg(2, this->impl->raysBuffer);
+        kernel.setArg(3, size.x);
+        kernel.setArg(4, size.y);
+
+        cl::CommandQueue &queue = this->impl->queue;
+
+        std::vector<cl::Memory> buffers = {this->impl->image};
+
+        queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
+        event.wait();
+
+        queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(8, 8), nullptr, &event);
+        event.wait();
+
+        queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
+        event.wait();
+
+        queue.finish();
 	}
 
 	void MultiHardwareTracer::render(const exeng::scenegraph::Camera *camera) {
         this->generateRays(camera);
         this->computeSynthesisData();
+        this->synthetizeImage();
 	}
 }}

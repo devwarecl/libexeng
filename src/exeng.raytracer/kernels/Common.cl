@@ -48,3 +48,6 @@ typedef struct {
     float3 up;
 } Camera;
 
+typedef struct {
+    float foo;
+} Material;
