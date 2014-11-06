@@ -185,7 +185,7 @@ namespace raytracer { namespace tracers {
     HardwareTracer::~HardwareTracer() {}
 
     void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
-        Vector3i size = this->getRenderTarget()->geSize();
+        Vector3i size = this->getRenderTarget()->getSize();
         cl::Image2DGL &image = this->impl->image;
         cl::Buffer &samplesBuffer = this->impl->samplesBuffer;
         cl::CommandQueue &queue = this->impl->queue;
@@ -230,7 +230,7 @@ namespace raytracer { namespace tracers {
         }
         event.wait();
         
-        errCode = queue.enqueueNDRangeKernel(this->impl->kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(16, 16), nullptr, &event);
+        errCode = queue.enqueueNDRangeKernel(this->impl->kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
         if (errCode != CL_SUCCESS) {
             std::cout << "Error Code:" << errCode << std::endl;
             throw std::runtime_error("HardwareTracer::render: OpenCL enqueueNDRange error.");

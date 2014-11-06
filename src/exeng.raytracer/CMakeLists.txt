@@ -51,7 +51,7 @@ set ( Samplers
     samplers/JitteredSampler.hpp    samplers/JitteredSampler.cpp 
 )
 
-add_executable(exeng.raytracer WIN32 ${BaseFiles} ${Tracers} ${Samplers} ${Kernels} )
+add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Kernels} )
 
 target_link_libraries(exeng.raytracer exeng exeng.main ${Boost_LIBRARIES} ${OPENCL_LIBRARIES} ${OPENGL_LIBRARIES})
 

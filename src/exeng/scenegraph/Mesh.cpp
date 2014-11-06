@@ -317,4 +317,8 @@ namespace exeng { namespace scenegraph {
     const MeshSubset* Mesh::getMeshSubset(int index) const {
         return this->impl->subsets[index].get();
     }
+
+    TypeInfo Mesh::getTypeInfo() const {
+        return TypeId<Mesh>();
+    }
 }}

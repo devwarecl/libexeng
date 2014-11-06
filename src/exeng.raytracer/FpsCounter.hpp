@@ -16,12 +16,16 @@ namespace raytracer {
         double getAverageFps() const;
         
         double getCurrentTime() const;
+
+        // TODO: Find a better name.
+        bool overflow() const;
         
     private:
         double currentSeconds;  //! Total ellapsed time for the current frame.
         double seconds;         //! Total ellapsed time.
         double framesDrawn;     //! Total frames drawn.
         double framesPerSecond; //! Current frames per second total.
+        bool overTime = false;
     };
 }
 

@@ -135,7 +135,8 @@ namespace raytracer {
         // Create a base texture.
         this->screenTexture = this->createTexture (
             this->driver.get(), 
-            {static_cast<float>(mode.size.width), static_cast<float>(mode.size.height)},
+            // {static_cast<float>(mode.size.width), static_cast<float>(mode.size.height)},
+            {4, 4},
             {0.0f, 0.5f, 1.0f, 1.0f}
         );
         
@@ -160,7 +161,10 @@ namespace raytracer {
     void RayTracerApp::update(double seconds) {
         // Actualizar los cuadros por segundo
         this->frameCounter.update(seconds);
-        // std::cout << this->frameCounter.getCurrentFps() << std::endl;
+
+        if (frameCounter.overflow()) {
+            std::cout << this->frameCounter.getCurrentFps() << std::endl;
+        }
         
         Vector3f delta(0.0f);
         const float moveSpeed = 1.5f;

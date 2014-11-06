@@ -57,6 +57,8 @@ namespace exeng { namespace scenegraph {
          */
         const exeng::graphics::MeshSubset* getMeshSubset(int index) const;
         
+        virtual TypeInfo getTypeInfo() const override;
+
     private:
         struct Private;
         Private *impl = nullptr;

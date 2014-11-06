@@ -11,6 +11,12 @@ namespace raytracer {
         this->seconds += seconds;
         this->currentSeconds += seconds;
         
+        if (currentSeconds > 1.0) {
+            this->overTime = true;
+        } else {
+            this->overTime = false;
+        }
+
         this->framesDrawn++;
         this->framesPerSecond = 1.0 / seconds;
         
@@ -27,5 +33,9 @@ namespace raytracer {
     
     double FpsCounter::getAverageFps() const {
         return this->framesDrawn / this->seconds;
+    }
+
+    bool FpsCounter::overflow() const {
+        return this->overTime;
     }
 }

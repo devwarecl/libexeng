@@ -10,7 +10,7 @@ namespace raytracer { namespace tracers {
     using namespace raytracer::samplers;
     
     inline uint32_t SoftwareTracer::getOffset(const Vector2i &point) const {
-        auto size = this->getRenderTarget()->geSize();
+        auto size = this->getRenderTarget()->getSize();
         
 #ifdef EXENG_DEBUG
         if (point.x < 0 || point.y < 0) {
@@ -41,7 +41,7 @@ namespace raytracer { namespace tracers {
     
     inline Ray SoftwareTracer::castRay(const Vector2f &pixel, const Camera *camera) const {
         // trazar el rayo usando una proyeccion ortografica
-        const auto size = this->getRenderTarget()->geSize();
+        const auto size = this->getRenderTarget()->getSize();
         const float pixelSize = 1.0f;
         const float halfWidth = (size.x - 1) * 0.5f;
         const float halfHeight = (size.y - 1) * 0.5f;
@@ -60,7 +60,7 @@ namespace raytracer { namespace tracers {
     }
     
     inline Ray SoftwareTracer::castRay(const Vector2f &pixel, const Camera *camera, const Vector2f &sample) const {
-        const auto size = this->getRenderTarget()->geSize();
+        const auto size = this->getRenderTarget()->getSize();
         const float pixelSize = 1.0f;
         const float halfWidth = (size.x - 1) * 0.5f;
         const float halfHeight = (size.y - 1) * 0.5f;
@@ -187,7 +187,7 @@ namespace raytracer { namespace tracers {
         this->flattenHierarchy(nodeList, this->getScene()->getRootNode());
         
         Vector2i pixel(0);
-        Vector2i screenSize = Vector2i(this->getRenderTarget()->geSize());
+        Vector2i screenSize = Vector2i(this->getRenderTarget()->getSize());
         
         if (!this->getSampler()) {
             // No sampler rendering

@@ -32,7 +32,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual TextureType::Enum getType() const override;
         virtual ColorFormat getColorFormat() const override;
-        virtual Vector3i geSize() const override;
+        virtual Vector3i getSize() const override;
         virtual void release() override;
         
         inline GLuint getTextureId() const {

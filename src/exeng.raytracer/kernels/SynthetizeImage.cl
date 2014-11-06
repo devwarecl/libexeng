@@ -8,7 +8,7 @@
  * 
  * The image is synthetized by using the different materials 
  */
-kernel void SynthetizeImages(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight /*, global Material *materials*/) {
+kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight /*, global Material *materials*/) {
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 	int i = x * screenHeight + y;

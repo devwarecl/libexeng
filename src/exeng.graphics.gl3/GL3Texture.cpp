@@ -140,7 +140,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 		return this->colorFormat;
 	}
 
-	Vector3i GL3Texture::geSize() const {
+	Vector3i GL3Texture::getSize() const {
 		return this->size;
 	}
 

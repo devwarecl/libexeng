@@ -77,7 +77,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Get the size, in texels, of the texture.
          */
-        virtual exeng::Vector3i geSize() const = 0;
+        virtual exeng::Vector3i getSize() const = 0;
         
         /**
          * @brief Get the native handle of the underlying graphics API.
