@@ -20,7 +20,7 @@
 #include <GLFW/glfw3.h>
 
 #if defined (EXENG_UNIX)
-#include <GL/glx.h>
+#  include <GL/glx.h>
 #endif
 
 using namespace exeng;
@@ -38,10 +38,11 @@ namespace raytracer { namespace tracers {
 		cl::Program program;
 		cl::Image2DGL image;
 
+        cl::Kernel clearSynthBufferKernel;
 		cl::Kernel rayGeneratorKernel;
 		cl::Kernel synthesisDataComputerKernel;
 		cl::Kernel imageSynthetizerKernel;
-
+        
         std::vector<Ray> raysData;
 
 		cl::Buffer raysBuffer;
@@ -77,11 +78,11 @@ namespace raytracer { namespace tracers {
             case CL_MAP_FAILURE                              :   return "CL_MAP_FAILURE";
             case CL_MISALIGNED_SUB_BUFFER_OFFSET             :   return "CL_MISALIGNED_SUB_BUFFER_OFFSET";
             case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST :   return "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST";
-            case CL_COMPILE_PROGRAM_FAILURE                  :   return "CL_COMPILE_PROGRAM_FAILURE";
-            case CL_LINKER_NOT_AVAILABLE                     :   return "CL_LINKER_NOT_AVAILABLE";
-            case CL_LINK_PROGRAM_FAILURE                     :   return "CL_LINK_PROGRAM_FAILURE";
-            case CL_DEVICE_PARTITION_FAILED                  :   return "CL_DEVICE_PARTITION_FAILED";
-            case CL_KERNEL_ARG_INFO_NOT_AVAILABLE            :   return "CL_KERNEL_ARG_INFO_NOT_AVAILABLE";
+            // case CL_COMPILE_PROGRAM_FAILURE                  :   return "CL_COMPILE_PROGRAM_FAILURE";
+            // case CL_LINKER_NOT_AVAILABLE                     :   return "CL_LINKER_NOT_AVAILABLE";
+            // case CL_LINK_PROGRAM_FAILURE                     :   return "CL_LINK_PROGRAM_FAILURE";
+            // case CL_DEVICE_PARTITION_FAILED                  :   return "CL_DEVICE_PARTITION_FAILED";
+            // case CL_KERNEL_ARG_INFO_NOT_AVAILABLE            :   return "CL_KERNEL_ARG_INFO_NOT_AVAILABLE";
             case CL_INVALID_VALUE                            :   return "CL_INVALID_VALUE";
             case CL_INVALID_DEVICE_TYPE                      :   return "CL_INVALID_DEVICE_TYPE";
             case CL_INVALID_PLATFORM                         :   return "CL_INVALID_PLATFORM";
@@ -117,10 +118,10 @@ namespace raytracer { namespace tracers {
             case CL_INVALID_MIP_LEVEL                        :   return "CL_INVALID_MIP_LEVEL";
             case CL_INVALID_GLOBAL_WORK_SIZE                 :   return "CL_INVALID_GLOBAL_WORK_SIZE";
             case CL_INVALID_PROPERTY                         :   return "CL_INVALID_PROPERTY";
-            case CL_INVALID_IMAGE_DESCRIPTOR                 :   return "CL_INVALID_IMAGE_DESCRIPTOR";
-            case CL_INVALID_COMPILER_OPTIONS                 :   return "CL_INVALID_COMPILER_OPTIONS";
-            case CL_INVALID_LINKER_OPTIONS                   :   return "CL_INVALID_LINKER_OPTIONS";
-            case CL_INVALID_DEVICE_PARTITION_COUNT           :   return "CL_INVALID_DEVICE_PARTITION_COUNT";
+            // case CL_INVALID_IMAGE_DESCRIPTOR                 :   return "CL_INVALID_IMAGE_DESCRIPTOR";
+            // case CL_INVALID_COMPILER_OPTIONS                 :   return "CL_INVALID_COMPILER_OPTIONS";
+            // case CL_INVALID_LINKER_OPTIONS                   :   return "CL_INVALID_LINKER_OPTIONS";
+            // case CL_INVALID_DEVICE_PARTITION_COUNT           :   return "CL_INVALID_DEVICE_PARTITION_COUNT";
             default: return "UNKNOWN CODE";
         }
     }
@@ -197,7 +198,7 @@ namespace raytracer { namespace tracers {
 		};
 
 		// initialize the OpenCL context
-		cl::Context context = cl::Context({ device }, properties);
+		cl::Context context = cl::Context(devices , properties);
 
 		// pass the samples to OpenCL
 		size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
@@ -231,10 +232,11 @@ namespace raytracer { namespace tracers {
 			throw std::runtime_error(msg);
 		}
 
+		cl::Kernel clearSynthBufferKernel       = cl::Kernel(program, "ClearSynthesisData");
 		cl::Kernel rayGeneratorKernel			= cl::Kernel(program, "GenerateRays");
 		cl::Kernel synthesisDataComputerKernel	= cl::Kernel(program, "ComputeSynthesisData");
 		cl::Kernel imageSynthetizerKernel		= cl::Kernel(program, "SynthetizeImage");
-
+        
 		// Command queue
 		cl::CommandQueue queue = cl::CommandQueue(context, device);
 
@@ -243,6 +245,8 @@ namespace raytracer { namespace tracers {
 		this->impl->device = device;
 		this->impl->context = context;
 		this->impl->program = program;
+        
+        this->impl->clearSynthBufferKernel = clearSynthBufferKernel;
         this->impl->rayGeneratorKernel = rayGeneratorKernel;
         this->impl->synthesisDataComputerKernel = synthesisDataComputerKernel;
         this->impl->imageSynthetizerKernel = imageSynthetizerKernel;
@@ -318,7 +322,6 @@ namespace raytracer { namespace tracers {
         kernel.setArg(11, size.y);
 
         // Execute the kernel
-        // this->impl->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(8, 8), nullptr, &event);
         errCode = this->impl->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
         if (errCode != CL_SUCCESS) {
             throw std::runtime_error("MultiHardwareTracer::generateRays: Error at trying to enqueue the GenerateRays Kernel:" + clErrorToString(errCode));
@@ -370,7 +373,26 @@ namespace raytracer { namespace tracers {
                         << std::endl;
         }
     }
-
+    
+    void MultiHardwareTracer::clearSynthBuffer() {
+        cl_int errCode = 0;
+        cl::Event event;
+        cl::CommandQueue &queue = this->impl->queue;
+        cl::Kernel &kernel = this->impl->clearSynthBufferKernel;
+        
+        Vector3i size = this->getRenderTarget()->getSize();
+        
+        kernel.setArg(0, this->impl->synthesisBuffer);
+        kernel.setArg(1, size.x);
+        kernel.setArg(2, size.y);
+        errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
+        if (errCode != CL_SUCCESS) {
+            throw std::runtime_error("MultiHardwareTracer::clearSynthBuffer: Error at trying to execute the ClearSynthBuffer kernel:" + clErrorToString(errCode));
+        }
+        
+        event.wait();
+    }
+    
 	void MultiHardwareTracer::computeSynthesisData() {
         std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
         
@@ -416,7 +438,7 @@ namespace raytracer { namespace tracers {
                     throw std::runtime_error("MultiHardwareTracer::computeSynthesisData: Error at trying to acquire the GL buffer object:" + clErrorToString(errCode));
                 }
                 event.wait();
-
+                
                 errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(screenSize.x, screenSize.y), cl::NullRange, nullptr, &event);
                 if (errCode != CL_SUCCESS) {
                     throw std::runtime_error("MultiHardwareTracer::computeSynthesisData: Error at trying to execute the ComputeSynthesisBuffer kernel:" + clErrorToString(errCode));
@@ -429,6 +451,7 @@ namespace raytracer { namespace tracers {
                 }
                 event.wait();
 
+                /*
                 std::vector<SynthesisElement> synthData;
                 synthData.reserve(screenSize.x * screenSize.y);
                 errCode = queue.enqueueReadBuffer(this->impl->synthesisBuffer, CL_TRUE, 0, synthData.size(), synthData.data(), nullptr, &event);
@@ -437,6 +460,7 @@ namespace raytracer { namespace tracers {
                 }
                 event.wait();
                 displaySynthesisBuffer(synthData);
+                */
 
                 queue.finish();
             }
@@ -465,7 +489,7 @@ namespace raytracer { namespace tracers {
         }
         event.wait();
 
-        errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NDRange(1, 1), nullptr, &event);
+        errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
         if (errCode != CL_SUCCESS) {
             throw std::runtime_error("MultiHardwareTracer::synthetizeImage: Error at trying to enqueue the SynthetizeImage kernel: " + clErrorToString(errCode));
         }
@@ -479,8 +503,9 @@ namespace raytracer { namespace tracers {
 
         queue.finish();
 	}
-
+    
 	void MultiHardwareTracer::render(const exeng::scenegraph::Camera *camera) {
+        this->clearSynthBuffer();
         this->generateRays(camera);
         this->computeSynthesisData();
         this->synthetizeImage();

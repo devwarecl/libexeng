@@ -12,9 +12,9 @@ void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane) {
 	float b = dot(plane.normal, ray.direction);
 	float distance = a / b;
 	
-	out->distance = distance;
-	out->normal = plane.normal;
-	out->point = ray.point + ray.direction * distance;
+    out->distance = distance;
+    out->normal = plane.normal;
+    out->point = ray.point + ray.direction * distance;
 }
 
 /**
@@ -34,7 +34,10 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 	};
 	
 	computeElementPlane(element, ray, plane);
-	
+    if (element->distance <= 0.0f) {
+        return;
+    }
+    
 	float3 p = ray.point;
 	float3 q = element->point;
 
@@ -57,9 +60,9 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 /**
  * @brief Compute a synthesis element from a mesh subset
  */
-void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global Vertex *vertices, global int *indices, int indexCount) {
-	SynthesisElement bestElement;
-	SynthesisElement currentElement;
+void computeElementMeshSubset(global SynthesisElement *element, Ray ray, constant Vertex *vertices, constant int *indices, int indexCount) {
+	SynthesisElement bestElement = {0.0f};
+	SynthesisElement currentElement = {0.0f};
 	
 	bestElement.distance = FLT_MAX;
 	
@@ -73,14 +76,37 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
 		
 		computeElementTriangle(&currentElement, ray, p1, p2, p3, normal);
 		
-		bestElement.distance = (bestElement.distance<currentElement.distance) ? bestElement.distance : currentElement.distance;
+		// bestElement.distance = (bestElement.distance<currentElement.distance) ? bestElement.distance : currentElement.distance;
 		
-		// if (computeElement(&element, ray, p1, p2, p3) && element.distance < prevElement.distance) {
-		// 	prevElement = element;
-		// }
+		if (currentElement.distance>0.0f && currentElement.distance<bestElement.distance) {
+		 	bestElement = currentElement;
+		}
 	}
 	
-	*element = bestElement;
+	if (bestElement.distance > 0.0f) {
+        *element = bestElement;
+    } else {
+        element->distance = 0.0f;
+    }
+}
+
+__kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) {
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+    int i = x * screenHeight + y;
+    
+    if (x >= screenWidth) {
+        return;
+    }
+    
+    if (y >= screenHeight) {
+        return;
+    }
+    
+    synthesisBuffer[i].distance = 0.0f;
+    synthesisBuffer[i].normal = (float3)(0.0f, 0.0f, 0.0f);
+    synthesisBuffer[i].point = (float3)(0.0f, 0.0f, 0.0f);
+    synthesisBuffer[i].material = 0;
 }
 
 /**
@@ -89,12 +115,20 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
 __kernel void ComputeSynthesisData (
 	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
 	global Vertex *vertices, global int *indices, int indexCount, int materialIndex) {
-	
+
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 	int i = x * screenHeight + y;
-	
+    
+    if (x >= screenWidth) {
+        return;
+    }
+    
+    if (y >= screenHeight) {
+        return;
+    }
+
 	Ray ray = rays[i];
 	
-	computeElementMeshSubset(synthesisBuffer + i, ray, vertices, indices, indexCount);
+	computeElementMeshSubset(synthesisBuffer + i, ray, vertices_, indices_, sizeof(indices_)/sizeof(indices_[0]));
 }

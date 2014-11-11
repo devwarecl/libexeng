@@ -41,6 +41,14 @@ kernel void GenerateRays (
 	
 	int i = x*screenHeight + y;
 	
+    if (x >= screenWidth) {
+        return;
+    }
+    
+    if (y >= screenHeight) {
+        return;
+    }
+    
 	float2 screenCoord = {(float) x, (float)y};
 	float2 screenSize = {(float)screenWidth, (float)screenHeight};
 

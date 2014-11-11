@@ -13,6 +13,14 @@ kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElemen
 	int y = get_global_id(1);
 	int i = x * screenHeight + y;
     
+    if (x >= screenWidth) {
+        return;
+    }
+    
+    if (y >= screenHeight) {
+        return;
+    }
+    
 	Ray ray = rays[i];
 	
 	float distance = synthesisBuffer[i].distance;

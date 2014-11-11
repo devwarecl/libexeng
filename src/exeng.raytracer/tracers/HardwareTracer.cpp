@@ -116,7 +116,7 @@ namespace raytracer { namespace tracers {
         };
         
         // initialize the OpenCL context
-        cl::Context context = cl::Context({device}, properties);
+        cl::Context context = cl::Context(devices, properties);
         
         // pass the samples to OpenCL
         size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
