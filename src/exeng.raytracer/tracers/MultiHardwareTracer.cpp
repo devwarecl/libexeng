@@ -6,8 +6,10 @@
 // #define __CL_ENABLE_EXCEPTIONS
 #define CL_USE_DEPRECATED_OPENCL_1_1_APIS 
 
+#include <ostream>
 #include <fstream>
 #include <list>
+#include <iomanip>
 
 #include "MultiHardwareTracer.hpp"
 
@@ -126,6 +128,48 @@ namespace raytracer { namespace tracers {
         }
     }
 
+    Vector2i indexToCoord(int index, int width, int height) {
+        Vector2i coord;
+
+        coord.x = index % width;
+        coord.y = index / height;
+
+        return coord;
+    }
+
+    std::ostream& operator<<(std::ostream &os, const Vector3f& v) {
+        os << std::fixed << std::setw( 11 ) << std::setprecision(6) << v.x << ", " << v.y << ", " << v.z;
+
+        return os;
+    }
+
+    void write(std::ostream &os, int width, int height, const std::vector<SynthesisElement>& synthBuffer) {
+        for (int i=0; i<synthBuffer.size(); ++i) {
+            const SynthesisElement &synthElement = synthBuffer[i];
+
+            os  << "[" << indexToCoord(i, width, height) << "]";
+            os  << "Synth {" 
+                << "distance:" << synthElement.distance << ", "
+                << "normal:" << synthElement.normal << ", "
+                << "point:" << synthElement.point
+                << "}" 
+                << std::endl;
+        }
+    }
+
+    void write(std::ostream &os, int width, int height, const std::vector<Ray>& rays) {
+        for (int i=0; i<rays.size(); ++i) {
+            const Ray &ray = rays[i];
+
+            os  << "[" << indexToCoord(i, width, height) << "]";
+            os  << "Ray   {" 
+                << "point:" << ray.getPoint()  << ", "
+                << "direction:" << ray.getDirection() 
+                << "}" 
+                << std::endl;
+        }
+    }
+    
 	static std::string getRootPath() {
 		return std::string(RAYTRACER_ROOT_FOLDER);
 	}
@@ -293,6 +337,10 @@ namespace raytracer { namespace tracers {
     }
 
     void MultiHardwareTracer::generateRays(const exeng::scenegraph::Camera *camera) {
+        std::ofstream fs;
+
+        fs.open("C:/rays.txt", std::ios_base::app);
+
         cl_int errCode = 0;
         cl::Event event;
 
@@ -329,8 +377,15 @@ namespace raytracer { namespace tracers {
         event.wait();
 
         // for debugging
-        // this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
-        // event.wait();
+        this->impl->raysData.resize(size.x * size.y);
+        errCode = this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
+        if (errCode != CL_SUCCESS) {
+            throw std::runtime_error("MultiHardwareTracer::generateRays: Error at trying to enqueue the GenerateRays Kernel:" + clErrorToString(errCode));
+        }
+        event.wait();
+
+        write(fs, size.x, size.y, this->impl->raysData);
+        fs << std::endl;
 
         this->impl->queue.finish();
 	}
@@ -354,7 +409,7 @@ namespace raytracer { namespace tracers {
             nodes.push_back(node);
         }
     }
-
+    
     std::list<const SceneNode*> getSceneNodes(const Scene *scene) {
         std::list<const SceneNode*> nodes;
 
@@ -363,17 +418,6 @@ namespace raytracer { namespace tracers {
         return nodes;
     }
 
-    void displaySynthesisBuffer(const std::vector<SynthesisElement>& synthBuffer) {
-        for (const SynthesisElement &synthElement : synthBuffer) {
-            std::cout   << "{" 
-                        << "distance:" << synthElement.distance << ", "
-                        << "normal:" << synthElement.normal << ", "
-                        << "point" << synthElement.point
-                        << "}" 
-                        << std::endl;
-        }
-    }
-    
     void MultiHardwareTracer::clearSynthBuffer() {
         cl_int errCode = 0;
         cl::Event event;
@@ -394,6 +438,9 @@ namespace raytracer { namespace tracers {
     }
     
 	void MultiHardwareTracer::computeSynthesisData() {
+        std::ofstream fs;
+        fs.open("C:/synth.txt", std::ios_base::app);
+
         std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
         
         // Invoke the ComputeSynthesisData kernel
@@ -451,16 +498,16 @@ namespace raytracer { namespace tracers {
                 }
                 event.wait();
 
-                /*
                 std::vector<SynthesisElement> synthData;
-                synthData.reserve(screenSize.x * screenSize.y);
-                errCode = queue.enqueueReadBuffer(this->impl->synthesisBuffer, CL_TRUE, 0, synthData.size(), synthData.data(), nullptr, &event);
+                synthData.resize(screenSize.x * screenSize.y);
+                errCode = queue.enqueueReadBuffer(this->impl->synthesisBuffer, CL_TRUE, 0, synthData.size()*sizeof(SynthesisElement), synthData.data(), nullptr, &event);
                 if (errCode != CL_SUCCESS) {
                     throw std::runtime_error("MultiHardwareTracer::computeSynthesisData: Error at trying readback the synthesis buffer:" + clErrorToString(errCode));
                 }
                 event.wait();
-                displaySynthesisBuffer(synthData);
-                */
+
+                write(fs, screenSize.x, screenSize.y, synthData);
+                fs << std::endl;
 
                 queue.finish();
             }

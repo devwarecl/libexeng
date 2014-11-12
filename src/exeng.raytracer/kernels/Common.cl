@@ -54,6 +54,7 @@ typedef struct {
 
 
 /*sample cube data*/
+/*
 constant Vertex vertices_[] =  {
     // Cara trasera
     {{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},  // Izquierda,  Arriba,  Atras
@@ -99,4 +100,17 @@ constant int indices_[] = {
     12 + 0, 12 + 1, 12 + 2, 12 + 1, 12 + 3, 12 + 2, 
     16 + 0, 16 + 1, 16 + 2, 16 + 1, 16 + 3, 16 + 2, 
     20 + 0, 20 + 1, 20 + 2, 20 + 1, 20 + 3, 20 + 2
+};
+*/
+
+constant Vertex vertices_[] =  {
+    // Cara trasera
+    {{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},  // Izquierda,  Arriba,  Atras
+    {{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f}},  // Derecha,    Arriba,  Atras
+    {{-0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 0.0f}},  // Izquierda,  Abajo,   Atras
+    {{ 0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 0.0f}},  // Derecha,    Abajo,   Atras
+};
+
+constant int indices_[] = {
+    0 + 0,  0 + 1,  0 + 2,  0 + 1,  0 + 3,  0 + 2
 };

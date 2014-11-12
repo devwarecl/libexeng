@@ -1,7 +1,7 @@
 /**
- * @file 	ComputeSynthesisData.cl
- * @brief 	This kernel compute the synthesis data (data needed for synthesize the final image) for the ray tracer for a 
- *		    single mesh subset data. It must be called multiple times, one for meshSubset, to render a complete scene.
+ * @file  ComputeSynthesisData.cl
+ * @brief This kernel compute the synthesis data (data needed for synthesize the final image) for the ray tracer for a 
+ *		  single mesh subset data. It must be called multiple times, one for meshSubset, to render a complete scene.
  */
 
 /**
@@ -12,9 +12,15 @@ void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane) {
 	float b = dot(plane.normal, ray.direction);
 	float distance = a / b;
 	
-    out->distance = distance;
-    out->normal = plane.normal;
-    out->point = ray.point + ray.direction * distance;
+	if (distance > 0.0f) {
+		out->distance = distance;
+		out->normal = plane.normal;
+		out->point = ray.point + ray.direction * distance;
+	} else {
+		out->distance = 0.0f;
+		out->normal = (float3)(0.0f, 0.0f, 0.0f);
+		out->point = (float3)(0.0f, 0.0f, 0.0f);
+	}
 }
 
 /**
@@ -33,13 +39,15 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 		normal
 	};
 	
-	computeElementPlane(element, ray, plane);
-    if (element->distance <= 0.0f) {
+	SynthesisElement tempElement;
+
+	computeElementPlane(&tempElement, ray, plane);
+    if (tempElement.distance <= 0.0f) {
         return;
     }
-    
+
 	float3 p = ray.point;
-	float3 q = element->point;
+	float3 q = tempElement.point;
 
 	float3 pq = q - p;
 	float3 pa = p1 - p;
@@ -49,12 +57,16 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 	float u = triple(pq, pc, pb);
 	float v = triple(pq, pa, pc);
 	float w = triple(pq, pb, pa);
-	
-	float result = (float)(u > 0.0f && v > 0.0f && w > 0.0f);
-	
-	element->point *= result;
-	element->distance *= result;
-	element->normal *= result;
+
+	if (u > 0.0f && v > 0.0f && w > 0.0f) {
+		
+	} else {
+		tempElement.distance = 0.0f;
+		tempElement.point = (float3)(0.0f, 0.0f, 0.0f);
+		tempElement.normal = (float3)(0.0f, 0.0f, 0.0f);
+	}
+
+	*element = tempElement;
 }
 
 /**
@@ -76,17 +88,13 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, constan
 		
 		computeElementTriangle(&currentElement, ray, p1, p2, p3, normal);
 		
-		// bestElement.distance = (bestElement.distance<currentElement.distance) ? bestElement.distance : currentElement.distance;
-		
 		if (currentElement.distance>0.0f && currentElement.distance<bestElement.distance) {
 		 	bestElement = currentElement;
 		}
 	}
 	
-	if (bestElement.distance > 0.0f) {
+	if (bestElement.distance > 0.0f && bestElement.distance != FLT_MAX) {
         *element = bestElement;
-    } else {
-        element->distance = 0.0f;
     }
 }
 
@@ -94,14 +102,6 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
     int x = get_global_id(0);
     int y = get_global_id(1);
     int i = x * screenHeight + y;
-    
-    if (x >= screenWidth) {
-        return;
-    }
-    
-    if (y >= screenHeight) {
-        return;
-    }
     
     synthesisBuffer[i].distance = 0.0f;
     synthesisBuffer[i].normal = (float3)(0.0f, 0.0f, 0.0f);
@@ -120,14 +120,6 @@ __kernel void ComputeSynthesisData (
 	int y = get_global_id(1);
 	int i = x * screenHeight + y;
     
-    if (x >= screenWidth) {
-        return;
-    }
-    
-    if (y >= screenHeight) {
-        return;
-    }
-
 	Ray ray = rays[i];
 	
 	computeElementMeshSubset(synthesisBuffer + i, ray, vertices_, indices_, sizeof(indices_)/sizeof(indices_[0]));

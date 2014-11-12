@@ -2,7 +2,6 @@
  * @brief Ray buffer generator kernel
  */
 
-
 // constant float3 screen_size = {640.0f, 480.0f, 0.0f};
 // constant float3 half_size = (float3)(639.0f * 0.5f, 479.0f * 0.5f, 0.0f);
 
@@ -41,14 +40,6 @@ kernel void GenerateRays (
 	
 	int i = x*screenHeight + y;
 	
-    if (x >= screenWidth) {
-        return;
-    }
-    
-    if (y >= screenHeight) {
-        return;
-    }
-    
 	float2 screenCoord = {(float) x, (float)y};
 	float2 screenSize = {(float)screenWidth, (float)screenHeight};
 
