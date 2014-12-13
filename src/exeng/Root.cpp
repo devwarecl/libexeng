@@ -10,11 +10,14 @@
  * found in the file LICENSE in this distribution.
  */
 
+#include "Root.hpp"
+
 #include <cassert>
-#include <boost/checked_delete.hpp>
 #include <memory>
-#include <iostream>
-#include <exeng/Root.hpp>
+// #include <iostream>
+
+#include <boost/checked_delete.hpp>
+
 #include <exeng/system/PluginManager.hpp>
 #include <exeng/graphics/GraphicsManager.hpp>
 #include <exeng/scenegraph/MeshManager.hpp>
@@ -45,7 +48,7 @@ namespace exeng {
             "found in the file LICENSE in this distribution\n";
     
     Root::Root() : impl(new Root::Private()) {
-        std::cout << licenseMsg << std::endl;
+        // std::cout << licenseMsg << std::endl;
         
         this->impl->graphicsManager.reset(new GraphicsManager());
         this->impl->pluginManager.reset(new PluginManager(this));
@@ -58,7 +61,7 @@ namespace exeng {
         
 #if defined (EXENG_DEBUG)
         if (count !=0) {
-            std::cout << "Root::~Root: Detected object leaks!. " << count << " objects non freed." << std::endl;
+            // std::cout << "Root::~Root: Detected object leaks!. " << count << " objects non freed." << std::endl;
         }   
 #endif
     }

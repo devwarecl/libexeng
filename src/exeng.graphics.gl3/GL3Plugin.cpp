@@ -17,17 +17,17 @@
 
 #include <exeng/Root.hpp>
 #include <exeng/graphics/GraphicsManager.hpp>
-#include <iostream>
+// #include <iostream>
 
 namespace exeng { namespace graphics { namespace gl3 {
     GL3Plugin::GL3Plugin() : root(nullptr), factory(nullptr) {
-        std::cout << "GL3Plugin::GL3Plugin()" << std::endl;
+        // std::cout << "GL3Plugin::GL3Plugin()" << std::endl;
         this->factory = std::unique_ptr<GL3GraphicsDriverFactory>(new GL3GraphicsDriverFactory());
     }
 
     GL3Plugin::~GL3Plugin() {
         this->terminate();
-        std::cout << "GL3Plugin::~GL3Plugin()" << std::endl;
+        // std::cout << "GL3Plugin::~GL3Plugin()" << std::endl;
     }
 
     std::string GL3Plugin::getName() const {
@@ -50,7 +50,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         this->root = root;
         this->root->getGraphicsManager()->addDriverFactory(this->factory.get());
         
-        std::cout << "done." << std::endl;
+        // std::cout << "done." << std::endl;
     }
 
     void GL3Plugin::terminate() {

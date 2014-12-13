@@ -461,15 +461,3 @@ namespace exeng {
 }
 
 
-template<typename Type, int Size>
-std::ostream& operator<< (std::ostream &os, const exeng::Vector<Type, Size>& Vector) {
-    for(int i=0; i<Size; ++i) {
-        os << std::fixed << std::setprecision( 4 ) << Vector[i];
-        
-        if (i + 1 != Size) {
-            os << ", ";
-        }
-    }
-    
-    return os;
-}

@@ -15,7 +15,7 @@ void castRay(global Ray *rayOut, Camera *camera, float2 screenCoord, float2 scre
 	float3 cam_pos = camera->position;
 	float3 cam_up = camera->up;	// assume a normalized vector
 	float3 cam_dir = normalize(camera->lookAt - cam_pos);
-    float3 cam_right = cross(cam_up, cam_dir);
+    float3 cam_right = normalize(cross(cam_up, cam_dir));
     
     float2 normalized_coords = (coordsf / screenSize) - (float2)(0.5f, 0.5f);
     float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;

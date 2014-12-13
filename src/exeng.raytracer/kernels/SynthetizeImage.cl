@@ -20,9 +20,9 @@ kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElemen
 	float3 point = synthesisBuffer[i].point;
 	int	material = synthesisBuffer[i].material;
 	
-	if (distance >= 0.0f) {
+	if (distance > 0.00001f) {
 		float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
-		float4 color = white * fabs(dot(ray.direction, normal));
+		float4 color = white/* * fabs(dot(ray.direction, normal))*/;
 	
 		write_imagef (image, (int2)(x, y), color);
 	} else {

@@ -351,6 +351,18 @@ namespace exeng {
          * @brief Regresa el vector zero
          */
         static Vector zero();
+
+		friend std::ostream& operator<< (std::ostream &os, const Vector<Type, Size> &v) {
+		    for(int i=0; i<Size; ++i) {
+				os << std::fixed << std::setprecision(4) << v[i];
+        
+				if (i+1 != Size) {
+					os << ", ";
+				}
+			}
+			
+			return os;
+		}
     };
 
     typedef Vector<float, 2> Vector2f;
@@ -366,8 +378,8 @@ namespace exeng {
     typedef Vector<int, 4> Vector4i;
 }
 
-template<typename Type, int Size>
-std::ostream& operator<< (std::ostream &os, const exeng::Vector<Type, Size>& Vector);
+// template<typename Type, int Size>
+// std::ostream& operator<< (std::ostream &os, const exeng::Vector<Type, Size>& Vector);
 
 #include "Vector.inl"
 

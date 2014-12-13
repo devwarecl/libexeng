@@ -16,7 +16,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <exeng/Object.hpp>
-#include <iostream>
+// #include <iostream>
 
 namespace exeng {
 #if defined (EXENG_DEBUG)
@@ -26,14 +26,14 @@ namespace exeng {
 	Object::Object() {
 #if defined (EXENG_DEBUG)
 		++count;
-		std::cout << "Creating object (currentCount: " << count << ")" << std::endl;
+		// std::cout << "Creating object (currentCount: " << count << ")" << std::endl;
 #endif
 	}
 
 
 	Object::~Object() {
 #if defined (EXENG_DEBUG)
-		std::cout << "Destroying object (currentCount: " << count << ")(type: " << this->toString() << ")" << std::endl;
+		// std::cout << "Destroying object (currentCount: " << count << ")(type: " << this->toString() << ")" << std::endl;
 		--count;
 #endif
 	}

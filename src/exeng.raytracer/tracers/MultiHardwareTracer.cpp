@@ -6,14 +6,16 @@
 // #define __CL_ENABLE_EXCEPTIONS
 #define CL_USE_DEPRECATED_OPENCL_1_1_APIS 
 
+#include "MultiHardwareTracer.hpp"
+
 #include <ostream>
 #include <fstream>
 #include <list>
 #include <iomanip>
 
-#include "MultiHardwareTracer.hpp"
-
 #include <boost/lexical_cast.hpp>
+#include <boost/log/trivial.hpp>
+
 #include <CL/cl.h>
 #include <CL/cl_gl.h>
 
@@ -54,6 +56,8 @@ namespace raytracer { namespace tracers {
 		cl::CommandQueue queue;
 
 		cl_int samplesCount;
+
+		cl::NDRange localSize = cl::NDRange(2, 2);
 	};
 
     struct SynthesisElement {
@@ -143,6 +147,7 @@ namespace raytracer { namespace tracers {
         return os;
     }
 
+	/*
     void write(std::ostream &os, int width, int height, const std::vector<SynthesisElement>& synthBuffer) {
         for (int i=0; i<synthBuffer.size(); ++i) {
             const SynthesisElement &synthElement = synthBuffer[i];
@@ -169,6 +174,7 @@ namespace raytracer { namespace tracers {
                 << std::endl;
         }
     }
+	*/
     
 	static std::string getRootPath() {
 		return std::string(RAYTRACER_ROOT_FOLDER);
@@ -203,6 +209,9 @@ namespace raytracer { namespace tracers {
 	//}
 
 	MultiHardwareTracer::MultiHardwareTracer(const Scene *scene, const raytracer::samplers::Sampler *sampler) : Tracer(scene, nullptr), impl(new MultiHardwareTracer::Private())  {
+
+		BOOST_LOG_TRIVIAL(trace) << "Initializing Multi-Object ray tracer ...";
+
 		std::vector<cl::Platform> platforms;
 		cl::Platform::get(&platforms);
 
@@ -210,8 +219,11 @@ namespace raytracer { namespace tracers {
 			throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL platforms available");
 		}
 
+		BOOST_LOG_TRIVIAL(trace) << "Found " << platforms.size() << " platform(s).";
+
 		// Select the first platform
 		cl::Platform platform = platforms[0];
+		BOOST_LOG_TRIVIAL(trace) << "Using OpenCL platform: " << platform.getInfo<CL_PLATFORM_NAME>(nullptr);
 
 		// Select the first GPU device of the first platform.
 		std::vector<cl::Device> devices;
@@ -220,7 +232,13 @@ namespace raytracer { namespace tracers {
 			throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL GPU devices available");
 		}
 
+		BOOST_LOG_TRIVIAL(trace) << "Found " << devices.size() << " device(s).";
+
 		cl::Device device = devices[0];
+
+		BOOST_LOG_TRIVIAL(trace) << "Using OpenCL device: " << device.getInfo<CL_DEVICE_NAME>(nullptr);
+
+		BOOST_LOG_TRIVIAL(trace) << "Creating OpenCL context with GL/CL interop support....";
 
 		// Set context properties for GL/CL interop.
 		cl_context_properties properties[] = {
@@ -245,6 +263,7 @@ namespace raytracer { namespace tracers {
 		cl::Context context = cl::Context(devices , properties);
 
 		// pass the samples to OpenCL
+		BOOST_LOG_TRIVIAL(trace) << "Creating sampling buffer from " << sampler->getSampleCount() << " sample(s)...";
 		size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
 		cl_mem_flags bufferFlags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
 		void* bufferData = (void*)(sampler->getSampleData());
@@ -252,12 +271,21 @@ namespace raytracer { namespace tracers {
 		cl::Buffer samplesBuffer = cl::Buffer(context, bufferFlags, bufferSize, bufferData);
 
 		// Create a Program object from all the kernels
-		std::list<std::string> programSourceList = {
-            loadFile(getRootPath() + "kernels/Common.cl"),
-            loadFile(getRootPath() + "kernels/GenerateRays.cl"),
-			loadFile(getRootPath() + "kernels/ComputeSynthesisData.cl"),
-			loadFile(getRootPath() + "kernels/SynthetizeImage.cl")
+		std::list<std::string> sourceFiles = {
+			getRootPath() + "kernels/Common.cl",
+            getRootPath() + "kernels/GenerateRays.cl",
+			getRootPath() + "kernels/ComputeSynthesisData.cl",
+			getRootPath() + "kernels/SynthetizeImage.cl"
 		};
+
+		BOOST_LOG_TRIVIAL(trace) << "Compiling the following OpenCL C source files ...";
+
+		std::list<std::string> programSourceList;
+
+		for (std::string &source : sourceFiles) {
+			BOOST_LOG_TRIVIAL(trace) << source;
+			programSourceList.push_back(loadFile(source));
+		}
 
 		cl::Program::Sources programSources;
 		for (std::string &src : programSourceList) {
@@ -275,6 +303,8 @@ namespace raytracer { namespace tracers {
 
 			throw std::runtime_error(msg);
 		}
+
+		BOOST_LOG_TRIVIAL(trace) << "Completing Multi-Object ray tracer initialization ...";
 
 		cl::Kernel clearSynthBufferKernel       = cl::Kernel(program, "ClearSynthesisData");
 		cl::Kernel rayGeneratorKernel			= cl::Kernel(program, "GenerateRays");
@@ -297,6 +327,8 @@ namespace raytracer { namespace tracers {
 		this->impl->queue = queue;
 		this->impl->samplesBuffer = samplesBuffer;
 		this->impl->samplesCount = sampler->getSampleCount();
+
+		BOOST_LOG_TRIVIAL(trace) << "Multi-Object ray tracer initialization done.";
 	}
 
 	void MultiHardwareTracer::setRenderTarget(exeng::graphics::Texture *renderTarget) {
@@ -337,10 +369,14 @@ namespace raytracer { namespace tracers {
     }
 
     void MultiHardwareTracer::generateRays(const exeng::scenegraph::Camera *camera) {
-        std::ofstream fs;
-
-        fs.open("C:/rays.txt", std::ios_base::app);
-
+		BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRays kernel with params: "
+			<< "Pos={" << camera->getPosition() << "}, "
+			<< "LookAt={" << camera->getLookAt() << "}, "
+			<< "Up={" << camera->getUp() << "}, "
+			<< "Screen= {" << this->getRenderTarget()->getSize() << "}";
+		
+        // std::ofstream fs;
+        // fs.open("C:/rays.txt", std::ios_base::app);
         cl_int errCode = 0;
         cl::Event event;
 
@@ -370,13 +406,17 @@ namespace raytracer { namespace tracers {
         kernel.setArg(11, size.y);
 
         // Execute the kernel
-        errCode = this->impl->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
+        errCode = this->impl->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), this->impl->localSize, nullptr, &event);
         if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("MultiHardwareTracer::generateRays: Error at trying to enqueue the GenerateRays Kernel:" + clErrorToString(errCode));
+			std::string msg = "MultiHardwareTracer::generateRays: Error at trying to enqueue the GenerateRays Kernel:" + clErrorToString(errCode);
+			BOOST_LOG_TRIVIAL(error) << msg;
+
+            throw std::runtime_error(msg);
         }
         event.wait();
 
         // for debugging
+		/*
         this->impl->raysData.resize(size.x * size.y);
         errCode = this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
         if (errCode != CL_SUCCESS) {
@@ -386,6 +426,7 @@ namespace raytracer { namespace tracers {
 
         write(fs, size.x, size.y, this->impl->raysData);
         fs << std::endl;
+		*/
 
         this->impl->queue.finish();
 	}
@@ -419,6 +460,8 @@ namespace raytracer { namespace tracers {
     }
 
     void MultiHardwareTracer::clearSynthBuffer() {
+		BOOST_LOG_TRIVIAL(trace) << "[1] Invoking clearSyntBuffer kernel with params: ScreenSize={" << this->getRenderTarget()->getSize() << "}";
+
         cl_int errCode = 0;
         cl::Event event;
         cl::CommandQueue &queue = this->impl->queue;
@@ -429,18 +472,21 @@ namespace raytracer { namespace tracers {
         kernel.setArg(0, this->impl->synthesisBuffer);
         kernel.setArg(1, size.x);
         kernel.setArg(2, size.y);
+
         errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
         if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("MultiHardwareTracer::clearSynthBuffer: Error at trying to execute the ClearSynthBuffer kernel:" + clErrorToString(errCode));
+			std::string msg = "MultiHardwareTracer::clearSynthBuffer: Error at trying to execute the ClearSynthBuffer kernel:" + clErrorToString(errCode);
+			BOOST_LOG_TRIVIAL(error) << msg;
+
+            throw std::runtime_error(msg);
         }
         
         event.wait();
     }
     
 	void MultiHardwareTracer::computeSynthesisData() {
-        std::ofstream fs;
-        fs.open("C:/synth.txt", std::ios_base::app);
-
+        // std::ofstream fs;
+        // fs.open("C:/synth.txt", std::ios_base::app);
         std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
         
         // Invoke the ComputeSynthesisData kernel
@@ -467,6 +513,11 @@ namespace raytracer { namespace tracers {
                 int indexFormatSize = IndexFormat::getSize(subset->getIndexFormat());
                 int indexCount = subset->getIndexBuffer()->getSize() / indexFormatSize;
 
+				BOOST_LOG_TRIVIAL(trace) 
+					<< "[3] Invoking computeSynthesisData kernel with params: "
+					<< "ScreenSize={" << screenSize << "}, "
+					<< "TriangleCount=" << indexCount;
+
                 kernel.setArg(0, this->impl->synthesisBuffer);
                 kernel.setArg(1, this->impl->raysBuffer);
                 kernel.setArg(2, screenSize.x);
@@ -482,22 +533,30 @@ namespace raytracer { namespace tracers {
 
                 errCode = queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
                 if (errCode != CL_SUCCESS) {
-                    throw std::runtime_error("MultiHardwareTracer::computeSynthesisData: Error at trying to acquire the GL buffer object:" + clErrorToString(errCode));
+					std::string msg = "MultiHardwareTracer::computeSynthesisData: Error at trying to acquire the GL buffer object:" + clErrorToString(errCode);
+					BOOST_LOG_TRIVIAL(error) << msg;
+
+                    throw std::runtime_error(msg);
                 }
                 event.wait();
                 
-                errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(screenSize.x, screenSize.y), cl::NullRange, nullptr, &event);
+                errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(screenSize.x, screenSize.y), this->impl->localSize, nullptr, &event);
                 if (errCode != CL_SUCCESS) {
-                    throw std::runtime_error("MultiHardwareTracer::computeSynthesisData: Error at trying to execute the ComputeSynthesisBuffer kernel:" + clErrorToString(errCode));
+					std::string msg = "MultiHardwareTracer::computeSynthesisData: Error at trying to execute the ComputeSynthesisBuffer kernel:" + clErrorToString(errCode);
+					BOOST_LOG_TRIVIAL(error) << msg;
+                    throw std::runtime_error(msg);
                 }
                 event.wait();
 
                 errCode = queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
                 if (errCode != CL_SUCCESS) {
-                    throw std::runtime_error("MultiHardwareTracer::computeSynthesisData: Error at trying to release the GL buffer object:" + clErrorToString(errCode));
+					std::string msg = "MultiHardwareTracer::computeSynthesisData: Error at trying to release the GL buffer object:" + clErrorToString(errCode);
+					BOOST_LOG_TRIVIAL(error) << msg;
+                    throw std::runtime_error(msg);
                 }
                 event.wait();
 
+				/*
                 std::vector<SynthesisElement> synthData;
                 synthData.resize(screenSize.x * screenSize.y);
                 errCode = queue.enqueueReadBuffer(this->impl->synthesisBuffer, CL_TRUE, 0, synthData.size()*sizeof(SynthesisElement), synthData.data(), nullptr, &event);
@@ -508,6 +567,7 @@ namespace raytracer { namespace tracers {
 
                 write(fs, screenSize.x, screenSize.y, synthData);
                 fs << std::endl;
+				*/
 
                 queue.finish();
             }
@@ -530,21 +590,34 @@ namespace raytracer { namespace tracers {
 
         std::vector<cl::Memory> buffers = {this->impl->image};
 
+		BOOST_LOG_TRIVIAL(trace) 
+			<< "[4] Invoking synthetizeImage kernel with params: "
+			<< "ScreenSize={" << size << "}";
+		
         errCode = queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
         if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("MultiHardwareTracer::synthetizeImage: Error at trying to acquire the GL texture object: " + clErrorToString(errCode));
+			std::string msg = "MultiHardwareTracer::synthetizeImage: Error at trying to acquire the GL texture object: " + clErrorToString(errCode);
+
+			BOOST_LOG_TRIVIAL(trace) << msg;
+            throw std::runtime_error(msg);
         }
         event.wait();
 
-        errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
+        errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), this->impl->localSize, nullptr, &event);
         if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("MultiHardwareTracer::synthetizeImage: Error at trying to enqueue the SynthetizeImage kernel: " + clErrorToString(errCode));
+			std::string msg = "MultiHardwareTracer::synthetizeImage: Error at trying to enqueue the SynthetizeImage kernel: " + clErrorToString(errCode);
+
+			BOOST_LOG_TRIVIAL(trace) << msg;
+            throw std::runtime_error(msg);
         }
         event.wait();
 
         errCode = queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
         if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("MultiHardwareTracer::synthetizeImage: Error at trying to release the GL texture object:" + clErrorToString(errCode));
+			std::string msg = "MultiHardwareTracer::synthetizeImage: Error at trying to release the GL texture object:" + clErrorToString(errCode);
+
+			BOOST_LOG_TRIVIAL(trace) << msg;
+            throw std::runtime_error(msg);
         }
         event.wait();
 
@@ -552,6 +625,8 @@ namespace raytracer { namespace tracers {
 	}
     
 	void MultiHardwareTracer::render(const exeng::scenegraph::Camera *camera) {
+		BOOST_LOG_TRIVIAL(trace) << "Rendering scene ...";
+
         this->clearSynthBuffer();
         this->generateRays(camera);
         this->computeSynthesisData();

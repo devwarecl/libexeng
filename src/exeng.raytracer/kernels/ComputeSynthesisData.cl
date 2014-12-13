@@ -1,3 +1,4 @@
+
 /**
  * @file  ComputeSynthesisData.cl
  * @brief This kernel compute the synthesis data (data needed for synthesize the final image) for the ray tracer for a 
@@ -16,10 +17,6 @@ void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane) {
 		out->distance = distance;
 		out->normal = plane.normal;
 		out->point = ray.point + ray.direction * distance;
-	} else {
-		out->distance = 0.0f;
-		out->normal = (float3)(0.0f, 0.0f, 0.0f);
-		out->point = (float3)(0.0f, 0.0f, 0.0f);
 	}
 }
 
@@ -57,16 +54,10 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 	float u = triple(pq, pc, pb);
 	float v = triple(pq, pa, pc);
 	float w = triple(pq, pb, pa);
-
+	
 	if (u > 0.0f && v > 0.0f && w > 0.0f) {
-		
-	} else {
-		tempElement.distance = 0.0f;
-		tempElement.point = (float3)(0.0f, 0.0f, 0.0f);
-		tempElement.normal = (float3)(0.0f, 0.0f, 0.0f);
+		*element = tempElement;
 	}
-
-	*element = tempElement;
 }
 
 /**

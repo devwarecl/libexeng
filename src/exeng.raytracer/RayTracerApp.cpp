@@ -9,6 +9,9 @@
 #include <list>
 #include <array>
 
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/trivial.hpp>
+
 #include <exeng.raytracer/samplers/JitteredSampler.hpp>
 #include <exeng.raytracer/tracers/MultiHardwareTracer.hpp>
 #include <exeng.raytracer/tracers/HardwareTracer.hpp>
@@ -91,15 +94,28 @@ namespace raytracer {
     }
     
     void RayTracerApp::initialize(int argc, char **argv) {
+
+		boost::log::add_file_log (
+			boost::log::keywords::file_name="raytracer.%N.log",
+			boost::log::keywords::rotation_size = 10*1024*1024
+		);
+
+		BOOST_LOG_TRIVIAL(trace) << "Initializing application...";
+
         // Initialize the exeng root class and plugins.
+		BOOST_LOG_TRIVIAL(trace) << "Loading plugins...";
+
         std::string path = getPluginPath();
-        
         this->getRoot()->getPluginManager()->load("exeng.graphics.gl3", path);
         
         // initialize the gl3 driver, in windowed mode
+		BOOST_LOG_TRIVIAL(trace) << "Initializing graphics driver...";
         this->driver = std::unique_ptr<GraphicsDriver>(this->getRoot()->getGraphicsManager()->createDriver());
         this->driver->addEventHandler(this);
         this->driver->initialize();
+
+		BOOST_LOG_TRIVIAL(trace) << "Initializing base objects of the graphics subsystem...";
+
         DisplayMode mode = this->driver->getDisplayMode();
         
         // create the geometry (a single triangle)
@@ -135,8 +151,8 @@ namespace raytracer {
         // Create a base texture.
         this->screenTexture = this->createTexture (
             this->driver.get(), 
-            // {(float)mode.size.width, (float)mode.size.height},
-            {(float)50, (float)50},
+            {(float)mode.size.width, (float)mode.size.height},
+            // {(float)50, (float)50},
             {0.0f, 0.5f, 1.0f, 1.0f}
         );
         
@@ -148,6 +164,8 @@ namespace raytracer {
         this->camera.setLookAt({0.0f, 0.0f, 0.0f});
         this->camera.setPosition({0.0f, 0.0f, -1.0f});
         this->camera.setUp({0.0f, 1.0f, 0.0f});
+
+		BOOST_LOG_TRIVIAL(trace) << "Application initialization done.";
     }
     
     void RayTracerApp::pollEvents() {
@@ -256,55 +274,55 @@ namespace exeng { namespace main {
     using namespace exeng::input;
     using namespace exeng::graphics;
 
-    class TestApp : public IEventHandler {
-    public:
-        TestApp() {
-            this->root = std::unique_ptr<Root>(new Root());
-            this->root->getPluginManager()->load("exeng.graphics.gl3", getPluginPath());
-            
-            this->graphicsDriver = std::unique_ptr<GraphicsDriver>(root->getGraphicsManager()->createDriver());
-            this->graphicsDriver->addEventHandler(this);
-            this->graphicsDriver->initialize();
-            
-            this->isRunning = true;
-        }
-        
-        ~TestApp() {}
-        
-        virtual void handleEvent(const EventData &data) override {
-            if (data.eventType == TypeId<InputEventData>()) {
-                if (data.cast<InputEventData>().check(ButtonStatus::Press, ButtonCode::KeyEsc)) {
-                    this->isRunning = false;
-                }
-            }
-        }
-        
-        void run() {
-            while (this->isRunning) {
-                this->update();
-                this->present();
-            }
-        }
-        
-        int getExitCode() const {
-            return 0;
-        }
-        
-    private:
-        void update() {
-            this->graphicsDriver->pollEvents();
-        }
+    //class TestApp : public IEventHandler {
+    //public:
+    //    TestApp() {
+    //        this->root = std::unique_ptr<Root>(new Root());
+    //        this->root->getPluginManager()->load("exeng.graphics.gl3", getPluginPath());
+    //        
+    //        this->graphicsDriver = std::unique_ptr<GraphicsDriver>(root->getGraphicsManager()->createDriver());
+    //        this->graphicsDriver->addEventHandler(this);
+    //        this->graphicsDriver->initialize();
+    //        
+    //        this->isRunning = true;
+    //    }
+    //    
+    //    ~TestApp() {}
+    //    
+    //    virtual void handleEvent(const EventData &data) override {
+    //        if (data.eventType == TypeId<InputEventData>()) {
+    //            if (data.cast<InputEventData>().check(ButtonStatus::Press, ButtonCode::KeyEsc)) {
+    //                this->isRunning = false;
+    //            }
+    //        }
+    //    }
+    //    
+    //    void run() {
+    //        while (this->isRunning) {
+    //            this->update();
+    //            this->present();
+    //        }
+    //    }
+    //    
+    //    int getExitCode() const {
+    //        return 0;
+    //    }
+    //    
+    //private:
+    //    void update() {
+    //        this->graphicsDriver->pollEvents();
+    //    }
 
-        void present() {
-            this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::Color);
-            this->graphicsDriver->endFrame();
-        }
+    //    void present() {
+    //        this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::Color);
+    //        this->graphicsDriver->endFrame();
+    //    }
 
-    private:
-        bool isRunning = false;
-        std::unique_ptr<Root> root;
-        std::unique_ptr<GraphicsDriver> graphicsDriver;
-    };
+    //private:
+    //    bool isRunning = false;
+    //    std::unique_ptr<Root> root;
+    //    std::unique_ptr<GraphicsDriver> graphicsDriver;
+    //};
 
 	int main(int argc, char **argv) {
         // TestApp app;

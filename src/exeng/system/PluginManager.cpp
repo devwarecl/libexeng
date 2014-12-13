@@ -17,7 +17,7 @@
 #include <stdexcept>
 #include <map>
 #include <memory>
-#include <iostream>
+// #include <iostream>
 #include <exeng/Root.hpp>
 #include <exeng/system/Library.hpp>
 #include <exeng/system/Plugin.hpp>
@@ -68,7 +68,7 @@ namespace exeng { namespace system {
             
         std::string path = path_;
         std::string libname;    // The library filename.
-        std::cout << "PluginManager: Loading module '" << name << "'" << std::endl;
+        // std::cout << "PluginManager: Loading module '" << name << "'" << std::endl;
             
 #if defined(EXENG_WINDOWS)
         libname = name + std::string(".dll");
