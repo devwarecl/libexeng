@@ -11,8 +11,8 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_MATH_Vector_HPP__
-#define __EXENG_MATH_Vector_HPP__
+#ifndef __EXENG_MATH_VECTOR_HPP__
+#define __EXENG_MATH_VECTOR_HPP__
 
 #include <iosfwd>
 #include <algorithm>

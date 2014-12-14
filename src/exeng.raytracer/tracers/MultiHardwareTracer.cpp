@@ -67,7 +67,7 @@ namespace raytracer { namespace tracers {
         int		    material;	// Material index/id (will be defined later).
     };
 
-    std::string clErrorToString(cl_int errCode) {
+    static std::string clErrorToString(cl_int errCode) {
         switch (errCode) {
             case CL_SUCCESS                                  :   return "CL_SUCCESS";
             case CL_DEVICE_NOT_FOUND                         :   return "CL_DEVICE_NOT_FOUND";
@@ -132,7 +132,7 @@ namespace raytracer { namespace tracers {
         }
     }
 
-    Vector2i indexToCoord(int index, int width, int height) {
+    static Vector2i indexToCoord(int index, int width, int height) {
         Vector2i coord;
 
         coord.x = index % width;
@@ -141,7 +141,7 @@ namespace raytracer { namespace tracers {
         return coord;
     }
 
-    std::ostream& operator<<(std::ostream &os, const Vector3f& v) {
+    static std::ostream& operator<<(std::ostream &os, const Vector3f& v) {
         os << std::fixed << std::setw( 11 ) << std::setprecision(6) << v.x << ", " << v.y << ", " << v.z;
 
         return os;
@@ -237,7 +237,6 @@ namespace raytracer { namespace tracers {
 		cl::Device device = devices[0];
 
 		BOOST_LOG_TRIVIAL(trace) << "Using OpenCL device: " << device.getInfo<CL_DEVICE_NAME>(nullptr);
-
 		BOOST_LOG_TRIVIAL(trace) << "Creating OpenCL context with GL/CL interop support....";
 
 		// Set context properties for GL/CL interop.
@@ -260,7 +259,7 @@ namespace raytracer { namespace tracers {
 		};
 
 		// initialize the OpenCL context
-		cl::Context context = cl::Context(devices , properties);
+		cl::Context context = cl::Context({device}, properties);
 
 		// pass the samples to OpenCL
 		BOOST_LOG_TRIVIAL(trace) << "Creating sampling buffer from " << sampler->getSampleCount() << " sample(s)...";
@@ -272,12 +271,15 @@ namespace raytracer { namespace tracers {
 
 		// Create a Program object from all the kernels
 		std::list<std::string> sourceFiles = {
+			/*
 			getRootPath() + "kernels/Common.cl",
             getRootPath() + "kernels/GenerateRays.cl",
 			getRootPath() + "kernels/ComputeSynthesisData.cl",
 			getRootPath() + "kernels/SynthetizeImage.cl"
+			*/
+			getRootPath() + "kernels/MultiHardwareTracer.cl"
 		};
-
+		
 		BOOST_LOG_TRIVIAL(trace) << "Compiling the following OpenCL C source files ...";
 
 		std::list<std::string> programSourceList;
@@ -293,9 +295,12 @@ namespace raytracer { namespace tracers {
 		}
 
 		// Compile the OpenCL programs
+		std::string programOptions = "";
+		programOptions += "-Werror -g -s";
+		programOptions += "\"" + getRootPath() + "kernels/MultiHardwareTracer.cl\"";
+		
 		cl::Program program = cl::Program(context, programSources);
-		program.build({ device }, "-Werror");
-		if (program.build({ device }) != CL_SUCCESS) {
+		if (program.build({device}, programOptions.c_str()) != CL_SUCCESS) {
 			std::string msg;
 			msg += "OpenCL program compile error: ";
 			msg += program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);

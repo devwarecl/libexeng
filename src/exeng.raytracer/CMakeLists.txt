@@ -32,11 +32,12 @@ set (BaseFiles
 )
 
 set (Kernels
-	kernels/TraceRay.cl
-	kernels/Common.cl
-	kernels/ComputeSynthesisData.cl
-	kernels/GenerateRays.cl
-	kernels/SynthetizeImage.cl
+	# kernels/TraceRay.cl
+	# kernels/Common.cl
+	# kernels/ComputeSynthesisData.cl
+	# kernels/GenerateRays.cl
+	# kernels/SynthetizeImage.cl
+	kernels/MultiHardwareTracer.cl
 )
 
 set ( Tracers

@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
 
 #if defined(EXENG_WINDOWS) 
 #include <Windows.h>
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, INT nCmdShow) {
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, INT nCmdShow) {
 	// TODO: Append the command line.
 	return exeng::main::main(0, nullptr);
 }
