@@ -25,9 +25,9 @@ typedef struct {
  * @brief Synthesis Element.
  */
 typedef struct {
-	float	distance;	// Distance from the origin of the ray.
-	float3	normal;		// Normal vector of the surface that collided with the ray.
 	float3 	point;		// Point of intersection
+	float3	normal;		// Normal vector of the surface that collided with the ray.
+	float	distance;	// Distance from the origin of the ray.
 	int		material;	// Material index/id (will be defined later).
 } SynthesisElement;
 
@@ -115,6 +115,7 @@ constant int indices_[] = {
     0 + 0,  0 + 1,  0 + 2,  0 + 1,  0 + 3,  0 + 2
 };
 
+constant int indexCount_ = 6;
 
 /**
  * @brief Ray buffer generator kernel
@@ -123,19 +124,24 @@ constant int indices_[] = {
 // constant float3 screen_size = {640.0f, 480.0f, 0.0f};
 // constant float3 half_size = (float3)(639.0f * 0.5f, 479.0f * 0.5f, 0.0f);
 
+int coordToIndex(int x, int y, int width, int height) 
+{
+	return y*width + x;
+}
+
 /**
  * @brief Cast a perspective ray from the camera
  */
 void castRay(global Ray *rayOut, Camera *camera, float2 screenCoord, float2 screenSize, float2 sample) {
-    // float3 coordsf = (float3)(screenCoord, 0.0f) + (float3)(sample, 0.0f);
     float2 coordsf = screenCoord + sample;
 
 	float3 cam_pos = camera->position;
+	
 	float3 cam_up = camera->up;	// assume a normalized vector
 	float3 cam_dir = normalize(camera->lookAt - cam_pos);
     float3 cam_right = normalize(cross(cam_up, cam_dir));
     
-    float2 normalized_coords = (coordsf / screenSize) - (float2)(0.5f, 0.5f);
+    float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
     float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
     
     Ray ray = {
@@ -156,7 +162,8 @@ kernel void GenerateRays (
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 	
-	int i = x*screenHeight + y;
+	// int i = x*screenHeight + y;
+	int i = coordToIndex(x, y, screenWidth, screenHeight);
 	
 	float2 screenCoord = {(float) x, (float)y};
 	float2 screenSize = {(float)screenWidth, (float)screenHeight};
@@ -167,7 +174,7 @@ kernel void GenerateRays (
 		{camUpX, camUpY, camUpZ},
 	};
 	
-	castRay(rays+i, &camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
+	castRay(&rays[i], &camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
 }
 
 
@@ -208,7 +215,7 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 		normal
 	};
 	
-	SynthesisElement tempElement;
+	SynthesisElement tempElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
 
 	computeElementPlane(&tempElement, ray, plane);
     if (tempElement.distance <= 0.0f) {
@@ -235,9 +242,10 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 /**
  * @brief Compute a synthesis element from a mesh subset
  */
-void computeElementMeshSubset(global SynthesisElement *element, Ray ray, constant Vertex *vertices, constant int *indices, int indexCount) {
-	SynthesisElement bestElement = {0.0f};
-	SynthesisElement currentElement = {0.0f};
+void computeElementMeshSubset(global SynthesisElement *element, Ray ray, constant Vertex *vertices, constant int *indices, int indexCount) 
+{
+	SynthesisElement bestElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
+	SynthesisElement currentElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
 	
 	bestElement.distance = FLT_MAX;
 	
@@ -266,9 +274,9 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
     int y = get_global_id(1);
     int i = x * screenHeight + y;
     
-    synthesisBuffer[i].distance = 0.0f;
+	synthesisBuffer[i].point = (float3)(0.0f, 0.0f, 0.0f);
     synthesisBuffer[i].normal = (float3)(0.0f, 0.0f, 0.0f);
-    synthesisBuffer[i].point = (float3)(0.0f, 0.0f, 0.0f);
+    synthesisBuffer[i].distance = 0.0f;
     synthesisBuffer[i].material = 0;
 }
 
@@ -281,11 +289,12 @@ __kernel void ComputeSynthesisData (
 
 	int x = get_global_id(0);
 	int y = get_global_id(1);
-	int i = x * screenHeight + y;
+
+	int i = coordToIndex(x, y, screenWidth, screenHeight);
     
-	Ray ray = rays[i];
+	const Ray ray = rays[i];
 	
-	computeElementMeshSubset(synthesisBuffer + i, ray, vertices_, indices_, sizeof(indices_)/sizeof(indices_[0]));
+	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices_, indices_, indexCount_);
 }
 
 /**
@@ -301,21 +310,23 @@ __kernel void ComputeSynthesisData (
 kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight /*, global Material *materials*/) {
 	int x = get_global_id(0);
 	int y = get_global_id(1);
-	int i = x * screenHeight + y;
+	int i = coordToIndex(x, y, screenWidth, screenHeight);
     
 	Ray ray = rays[i];
 	
-	float distance = synthesisBuffer[i].distance;
-	float3 normal = synthesisBuffer[i].normal;
 	float3 point = synthesisBuffer[i].point;
+	float3 normal = synthesisBuffer[i].normal;
+	float distance = synthesisBuffer[i].distance;
 	int	material = synthesisBuffer[i].material;
 	
-	if (distance > 0.00001f) {
-		float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
-		float4 color = white/* * fabs(dot(ray.direction, normal))*/;
-	
-		write_imagef (image, (int2)(x, y), color);
-	} else {
-		write_imagef (image, (int2)(x, y), (float4)(0.0f, 0.0f, 0.0f, 1.0f));
+	const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
+	float4 color;
+
+	if (distance > 0.0f) {
+		color = white * fabs(dot(ray.direction, normal));
+	} else { 
+		color = (float4)(0.0f, 0.0f, 0.0f, 1.0f);
 	}
+
+	write_imagef (image, (int2)(x, y), color);
 }

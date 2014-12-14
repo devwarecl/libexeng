@@ -60,11 +60,13 @@ namespace raytracer { namespace tracers {
 		cl::NDRange localSize = cl::NDRange(2, 2);
 	};
 
+	typedef exeng::Vector<cl_float, 3> cl_float3;
+
     struct SynthesisElement {
-        float	    distance;	// Distance from the origin of the ray.
-        Vector3f    normal;		// Normal vector of the surface that collided with the ray.
-        Vector3f    point;		// Point of intersection
-        int		    material;	// Material index/id (will be defined later).
+		Vector3f	point;		// Point of intersection
+        Vector3f	normal;		// Normal vector of the surface that collided with the ray.
+		float		distance;	// Distance from the origin of the ray.
+        cl_int		material;	// Material index/id (will be defined later).
     };
 
     static std::string clErrorToString(cl_int errCode) {
@@ -133,23 +135,16 @@ namespace raytracer { namespace tracers {
     }
 
     static Vector2i indexToCoord(int index, int width, int height) {
-        Vector2i coord;
-
-        coord.x = index % width;
-        coord.y = index / height;
+        Vector2i coord = {
+			index / height,
+			index % width
+		};
 
         return coord;
     }
-
-    static std::ostream& operator<<(std::ostream &os, const Vector3f& v) {
-        os << std::fixed << std::setw( 11 ) << std::setprecision(6) << v.x << ", " << v.y << ", " << v.z;
-
-        return os;
-    }
-
-	/*
+	
     void write(std::ostream &os, int width, int height, const std::vector<SynthesisElement>& synthBuffer) {
-        for (int i=0; i<synthBuffer.size(); ++i) {
+        for (int i=0; i<(int)synthBuffer.size(); ++i) {
             const SynthesisElement &synthElement = synthBuffer[i];
 
             os  << "[" << indexToCoord(i, width, height) << "]";
@@ -163,7 +158,7 @@ namespace raytracer { namespace tracers {
     }
 
     void write(std::ostream &os, int width, int height, const std::vector<Ray>& rays) {
-        for (int i=0; i<rays.size(); ++i) {
+        for (int i=0; i<(int)rays.size(); ++i) {
             const Ray &ray = rays[i];
 
             os  << "[" << indexToCoord(i, width, height) << "]";
@@ -174,8 +169,7 @@ namespace raytracer { namespace tracers {
                 << std::endl;
         }
     }
-	*/
-    
+	
 	static std::string getRootPath() {
 		return std::string(RAYTRACER_ROOT_FOLDER);
 	}
@@ -380,8 +374,9 @@ namespace raytracer { namespace tracers {
 			<< "Up={" << camera->getUp() << "}, "
 			<< "Screen= {" << this->getRenderTarget()->getSize() << "}";
 		
-        // std::ofstream fs;
-        // fs.open("C:/rays.txt", std::ios_base::app);
+        std::ofstream fs;
+        fs.open("C:/rays.txt", std::ios_base::out);
+
         cl_int errCode = 0;
         cl::Event event;
 
@@ -421,7 +416,6 @@ namespace raytracer { namespace tracers {
         event.wait();
 
         // for debugging
-		/*
         this->impl->raysData.resize(size.x * size.y);
         errCode = this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
         if (errCode != CL_SUCCESS) {
@@ -431,7 +425,7 @@ namespace raytracer { namespace tracers {
 
         write(fs, size.x, size.y, this->impl->raysData);
         fs << std::endl;
-		*/
+		
 
         this->impl->queue.finish();
 	}
@@ -490,8 +484,9 @@ namespace raytracer { namespace tracers {
     }
     
 	void MultiHardwareTracer::computeSynthesisData() {
-        // std::ofstream fs;
-        // fs.open("C:/synth.txt", std::ios_base::app);
+        std::ofstream fs;
+        fs.open("C:/synth.txt", std::ios_base::out);
+
         std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
         
         // Invoke the ComputeSynthesisData kernel
@@ -561,7 +556,6 @@ namespace raytracer { namespace tracers {
                 }
                 event.wait();
 
-				/*
                 std::vector<SynthesisElement> synthData;
                 synthData.resize(screenSize.x * screenSize.y);
                 errCode = queue.enqueueReadBuffer(this->impl->synthesisBuffer, CL_TRUE, 0, synthData.size()*sizeof(SynthesisElement), synthData.data(), nullptr, &event);
@@ -572,7 +566,6 @@ namespace raytracer { namespace tracers {
 
                 write(fs, screenSize.x, screenSize.y, synthData);
                 fs << std::endl;
-				*/
 
                 queue.finish();
             }

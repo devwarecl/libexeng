@@ -32,7 +32,7 @@ set (BaseFiles
 )
 
 set (Kernels
-	# kernels/TraceRay.cl
+	kernels/TraceRay.cl
 	# kernels/Common.cl
 	# kernels/ComputeSynthesisData.cl
 	# kernels/GenerateRays.cl

@@ -151,8 +151,8 @@ namespace raytracer {
         // Create a base texture.
         this->screenTexture = this->createTexture (
             this->driver.get(), 
-            {(float)mode.size.width, (float)mode.size.height},
-            // {(float)50, (float)50},
+            // {(float)mode.size.width, (float)mode.size.height},
+            {(float)20, (float)20},
             {0.0f, 0.5f, 1.0f, 1.0f}
         );
         
