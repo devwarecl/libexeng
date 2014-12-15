@@ -1,6 +1,7 @@
+
 /**
- * @file 	Commmon.cl
- * @brief 	Common structures and definitions.
+ * @file 	MultiHardwareTracer.cl
+ * @brief 	Multi object, hardware-based, ray tracer source code.
  */
 
 /** 
@@ -190,13 +191,6 @@ kernel void GenerateRays (
 	castRay(&rays[i], &camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
 }
 
-
-/**
- * @file  ComputeSynthesisData.cl
- * @brief This kernel compute the synthesis data (data needed for synthesize the final image) for the ray tracer for a 
- *		  single mesh subset data. It must be called multiple times, one for meshSubset, to render a complete scene.
- */
-
 /**
  * @brief Compute a synthesis element
  */
@@ -223,7 +217,7 @@ float triple(float3 a, float3 b, float3 c) {
  * @brief Compute a synthesis element for the specified triangle
  */
 void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float3 p2, float3 p3, float3 normal) {	
-	Plane plane = {
+	const Plane plane = {
 		(p1 + p2 + p3) * (1.0f/3.0f), 
 		normal
 	};
@@ -306,6 +300,8 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
 
 /**
  * @brief Generate all the synthesis data to render a single object
+ * This kernel compute the synthesis data (data needed for synthesize the final image) for the ray tracer for a 
+ * single mesh subset data. It must be called multiple times, one for each meshSubset, to render a complete scene.
  */
 __kernel void ComputeSynthesisData (
 	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,

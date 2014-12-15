@@ -1,7 +1,7 @@
 /**
  * @file 
  * @brief Define the VertexFormat structure.
- * @todo Make the VertexFormat structure a enumeration. I think it's a more 
+ * @todo Make the VertexFormat structure a enumeration. Maybe it's a more 
  * elegant solution than relying on a array of structures
  */
 
