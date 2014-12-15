@@ -515,7 +515,7 @@ namespace raytracer { namespace tracers {
                 cl::BufferGL indexBuffer = cl::BufferGL(this->impl->context, CL_MEM_READ_WRITE, indexBufferId);
 
                 int indexFormatSize = IndexFormat::getSize(subset->getIndexFormat());
-                int indexCount = subset->getIndexBuffer()->getSize() / indexFormatSize;
+                int indexCount = subset->getIndexBuffer()->getSize() / (indexFormatSize/8);
 
 				BOOST_LOG_TRIVIAL(trace) 
 					<< "[3] Invoking computeSynthesisData kernel with params: "

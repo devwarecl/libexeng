@@ -13,12 +13,13 @@ typedef struct {
 
 /** 
  * @brief Vertex data.
+ * This structure doesn't map portably to the Host.
  */
 typedef struct {
 	float3 coord;		// Vertex position
 	float3 normal;		// Vertex normalized normal vector
 	float2 tex;			// Vertex texture coordinate
-} Vertex;
+} Vertex_;
 
 /**
  * @brief Synthesis Element.
@@ -100,21 +101,39 @@ constant int indices_[] = {
     16 + 0, 16 + 1, 16 + 2, 16 + 1, 16 + 3, 16 + 2, 
     20 + 0, 20 + 1, 20 + 2, 20 + 1, 20 + 3, 20 + 2
 };
+
+constant int indexCount_ = 36;
 */
 
+/*
 constant Vertex vertices_[] =  {
     // Cara trasera
     {{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},  // Izquierda,  Arriba,  Atras
     {{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f}},  // Derecha,    Arriba,  Atras
     {{-0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 0.0f}},  // Izquierda,  Abajo,   Atras
     {{ 0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 0.0f}},  // Derecha,    Abajo,   Atras
+
+	// Cara derecha
+    {{0.5f,   0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}}, // Derecha,     Arriba, Atras
+    {{0.5f,   0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}}, // Derecha,     Arriba, Adelante
+    {{0.5f,  -0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}}, // Derecha,     Abajo,  Atras
+    {{0.5f,  -0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}}, // Derecha,     Abajo,  Adelante 
+
+	// Cara delantera
+    {{ 0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 1.0f}},  // Derecha,     Arriba, Adelante
+    {{-0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 1.0f}},  // Izquierda,   Arriba, Adelante
+    {{ 0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 0.0f}},  // Derecha,     Abajo,  Adelante
+    {{-0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 0.0f}},  // Izquierda,   Abajo,  Adelante
 };
 
 constant int indices_[] = {
-    0 + 0,  0 + 1,  0 + 2,  0 + 1,  0 + 3,  0 + 2
+    0 + 0,  0 + 1,  0 + 2,  0 + 1,  0 + 3,  0 + 2,
+	4 + 0,  4 + 1,  4 + 2,  4 + 1,  4 + 3,  4 + 2, 
+	8 + 0,  8 + 1,  8 + 2,  8 + 1,  8 + 3,  8 + 2, 
 };
 
-constant int indexCount_ = 6;
+constant int indexCount_ = 18;
+*/
 
 /**
  * @brief Ray buffer generator kernel
@@ -236,21 +255,32 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 /**
  * @brief Compute a synthesis element from a mesh subset
  */
-void computeElementMeshSubset(global SynthesisElement *element, Ray ray, constant Vertex *vertices, constant int *indices, int indexCount) 
+void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global void *vertices, global int *indices, int indexCount) 
 {
+	const int VertexSize = 32;	// = sizeof(exeng::Vertex)
+	const int CoordOffset = 0;
+	const int NormalOffset = 12;
+	const int TexCoordOffset = 24;
+
+	global uchar *vertexData = (global uchar*)vertices;
+
 	SynthesisElement bestElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
 	SynthesisElement currentElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
 	
 	bestElement.distance = FLT_MAX;
 	
-	float factor;
-	
 	for (int i=0; i<indexCount; i+=3) {
-		float3 normal = vertices[indices[i + 0]].normal;
+		/*
 		float3 p1 = vertices[indices[i + 0]].coord;
 		float3 p2 = vertices[indices[i + 1]].coord;
 		float3 p3 = vertices[indices[i + 2]].coord;
-		
+		float3 normal = vertices[indices[i + 0]].normal;
+		*/
+		float3 p1		= *(global float3*)(vertexData + VertexSize*indices[i + 0] + CoordOffset);
+		float3 p2		= *(global float3*)(vertexData + VertexSize*indices[i + 1] + CoordOffset);
+		float3 p3		= *(global float3*)(vertexData + VertexSize*indices[i + 2] + CoordOffset);
+		float3 normal	= *(global float3*)(vertexData + VertexSize*indices[i + 0] + NormalOffset);
+
 		computeElementTriangle(&currentElement, ray, p1, p2, p3, normal);
 		
 		if (currentElement.distance>0.0f && currentElement.distance<bestElement.distance) {
@@ -279,7 +309,7 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
  */
 __kernel void ComputeSynthesisData (
 	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
-	global Vertex *vertices, global int *indices, int indexCount, int materialIndex) {
+	global void *vertices, global int *indices, int indexCount, int materialIndex) {
 
 	int x = get_global_id(0);
 	int y = get_global_id(1);
@@ -288,7 +318,7 @@ __kernel void ComputeSynthesisData (
     
 	const Ray ray = rays[i];
 	
-	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices_, indices_, indexCount_);
+	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices, indices, indexCount);
 }
 
 /**
@@ -313,7 +343,7 @@ kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElemen
 	float4 color = {0.0f, 0.0f, 0.0f, 1.0f};
 	
 	if (synthElement.distance > 0.0f) {
-		color = white /* * fabs(dot(ray.direction, synthElement.normal))*/;
+		color = white * fabs(dot(ray.direction, synthElement.normal));
 	} /*else if (synthElement.distance < 0.0f) { 
 		color = (float4)(0.0f, 1.0f, 0.0f, 1.0f);
 	} else { 
