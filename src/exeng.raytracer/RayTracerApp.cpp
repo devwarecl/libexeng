@@ -77,16 +77,11 @@ namespace raytracer {
     std::unique_ptr<Texture> RayTracerApp::createTexture(GraphicsDriver *driver, const Vector3f& size, const Vector4f &color) {
         std::unique_ptr<Texture> texture = driver->createTexture(TextureType::Tex2D, size, ColorFormat::getColorFormatR8G8B8A8());
         
-        struct Texel { std::uint8_t red, green, blue, alpha; };
-        
-        Texel *textureData = reinterpret_cast<Texel*>(texture->lock());
+		typedef Vector<std::uint8_t, 4> Vector4ub;
+
+        Vector4ub *textureData = reinterpret_cast<Vector4ub*>(texture->lock());
         for (int i=0; i<size.x * size.y; ++i) {
-            textureData[i] = {
-                static_cast<std::uint8_t>(color.x * 255), 
-                static_cast<std::uint8_t>(color.y * 255), 
-                static_cast<std::uint8_t>(color.z * 255), 
-                static_cast<std::uint8_t>(color.w * 255)
-            };
+			textureData[i] = static_cast<Vector4ub>(color * Vector4f(255.0f, 255.0f, 255.0f, 255.0f));
         }
         texture->unlock();
 
@@ -151,8 +146,9 @@ namespace raytracer {
         // Create a base texture.
         this->screenTexture = this->createTexture (
             this->driver.get(), 
-            // {(float)mode.size.width, (float)mode.size.height},
-            {(float)20, (float)20},
+            {(float)mode.size.width, (float)mode.size.height},
+            // {(float)100, (float)100},
+			// {(float)50, (float)30},
             {0.0f, 0.5f, 1.0f, 1.0f}
         );
         
@@ -329,7 +325,7 @@ namespace exeng { namespace main {
         // app.run();
         // return app.getExitCode();
 
-        using namespace raytracer;
+		using namespace raytracer;
         using namespace exeng;
         using namespace exeng::framework;
 

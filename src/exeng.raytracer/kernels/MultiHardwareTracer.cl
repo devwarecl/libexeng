@@ -3,7 +3,6 @@
  * @brief 	Common structures and definitions.
  */
 
-
 /** 
  * @brief Ray data structure.
  */
@@ -121,11 +120,7 @@ constant int indexCount_ = 6;
  * @brief Ray buffer generator kernel
  */
 
-// constant float3 screen_size = {640.0f, 480.0f, 0.0f};
-// constant float3 half_size = (float3)(639.0f * 0.5f, 479.0f * 0.5f, 0.0f);
-
-int coordToIndex(int x, int y, int width, int height) 
-{
+int coordToIndex(int x, int y, int width, int height) {
 	return y*width + x;
 }
 
@@ -162,7 +157,6 @@ kernel void GenerateRays (
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 	
-	// int i = x*screenHeight + y;
 	int i = coordToIndex(x, y, screenWidth, screenHeight);
 	
 	float2 screenCoord = {(float) x, (float)y};
@@ -272,12 +266,12 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, constan
 __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) {
     int x = get_global_id(0);
     int y = get_global_id(1);
-    int i = x * screenHeight + y;
+
+    int i = coordToIndex(x, y, screenWidth, screenHeight);
     
-	synthesisBuffer[i].point = (float3)(0.0f, 0.0f, 0.0f);
-    synthesisBuffer[i].normal = (float3)(0.0f, 0.0f, 0.0f);
-    synthesisBuffer[i].distance = 0.0f;
-    synthesisBuffer[i].material = 0;
+	const SynthesisElement element = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
+
+	synthesisBuffer[i] = element;
 }
 
 /**
@@ -313,20 +307,23 @@ kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElemen
 	int i = coordToIndex(x, y, screenWidth, screenHeight);
     
 	Ray ray = rays[i];
-	
-	float3 point = synthesisBuffer[i].point;
-	float3 normal = synthesisBuffer[i].normal;
-	float distance = synthesisBuffer[i].distance;
-	int	material = synthesisBuffer[i].material;
-	
-	const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
-	float4 color;
+	SynthesisElement synthElement = synthesisBuffer[i];
 
-	if (distance > 0.0f) {
-		color = white * fabs(dot(ray.direction, normal));
+	const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
+	float4 color = {0.0f, 0.0f, 0.0f, 1.0f};
+	
+	if (synthElement.distance > 0.0f) {
+		color = white /* * fabs(dot(ray.direction, synthElement.normal))*/;
+	} /*else if (synthElement.distance < 0.0f) { 
+		color = (float4)(0.0f, 1.0f, 0.0f, 1.0f);
 	} else { 
 		color = (float4)(0.0f, 0.0f, 0.0f, 1.0f);
-	}
-
+	}*/
+	
 	write_imagef (image, (int2)(x, y), color);
+}
+
+kernel void GetStructuresSize(global int* out) { 
+	out[0] = sizeof(Ray);
+	out[1] = sizeof(SynthesisElement);
 }

@@ -55,17 +55,18 @@ namespace raytracer { namespace tracers {
 		cl::Buffer samplesBuffer;
 		cl::CommandQueue queue;
 
-		cl_int samplesCount;
+		cl_int samplesCount = 0;
 
+		cl_int synthesisElementSize = 0;
+		cl_int raySize = 0;
+		
 		cl::NDRange localSize = cl::NDRange(2, 2);
 	};
 
-	typedef exeng::Vector<cl_float, 3> cl_float3;
-
     struct SynthesisElement {
-		Vector3f	point;		// Point of intersection
-        Vector3f	normal;		// Normal vector of the surface that collided with the ray.
-		float		distance;	// Distance from the origin of the ray.
+		cl_float3	point;		// Point of intersection
+        cl_float3	normal;		// Normal vector of the surface that collided with the ray.
+		cl_float	distance;	// Distance from the origin of the ray.
         cl_int		material;	// Material index/id (will be defined later).
     };
 
@@ -143,6 +144,7 @@ namespace raytracer { namespace tracers {
         return coord;
     }
 	
+	/*
     void write(std::ostream &os, int width, int height, const std::vector<SynthesisElement>& synthBuffer) {
         for (int i=0; i<(int)synthBuffer.size(); ++i) {
             const SynthesisElement &synthElement = synthBuffer[i];
@@ -169,6 +171,7 @@ namespace raytracer { namespace tracers {
                 << std::endl;
         }
     }
+	*/
 	
 	static std::string getRootPath() {
 		return std::string(RAYTRACER_ROOT_FOLDER);
@@ -265,12 +268,6 @@ namespace raytracer { namespace tracers {
 
 		// Create a Program object from all the kernels
 		std::list<std::string> sourceFiles = {
-			/*
-			getRootPath() + "kernels/Common.cl",
-            getRootPath() + "kernels/GenerateRays.cl",
-			getRootPath() + "kernels/ComputeSynthesisData.cl",
-			getRootPath() + "kernels/SynthetizeImage.cl"
-			*/
 			getRootPath() + "kernels/MultiHardwareTracer.cl"
 		};
 		
@@ -327,6 +324,11 @@ namespace raytracer { namespace tracers {
 		this->impl->samplesBuffer = samplesBuffer;
 		this->impl->samplesCount = sampler->getSampleCount();
 
+		this->executeGetStructuresSizeKernel();
+
+		BOOST_LOG_TRIVIAL(trace) << "Ray structure size: " << this->impl->raySize;
+		BOOST_LOG_TRIVIAL(trace) << "SynthesisBuffer structure size: " << this->impl->synthesisElementSize;
+		
 		BOOST_LOG_TRIVIAL(trace) << "Multi-Object ray tracer initialization done.";
 	}
 
@@ -348,26 +350,27 @@ namespace raytracer { namespace tracers {
 
 			throw std::runtime_error(str);
 		}
-
+		
         // Create the CL buffers for the intermediate data
         Vector3i size = renderTarget->getSize();
 
-        this->impl->raysData.resize(size.x*size.y);
+        // this->impl->raysData.resize(size.x*size.y);
+		const int synthesisBufferSize = size.x*size.y*this->impl->synthesisElementSize;
+		const int raysBufferSize = size.x*size.y*this->impl->raySize;
 
-        cl::Buffer raysBuffer = cl::Buffer(this->impl->context, CL_MEM_READ_WRITE, size.x*size.y*sizeof(Ray));
-        cl::Buffer synthesisBuffer = cl::Buffer(this->impl->context, CL_MEM_READ_WRITE, size.x*size.y*sizeof(SynthesisElement));
+        cl::Buffer synthesisBuffer = cl::Buffer(this->impl->context, CL_MEM_READ_WRITE, synthesisBufferSize);
+		cl::Buffer raysBuffer = cl::Buffer(this->impl->context, CL_MEM_READ_WRITE, raysBufferSize);
 
 		this->impl->image = image;
-        this->impl->raysBuffer = raysBuffer;
         this->impl->synthesisBuffer = synthesisBuffer;
+		this->impl->raysBuffer = raysBuffer;
 
 		Tracer::setRenderTarget(renderTarget);
 	}
 
-	MultiHardwareTracer::~MultiHardwareTracer() {
-    }
+	MultiHardwareTracer::~MultiHardwareTracer() {}
 
-    void MultiHardwareTracer::generateRays(const exeng::scenegraph::Camera *camera) {
+    void MultiHardwareTracer::executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera) {
 		BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRays kernel with params: "
 			<< "Pos={" << camera->getPosition() << "}, "
 			<< "LookAt={" << camera->getLookAt() << "}, "
@@ -387,7 +390,7 @@ namespace raytracer { namespace tracers {
         Vector3f lookAt = camera->getLookAt(); 
         Vector3f up = camera->getUp();
         Vector3i size = this->getRenderTarget()->getSize();
-
+		
         kernel.setArg(0, this->impl->raysBuffer);
         
         kernel.setArg(1, pos.x);
@@ -416,6 +419,7 @@ namespace raytracer { namespace tracers {
         event.wait();
 
         // for debugging
+		/*
         this->impl->raysData.resize(size.x * size.y);
         errCode = this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
         if (errCode != CL_SUCCESS) {
@@ -425,8 +429,8 @@ namespace raytracer { namespace tracers {
 
         write(fs, size.x, size.y, this->impl->raysData);
         fs << std::endl;
+		*/
 		
-
         this->impl->queue.finish();
 	}
 
@@ -458,7 +462,7 @@ namespace raytracer { namespace tracers {
         return nodes;
     }
 
-    void MultiHardwareTracer::clearSynthBuffer() {
+    void MultiHardwareTracer::executeClearSynthBufferKernel() {
 		BOOST_LOG_TRIVIAL(trace) << "[1] Invoking clearSyntBuffer kernel with params: ScreenSize={" << this->getRenderTarget()->getSize() << "}";
 
         cl_int errCode = 0;
@@ -483,7 +487,7 @@ namespace raytracer { namespace tracers {
         event.wait();
     }
     
-	void MultiHardwareTracer::computeSynthesisData() {
+	void MultiHardwareTracer::executeComputeSynthesisDataKernel() {
         std::ofstream fs;
         fs.open("C:/synth.txt", std::ios_base::out);
 
@@ -525,7 +529,7 @@ namespace raytracer { namespace tracers {
                 kernel.setArg(4, vertexBuffer);
                 kernel.setArg(5, indexBuffer);
                 kernel.setArg(6, indexCount);
-                kernel.setArg(7, 1);
+                kernel.setArg(7, 1);			// material index
 
                 std::vector<cl::Memory> buffers = {vertexBuffer, indexBuffer};
 
@@ -556,6 +560,7 @@ namespace raytracer { namespace tracers {
                 }
                 event.wait();
 
+				/*
                 std::vector<SynthesisElement> synthData;
                 synthData.resize(screenSize.x * screenSize.y);
                 errCode = queue.enqueueReadBuffer(this->impl->synthesisBuffer, CL_TRUE, 0, synthData.size()*sizeof(SynthesisElement), synthData.data(), nullptr, &event);
@@ -566,13 +571,14 @@ namespace raytracer { namespace tracers {
 
                 write(fs, screenSize.x, screenSize.y, synthData);
                 fs << std::endl;
-
+				*/
+				
                 queue.finish();
             }
         }
 	}
 
-	void MultiHardwareTracer::synthetizeImage() {
+	void MultiHardwareTracer::executeSynthetizeImageKernel() {
         Vector3i size = this->getRenderTarget()->getSize();
         cl::Event event;
         cl::Kernel &kernel = this->impl->imageSynthetizerKernel;
@@ -625,9 +631,48 @@ namespace raytracer { namespace tracers {
 	void MultiHardwareTracer::render(const exeng::scenegraph::Camera *camera) {
 		BOOST_LOG_TRIVIAL(trace) << "Rendering scene ...";
 
-        this->clearSynthBuffer();
-        this->generateRays(camera);
-        this->computeSynthesisData();
-        this->synthetizeImage();
+        this->executeClearSynthBufferKernel();
+        this->executeGenerateRaysKernel(camera);
+        this->executeComputeSynthesisDataKernel();
+        this->executeSynthetizeImageKernel();
+	}
+
+	void MultiHardwareTracer::executeGetStructuresSizeKernel() {
+		const int StructuresCount = 2;
+		cl_int out[StructuresCount] = {0};
+
+		cl::Event event;
+		cl::CommandQueue &queue = this->impl->queue;
+		cl::Kernel kernel = cl::Kernel(this->impl->program, "GetStructuresSize");
+		cl::Buffer outBuffer = cl::Buffer(this->impl->context, CL_MEM_READ_WRITE, sizeof(cl_int)*StructuresCount);
+
+		cl_int errCode;
+
+		kernel.setArg(0, outBuffer);
+
+		errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1, 1),  cl::NullRange, nullptr, &event);
+		if (errCode != CL_SUCCESS) {
+			std::string msg = "MultiHardwareTracer::executeGetSynthesisElementSizeKernel: Error :" + clErrorToString(errCode);
+
+			BOOST_LOG_TRIVIAL(trace) << msg;
+            throw std::runtime_error(msg);
+        }
+		event.wait();
+
+		errCode = queue.enqueueReadBuffer(outBuffer, CL_TRUE, 0, sizeof(cl_int)*StructuresCount, out, nullptr, &event);
+		if (errCode != CL_SUCCESS) {
+			std::string msg = "MultiHardwareTracer::executeGetSynthesisElementSizeKernel: Error :" + clErrorToString(errCode);
+
+			BOOST_LOG_TRIVIAL(trace) << msg;
+            throw std::runtime_error(msg);
+        }
+		event.wait();
+
+		queue.finish();
+
+		this->impl->raySize = out[0];
+		this->impl->synthesisElementSize = out[1];
+		// std::cout << "[Ray]			     CL=" << this->impl->synthesisElementSize << ", C++=" << sizeof(Ray) << std::endl;
+		// std::cout << "[SynthesisElement] CL=" << this->impl->synthesisElementSize << ", C++=" << sizeof(SynthesisElement) << std::endl;
 	}
 }}

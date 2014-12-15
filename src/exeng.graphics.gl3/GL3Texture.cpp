@@ -23,7 +23,7 @@ using namespace exeng;
 
 namespace exeng { namespace graphics { namespace gl3 {
 
-	GL3Texture::GL3Texture(TextureType::Enum type, Vector3i size, const ColorFormat &colorFormat) {
+	GL3Texture::GL3Texture(TextureType::Enum type, Vector3i size, const ColorFormat &colorFormat) : size(0, 0, 0) {
 		GLuint textureId = 0;
         
 		// check for a valid type
@@ -72,18 +72,49 @@ namespace exeng { namespace graphics { namespace gl3 {
 		::glTexParameteri(textureTarget, GL_TEXTURE_MAX_LEVEL, 0);
 		::glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		::glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		::glBindTexture(textureTarget, 0);
     
 		assert(textureId != 0);
 		GL3_CHECK();
     
 		this->buffer.allocate(size.x*size.y*size.z * colorFormat.size/8);
-		this->size = size;
+		// this->size = size;
 		this->colorFormat = colorFormat;
 		this->type = type;
 		this->textureId = textureId;
 		this->textureTarget = textureTarget;
 		this->internalFormat = internalFormat;
+
+		// Determine true size
+		if (textureTarget == GL_TEXTURE_1D) {
+			GLint width;
+
+			::glGetTexLevelParameteriv(GL_TEXTURE_1D, 0, GL_TEXTURE_WIDTH, &width);
+			this->size.x = width;
+
+		} else if (textureTarget == GL_TEXTURE_2D) {
+			GLint width, height;
+
+			::glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+			::glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+
+			this->size.x = width;
+			this->size.y = height;
+
+		} else if (textureTarget == GL_TEXTURE_3D) {
+			GLint width, height, depth;
+
+			::glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_WIDTH, &width);
+			::glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_HEIGHT, &height);
+			::glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_DEPTH, &depth);
+
+			this->size.x = width;
+			this->size.y = height;
+			this->size.z = depth;
+		} else {
+			assert(false);
+		}
+
+		::glBindTexture(textureTarget, 0);
 	}
 
 	GL3Texture::~GL3Texture() {
