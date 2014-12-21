@@ -188,17 +188,30 @@ namespace raytracer {
         
         float displace = 0.0f;
         float rotate = 0.0f;
+
+        float displaceDelta = moveSpeed * static_cast<float>(seconds);
+        float rotateDelta = rotationSpeed * static_cast<float>(seconds);
         
         // actualiza la camara en funcion de la entrada por teclado
         if (this->buttonStatus[ButtonCode::KeyEsc]) {
             this->applicationStatus = ApplicationStatus::Terminated;
         }
         
-        if (this->buttonStatus[ButtonCode::KeyUp])      displace =  moveSpeed * static_cast<float>(seconds);
-        if (this->buttonStatus[ButtonCode::KeyDown])    displace = -moveSpeed * static_cast<float>(seconds);
+        if (this->buttonStatus[ButtonCode::KeyUp]) {
+            displace = displaceDelta;
+        }
+
+        if (this->buttonStatus[ButtonCode::KeyDown]) {
+            displace = -displaceDelta;
+        }
         
-        if (this->buttonStatus[ButtonCode::KeyLeft])    rotate = -rotationSpeed * static_cast<float>(seconds);
-        if (this->buttonStatus[ButtonCode::KeyRight])   rotate =  rotationSpeed * static_cast<float>(seconds);
+        if (this->buttonStatus[ButtonCode::KeyLeft]) {
+            rotate = -rotateDelta;
+        }
+
+        if (this->buttonStatus[ButtonCode::KeyRight]) {
+            rotate = rotateDelta;
+        }
         
         Matrix4f rotationMatrix;
         rotationMatrix.identity();
@@ -268,56 +281,6 @@ namespace exeng { namespace main {
     using namespace exeng::input;
     using namespace exeng::graphics;
 
-    //class TestApp : public IEventHandler {
-    //public:
-    //    TestApp() {
-    //        this->root = std::unique_ptr<Root>(new Root());
-    //        this->root->getPluginManager()->load("exeng.graphics.gl3", getPluginPath());
-    //        
-    //        this->graphicsDriver = std::unique_ptr<GraphicsDriver>(root->getGraphicsManager()->createDriver());
-    //        this->graphicsDriver->addEventHandler(this);
-    //        this->graphicsDriver->initialize();
-    //        
-    //        this->isRunning = true;
-    //    }
-    //    
-    //    ~TestApp() {}
-    //    
-    //    virtual void handleEvent(const EventData &data) override {
-    //        if (data.eventType == TypeId<InputEventData>()) {
-    //            if (data.cast<InputEventData>().check(ButtonStatus::Press, ButtonCode::KeyEsc)) {
-    //                this->isRunning = false;
-    //            }
-    //        }
-    //    }
-    //    
-    //    void run() {
-    //        while (this->isRunning) {
-    //            this->update();
-    //            this->present();
-    //        }
-    //    }
-    //    
-    //    int getExitCode() const {
-    //        return 0;
-    //    }
-    //    
-    //private:
-    //    void update() {
-    //        this->graphicsDriver->pollEvents();
-    //    }
-
-    //    void present() {
-    //        this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::Color);
-    //        this->graphicsDriver->endFrame();
-    //    }
-
-    //private:
-    //    bool isRunning = false;
-    //    std::unique_ptr<Root> root;
-    //    std::unique_ptr<GraphicsDriver> graphicsDriver;
-    //};
-
 	int main(int argc, char **argv) {
         // TestApp app;
         // app.run();
@@ -327,7 +290,7 @@ namespace exeng { namespace main {
         using namespace exeng;
         using namespace exeng::framework;
 
-        int exitCode = -1;
+        int exitCode = 1;
 
         try {
             exitCode = Application::execute<RayTracerApp>(argc, argv);

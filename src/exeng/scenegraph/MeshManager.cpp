@@ -85,6 +85,10 @@ namespace exeng { namespace scenegraph {
                 {{-0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 0.0f}}
             };
 
+            int coordOffset = offsetof(Vertex, coord);
+            int normalOffset = offsetof(Vertex, normal);
+            int texCoordOffset = offsetof(Vertex, texCoord);
+
             return graphicsDriver->createVertexBuffer(sizeof(vertices), vertices);
         }
         
@@ -104,7 +108,7 @@ namespace exeng { namespace scenegraph {
 }}
 
 namespace exeng { namespace scenegraph {
-    struct MeshManager::Private  {
+    struct MeshManager::Private {
         std::list<std::unique_ptr<IMeshLoader>> loaders;
         std::map<std::string, std::unique_ptr<Mesh>> meshes;
     };

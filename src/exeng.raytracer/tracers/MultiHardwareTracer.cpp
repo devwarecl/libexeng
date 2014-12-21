@@ -60,7 +60,7 @@ namespace raytracer { namespace tracers {
 		cl_int synthesisElementSize = 0;
 		cl_int raySize = 0;
 		
-		cl::NDRange localSize = cl::NDRange(2, 2);
+		cl::NDRange localSize = cl::NDRange(16, 8);
 	};
 
     struct SynthesisElement {
@@ -126,7 +126,7 @@ namespace raytracer { namespace tracers {
             case CL_INVALID_BUFFER_SIZE                      :   return "CL_INVALID_BUFFER_SIZE";
             case CL_INVALID_MIP_LEVEL                        :   return "CL_INVALID_MIP_LEVEL";
             case CL_INVALID_GLOBAL_WORK_SIZE                 :   return "CL_INVALID_GLOBAL_WORK_SIZE";
-            case CL_INVALID_PROPERTY                         :   return "CL_INVALID_PROPERTY";
+            // case CL_INVALID_PROPERTY                         :   return "CL_INVALID_PROPERTY";
             // case CL_INVALID_IMAGE_DESCRIPTOR                 :   return "CL_INVALID_IMAGE_DESCRIPTOR";
             // case CL_INVALID_COMPILER_OPTIONS                 :   return "CL_INVALID_COMPILER_OPTIONS";
             // case CL_INVALID_LINKER_OPTIONS                   :   return "CL_INVALID_LINKER_OPTIONS";
@@ -287,8 +287,8 @@ namespace raytracer { namespace tracers {
 
 		// Compile the OpenCL programs
 		std::string programOptions = "";
-		programOptions += "-Werror -g -s";
-		programOptions += "\"" + getRootPath() + "kernels/MultiHardwareTracer.cl\"";
+		programOptions += "-Werror";
+		// programOptions += "\"" + getRootPath() + "kernels/MultiHardwareTracer.cl\"";
 		
 		cl::Program program = cl::Program(context, programSources);
 		if (program.build({device}, programOptions.c_str()) != CL_SUCCESS) {
@@ -326,6 +326,7 @@ namespace raytracer { namespace tracers {
 
 		this->executeGetStructuresSizeKernel();
 
+        BOOST_LOG_TRIVIAL(trace) << "[Host] Vertex structure size: " << sizeof(Vertex);
 		BOOST_LOG_TRIVIAL(trace) << "Ray structure size: " << this->impl->raySize;
 		BOOST_LOG_TRIVIAL(trace) << "SynthesisBuffer structure size: " << this->impl->synthesisElementSize;
 		

@@ -249,14 +249,15 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 /**
  * @brief Compute a synthesis element from a mesh subset
  */
-void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global void *vertices, global int *indices, int indexCount) 
+void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global float *vertices, global int *indices, int indexCount) 
 {
-	const int VertexSize = 32;	// = sizeof(exeng::Vertex)
+	const int VertexSize = 32/4;	// = sizeof(exeng::Vertex)
 	const int CoordOffset = 0;
-	const int NormalOffset = 12;
-	const int TexCoordOffset = 24;
+	const int NormalOffset = 12/4;
+	const int TexCoordOffset = 24/4;
 
-	global uchar *vertexData = (global uchar*)vertices;
+	// global uchar *vertexData = (global uchar*)vertices;
+    global float *vertexData = vertices;
 
 	SynthesisElement bestElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
 	SynthesisElement currentElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
@@ -270,12 +271,24 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
 		float3 p3 = vertices[indices[i + 2]].coord;
 		float3 normal = vertices[indices[i + 0]].normal;
 		*/
-		float3 p1		= *(global float3*)(vertexData + VertexSize*indices[i + 0] + CoordOffset);
+        /*
+        float3 p1		= *(global float3*)(vertexData + VertexSize*indices[i + 0] + CoordOffset);
 		float3 p2		= *(global float3*)(vertexData + VertexSize*indices[i + 1] + CoordOffset);
 		float3 p3		= *(global float3*)(vertexData + VertexSize*indices[i + 2] + CoordOffset);
 		float3 normal	= *(global float3*)(vertexData + VertexSize*indices[i + 0] + NormalOffset);
+        */
 
-		computeElementTriangle(&currentElement, ray, p1, p2, p3, normal);
+        global float* vertex1Ptr = vertexData + VertexSize*indices[i + 0];
+        global float* vertex2Ptr = vertexData + VertexSize*indices[i + 1];
+        global float* vertex3Ptr = vertexData + VertexSize*indices[i + 2];
+        global float* normalPtr = vertexData + VertexSize*indices[i + 0] + NormalOffset;
+        
+		float3 coord1 = {vertex1Ptr[0], vertex1Ptr[1], vertex1Ptr[2]};
+		float3 coord2 = {vertex2Ptr[0], vertex2Ptr[1], vertex2Ptr[2]};
+		float3 coord3 = {vertex3Ptr[0], vertex3Ptr[1], vertex3Ptr[2]};
+		float3 normal = {normalPtr[0], normalPtr[1], normalPtr[2]};
+
+		computeElementTriangle(&currentElement, ray, coord1, coord2, coord3, normal);
 		
 		if (currentElement.distance>0.0f && currentElement.distance<bestElement.distance) {
 		 	bestElement = currentElement;
@@ -305,7 +318,7 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
  */
 __kernel void ComputeSynthesisData (
 	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
-	global void *vertices, global int *indices, int indexCount, int materialIndex) {
+	global float *vertices, global int *indices, int indexCount, int materialIndex) {
 
 	int x = get_global_id(0);
 	int y = get_global_id(1);
@@ -316,11 +329,6 @@ __kernel void ComputeSynthesisData (
 	
 	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices, indices, indexCount);
 }
-
-/**
- * @file  SynthetizeImage.cl
- * @brief Define the SynthetizeImage kernel.
- */
 
 /**
  * @brief Synthetize the final image.
@@ -340,11 +348,7 @@ kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElemen
 	
 	if (synthElement.distance > 0.0f) {
 		color = white * fabs(dot(ray.direction, synthElement.normal));
-	} /*else if (synthElement.distance < 0.0f) { 
-		color = (float4)(0.0f, 1.0f, 0.0f, 1.0f);
-	} else { 
-		color = (float4)(0.0f, 0.0f, 0.0f, 1.0f);
-	}*/
+	}
 	
 	write_imagef (image, (int2)(x, y), color);
 }
