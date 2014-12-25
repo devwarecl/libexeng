@@ -31,4 +31,3 @@ namespace raytracer {
 
 }
 #endif // __RAYTRACER_RAYTRACERSCENERENDERER_HPP__
-

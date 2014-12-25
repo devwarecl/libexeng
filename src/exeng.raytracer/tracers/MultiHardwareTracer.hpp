@@ -19,7 +19,6 @@ namespace raytracer { namespace tracers {
 
 	private:
 		void executeGetStructuresSizeKernel();
-
         void executeClearSynthBufferKernel();
         void executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera);
 		void executeComputeSynthesisDataKernel();

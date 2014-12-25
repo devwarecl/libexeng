@@ -16,6 +16,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <exeng/Vector.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/Camera.hpp>
@@ -33,10 +34,12 @@ namespace exeng { namespace scenegraph {
         std::list<SceneNode*> lightNodes;
         std::unique_ptr<SceneNode> rootNode;
         
-        std::list<std::unique_ptr<Light> > lights;
-        std::list<std::unique_ptr<Camera> > cameras;
+        std::list<std::unique_ptr<Light>> lights;
+        std::list<std::unique_ptr<Camera>> cameras;
+
         std::map<std::string, std::unique_ptr<Material>> materials;
-        
+        std::list<Material*> materialList;
+
         Private() : rootNode(new SceneNode("rootNode")) {}
     };
     
@@ -91,7 +94,8 @@ namespace exeng { namespace scenegraph {
         material->setName(materialName);
         
         this->impl->materials[materialName] = std::move(material);
-        
+        this->impl->materialList.push_back(material.get());
+
         return this->impl->materials[materialName].get();
     }
 
@@ -116,5 +120,30 @@ namespace exeng { namespace scenegraph {
         }
         
         return sceneNode;
+    }
+
+    const Material* Scene::getMaterial(const int index) const
+    {
+#if defined(EXENG_DEBUG)
+        if (index < 0 || index >= this->getMaterialCount()) {
+            std::stringstream ss;
+
+            ss << "Scene::getMaterial: The index ";
+            ss << "(" << index << ") ";
+            ss << "out of bounds.";
+
+            throw std::runtime_error(ss.str());
+        }
+#endif
+        auto materialIterator = this->impl->materialList.begin();
+
+        std::advance(materialIterator, index);
+
+        return *materialIterator;
+    }
+
+    const int Scene::getMaterialCount() const
+    {
+        return this->impl->materials.size();
     }
 }}

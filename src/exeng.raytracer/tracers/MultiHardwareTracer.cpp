@@ -33,6 +33,8 @@ using namespace exeng::graphics;
 using namespace exeng::scenegraph;
 
 namespace raytracer { namespace tracers {
+    using namespace raytracer::samplers;
+
 	struct MultiHardwareTracer::Private {
 
 		cl::Platform platform;
@@ -54,6 +56,7 @@ namespace raytracer { namespace tracers {
 
 		cl::Buffer samplesBuffer;
 		cl::CommandQueue queue;
+        cl::Buffer materialBuffer;
 
 		cl_int samplesCount = 0;
 
@@ -144,6 +147,42 @@ namespace raytracer { namespace tracers {
         return coord;
     }
 	
+    static cl::Buffer createBuffer(cl::Context &context, const Scene *scene)
+    {
+        cl::Buffer materialBuffer;
+
+        if (scene->getMaterialCount() > 0) {
+            const int materialSize = 12;
+            const int materialBufferSize = scene->getMaterialCount() * materialSize;
+
+            int offset = 0;
+
+            HeapBuffer buffer(materialBufferSize);
+
+            for (int i=0; i<scene->getMaterialCount(); ++i) {
+                const Material *material = scene->getMaterial(i);
+
+                Vector4f color{1.0f, 1.0f, 1.0f, 1.0f};
+                
+                if (material) {
+                    color = scene->getMaterial(i)->getProperty4f("ambient");
+                } else {
+                    BOOST_LOG_TRIVIAL(trace) << "Material " << i << " is null.";
+                }
+
+                std::uint8_t *bufferData = static_cast<std::uint8_t*>(buffer.getDataPtr());
+
+                std::memcpy(bufferData + offset, color.data, materialSize);
+                offset += materialSize;
+            }
+
+            cl_mem_flags bufferFlags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
+            materialBuffer = cl::Buffer(context, bufferFlags, materialSize, buffer.getDataPtr());
+        } 
+        
+        return materialBuffer;
+    }
+
 	/*
     void write(std::ostream &os, int width, int height, const std::vector<SynthesisElement>& synthBuffer) {
         for (int i=0; i<(int)synthBuffer.size(); ++i) {
@@ -196,17 +235,18 @@ namespace raytracer { namespace tracers {
 		return content;
 	}
 
-	//static cl::Buffer createCLBuffer(cl::Context &context, exeng::Buffer *in) {
-	//	if (in == nullptr) {
-	//		throw std::runtime_error("[HardwareTracer.cpp] createCLBuffer -> The input buffer can't be a nullptr.");
-	//	}
+	//static cl::Buffer createCLBuffer(cl::Context &context, exeng::Buffer *in) 
+    //{
+	//    if (in == nullptr) {
+	//      throw std::runtime_error("[HardwareTracer.cpp] createCLBuffer -> The input buffer can't be a nullptr.");
+	//	  }
 	//	cl_int errCode = 0;
 	//	cl::Buffer result /*= cl::Buffer(context, , in->getSize(), in->getDataPtr())*/;
 	//	return result;
 	//}
 
-	MultiHardwareTracer::MultiHardwareTracer(const Scene *scene, const raytracer::samplers::Sampler *sampler) : Tracer(scene, nullptr), impl(new MultiHardwareTracer::Private())  {
-
+	MultiHardwareTracer::MultiHardwareTracer(const Scene *scene, const Sampler *sampler) : Tracer(scene, nullptr), impl(new MultiHardwareTracer::Private())  
+    {
 		BOOST_LOG_TRIVIAL(trace) << "Initializing Multi-Object ray tracer ...";
 
 		std::vector<cl::Platform> platforms;
@@ -257,7 +297,7 @@ namespace raytracer { namespace tracers {
 
 		// initialize the OpenCL context
 		cl::Context context = cl::Context({device}, properties);
-
+        
 		// pass the samples to OpenCL
 		BOOST_LOG_TRIVIAL(trace) << "Creating sampling buffer from " << sampler->getSampleCount() << " sample(s)...";
 		size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
@@ -286,8 +326,8 @@ namespace raytracer { namespace tracers {
 		}
 
 		// Compile the OpenCL programs
-		std::string programOptions = "";
-		programOptions += "-Werror";
+		std::string programOptions = "-Werror";
+		// programOptions += "-Werror";
 		// programOptions += "\"" + getRootPath() + "kernels/MultiHardwareTracer.cl\"";
 		
 		cl::Program program = cl::Program(context, programSources);
@@ -310,6 +350,9 @@ namespace raytracer { namespace tracers {
 		// Command queue
 		cl::CommandQueue queue = cl::CommandQueue(context, device);
 
+        // Pass the materials of the scene to CL
+        cl::Buffer materialBuffer = createBuffer(context, scene);
+
 		// Finish off the impl
 		this->impl->platform = platform;
 		this->impl->device = device;
@@ -323,6 +366,7 @@ namespace raytracer { namespace tracers {
 		this->impl->queue = queue;
 		this->impl->samplesBuffer = samplesBuffer;
 		this->impl->samplesCount = sampler->getSampleCount();
+        this->impl->materialBuffer = materialBuffer;
 
 		this->executeGetStructuresSizeKernel();
 
@@ -673,7 +717,5 @@ namespace raytracer { namespace tracers {
 
 		this->impl->raySize = out[0];
 		this->impl->synthesisElementSize = out[1];
-		// std::cout << "[Ray]			     CL=" << this->impl->synthesisElementSize << ", C++=" << sizeof(Ray) << std::endl;
-		// std::cout << "[SynthesisElement] CL=" << this->impl->synthesisElementSize << ", C++=" << sizeof(SynthesisElement) << std::endl;
 	}
 }}

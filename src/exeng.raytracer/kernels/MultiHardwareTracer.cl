@@ -53,7 +53,6 @@ typedef struct {
     float foo;
 } Material;
 
-
 /*sample cube data*/
 /*
 constant Vertex vertices_[] =  {
@@ -249,7 +248,7 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 /**
  * @brief Compute a synthesis element from a mesh subset
  */
-void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global float *vertices, global int *indices, int indexCount) 
+void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global float *vertices, global int *indices, int indexCount, int materialIndex) 
 {
 	const int VertexSize = 32/4;	// = sizeof(exeng::Vertex)
 	const int CoordOffset = 0;
@@ -297,6 +296,8 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
 	
 	if (bestElement.distance > 0.0f && bestElement.distance != FLT_MAX) {
         *element = bestElement;
+
+        element->material = materialIndex;
     }
 }
 
@@ -327,7 +328,7 @@ __kernel void ComputeSynthesisData (
     
 	const Ray ray = rays[i];
 	
-	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices, indices, indexCount);
+	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices, indices, indexCount, materialIndex);
 }
 
 /**
@@ -335,7 +336,7 @@ __kernel void ComputeSynthesisData (
  * 
  * The image is synthetized by using the different materials 
  */
-kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight /*, global Material *materials*/) {
+kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight) {
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 	int i = coordToIndex(x, y, screenWidth, screenHeight);

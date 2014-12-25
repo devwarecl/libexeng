@@ -62,6 +62,10 @@ namespace exeng { namespace scenegraph {
          */
         exeng::graphics::Color getBackColor() const;
 
+        const exeng::graphics::Material* getMaterial(const int index) const;
+
+        const int getMaterialCount() const;
+
     private:
         struct Private;
         Private* impl = nullptr;
