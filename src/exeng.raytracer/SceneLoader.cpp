@@ -27,6 +27,7 @@ namespace raytracer {
 
         // box mesh
         Mesh *boxMesh = this->meshManager->getMesh("/cube", this->graphicsDriver);
+        boxMesh->getMeshSubset(0)->setMaterial(boxMaterial);
 
         // box scenenode
         scene->getRootNode()->addChild("boxNode")->setData(boxMesh);

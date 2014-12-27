@@ -5,6 +5,8 @@
  * found in the file LICENSE in this distribution.
  */
 
+#include "Material.hpp"
+
 #include <cassert>
 #include <stdexcept>
 #include <cstring>
@@ -12,8 +14,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/checked_delete.hpp>
 #include <boost/lexical_cast.hpp>
-
-#include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/io/Stream.hpp>
 
@@ -118,11 +118,9 @@ namespace exeng { namespace graphics {
 		std::string name;
 		PropertyMap properties;
 		MaterialLayer layers[LayerCount];
-		const ShaderProgram *shaderProgram;
-    
-		Private() : shaderProgram(nullptr) {}
+		const ShaderProgram *shaderProgram = nullptr;
 		
-		PropertyMap::const_iterator getPosition(int index) const {
+		inline PropertyMap::const_iterator getPosition(int index) const {
 			auto it = this->properties.end();
 			int i = 0;
             
@@ -134,6 +132,13 @@ namespace exeng { namespace graphics {
 			}
         
 			return it;
+		}
+
+		inline bool existProperty(const std::string &propertyName) const {
+			auto propertyIterator = this->properties.find(propertyName);
+
+			bool result = propertyIterator!=this->properties.end();
+			return result;
 		}
 	};
 
@@ -169,22 +174,46 @@ namespace exeng { namespace graphics {
 	}
 
 	float Material::getPropertyf(const std::string &name) const {
-		assert( this->impl != nullptr );
+		assert(this->impl != nullptr);
+
+#if defined(EXENG_DEBUG)
+		if (!this->impl->existProperty(name)) {
+			throw std::runtime_error("Material::getPropertyf: The property '" + name + "' doesn't exist.");
+		}
+#endif
 		return this->impl->properties[name].getValue<float>();
 	}
 
 	Vector2f Material::getProperty2f(const std::string &name) const {
 		assert( this->impl != nullptr );
+
+#if defined(EXENG_DEBUG)
+		if (!this->impl->existProperty(name)) {
+			throw std::runtime_error("Material::getProperty2f: The property '" + name + "' doesn't exist.");
+		}
+#endif
 		return this->impl->properties[name].getValue<Vector2f>();
 	}
 
 	Vector3f Material::getProperty3f(const std::string &name) const {
 		assert( this->impl != nullptr );
+
+#if defined(EXENG_DEBUG)
+		if (!this->impl->existProperty(name)) {
+			throw std::runtime_error("Material::getProperty3f: The property '" + name + "' doesn't exist.");
+		}
+#endif
 		return this->impl->properties[name].getValue<Vector3f>();
 	}
 
 	Vector4f Material::getProperty4f(const std::string &name) const {
 		assert( this->impl != nullptr );
+
+#if defined(EXENG_DEBUG)
+		if (!this->impl->existProperty(name)) {
+			throw std::runtime_error("Material::getProperty4f: The property '" + name + "' doesn't exist.");
+		}
+#endif
 		return this->impl->properties[name].getValue<Vector4f>();
 	}
 

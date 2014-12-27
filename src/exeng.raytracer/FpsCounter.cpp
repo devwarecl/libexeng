@@ -1,11 +1,10 @@
 
-#include <exeng.raytracer/FpsCounter.hpp>
+#include "FpsCounter.hpp"
 
 #include <cmath>
 
 namespace raytracer {
-    FpsCounter::FpsCounter() : currentSeconds(0.0), seconds(0.0), framesDrawn(0.0), framesPerSecond(0.0) {
-    }
+    FpsCounter::FpsCounter() {}
     
     void FpsCounter::update(double seconds) {
         this->seconds += seconds;

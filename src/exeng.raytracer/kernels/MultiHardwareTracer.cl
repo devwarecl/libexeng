@@ -336,7 +336,7 @@ __kernel void ComputeSynthesisData (
  * 
  * The image is synthetized by using the different materials 
  */
-kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight) {
+kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight, int materialSize, global float *materialData) {
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 	int i = coordToIndex(x, y, screenWidth, screenHeight);
@@ -344,11 +344,14 @@ kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElemen
 	Ray ray = rays[i];
 	SynthesisElement synthElement = synthesisBuffer[i];
 
-	const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
-	float4 color = {0.0f, 0.0f, 0.0f, 1.0f};
+	// const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
+	float4 color = {0.2f, 0.2f, 0.6f, 1.0f};
 	
 	if (synthElement.distance > 0.0f) {
-		color = white * fabs(dot(ray.direction, synthElement.normal));
+		const int materialIndex = synthElement.material;
+
+		color = *((global float4 *)(materialData + materialIndex));
+		color = color * fabs(dot(ray.direction, synthElement.normal));
 	}
 	
 	write_imagef (image, (int2)(x, y), color);

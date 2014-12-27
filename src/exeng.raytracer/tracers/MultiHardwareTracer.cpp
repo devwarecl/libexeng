@@ -73,6 +73,8 @@ namespace raytracer { namespace tracers {
         cl_int		material;	// Material index/id (will be defined later).
     };
 
+	const int MaterialSize = 4;	// Size of the material (number of float's)
+
     static std::string clErrorToString(cl_int errCode) {
         switch (errCode) {
             case CL_SUCCESS                                  :   return "CL_SUCCESS";
@@ -152,12 +154,10 @@ namespace raytracer { namespace tracers {
         cl::Buffer materialBuffer;
 
         if (scene->getMaterialCount() > 0) {
-            const int materialSize = 12;
-            const int materialBufferSize = scene->getMaterialCount() * materialSize;
+			const int MaterialStride = MaterialSize * 4;
+            const int MaterialBufferSize = scene->getMaterialCount() * MaterialStride;
 
-            int offset = 0;
-
-            HeapBuffer buffer(materialBufferSize);
+			std::vector<Vector4f> materialData(scene->getMaterialCount());
 
             for (int i=0; i<scene->getMaterialCount(); ++i) {
                 const Material *material = scene->getMaterial(i);
@@ -165,19 +165,16 @@ namespace raytracer { namespace tracers {
                 Vector4f color{1.0f, 1.0f, 1.0f, 1.0f};
                 
                 if (material) {
-                    color = scene->getMaterial(i)->getProperty4f("ambient");
+                    color = scene->getMaterial(i)->getProperty4f("diffuse");
                 } else {
                     BOOST_LOG_TRIVIAL(trace) << "Material " << i << " is null.";
                 }
 
-                std::uint8_t *bufferData = static_cast<std::uint8_t*>(buffer.getDataPtr());
-
-                std::memcpy(bufferData + offset, color.data, materialSize);
-                offset += materialSize;
+				materialData[i] = color;
             }
 
             cl_mem_flags bufferFlags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
-            materialBuffer = cl::Buffer(context, bufferFlags, materialSize, buffer.getDataPtr());
+            materialBuffer = cl::Buffer(context, bufferFlags, MaterialBufferSize, materialData.data());
         } 
         
         return materialBuffer;
@@ -462,19 +459,6 @@ namespace raytracer { namespace tracers {
             throw std::runtime_error(msg);
         }
         event.wait();
-
-        // for debugging
-		/*
-        this->impl->raysData.resize(size.x * size.y);
-        errCode = this->impl->queue.enqueueReadBuffer(this->impl->raysBuffer, CL_TRUE, 0, this->impl->raysData.size()*sizeof(Ray), this->impl->raysData.data());
-        if (errCode != CL_SUCCESS) {
-            throw std::runtime_error("MultiHardwareTracer::generateRays: Error at trying to enqueue the GenerateRays Kernel:" + clErrorToString(errCode));
-        }
-        event.wait();
-
-        write(fs, size.x, size.y, this->impl->raysData);
-        fs << std::endl;
-		*/
 		
         this->impl->queue.finish();
 	}
@@ -499,7 +483,7 @@ namespace raytracer { namespace tracers {
         }
     }
     
-    std::list<const SceneNode*> getSceneNodes(const Scene *scene) {
+    static std::list<const SceneNode*> getSceneNodes(const Scene *scene) {
         std::list<const SceneNode*> nodes;
 
         linearizeSceneBranch(nodes, scene->getRootNode());
@@ -574,7 +558,7 @@ namespace raytracer { namespace tracers {
                 kernel.setArg(4, vertexBuffer);
                 kernel.setArg(5, indexBuffer);
                 kernel.setArg(6, indexCount);
-                kernel.setArg(7, 1);			// material index
+                kernel.setArg(7, this->getScene()->getMaterialIndex(subset->getMaterial())); // material index
 
                 std::vector<cl::Memory> buffers = {vertexBuffer, indexBuffer};
 
@@ -605,19 +589,6 @@ namespace raytracer { namespace tracers {
                 }
                 event.wait();
 
-				/*
-                std::vector<SynthesisElement> synthData;
-                synthData.resize(screenSize.x * screenSize.y);
-                errCode = queue.enqueueReadBuffer(this->impl->synthesisBuffer, CL_TRUE, 0, synthData.size()*sizeof(SynthesisElement), synthData.data(), nullptr, &event);
-                if (errCode != CL_SUCCESS) {
-                    throw std::runtime_error("MultiHardwareTracer::computeSynthesisData: Error at trying readback the synthesis buffer:" + clErrorToString(errCode));
-                }
-                event.wait();
-
-                write(fs, screenSize.x, screenSize.y, synthData);
-                fs << std::endl;
-				*/
-				
                 queue.finish();
             }
         }
@@ -634,6 +605,8 @@ namespace raytracer { namespace tracers {
         kernel.setArg(2, this->impl->raysBuffer);
         kernel.setArg(3, size.x);
         kernel.setArg(4, size.y);
+		kernel.setArg(5, 16);
+		kernel.setArg(6, this->impl->materialBuffer);
 
         cl::CommandQueue &queue = this->impl->queue;
 

@@ -93,9 +93,9 @@ namespace exeng { namespace scenegraph {
         auto material = std::unique_ptr<Material>(new Material());
         material->setName(materialName);
         
+		this->impl->materialList.push_back(material.get());	
         this->impl->materials[materialName] = std::move(material);
-        this->impl->materialList.push_back(material.get());
-
+		
         return this->impl->materials[materialName].get();
     }
 
@@ -127,10 +127,10 @@ namespace exeng { namespace scenegraph {
 #if defined(EXENG_DEBUG)
         if (index < 0 || index >= this->getMaterialCount()) {
             std::stringstream ss;
-
             ss << "Scene::getMaterial: The index ";
             ss << "(" << index << ") ";
-            ss << "out of bounds.";
+            ss << "is out of the range ";
+			ss << "[" << 0 << ", " << (this->getMaterialCount()-1) << "]";
 
             throw std::runtime_error(ss.str());
         }
@@ -145,5 +145,20 @@ namespace exeng { namespace scenegraph {
     const int Scene::getMaterialCount() const
     {
         return this->impl->materials.size();
+    }
+
+    const int Scene::getMaterialIndex(const exeng::graphics::Material *material) const 
+    {
+        int index = 0;
+
+        for (Material *currentMaterial : this->impl->materialList) {
+            if (currentMaterial == material) {
+                break;
+            }
+
+            index++;
+        }
+
+        return index;
     }
 }}
