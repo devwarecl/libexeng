@@ -139,14 +139,16 @@ constant int indexCount_ = 18;
  * @brief Ray buffer generator kernel
  */
 
-int coordToIndex(int x, int y, int width, int height) {
+int coordToIndex(int x, int y, int width, int height) 
+{
 	return y*width + x;
 }
 
 /**
  * @brief Cast a perspective ray from the camera
  */
-void castRay(global Ray *rayOut, Camera *camera, float2 screenCoord, float2 screenSize, float2 sample) {
+void castRay(global Ray *rayOut, Camera *camera, float2 screenCoord, float2 screenSize, float2 sample) 
+{
     float2 coordsf = screenCoord + sample;
 
 	float3 cam_pos = camera->position;
@@ -171,8 +173,8 @@ kernel void GenerateRays (
 	float camPosX, float camPosY, float camPosZ,
 	float camLookAtX, float camLookAtY, float camLookAtZ, 
 	float camUpX, float camUpY, float camUpZ,
-	int screenWidth, int screenHeight) {
-
+	int screenWidth, int screenHeight) 
+{
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 	
@@ -193,7 +195,8 @@ kernel void GenerateRays (
 /**
  * @brief Compute a synthesis element
  */
-void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane) {
+void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane) 
+{
 	float a = dot(plane.normal, plane.point - ray.point);
 	float b = dot(plane.normal, ray.direction);
 	float distance = a / b;
@@ -208,14 +211,16 @@ void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane) {
 /**
  * @brief Compute the triple dot product between three vectors.
  */
-float triple(float3 a, float3 b, float3 c) {
+float triple(float3 a, float3 b, float3 c) 
+{
 	return dot(a, cross(b, c));
 }
 
 /**
  * @brief Compute a synthesis element for the specified triangle
  */
-void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float3 p2, float3 p3, float3 normal) {	
+void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float3 p2, float3 p3, float3 normal) 
+{
 	const Plane plane = {
 		(p1 + p2 + p3) * (1.0f/3.0f), 
 		normal
@@ -301,7 +306,8 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
     }
 }
 
-__kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) {
+__kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) 
+{
     int x = get_global_id(0);
     int y = get_global_id(1);
 
@@ -319,8 +325,8 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
  */
 __kernel void ComputeSynthesisData (
 	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
-	global float *vertices, global int *indices, int indexCount, int materialIndex) {
-
+	global float *vertices, global int *indices, int indexCount, int materialIndex) 
+{
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 
@@ -336,7 +342,8 @@ __kernel void ComputeSynthesisData (
  * 
  * The image is synthetized by using the different materials 
  */
-kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight, int materialSize, global float *materialData) {
+kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight, int materialSize, global float *materialData) 
+{
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 	int i = coordToIndex(x, y, screenWidth, screenHeight);
@@ -358,7 +365,8 @@ kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElemen
 	write_imagef (image, (int2)(x, y), color);
 }
 
-kernel void GetStructuresSize(global int* out) { 
+kernel void GetStructuresSize(global int* out) 
+{
 	out[0] = sizeof(Ray);
 	out[1] = sizeof(SynthesisElement);
 }
