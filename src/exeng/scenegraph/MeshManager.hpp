@@ -18,6 +18,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+
+#include <exeng/Vector.hpp>
 #include <exeng/Config.hpp>
 
 namespace exeng { namespace graphics {
@@ -49,7 +51,12 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Load a mesh from the specified file.
          */
-        Mesh* getMesh(const std::string &filename, exeng::graphics::GraphicsDriver *graphicsDriver);
+        Mesh* getMesh(const std::string &id, exeng::graphics::GraphicsDriver *graphicsDriver);
+
+		/**
+		 * @brief Generate a cube mesh
+		 */
+		Mesh* generateBoxMesh(const std::string &id, exeng::graphics::GraphicsDriver *graphicsDriver, const Vector3f &center, const Vector3f &size);
 
     private:
         struct Private;

@@ -226,11 +226,30 @@ namespace exeng { namespace graphics {
          */
         virtual std::unique_ptr<Buffer> createVertexBuffer(const std::int32_t size, const void* data) = 0;
         
+		template<typename StdVector>
+		std::unique_ptr<Buffer> createVertexBuffer(const StdVector &vertices) 
+		{
+			const int bufferSize = sizeof(StdVector::value_type) * vertices.size();
+			const void *bufferData = vertices.data();
+
+			return this->createVertexBuffer(bufferSize, bufferData);
+		}
+
         /**
          * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
          */
         virtual std::unique_ptr<Buffer> createIndexBuffer(const std::int32_t size, const void* data) = 0;
         
+		template<typename StdVector>
+		std::unique_ptr<Buffer> createIndexBuffer(const StdVector &indices) 
+		{
+			const int bufferSize = sizeof(StdVector::value_type) * indices.size();
+			const void *bufferData = indices.data();
+
+			return this->createIndexBuffer(bufferSize, bufferData);
+		}
+		
+
         inline std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) {
             std::unique_ptr<Buffer> indexBuffer;
 
