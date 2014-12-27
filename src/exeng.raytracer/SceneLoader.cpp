@@ -21,18 +21,32 @@ namespace raytracer {
         // empty object
         auto scene = std::unique_ptr<Scene>(new Scene());
 
-        // box material
-        Material *boxMaterial = scene->createMaterial("boxMaterial");
-        boxMaterial->setProperty("diffuse", Vector4f(1.0f, 0.3f, 0.2f, 1.0f));
-
-        // box mesh
-        // Mesh *boxMesh = this->meshManager->getMesh("/cube", this->graphicsDriver);
-		Mesh *boxMesh = this->meshManager->generateBoxMesh("box1", this->graphicsDriver, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f});
-        boxMesh->getMeshSubset(0)->setMaterial(boxMaterial);
-
-        // box scenenode
-        scene->getRootNode()->addChild("boxNode")->setData(boxMesh);
+		this->addBoxNode ( 
+			scene.get(), "boxNode", 
+			"boxMaterial", {1.0f, 0.3f, 0.2f, 1.0f},
+			"boxMesh1", {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}
+		);
 
         return scene;
     }
+
+	SceneNode* SceneLoader::addBoxNode(
+		Scene *scene, const std::string &boxNodeName, 
+		const std::string &materialName, const Vector4f &materialColor, 
+		const std::string &boxMeshName, const Vector3f &boxCenter, const Vector3f &boxSize) 
+	{
+		// box material
+        Material *boxMaterial = scene->createMaterial(materialName);
+        boxMaterial->setProperty("diffuse", materialColor);
+
+        // box mesh
+        // Mesh *boxMesh = this->meshManager->getMesh("/cube", this->graphicsDriver);
+		Mesh *boxMesh = this->meshManager->generateBoxMesh(boxMeshName, this->graphicsDriver, boxCenter, boxSize);
+        boxMesh->getMeshSubset(0)->setMaterial(boxMaterial);
+
+        // box scenenode
+        scene->getRootNode()->addChild(boxNodeName)->setData(boxMesh);
+
+		return scene->getRootNode()->getChild(boxNodeName);
+	}
 }
