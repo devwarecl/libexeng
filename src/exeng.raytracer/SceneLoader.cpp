@@ -13,11 +13,15 @@ namespace raytracer {
     
     SceneLoader::~SceneLoader() {}
     
-    SceneLoader::SceneLoader(GraphicsDriver *driver_, MeshManager *meshManager_) : graphicsDriver(driver_), meshManager(meshManager_) {
+    SceneLoader::SceneLoader(GraphicsDriver *driver_, MeshManager *meshManager_) 
+	{
+		this->graphicsDriver = driver_;
+		this->meshManager = meshManager_;
     }
     
     // For now, just create a simple scene, boxed scene.
-    std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename) {
+    std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename) 
+	{
         // empty object
         auto scene = std::unique_ptr<Scene>(new Scene());
 
