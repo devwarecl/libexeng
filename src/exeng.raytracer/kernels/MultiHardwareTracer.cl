@@ -300,9 +300,10 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
 	}
 	
 	if (bestElement.distance > 0.0f && bestElement.distance != FLT_MAX) {
-        *element = bestElement;
-
-        element->material = materialIndex;
+		if (element->distance==0.0f || bestElement.distance<element->distance) {
+			*element = bestElement;
+			element->material = materialIndex;
+		}
     }
 }
 
