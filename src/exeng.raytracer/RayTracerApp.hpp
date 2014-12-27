@@ -12,7 +12,7 @@
 #include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/scenegraph/SceneManager.hpp>
 #include <exeng.raytracer/SceneLoader.hpp>
-#include <exeng.raytracer/FpsCounter.hpp>
+#include <exeng.raytracer/FrameCounter.hpp>
 #include <exeng.raytracer/samplers/Sampler.hpp>
 #include <exeng.raytracer/tracers/Tracer.hpp>
 
@@ -64,7 +64,7 @@ namespace raytracer {
         std::unique_ptr<SceneLoader> sceneLoader;
 
         mutable uint32_t lastTime;
-        FpsCounter frameCounter;
+        FrameCounter frameCounter;
         exeng::framework::ApplicationStatus::Enum applicationStatus;
         exeng::graphics::ButtonStatus::Enum buttonStatus[exeng::graphics::ButtonCode::Count];
         

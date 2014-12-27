@@ -1,12 +1,12 @@
 
-#include "FpsCounter.hpp"
+#include "FrameCounter.hpp"
 
 #include <cmath>
 
 namespace raytracer {
-    FpsCounter::FpsCounter() {}
+    FrameCounter::FrameCounter() {}
     
-    void FpsCounter::update(double seconds) {
+    void FrameCounter::update(double seconds) {
         this->seconds += seconds;
         this->currentSeconds += seconds;
         
@@ -22,19 +22,19 @@ namespace raytracer {
         this->currentSeconds = std::fmod(this->currentSeconds, 1.0);
     }
     
-    double FpsCounter::getCurrentFps() const {
+    double FrameCounter::getCurrentFps() const {
         return this->framesPerSecond;
     }
     
-    double FpsCounter::getCurrentTime() const {
+    double FrameCounter::getCurrentTime() const {
         return this->currentSeconds;
     }
     
-    double FpsCounter::getAverageFps() const {
+    double FrameCounter::getAverageFps() const {
         return this->framesDrawn / this->seconds;
     }
 
-    bool FpsCounter::overflow() const {
+    bool FrameCounter::overflow() const {
         return this->overTime;
     }
 }

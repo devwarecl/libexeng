@@ -6,9 +6,9 @@ namespace raytracer {
     /**
      * @brief Simple frames per second counter
      */
-    class FpsCounter {
+    class FrameCounter {
     public:
-        FpsCounter();
+        FrameCounter();
         
         void update(double seconds);
         
