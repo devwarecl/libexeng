@@ -605,7 +605,7 @@ namespace raytracer { namespace tracers {
         kernel.setArg(2, this->impl->raysBuffer);
         kernel.setArg(3, size.x);
         kernel.setArg(4, size.y);
-		kernel.setArg(5, 16);
+		kernel.setArg(5, MaterialSize);
 		kernel.setArg(6, this->impl->materialBuffer);
 
         cl::CommandQueue &queue = this->impl->queue;

@@ -349,8 +349,9 @@ kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElemen
 	
 	if (synthElement.distance > 0.0f) {
 		const int materialIndex = synthElement.material;
+		// const int materialIndex = 1;
 
-		color = *((global float4 *)(materialData + materialIndex));
+		color = *((global float4 *)(materialData + (materialIndex*materialSize)));
 		color = color * fabs(dot(ray.direction, synthElement.normal));
 	}
 	
