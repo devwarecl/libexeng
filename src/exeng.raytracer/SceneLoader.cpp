@@ -26,12 +26,13 @@ namespace raytracer {
         boxMaterial->setProperty("diffuse", Vector4f(1.0f, 0.3f, 0.2f, 1.0f));
 
         // box mesh
-        Mesh *boxMesh = this->meshManager->getMesh("/cube", this->graphicsDriver);
+        // Mesh *boxMesh = this->meshManager->getMesh("/cube", this->graphicsDriver);
+		Mesh *boxMesh = this->meshManager->generateBoxMesh("box1", this->graphicsDriver, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f});
         boxMesh->getMeshSubset(0)->setMaterial(boxMaterial);
 
         // box scenenode
         scene->getRootNode()->addChild("boxNode")->setData(boxMesh);
-        
+
         return scene;
     }
 }

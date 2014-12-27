@@ -131,16 +131,22 @@ namespace exeng { namespace scenegraph {
     
     void MeshManager::addMeshLoader(IMeshLoader *loader) 
 	{
+		assert(this->impl != nullptr);
+
         this->impl->loaders.push_front(std::unique_ptr<IMeshLoader>(loader));
     }
     
     void MeshManager::removeMeshLoader(IMeshLoader *loader) 
 	{
+		assert(this->impl != nullptr);
+
         this->impl->loaders.remove(std::unique_ptr<IMeshLoader>(loader));
     }
     
     Mesh* MeshManager::getMesh(const std::string &filename, GraphicsDriver *graphicsDriver) 
 	{
+		assert(this->impl != nullptr);
+
         Mesh* mesh = nullptr;
         
         // search the mesh
@@ -167,6 +173,16 @@ namespace exeng { namespace scenegraph {
 
 	Mesh* MeshManager::generateBoxMesh(const std::string &id, exeng::graphics::GraphicsDriver *graphicsDriver, const Vector3f &center, const Vector3f &size)
 	{
+		assert(this->impl != nullptr);
+
+		auto &meshes = this->impl->meshes;
+
+#if defined(EXENG_DEBUG)
+		if (meshes.find(id) != meshes.end()) {
+			throw std::runtime_error("MeshManager::generateBoxMesh: The mesh id '" + id + "' already exists.");
+		}
+#endif
+
 		std::vector<Vertex> vertices = generateBoxVertices(center, size);
 		std::vector<int> indices = generateBoxIndices();
 
@@ -176,8 +192,8 @@ namespace exeng { namespace scenegraph {
 		auto subset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), VertexFormat::makeVertex());
 		auto mesh = std::unique_ptr<Mesh>(new Mesh(std::move(subset)));
 
-		this->impl->meshes[id] = std::move(mesh);
+		meshes[id] = std::move(mesh);
 
-		return mesh.get();
+		return meshes[id].get();
 	}
 }}
