@@ -40,7 +40,7 @@ namespace raytracer {
 		this->addBoxNode ( 
 			scene.get(), "boxNode3", 
 			"boxMaterial3", {0.3f, 0.8f, 0.1f, 1.0f},
-			"boxMesh3", {0.0f, 0.0f, 0.0f}, {0.75f, 0.75f, 0.75f}
+			"boxMesh3", {0.0f, -0.25f, 0.0f}, {0.75f, 0.25f, 0.25f}
 		);
 
         return scene;
