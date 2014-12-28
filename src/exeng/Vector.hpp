@@ -1,6 +1,6 @@
 /**
- * @file 
- * @brief 
+ * @file Vector.hpp
+ * @brief Vector class and companion functions definition and implementation.
  */
 
 
@@ -11,12 +11,17 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_MATH_VECTOR_HPP__
-#define __EXENG_MATH_VECTOR_HPP__
+#ifndef __EXENG_VECTOR_HPP__
+#define __EXENG_VECTOR_HPP__
 
 #include <iosfwd>
 #include <algorithm>
+#include <cmath>
 #include "Common.hpp"
+
+#if defined(EXENG_DEBUG)
+#include <stdexcept>
+#endif
 
 namespace exeng { 
     template<typename Type, int size>
@@ -58,7 +63,6 @@ namespace exeng {
             struct { Type x, y, z, w; };
         };
 
-
         void set(Type x, Type y, Type z, Type w) {
             this->x = x;
             this->y = y;
@@ -66,7 +70,6 @@ namespace exeng {
             this->w = w;
         }
     };
-
 
     /**
      * @brief Base vector class
@@ -79,203 +82,229 @@ namespace exeng {
     public:
         using VectorBase<Type, Size>::set;
 
+		Vector() {}
 
-        /**
-         * @brief PENDIENTE
-         */
-        Vector();
+        explicit Vector(const Type *arrayValues)
+		{
+			this->set(arrayValues);
+		}
 
-        /**
-         * @brief PENDIENTE
-         */
-        explicit Vector(const Type *Array);
+        explicit Vector(Type value)
+		{
+			this->set(value);
+		}
 
-        /**
-         * @brief PENDIENTE
-         */
-        explicit Vector(Type Value);
+        Vector(Type x, Type y)
+		{
+			this->set(Type());
 
-        /**
-         * @brief PENDIENTE
-         */
-        Vector(Type x, Type y);
+			this->x = x;
+			this->y = y;
+		}
 
-        /**
-         * @brief PENDIENTE
-         */
-        Vector(Type x, Type y, Type z);
+        Vector(Type x, Type y, Type z)
+		{
+			this->set(Type());
 
-        /**
-         * @brief PENDIENTE
-         */
-        Vector(Type x, Type y, Type z, Type w);
+			this->x = x;
+			this->y = y;
+			this->z = z;
+		}
 
-        /**
-         * @brief PENDIENTE
-         */
-        void set(const Type *Values);
+        Vector(Type x, Type y, Type z, Type w)
+		{
+			this->set(Type());
 
-        /**
-         * @brief PENDIENTE
-         */
-        void set(Type Value);
+			this->x = x;
+			this->y = y;
+			this->z = z;
+			this->w = w;
+		}
 
-        /**
-         * @brief Devuelve la magnitud del vector elevada al cuadrado
-         */
-        Type getMagnitudeSq() const;
+        void set(const Type *Values)
+		{
+#if defined(EXENG_DEBUG)
+			if (values == nullptr) {
+				throw std::runtime_error("Vector<Type, Size>::set: Input value is a null pointer.");
+			}
+#endif
+			::memcpy(this->data, values, sizeof(Type)*Size);
+		}
 
-        /**
-         * @brief Devuelve la magnitud del vector
-         */
-        Type getMagnitude() const;
+        void set(Type Value)
+		{
+			for(int i=0; i<Size; ++i) {
+				this->data[i] = Value;
+			}	
+		}
+
+        Type* getPtr()
+		{
+			return this->data;
+		}
+		
+        const Type* getPtr() const
+		{
+			return this->data;
+		}
+		
+        Type& operator[] (int index)
+		{
+#if defined(EXENG_DEBUG)
+			if (index < 0 || index >= Size) {
+				throw std::runtime_error("Vector<Type, Size>::operator[]: Index out of bounds.");
+			}
+#endif
+			return this->data[index];
+		}
+
+        const Type& operator[] (int index) const
+		{
+#if defined(EXENG_DEBUG)
+			if (index < 0 || index >= Size) {
+				throw std::runtime_error("Vector<Type, Size>::operator[]: Index out of bounds.");
+			}
+#endif
+			return this->data[index];
+		}
+
+        Vector operator+ (const Vector &rhs) const
+		{
+			Vector<Type, Size> result;
+
+			for(int i=0; i<Size; ++i) {
+				result.data[i] = this->data[i] + rhs.data[i];
+			}
     
-        /**
-         * @brief Normalize the vector.
-         */
-        void normalize();
+			return result;
+		}
+
+        Vector& operator+= (const Vector &rhs)
+		{
+			*this = *this + rhs;
+
+			return *this;
+		}
+
+        Vector operator- (const Vector &rhs) const
+		{
+			Vector<Type, Size> result;
+
+			for(int i=0; i<Size; ++i) {
+				result.data[i] = this->data[i] - rhs.data[i];
+			}
     
-        /**
-         * @brief Establece la magnitud del vector
-         */
-        void setMagnitude(Type Magnitude);
+			return result;
+		}
+		
+        Vector& operator-= (const Vector &rhs)
+		{
+			*this = *this - rhs;
 
-        /**
-         * @brief Get vector internal data pointer
-         */
-        Type* getPtr();
+			return *this;
+		}
 
-        /**
-         * @brief Get vector internal data pointer
-         */
-        const Type* getPtr() const;
+        Vector operator* (Type rhs) const
+		{
+			Vector<Type, Size> result;
+
+			for(int i=0; i<Size; ++i) {
+				result.data[i] = this->data[i] * rhs;
+			}
     
-        /**
-         * @brief Array like member access
-         */
-        Type& operator[] (int Index);
+			return result;
+		}
 
-        /**
-         * @brief Array like member access (const)
-         */
-        const Type& operator[] (int Index) const;
+        Vector& operator*= (Type rhs)
+		{
+			*this = *this * rhs;
 
-        /**
-         * @brief Suma dos vectores
-         */
-        Vector operator+ (const Vector &Other) const;
+			return *this;
+		}
 
-        /**
-         * @brief Suma dos vectores
-         */
-        Vector &operator+= (const Vector &Other);
-
-        /**
-         * @brief Resta dos vectores
-         */
-        Vector operator- (const Vector &Other) const;
-    
-        /**
-         * @brief PENDIENTE
-         */
-        Vector &operator-= (const Vector &Other);
-
-        /**
-         * @brief Escala un vector
-         */
-        Vector operator* (Type Number) const;
-
-        /**
-         * @brief Escala un vector
-         */
         template<typename OtherType>
-        friend Vector<OtherType, Size> operator* (Type Number, const Vector& Other) {
+        friend Vector<OtherType, Size> operator* (Type Number, const Vector& Other) 
+		{
             return Other*Number;
         }
     
-        /**
-         * @brief Escala un vector
-         */
-        Vector &operator*= (Type Number);
+        Vector operator/ (Type rhs) const
+		{
+			Vector<Type, Size> result;
 
-        /**
-         * @brief Divide un vector por un numero
-         */
-        Vector operator/ (Type Number) const;
+			for(int i=0; i<Size; ++i) {
+				result.data[i] = this->data[i] / rhs;
+			}
     
-        /**
-         * @brief Divide un vector por un numero
-         */
-        Vector &operator/= (Type Number);
-
-        /**
-         * @brief Escala un vector por otro vector
-         */
-        Vector operator* (const Vector &Other) const;
-
-        /**
-         * @brief Escala un vector por otro vector
-         */
-        Vector &operator*= (const Vector &Other);
-
-        /**
-         * @brief Divide un vector por otro vector
-         */
-        Vector operator/ (const Vector &Other) const;
-
-        /**
-         * @brief Divide un vector por otro vector
-         */
-        Vector &operator/= (const Vector &Other);
-
-        /**
-         * @brief Devuelve el vector negativo
-         */
-        Vector operator- () const;
-
-        /**
-         * @brief Operador de igualdad
-         */
-        bool operator == (const Vector &Other) const;
-
-        /**
-         * @brief Operador de desigualdad
-         */
-        bool operator != (const Vector &Other) const;
-
-        /**
-         * @brief Ve si un vector es mayor que otro vector
-         */
-        bool operator > (const Vector &Other) const;
+			return result;
+		}
     
-        /**
-         * @brief Ve si un vector es menor que otro vector
-         */
-        bool operator < (const Vector &Other) const;
-    
-        /**
-         * @brief Ve si un vector es mayor o igual que otro vector
-         */
-        bool operator >= (const Vector &Other) const;
-    
-        /**
-         * @brief Ve si un vector es menor o igual que otro vector
-         */
-        bool operator <= (const Vector &Other) const;
+        Vector& operator/= (Type rhs)
+		{
+			*this = *this / rhs;
 
+			return *this;
+		}
 
-        /**
-         * @brief PENDIENTE
-         */
-        friend Vector<Type, Size> operator* (Type scalar, const Vector<Type, Size>& other) {
+        Vector operator* (const Vector &rhs) const
+		{
+			Vector<Type, Size> result;
+
+			for (int i=0; i<Size; ++i) {
+				result.data[i] = this->data[i] * rhs.data[i];
+			}
+    
+			return result;
+		}
+
+        Vector& operator*= (const Vector &rhs)
+		{
+			*this = *this * rhs;
+
+			return *this;
+		}
+
+        Vector operator/ (const Vector &rhs) const
+		{
+			Vector<Type, Size> result;
+
+			for(int i=0; i<Size; ++i) {
+				result.data[i] = this->data[i] / rhs.data[i];
+			}
+    
+			return result;
+		}
+
+        Vector& operator/= (const Vector rhs)
+		{
+			*this = *this / rhs;
+
+			return *this;
+		}
+
+        Vector operator- () const
+		{
+			return Type(-1)* (*this);
+		}
+
+        bool operator== (const Vector &Other) const
+		{
+			return arrayCompare<Type, Size>(this->data, Other.data);
+		}
+
+        bool operator!= (const Vector &Other) const
+		{
+			return !(*this == Other);
+		}
+
+        friend Vector<Type, Size> operator* (Type scalar, const Vector<Type, Size>& other) 
+		{
             return other * scalar;
         }
         
-        /**
-         * @brief Convierte de un tipo de vector a otro
-         */
         template<typename OtherType, int OtherSize>
-        operator Vector<OtherType, OtherSize>() const {
+        operator Vector<OtherType, OtherSize>() const 
+		{
             Vector<OtherType, OtherSize> result(static_cast<OtherType>(0));
             int minSize = std::min(OtherSize, Size);
         
@@ -286,73 +315,18 @@ namespace exeng {
             return result;
         }
     
-    public:
-    
-        /**
-         * @brief Calcula el producto punto entre dos vectores.
-         * Este valor es representativo del coseno entre los dos vectores.
-         */
-        Type dot(const VectorType &other) const;
+        bool isZero() const 
+		{
+			return *this == Vector<Type, Size>::zero();
+		}
+		
+        static Vector zero()
+		{
+			return Vector<Type, Size>(Type());
+		}
 
-        /**
-         * @brief Calcula el producto cruz entre dos vectores
-         */
-        VectorType cross(const VectorType &other) const;
-
-    
-        /**
-         * @brief Calcula el triple producto escalar entre tres vectores
-         */
-        Type triple(const VectorType &other1, const VectorType &other2) const;
-    
-    
-        /**
-         * @brief Maximiza un vector
-         */
-        VectorType maximize(const VectorType &other) const;
-    
-        /**
-         * @brief Minimiza un vector
-         */
-        VectorType minimize(const VectorType &other) const;
-    
-        /**
-         * @brief Calcula la proyeccion vectorial del vector B sobre el vector A
-         */
-        VectorType proj(const VectorType &other) const;
-    
-        /**
-         * @brief Calcula el componente escalar del vector B sobre el vector A
-         */
-        Type comp(const VectorType &other) const;
-
-        /**
-         * @brief Interpolacion lineal
-         */
-        static VectorType lerp(const VectorType& V1, const VectorType& V2, Type S);
-
-        /**
-         * @brief Interpolacion cubica
-         */
-        static VectorType hermite(const VectorType& V1, const VectorType& T1, const VectorType& V2, const VectorType& T2, Type S);
-    
-        /**
-         * @brief Comprueba si dos vectores son iguales. Solo tiene sentido si el vector esta basado
-         * en un tipo de datos de ṕunto flotante.
-         */
-        bool equals(VectorType &other, Type epsilon=Type()) const;
-        
-        /**
-         * @brief Comprueba si el vector actual corresponde al vector zero.
-         */
-        bool isZero() const;
-    
-        /**
-         * @brief Regresa el vector zero
-         */
-        static Vector zero();
-
-		friend std::ostream& operator<< (std::ostream &os, const Vector<Type, Size> &v) {
+		friend std::ostream& operator<< (std::ostream &os, const Vector<Type, Size> &v) 
+		{
 		    for(int i=0; i<Size; ++i) {
 				os << std::fixed << std::setprecision(8) << v[i];
         
@@ -365,6 +339,151 @@ namespace exeng {
 		}
     };
 
+	template<typename Type, int Size>
+    Type dot(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2) 
+	{
+		Type result = static_cast<Type>(0);
+
+		for(int i=0; i<Size; ++i) {
+			result += v1[i]*v2[i];
+		}
+    
+		return result;
+	}
+
+	template<typename Type, int Size>
+    Vector<Type, Size> cross(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2) 
+	{
+		Vector<Type, Size> result = {
+			v1.y*v2.z - v1.z*v2.y, 
+			v1.z*v2.x - v1.x*v2.z, 
+			v1.x*v2.y - v1.y*v2.x
+		};
+
+		return result;
+	}
+
+	template<typename Type, int Size>
+    Type dot(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2, const Vector<Type, Size> &v3) 
+	{
+		return dot(v1, cross(v2, v3));
+	}
+
+	template<typename Type, int Size>
+    Vector<Type, Size> cross(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2, const Vector<Type, Size> &v3) 
+	{
+		return cross(v1, cross(v2, v3));
+	}
+	
+	template<typename Type, int Size>
+    Type abs2(const Vector<Type, Size> &v) 
+	{
+		return dot(v, v);
+	}
+
+	template<typename Type, int Size>
+    Type abs(const Vector<Type, Size> &v) 
+	{
+		return std::sqrt(abs2(v));
+	}
+	
+	template<typename Type, int Size>
+    Vector<Type, Size> normalize(const Vector<Type, Size> &v)
+	{
+		return v / abs(v);
+	}
+	
+	template<typename Type, int Size>
+    Vector<Type, Size> maximize(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2) 
+	{
+		Vector<Type, Size> result;
+
+		for (int i=0; i<Size; ++i) {
+			result.data[i] = std::max(v1[i], v2[i]);
+		}
+
+		return result;
+	}
+	
+	template<typename Type, int Size>
+    Vector<Type, Size> minimize(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2) 
+	{
+		Vector<Type, Size> result;
+
+		for (int i=0; i<Size; ++i) {
+			result.data[i] = std::min(v1[i], v2[i]);
+		}
+
+		return result;
+	}
+	
+	template<typename Type, int Size>
+    Type max(const Vector<Type, Size> &v) 
+	{
+		Type result = v[0];
+
+		for (int i=1; i<Size; ++i) {
+			result = std::max(result, v[i]);
+		}
+
+		return result;
+	}
+	
+	template<typename Type, int Size>
+    Type min(const Vector<Type, Size> &v) 
+	{
+		Type result = v[0];
+
+		for (int i=1; i<Size; ++i) {
+			result = std::min(result, v[i]);
+		}
+
+		return result;
+	}
+
+	template<typename Type, int Size>
+    const Vector<Type, Size> proj(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2) 
+	{
+		return v1 * ((dot(v1, v2)/abs2(v1, v1)));
+		// return (this->dot(other) / this->getMagnitudeSq()) * (*this);
+	}
+	
+	template<typename Type, int Size>
+    Vector<Type, Size> lerp(const Vector<Type, Size>& v1, const Vector<Type, Size>& v2, Type t)
+	{
+		return t*v2 + v1*(Type(1) - t);
+	}
+
+	template<typename Type, int Size>
+    Vector<Type, Size> hermite (
+		const Vector<Type, Size>& V1, const Vector<Type, Size>& T1, 
+		const Vector<Type, Size>& V2, const Vector<Type, Size>& T2, 
+		Type t)
+	{
+		Type ss = t*t;
+		Type sss = ss*t;
+
+		Type _2sss = sss+sss;
+		Type _3ss = ss+ss+ss;
+    
+		return  V1*(_2sss - _3ss + Type(s))	+ 
+				V2*(_3ss - _2sss) + 
+				T1*(sss - (ss+ss) + s) + 
+				T2*(sss - ss);
+	}
+	
+	template<typename Type, int Size>
+    bool equals(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2, Type epsilon=Type()) 
+	{
+		for (int i=0; i<Size; ++i) {
+			if ( std::abs( v1[i] - v2[i] ) > epsilon ) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+    
     typedef Vector<float, 2> Vector2f;
     typedef Vector<float, 3> Vector3f;
     typedef Vector<float, 4> Vector4f;
@@ -378,9 +497,4 @@ namespace exeng {
     typedef Vector<int, 4> Vector4i;
 }
 
-// template<typename Type, int Size>
-// std::ostream& operator<< (std::ostream &os, const exeng::Vector<Type, Size>& Vector);
-
-#include "Vector.inl"
-
-#endif	//__EXENG_MATH_Vector_HPP__
+#endif	//__EXENG_VECTOR_HPP__

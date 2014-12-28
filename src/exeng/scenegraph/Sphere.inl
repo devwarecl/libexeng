@@ -79,10 +79,10 @@ inline bool Sphere::intersect(const Ray& ray, IntersectInfo *intersectInfo) cons
     auto r_2 = r*r;
 
     auto r0_sub_c = r0 - c;
-    auto r0_c_2 = r0_sub_c.getMagnitudeSq();
+    auto r0_c_2 = abs2(r0_sub_c);
 
     // Temporales de la ecuacion cuadratica
-    auto B = 2.0f * d.dot(r0_sub_c);
+    auto B = 2.0f * dot(d, r0_sub_c);
     auto C = r0_c_2 - r_2;
 
     // Calcular el discriminante
@@ -119,10 +119,7 @@ inline bool Sphere::intersect(const Ray& ray, IntersectInfo *intersectInfo) cons
         intersectInfo->intersect = result;
 
         if (intersectInfo->intersect == true) {
-            auto normal = ray.getPointAt(t);
-            normal.normalize();
-
-            intersectInfo->normal = normal;
+            intersectInfo->normal = normalize(ray.getPointAt(t));
             intersectInfo->distance = t;
         }
     }

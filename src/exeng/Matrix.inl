@@ -263,11 +263,9 @@ namespace exeng {
             this->at(1, 0) = Sin;
             this->at(0, 1) = -Sin;
         } else {
-            Vector<Type, 3> U(Axis), V(Axis);
-            Matrix<Type, 3, 3> MatS(static_cast<Type>(0)), MatUut(static_cast<Type>(0)), MatId(static_cast<Type>(0));
-        
-            V.normalize();
-
+            Vector<Type, 3> U(Axis), V(normalize(Axis));
+            Matrix<Type, 3, 3> MatS(Type(0)), MatUut(Type(0)), MatId(Type(0));
+			
             //Iniciar S
             MatS.at(0, 1) = -V.z;
             MatS.at(1, 0) = V.z;

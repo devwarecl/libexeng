@@ -48,9 +48,7 @@ namespace exeng { namespace scenegraph {
      * triangle conformed by the points P1, P2, P3.
      */
     inline Vector3f computeNormal(const Vector3f &p1, const Vector3f &p2, const Vector3f &p3) {
-        Vector3f n = (p2 - p1).cross(p3 - p1);
-        n.normalize();
-        return n;
+		return normalize(cross(p2 - p1, p3 - p1));
     }
     
     /**
@@ -73,7 +71,8 @@ namespace exeng { namespace scenegraph {
      */
     inline bool intersectWithTriangle(const Vector3f &p1, const Vector3f &p2, const Vector3f &p3, const Vector3f &n, 
                                       const Ray &ray, 
-                                      IntersectInfo *intersectInfo=nullptr) {
+                                      IntersectInfo *intersectInfo=nullptr) 
+	{
         IntersectInfo info;
        
         if (Plane(p1, n).intersect(ray, &info) == false) {
@@ -94,9 +93,9 @@ namespace exeng { namespace scenegraph {
         Vector3f pb = (b - p);
         Vector3f pc = (c - p);
         
-        float u = pq.triple(pc, pb);
-        float v = pq.triple(pa, pc);
-        float w = pq.triple(pb, pa);
+        float u = dot(pq, pc, pb);
+        float v = dot(pq, pa, pc);
+        float w = dot(pq, pb, pa);
         
         // Check collision exists
         if ((u > 0.0f && v > 0.0f && w > 0.0f) == true || (u < 0.0f && v < 0.0f && w < 0.0f) == true) {

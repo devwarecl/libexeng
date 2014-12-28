@@ -183,9 +183,8 @@ namespace raytracer {
         const float moveSpeed = 1.5f;
         const float rotationSpeed = 60.0f;
         
-        Vector3f direction = this->camera.getLookAt() - this->camera.getPosition();
-        direction.normalize();
-        
+        Vector3f direction = normalize(this->camera.getLookAt() - this->camera.getPosition());
+		
         float displace = 0.0f;
         float rotate = 0.0f;
 

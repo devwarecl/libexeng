@@ -102,8 +102,7 @@ namespace exeng { namespace scenegraph {
         }
 #endif
 
-        this->impl->up = up;
-        this->impl->up.normalize();
+        this->impl->up = normalize(up);
     }
         
     void Camera::setViewport(const Rectf &viewport) {

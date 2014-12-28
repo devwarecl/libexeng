@@ -34,19 +34,16 @@ namespace exeng { namespace scenegraph {
 
     inline void Plane::set(const exeng::Vector3f& p1, const exeng::Vector3f& p2, const exeng::Vector3f& p3) {
         const float factor = 1.0f/3.0f;
-    
-        exeng::Vector3f v1 = p2 - p1;
-        exeng::Vector3f v2 = p3 - p1;
-        exeng::Vector3f normal = v1.cross(v2);
+		
+        exeng::Vector3f normal = cross(p2 - p1, p3 - p1);
         exeng::Vector3f point = factor * (p1 + p2 + p3);
-    
+		
         this->set(point, normal);
     }
 
 
     inline void Plane::setNormal(const exeng::Vector3f& normal) {
-        this->normal = normal;
-        this->normal.normalize();
+        this->normal = normalize(normal);
     }
 
 
@@ -71,8 +68,8 @@ namespace exeng { namespace scenegraph {
         auto r = ray.getPoint();
         auto d = ray.getDirection();
     
-        auto t = n.dot(p - r) /  n.dot(d);
-    
+        auto t = dot(n, p - r) / dot(n, d);
+		
         bool result = false;
     
         if (t > 0.0f) {

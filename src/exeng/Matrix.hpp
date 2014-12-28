@@ -320,12 +320,10 @@ namespace exeng {
          */
         template<int VectorSize>
         Vector<Type, VectorSize> operator* (const Vector<Type, VectorSize>& point) const {
-            Vector<Type, VectorSize> result;
-            
-            result.set(static_cast<Type>(0));
+			Vector<Type, VectorSize> result{Type(0)};
             
             for(int i=0; i<VectorSize; ++i) {
-                result[i] =  this->getRowVector(i).dot(point);
+                result[i] = dot<Type, VectorSize>(this->getRowVector(i), point);
             }
 
             return result;
