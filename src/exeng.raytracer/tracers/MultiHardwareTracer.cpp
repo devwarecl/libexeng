@@ -136,7 +136,13 @@ namespace raytracer { namespace tracers {
             // case CL_INVALID_COMPILER_OPTIONS                 :   return "CL_INVALID_COMPILER_OPTIONS";
             // case CL_INVALID_LINKER_OPTIONS                   :   return "CL_INVALID_LINKER_OPTIONS";
             // case CL_INVALID_DEVICE_PARTITION_COUNT           :   return "CL_INVALID_DEVICE_PARTITION_COUNT";
-            default: return "UNKNOWN CODE";
+            default: 
+            {
+                std::stringstream ss;
+                ss << "The code '" << errCode << "' is unknown.";
+                
+                return ss.str();
+            }
         }
     }
 
