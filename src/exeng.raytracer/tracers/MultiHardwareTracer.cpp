@@ -231,7 +231,9 @@ namespace raytracer { namespace tracers {
 
 		return content;
 	}
-
+    
+    
+    
 	//static cl::Buffer createCLBuffer(cl::Context &context, exeng::Buffer *in) 
     //{
 	//    if (in == nullptr) {
@@ -245,34 +247,46 @@ namespace raytracer { namespace tracers {
 	MultiHardwareTracer::MultiHardwareTracer(const Scene *scene, const Sampler *sampler) : Tracer(scene, nullptr), impl(new MultiHardwareTracer::Private())  
     {
 		BOOST_LOG_TRIVIAL(trace) << "Initializing Multi-Object ray tracer ...";
-
+    
+        cl::Platform platform;  // selected platform
+        cl::Device device;      // selected device
+        bool deviceFound = false;
+        
 		std::vector<cl::Platform> platforms;
 		cl::Platform::get(&platforms);
+        
+        BOOST_LOG_TRIVIAL(trace) << "Found " << platforms.size() << " platform(s).";
+        
+        if (platforms.size() == 0) {
+            throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL platforms available");
+        }
+        
+        for (cl::Platform &platform_ : platforms) {
+            std::vector<cl::Device> devices;
+            platform_.getDevices(CL_DEVICE_TYPE_GPU, &devices);
 
-		if (platforms.size() == 0) {
-			throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL platforms available");
-		}
-
-		BOOST_LOG_TRIVIAL(trace) << "Found " << platforms.size() << " platform(s).";
-
-		// Select the first platform
-		cl::Platform platform = platforms[0];
-		BOOST_LOG_TRIVIAL(trace) << "Using OpenCL platform: " << platform.getInfo<CL_PLATFORM_NAME>(nullptr);
-
-		// Select the first GPU device of the first platform.
-		std::vector<cl::Device> devices;
-		platform.getDevices(CL_DEVICE_TYPE_GPU, &devices);
-		if (devices.size() == 0) {
-			throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL GPU devices available");
-		}
-
-		BOOST_LOG_TRIVIAL(trace) << "Found " << devices.size() << " device(s).";
-
-		cl::Device device = devices[0];
-
-		BOOST_LOG_TRIVIAL(trace) << "Using OpenCL device: " << device.getInfo<CL_DEVICE_NAME>(nullptr);
+            // Select the first platform
+            BOOST_LOG_TRIVIAL(trace) 
+                << "Found " << devices.size() << " device(s) for platform "
+                << "with platform: " << platform.getInfo<CL_PLATFORM_NAME>(nullptr);
+            
+            if (devices.size() > 0) {
+                platform = platform_;
+                device = devices[0];
+                deviceFound = true;
+                
+                BOOST_LOG_TRIVIAL(trace) << "Using OpenCL device: " << device.getInfo<CL_DEVICE_NAME>(nullptr);
+                
+                break;
+            }
+        }
+        
+        if (!deviceFound) {
+            throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL GPU devices available");
+        }
+        
 		BOOST_LOG_TRIVIAL(trace) << "Creating OpenCL context with GL/CL interop support....";
-
+        
 		// Set context properties for GL/CL interop.
 		cl_context_properties properties[] = {
 			// We need to add information about the OpenGL context with
