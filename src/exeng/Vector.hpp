@@ -14,9 +14,12 @@
 #ifndef __EXENG_VECTOR_HPP__
 #define __EXENG_VECTOR_HPP__
 
-#include <iosfwd>
+#include <iostream> //! TODO: Make it optional
+#include <iomanip>
 #include <algorithm>
 #include <cmath>
+#include <cstring>
+
 #include "Common.hpp"
 
 #if defined(EXENG_DEBUG)
@@ -121,14 +124,14 @@ namespace exeng {
 			this->w = w;
 		}
 
-        void set(const Type *Values)
+        void set(const Type *values)
 		{
 #if defined(EXENG_DEBUG)
 			if (values == nullptr) {
 				throw std::runtime_error("Vector<Type, Size>::set: Input value is a null pointer.");
 			}
 #endif
-			::memcpy(this->data, values, sizeof(Type)*Size);
+			std::memcpy(this->data, values, sizeof(Type)*Size);
 		}
 
         void set(Type Value)
@@ -466,9 +469,9 @@ namespace exeng {
 		Type _2sss = sss+sss;
 		Type _3ss = ss+ss+ss;
     
-		return  V1*(_2sss - _3ss + Type(s))	+ 
+		return  V1*(_2sss - _3ss + Type(t))	+ 
 				V2*(_3ss - _2sss) + 
-				T1*(sss - (ss+ss) + s) + 
+				T1*(sss - (ss+ss) + t) + 
 				T2*(sss - ss);
 	}
 	

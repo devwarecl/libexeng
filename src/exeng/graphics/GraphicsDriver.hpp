@@ -229,7 +229,7 @@ namespace exeng { namespace graphics {
 		template<typename StdVector>
 		std::unique_ptr<Buffer> createVertexBuffer(const StdVector &vertices) 
 		{
-			const int bufferSize = sizeof(StdVector::value_type) * vertices.size();
+			const int bufferSize = sizeof(typename StdVector::value_type) * vertices.size();
 			const void *bufferData = vertices.data();
 
 			return this->createVertexBuffer(bufferSize, bufferData);
@@ -243,7 +243,7 @@ namespace exeng { namespace graphics {
 		template<typename StdVector>
 		std::unique_ptr<Buffer> createIndexBuffer(const StdVector &indices) 
 		{
-			const int bufferSize = sizeof(StdVector::value_type) * indices.size();
+			const int bufferSize = sizeof(typename StdVector::value_type) * indices.size();
 			const void *bufferData = indices.data();
 
 			return this->createIndexBuffer(bufferSize, bufferData);

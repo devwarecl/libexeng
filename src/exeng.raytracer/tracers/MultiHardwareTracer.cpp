@@ -291,9 +291,9 @@ namespace raytracer { namespace tracers {
 			CL_CONTEXT_PLATFORM, (cl_context_properties)platform(),
 			0, 0,
 		};
-
+        
 		// initialize the OpenCL context
-		cl::Context context = cl::Context({device}, properties);
+		cl::Context context = cl::Context(device, properties);
         
 		// pass the samples to OpenCL
 		BOOST_LOG_TRIVIAL(trace) << "Creating sampling buffer from " << sampler->getSampleCount() << " sample(s)...";
