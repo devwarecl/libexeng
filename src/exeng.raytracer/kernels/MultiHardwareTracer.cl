@@ -7,7 +7,8 @@
 /** 
  * @brief Ray data structure.
  */
-typedef struct {
+typedef struct 
+{
 	float3 point;		// Base point
 	float3 direction;	// Normalized direction vector
 } Ray;
@@ -16,7 +17,8 @@ typedef struct {
  * @brief Vertex data.
  * This structure doesn't map portably to the Host.
  */
-typedef struct {
+typedef struct 
+{
 	float3 coord;		// Vertex position
 	float3 normal;		// Vertex normalized normal vector
 	float2 tex;			// Vertex texture coordinate
@@ -25,7 +27,8 @@ typedef struct {
 /**
  * @brief Synthesis Element.
  */
-typedef struct {
+typedef struct 
+{
 	float3 	point;		// Point of intersection
 	float3	normal;		// Normal vector of the surface that collided with the ray.
 	float	distance;	// Distance from the origin of the ray.
@@ -35,7 +38,8 @@ typedef struct {
 /** 
  * @brief Plane
  */
-typedef struct {
+typedef struct 
+{
 	float3 point;
 	float3 normal;
 } Plane;
@@ -43,15 +47,37 @@ typedef struct {
 /** 
  * @brief Camera definition
  */
-typedef struct {
+typedef struct 
+{
     float3 position;
     float3 lookAt;
     float3 up;
 } Camera;
 
-typedef struct {
+typedef struct 
+{
     float foo;
 } Material;
+
+/**
+ * @brief 4x4 Matrix structure
+ */
+typedef struct 
+{
+    float4 rows[4];
+} Matrix;
+
+float4 transform(Matrix matrix, float4 vector) 
+{
+    float4 result = {
+        dot(matrix.rows[0], vector),
+        dot(matrix.rows[1], vector),
+        dot(matrix.rows[2], vector),
+        dot(matrix.rows[3], vector)
+    };
+    
+    return result;
+}
 
 /*sample cube data*/
 /*
@@ -147,7 +173,7 @@ int coordToIndex(int x, int y, int width, int height)
 /**
  * @brief Cast a perspective ray from the camera
  */
-void castRay(global Ray *rayOut, Camera *camera, float2 screenCoord, float2 screenSize, float2 sample) 
+Ray castRay(const Camera *camera, const float2 screenCoord, const float2 screenSize, const float2 sample)
 {
     float2 coordsf = screenCoord + sample;
 
@@ -165,7 +191,7 @@ void castRay(global Ray *rayOut, Camera *camera, float2 screenCoord, float2 scre
         normalize(image_point - cam_pos) + (float3)(sample, 0.0f)
     };
     
-    *rayOut = ray;
+    return ray;
 }
 
 kernel void GenerateRays (
@@ -183,13 +209,40 @@ kernel void GenerateRays (
 	float2 screenCoord = {(float) x, (float)y};
 	float2 screenSize = {(float)screenWidth, (float)screenHeight};
 
-	Camera camera = {
+	const Camera camera = {
 		{camPosX, camPosY, camPosZ},
 		{camLookAtX, camLookAtY, camLookAtZ},
 		{camUpX, camUpY, camUpZ},
 	};
 	
-	castRay(&rays[i], &camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
+    *(rays + i) = castRay(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
+}
+
+kernel void GenerateRaysFromWorldMatrix (
+    global Ray *rays, 
+    global Matrix *worldMatrix, global Matrix *invWorldMatrix,
+    int screenWidth, int screenHeight)
+{
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+    
+    int i = coordToIndex(x, y, screenWidth, screenHeight);
+    
+    float2 screenCoord = {(float) x, (float)y};
+    float2 screenSize = {(float)screenWidth, (float)screenHeight};
+    
+    Camera camera = {
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 1.0f},
+        {0.0f, 1.0f, 0.0f},
+    };
+    
+    Ray ray = castRay(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
+    
+    ray.point = transform(*worldMatrix, (float4)(ray.point, 1.0f)).xyz;
+    ray.direction = transform(*invWorldMatrix, (float4)(ray.direction, 0.0f)).xyz;
+    
+    *(rays + i) = ray;
 }
 
 /**

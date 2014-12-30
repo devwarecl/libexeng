@@ -16,6 +16,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
 
+#include <exeng/Buffer.hpp>
+
 #include <CL/cl.h>
 #include <CL/cl_gl.h>
 
@@ -35,8 +37,8 @@ using namespace exeng::scenegraph;
 namespace raytracer { namespace tracers {
     using namespace raytracer::samplers;
 
-	struct MultiHardwareTracer::Private {
-
+	struct MultiHardwareTracer::Private 
+	{
 		cl::Platform platform;
 		cl::Device device;
 		cl::Context context;
@@ -50,7 +52,7 @@ namespace raytracer { namespace tracers {
 		cl::Kernel imageSynthetizerKernel;
         
         std::vector<Ray> raysData;
-
+        
 		cl::Buffer raysBuffer;
 		cl::Buffer synthesisBuffer;
 
@@ -66,16 +68,27 @@ namespace raytracer { namespace tracers {
 		cl::NDRange localSize = cl::NDRange(16, 8);
 	};
 
-    struct SynthesisElement {
+    struct SynthesisElement 
+    {
 		cl_float3	point;		// Point of intersection
         cl_float3	normal;		// Normal vector of the surface that collided with the ray.
 		cl_float	distance;	// Distance from the origin of the ray.
         cl_int		material;	// Material index/id (will be defined later).
     };
-
+    
+    class PlatformBuffer : public exeng::Buffer
+    {
+    public:
+        PlatformBuffer(cl::Context &context_) : context(context_) {}
+        
+    private:
+        cl::Context &context;
+    };
+    
 	const int MaterialSize = 4;	// Size of the material (number of float's)
 
-    static std::string clErrorToString(cl_int errCode) {
+    static std::string clErrorToString(cl_int errCode) 
+    {
         switch (errCode) {
             case CL_SUCCESS                                  :   return "CL_SUCCESS";
             case CL_DEVICE_NOT_FOUND                         :   return "CL_DEVICE_NOT_FOUND";
@@ -136,8 +149,7 @@ namespace raytracer { namespace tracers {
             // case CL_INVALID_COMPILER_OPTIONS                 :   return "CL_INVALID_COMPILER_OPTIONS";
             // case CL_INVALID_LINKER_OPTIONS                   :   return "CL_INVALID_LINKER_OPTIONS";
             // case CL_INVALID_DEVICE_PARTITION_COUNT           :   return "CL_INVALID_DEVICE_PARTITION_COUNT";
-            default: 
-            {
+            default: {
                 std::stringstream ss;
                 ss << "The code '" << errCode << "' is unknown.";
                 
@@ -146,7 +158,8 @@ namespace raytracer { namespace tracers {
         }
     }
 
-    static Vector2i indexToCoord(int index, int width, int height) {
+    static Vector2i indexToCoord(int index, int width, int height) 
+    {
         Vector2i coord = {
 			index / height,
 			index % width
@@ -168,11 +181,12 @@ namespace raytracer { namespace tracers {
             for (int i=0; i<scene->getMaterialCount(); ++i) {
                 const Material *material = scene->getMaterial(i);
 
-                Vector4f color{1.0f, 1.0f, 1.0f, 1.0f};
+                Vector4f color;
                 
                 if (material) {
                     color = scene->getMaterial(i)->getProperty4f("diffuse");
                 } else {
+                    color = {1.0f, 1.0f, 1.0f, 1.0f};
                     BOOST_LOG_TRIVIAL(trace) << "Material " << i << " is null.";
                 }
 
@@ -185,7 +199,7 @@ namespace raytracer { namespace tracers {
         
         return materialBuffer;
     }
-
+    
 	/*
     void write(std::ostream &os, int width, int height, const std::vector<SynthesisElement>& synthBuffer) {
         for (int i=0; i<(int)synthBuffer.size(); ++i) {
