@@ -383,7 +383,7 @@ namespace exeng {
 	{
 		return dot(v, v);
 	}
-
+    
 	template<typename Type, int Size>
     Type abs(const Vector<Type, Size> &v) 
 	{

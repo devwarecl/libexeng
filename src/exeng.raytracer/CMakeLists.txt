@@ -14,6 +14,10 @@ find_package(OpenCL REQUIRED)
 find_package(Boost COMPONENTS system timer log thread REQUIRED)
 find_package(glfw REQUIRED)
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+  find_package(Threads REQUIRED)
+endif()
+
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${GLFW_INCLUDE_DIR})
@@ -33,28 +37,25 @@ set (BaseFiles
 
 set (Kernels
 	kernels/TraceRay.cl
-	# kernels/Common.cl
-	# kernels/ComputeSynthesisData.cl
-	# kernels/GenerateRays.cl
-	# kernels/SynthetizeImage.cl
 	kernels/MultiHardwareTracer.cl
 )
 
-set ( Tracers
+set (Tracers
 	tracers/Tracer.hpp              tracers/Tracer.cpp 
     tracers/SoftwareTracer.hpp      tracers/SoftwareTracer.cpp 
     tracers/HardwareTracer.hpp      tracers/HardwareTracer.cpp 
 	tracers/MultiHardwareTracer.hpp	tracers/MultiHardwareTracer.cpp 
 )
 
-set ( Samplers
+set (Samplers
 	samplers/Sampler.hpp            samplers/Sampler.cpp 
     samplers/JitteredSampler.hpp    samplers/JitteredSampler.cpp 
 )
 
-add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Kernels} )
 
-target_link_libraries(exeng.raytracer exeng exeng.main ${Boost_LIBRARIES} ${OPENCL_LIBRARIES} ${OPENGL_LIBRARIES})
+add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Kernels})
+
+target_link_libraries(exeng.raytracer exeng exeng.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 source_group(\\			FILES ${BaseFiles})
 source_group(tracers	FILES ${Tracers})

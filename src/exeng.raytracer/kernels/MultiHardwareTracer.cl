@@ -7,8 +7,7 @@
 /** 
  * @brief Ray data structure.
  */
-typedef struct 
-{
+typedef struct {
 	float3 point;		// Base point
 	float3 direction;	// Normalized direction vector
 } Ray;
@@ -17,8 +16,7 @@ typedef struct
  * @brief Vertex data.
  * This structure doesn't map portably to the Host.
  */
-typedef struct 
-{
+typedef struct {
 	float3 coord;		// Vertex position
 	float3 normal;		// Vertex normalized normal vector
 	float2 tex;			// Vertex texture coordinate
@@ -27,8 +25,7 @@ typedef struct
 /**
  * @brief Synthesis Element.
  */
-typedef struct 
-{
+typedef struct {
 	float3 	point;		// Point of intersection
 	float3	normal;		// Normal vector of the surface that collided with the ray.
 	float	distance;	// Distance from the origin of the ray.
@@ -38,8 +35,7 @@ typedef struct
 /** 
  * @brief Plane
  */
-typedef struct 
-{
+typedef struct {
 	float3 point;
 	float3 normal;
 } Plane;
@@ -47,23 +43,16 @@ typedef struct
 /** 
  * @brief Camera definition
  */
-typedef struct 
-{
+typedef struct {
     float3 position;
     float3 lookAt;
     float3 up;
 } Camera;
 
-typedef struct 
-{
-    float foo;
-} Material;
-
 /**
  * @brief 4x4 Matrix structure
  */
-typedef struct 
-{
+typedef struct {
     float4 rows[4];
 } Matrix;
 
@@ -206,7 +195,7 @@ kernel void GenerateRays (
 	
 	int i = coordToIndex(x, y, screenWidth, screenHeight);
 	
-	float2 screenCoord = {(float) x, (float)y};
+	float2 screenCoord = {(float)x, (float)y};
 	float2 screenSize = {(float)screenWidth, (float)screenHeight};
 
 	const Camera camera = {
@@ -218,9 +207,12 @@ kernel void GenerateRays (
     *(rays + i) = castRay(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
 }
 
+/**
+ * @brief Explain itself.
+ */
 kernel void GenerateRaysFromWorldMatrix (
     global Ray *rays, 
-    global Matrix *worldMatrix, global Matrix *invWorldMatrix,
+    global Matrix *viewMatrix, global Matrix *invViewMatrix,
     int screenWidth, int screenHeight)
 {
     int x = get_global_id(0);
@@ -239,8 +231,8 @@ kernel void GenerateRaysFromWorldMatrix (
     
     Ray ray = castRay(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
     
-    ray.point = transform(*worldMatrix, (float4)(ray.point, 1.0f)).xyz;
-    ray.direction = transform(*invWorldMatrix, (float4)(ray.direction, 0.0f)).xyz;
+    ray.point = transform(*viewMatrix, (float4)(ray.point, 1.0f)).xyz;
+    ray.direction = transform(*invViewMatrix, (float4)(ray.direction, 0.0f)).xyz;
     
     *(rays + i) = ray;
 }
@@ -306,7 +298,9 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 /**
  * @brief Compute a synthesis element from a mesh subset
  */
-void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global float *vertices, global int *indices, int indexCount, int materialIndex) 
+void computeElementMeshSubset (
+    global SynthesisElement *element, Ray ray, 
+    global float *vertices, global int *indices, int indexCount, int materialIndex)
 {
 	const int VertexSize = 32/4;	// = sizeof(exeng::Vertex)
 	const int CoordOffset = 0;
@@ -360,7 +354,7 @@ void computeElementMeshSubset(global SynthesisElement *element, Ray ray, global 
     }
 }
 
-__kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) 
+kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) 
 {
     int x = get_global_id(0);
     int y = get_global_id(1);
@@ -377,9 +371,9 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
  * This kernel compute the synthesis data (data needed for synthesize the final image) for the ray tracer for a 
  * single mesh subset data. It must be called multiple times, one for each meshSubset, to render a complete scene.
  */
-__kernel void ComputeSynthesisData (
+kernel void ComputeSynthesisData (
 	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
-	global float *vertices, global int *indices, int indexCount, int materialIndex) 
+	global float *vertices, global int *indices, int indexCount, int materialIndex)
 {
 	int x = get_global_id(0);
 	int y = get_global_id(1);
@@ -396,7 +390,10 @@ __kernel void ComputeSynthesisData (
  * 
  * The image is synthetized by using the different materials 
  */
-kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight, int materialSize, global float *materialData) 
+kernel void SynthetizeImage (
+    write_only image2d_t image, 
+    global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight, 
+    int materialSize, global float *materialData)
 {
 	int x = get_global_id(0);
 	int y = get_global_id(1);
@@ -404,7 +401,7 @@ kernel void SynthetizeImage(__write_only image2d_t image, global SynthesisElemen
     
 	Ray ray = rays[i];
 	SynthesisElement synthElement = synthesisBuffer[i];
-
+    
 	// const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
 	float4 color = {0.2f, 0.2f, 0.6f, 1.0f};
 	
