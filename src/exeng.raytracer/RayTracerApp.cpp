@@ -212,10 +212,13 @@ namespace raytracer {
             rotate = rotateDelta;
         }
         
-        Matrix4f rotationMatrix;
-        rotationMatrix.identity();
-        rotationMatrix.rotation(this->camera.getUp(), rotate);
-        direction = rotationMatrix * direction;
+        Matrix4f rotationMatrix = makeRotationMatrix<float>(toRad(rotate), this->camera.getUp());
+        
+        direction = transform(rotationMatrix, direction);
+        
+        // rotationMatrix.identity();
+        // rotationMatrix.rotation(this->camera.getUp(), rotate);
+        // direction = rotationMatrix * direction;
         
         Vector3f position = this->camera.getPosition() + (displace * direction);
         Vector3f lookAt = this->camera.getPosition() + (10.0f * direction);

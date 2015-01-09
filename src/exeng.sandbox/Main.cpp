@@ -449,15 +449,10 @@ namespace simple {
         }
 
         virtual void render() {
-            Matrix4f projMatrix;
-            Matrix4f modelMatrix;
-
-            projMatrix.identity();
-            projMatrix.perspective(60.0f, 640.0f/480.0f, 0.1f, 100.0f);
-
-            modelMatrix.identity();
-            modelMatrix.translation(this->objPos);
-
+            
+            Matrix4f projMatrix = makePerspectiveMatrix<float>(60.0f, 640.0f/480.0f, 0.1f, 100.0f);
+            Matrix4f modelMatrix = makeTranslationMatrix<float>(this->objPos);
+            
             this->processor.process();
 
             ::glClearColor(0.1f, 0.2f, 0.8f, 1.0f);

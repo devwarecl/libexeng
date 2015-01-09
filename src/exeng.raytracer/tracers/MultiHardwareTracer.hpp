@@ -18,12 +18,16 @@ namespace raytracer { namespace tracers {
 		virtual void setRenderTarget(exeng::graphics::Texture *renderTarget);
 
 	private:
+        void syncCamera(const exeng::scenegraph::Camera *camera);
+        
 		void executeGetStructuresSizeKernel();
         void executeClearSynthBufferKernel();
+        
+        void executeGenerateRaysKernelFromMatrix(const exeng::scenegraph::Camera *camera);
         void executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera);
 		void executeComputeSynthesisDataKernel();
 		void executeSynthetizeImageKernel();
-
+        
 	private:
 		struct Private;
 		std::unique_ptr<Private> impl;
