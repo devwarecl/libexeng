@@ -45,6 +45,9 @@ set ( Tracers
     tracers/SoftwareTracer.hpp      tracers/SoftwareTracer.cpp 
     tracers/HardwareTracer.hpp      tracers/HardwareTracer.cpp 
 	tracers/MultiHardwareTracer.hpp	tracers/MultiHardwareTracer.cpp 
+	
+	tracers/TracerFactory.hpp		tracers/TracerFactory.cpp 
+	tracers/TracerCreator.hpp		tracers/TracerCreator.cpp 
 )
 
 set ( Samplers
