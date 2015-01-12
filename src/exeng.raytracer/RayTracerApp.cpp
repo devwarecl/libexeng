@@ -13,9 +13,6 @@
 #include <boost/log/trivial.hpp>
 
 #include <exeng.raytracer/samplers/JitteredSampler.hpp>
-#include <exeng.raytracer/tracers/MultiHardwareTracer.hpp>
-#include <exeng.raytracer/tracers/HardwareTracer.hpp>
-#include <exeng.raytracer/tracers/SoftwareTracer.hpp>
 #include <exeng.main/Main.hpp>
 
 #if defined(EXENG_UNIX)
@@ -141,7 +138,7 @@ namespace raytracer {
         
         // this->tracer.reset(new raytracer::tracers::SoftwareTracer(this->scene.get(), this->sampler.get()));
         // this->tracer = std::unique_ptr<Tracer>(new raytracer::tracers::HardwareTracer(this->scene.get(), this->sampler.get()));
-		this->tracer = std::unique_ptr<Tracer>(new raytracer::tracers::MultiHardwareTracer(this->scene.get(), this->sampler.get()));
+		this->tracer = this->tracerFactory.createTracer(this->scene.get(), this->sampler.get());
         
         // Create a base texture.
         this->screenTexture = this->createTexture (

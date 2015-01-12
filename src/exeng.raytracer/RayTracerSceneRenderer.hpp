@@ -10,23 +10,18 @@
 
 namespace raytracer {
     /**
-     * @brief Renderizador de escenas, implementado como un trazador de rayos
+     * @brief Ray tracer scene renderer
      */
     class RayTracerSceneRenderer : public exeng::scenegraph::ISceneRenderer {
     public:
-        RayTracerSceneRenderer();
-        RayTracerSceneRenderer(raytracer::tracers::Tracer *tracer);
+        RayTracerSceneRenderer(const exeng::scenegraph::Scene *scene, raytracer::tracers::Tracer *tracer);
         
         virtual ~RayTracerSceneRenderer();
-        
-        virtual void renderScene(const exeng::scenegraph::Scene *scene, const exeng::scenegraph::Camera *camera);
-        
-        void setTracer(raytracer::tracers::Tracer *tracer);
-        const raytracer::tracers::Tracer* getTracer() const;
-        raytracer::tracers::Tracer* getTracer();
-        
+        virtual void renderScene(const exeng::scenegraph::Camera *camera);
+
     private:
-        raytracer::tracers::Tracer* tracer;
+		exeng::scenegraph::Scene* scene = nullptr;
+        raytracer::tracers::Tracer* tracer = nullptr;
     };
 
 }

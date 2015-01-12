@@ -15,6 +15,7 @@
 #include <exeng.raytracer/FrameCounter.hpp>
 #include <exeng.raytracer/samplers/Sampler.hpp>
 #include <exeng.raytracer/tracers/Tracer.hpp>
+#include <exeng.raytracer/tracers/TracerFactory.hpp>
 
 namespace raytracer {
     typedef std::list<exeng::scenegraph::SceneNode*> SceneNodeList;
@@ -52,6 +53,8 @@ namespace raytracer {
         
     private:
         exeng::scenegraph::Camera camera;
+		raytracer::tracers::TracerFactory tracerFactory;
+
         std::unique_ptr<exeng::graphics::GraphicsDriver> driver;
         std::unique_ptr<raytracer::samplers::Sampler> sampler;
         std::unique_ptr<raytracer::tracers::Tracer> tracer;

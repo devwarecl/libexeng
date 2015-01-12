@@ -14,7 +14,7 @@ namespace raytracer { namespace tracers {
 		TracerFactory();
 		~TracerFactory();
 
-		Tracer* createTracer();
+		std::unique_ptr<Tracer> createTracer(exeng::scenegraph::Scene *scene, raytracer::samplers::Sampler *sampler);
 	private:
 		std::list<std::unique_ptr<TracerCreator>> tracerCreators;
 	};

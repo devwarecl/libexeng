@@ -8,6 +8,17 @@
 #include "Tracer.hpp"
 #include "../samplers/Sampler.hpp"
 
+#include <CL/cl.h>
+#include <CL/cl_gl.h>
+
+#undef CL_VERSION_1_2
+#include <CL/cl.hpp>
+#include <GLFW/glfw3.h>
+
+#if defined (EXENG_UNIX)
+#  include <GL/glx.h>
+#endif
+
 namespace raytracer { namespace tracers {
 	class MultiHardwareTracer : public Tracer {
 	public:
@@ -27,10 +38,38 @@ namespace raytracer { namespace tracers {
         void executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera);
 		void executeComputeSynthesisDataKernel();
 		void executeSynthetizeImageKernel();
-        
+
 	private:
-		struct Private;
-		std::unique_ptr<Private> impl;
+		cl::Platform platform;
+		cl::Device device;
+		cl::Context context;
+
+		cl::Program program;
+		cl::Image2DGL image;
+
+        cl::Kernel clearSynthBufferKernel;
+		cl::Kernel rayGeneratorKernel;
+		cl::Kernel synthesisDataComputerKernel;
+		cl::Kernel imageSynthetizerKernel;
+        
+        std::vector<exeng::scenegraph::Ray> raysData;
+        
+		cl::Buffer raysBuffer;
+		cl::Buffer synthesisBuffer;
+
+		cl::Buffer samplesBuffer;
+		cl::CommandQueue queue;
+        cl::Buffer materialBuffer;
+
+		cl_int samplesCount = 0;
+
+		cl_int synthesisElementSize = 0;
+		cl_int raySize = 0;
+		
+		cl::NDRange localSize = cl::NDRange(16, 8);
+        
+        cl::Buffer viewMatrixBuffer;
+        cl::Buffer invViewMatrixBuffer;
 	};
 }}
 

@@ -6,7 +6,8 @@
 namespace raytracer {
     FrameCounter::FrameCounter() {}
     
-    void FrameCounter::update(double seconds) {
+    void FrameCounter::update(double seconds) 
+	{
         this->seconds += seconds;
         this->currentSeconds += seconds;
         
@@ -22,7 +23,8 @@ namespace raytracer {
         this->currentSeconds = std::fmod(this->currentSeconds, 1.0);
     }
     
-    double FrameCounter::getCurrentFps() const {
+    double FrameCounter::getCurrentFps() const 
+	{
         return this->framesPerSecond;
     }
     
@@ -30,11 +32,13 @@ namespace raytracer {
         return this->currentSeconds;
     }
     
-    double FrameCounter::getAverageFps() const {
+    double FrameCounter::getAverageFps() const 
+	{
         return this->framesDrawn / this->seconds;
     }
 
-    bool FrameCounter::overflow() const {
+    bool FrameCounter::overflow() const 
+	{
         return this->overTime;
     }
 }

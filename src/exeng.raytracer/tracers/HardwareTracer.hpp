@@ -12,6 +12,22 @@
 #include "Tracer.hpp"
 #include "../samplers/Sampler.hpp"
 
+#include <CL/cl.h>
+#include <CL/cl_gl.h>
+
+#undef CL_VERSION_1_2
+#include <CL/cl.hpp>
+#include <GLFW/glfw3.h>
+
+#if defined (EXENG_UNIX)
+  #include <GL/glx.h>
+#endif
+
+using namespace exeng;
+using namespace exeng::math;
+using namespace exeng::graphics;
+using namespace exeng::scenegraph;
+
 namespace raytracer { namespace tracers {
     class HardwareTracer : public Tracer {
     public:
@@ -22,8 +38,15 @@ namespace raytracer { namespace tracers {
         virtual void setRenderTarget(exeng::graphics::Texture *renderTarget);
         
     private:
-        struct Private;
-        std::unique_ptr<Private> impl;
+		cl::Platform platform;
+        cl::Device device;
+        cl::Context context;
+        cl::Program program;
+        cl::Image2DGL image;
+        cl::Kernel kernel;
+        cl::CommandQueue queue;
+        cl::Buffer samplesBuffer;
+        cl_int samplesCount;
     };
 }}
 

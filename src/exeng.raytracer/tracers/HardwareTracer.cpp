@@ -11,35 +11,8 @@
 #include "HardwareTracer.hpp"
 
 #include <boost/lexical_cast.hpp>
-#include <CL/cl.h>
-#include <CL/cl_gl.h>
-
-#undef CL_VERSION_1_2
-#include <CL/cl.hpp>
-#include <GLFW/glfw3.h>
-
-#if defined (EXENG_UNIX)
-  #include <GL/glx.h>
-#endif
-
-using namespace exeng;
-using namespace exeng::math;
-using namespace exeng::graphics;
-using namespace exeng::scenegraph;
 
 namespace raytracer { namespace tracers {
-    
-    struct HardwareTracer::Private {
-        cl::Platform platform;
-        cl::Device device;
-        cl::Context context;
-        cl::Program program;
-        cl::Image2DGL image;
-        cl::Kernel kernel;
-        cl::CommandQueue queue;
-        cl::Buffer samplesBuffer;
-        cl_int samplesCount;
-    };
     
     std::string getRootPath() {
         return std::string(RAYTRACER_ROOT_FOLDER);
@@ -76,7 +49,7 @@ namespace raytracer { namespace tracers {
         return result;
     }
     
-    HardwareTracer::HardwareTracer(const Scene *scene, const raytracer::samplers::Sampler *sampler) : Tracer(scene, nullptr), impl(new HardwareTracer::Private())  {
+    HardwareTracer::HardwareTracer(const Scene *scene, const raytracer::samplers::Sampler *sampler) : Tracer(scene, nullptr) {
         std::vector<cl::Platform> platforms;
         cl::Platform::get(&platforms);
         
@@ -149,14 +122,14 @@ namespace raytracer { namespace tracers {
         cl::CommandQueue queue = cl::CommandQueue(context, device);
         
         // Save the final variables
-        this->impl->platform = platform;
-        this->impl->device = device;
-        this->impl->context = context;
-        this->impl->program = program;
-        this->impl->kernel = kernel;
-        this->impl->queue = queue;
-        this->impl->samplesBuffer = samplesBuffer;
-        this->impl->samplesCount = sampler->getSampleCount();
+        this->platform = platform;
+        this->device = device;
+        this->context = context;
+        this->program = program;
+        this->kernel = kernel;
+        this->queue = queue;
+        this->samplesBuffer = samplesBuffer;
+        this->samplesCount = sampler->getSampleCount();
     }
     
     void HardwareTracer::setRenderTarget(exeng::graphics::Texture *renderTarget) {
@@ -169,7 +142,7 @@ namespace raytracer { namespace tracers {
         
         cl_int errorCode = 0;
         
-        cl::Image2DGL image(this->impl->context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureId, &errorCode);
+        cl::Image2DGL image(this->context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureId, &errorCode);
         if (errorCode != CL_SUCCESS) {
             std::string str;
             str += "HardwareTracer::setRenderTarget: Invalid render target texture. Error code: ";
@@ -178,7 +151,7 @@ namespace raytracer { namespace tracers {
             throw std::runtime_error(str);
         }
         
-        this->impl->image = image;
+        this->image = image;
         Tracer::setRenderTarget(renderTarget);
     }
     
@@ -186,9 +159,9 @@ namespace raytracer { namespace tracers {
 
     void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
         Vector3i size = this->getRenderTarget()->getSize();
-        cl::Image2DGL &image = this->impl->image;
-        cl::Buffer &samplesBuffer = this->impl->samplesBuffer;
-        cl::CommandQueue &queue = this->impl->queue;
+        cl::Image2DGL &image = this->image;
+        cl::Buffer &samplesBuffer = this->samplesBuffer;
+        cl::CommandQueue &queue = this->queue;
         cl::Event event;
         cl_int errCode = 0;
         
@@ -208,18 +181,18 @@ namespace raytracer { namespace tracers {
         uy = camera->getUp().y;
         uz = camera->getUp().z;
         
-        this->impl->kernel.setArg(0, image);
-        this->impl->kernel.setArg(1, samplesBuffer);
-        this->impl->kernel.setArg(2, 16);
-        this->impl->kernel.setArg(3, cx);
-        this->impl->kernel.setArg(4, cy);
-        this->impl->kernel.setArg(5, cz);
-        this->impl->kernel.setArg(6, lx);
-        this->impl->kernel.setArg(7, ly);
-        this->impl->kernel.setArg(8, lz);
-        this->impl->kernel.setArg(9, ux);
-        this->impl->kernel.setArg(10, uy);
-        this->impl->kernel.setArg(11, uz);
+        this->kernel.setArg(0, image);
+        this->kernel.setArg(1, samplesBuffer);
+        this->kernel.setArg(2, 16);
+        this->kernel.setArg(3, cx);
+        this->kernel.setArg(4, cy);
+        this->kernel.setArg(5, cz);
+        this->kernel.setArg(6, lx);
+        this->kernel.setArg(7, ly);
+        this->kernel.setArg(8, lz);
+        this->kernel.setArg(9, ux);
+        this->kernel.setArg(10, uy);
+        this->kernel.setArg(11, uz);
         
         std::vector<cl::Memory> buffersGL = {image};
         
@@ -230,7 +203,7 @@ namespace raytracer { namespace tracers {
         }
         event.wait();
         
-        errCode = queue.enqueueNDRangeKernel(this->impl->kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
+        errCode = queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
         if (errCode != CL_SUCCESS) {
             std::cout << "Error Code:" << errCode << std::endl;
             throw std::runtime_error("HardwareTracer::render: OpenCL enqueueNDRange error.");
