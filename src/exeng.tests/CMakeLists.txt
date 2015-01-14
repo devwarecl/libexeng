@@ -1,10 +1,19 @@
 
 include_directories( ${PROJECT_SOURCE_DIR}/src)
 
-add_executable(exeng.tests
-    TestMain.cpp 
+# FIND_PACKAGE(UnitTestPP)
+
+SET (BaseFiles 
+	TestMain.cpp 
     TestMath.cpp 
     TestScenegraph.cpp  
 )
 
-# target_link_libraries(test exeng unittest++)
+SOURCE_GROUP(\\ FILES ${BaseFiles})
+
+add_executable(exeng.tests ${BaseFiles})
+target_link_libraries(exeng.tests exeng unittest++)
+
+# ENDIF (UnitTestPP_FOUND)
+
+

@@ -260,8 +260,9 @@ namespace exeng {
         {
             Matrix<OtherType, ColumnCount, RowCount> Result;
 
-            for(int i=0; i<Size; ++i)
+            for(int i=0; i<Size; ++i) {
                 Result.Data[i] = static_cast<OtherType>(this->Data[i]);
+			}
 
             return Result;
         }
@@ -603,11 +604,15 @@ namespace exeng {
                 const int row = 0;
                 
                 for (int column=0; column<Size; ++column) {
-                    auto subMatrix = matrix.getSubMatrix(row, column);
-                    Type subMatrixDet = abs(subMatrix);
-                    
-                    factor = factor * ((column+1)%2==0?Type(1):Type(-1));
-                    result += factor * matrix(row, column) * subMatrixDet;
+					if ((column+1)%2 == 0) {
+						factor = Type(1);
+					} else {
+						factor = Type(-1);
+					}
+					
+					Type subDet = abs(matrix.getSubMatrix(row, column));
+
+                    result += factor * matrix.at(row, column) * subDet;
                 }
                 
                 return result;
@@ -674,15 +679,15 @@ namespace exeng {
      * Matrix factory functions for 3D graphics
      */
     template<typename Type, int RowCount, int ColumnCount>
-    Matrix<Type, RowCount, ColumnCount> makeZeroMatrix() 
+    Matrix<Type, RowCount, ColumnCount> zero()
     {
         return Matrix<Type, RowCount, ColumnCount>{Type(0)};
     }
 
     template<typename Type, int Size>
-    Matrix<Type, Size, Size> makeIdentityMatrix() 
+    Matrix<Type, Size, Size> identity() 
     {
-        auto result = makeZeroMatrix<Type, Size, Size>();
+        auto result = zero<Type, Size, Size>();
         
         for(int i=0; i<Size; ++i) {
             result(i, i) = Type(1);
@@ -692,9 +697,9 @@ namespace exeng {
     }
     
     template<typename Type, int Size>
-    Matrix<Type, Size, Size> makeScaleMatrix(const Vector<Type, Size> &scale)
+    Matrix<Type, Size, Size> scale(const Vector<Type, Size> &scale)
     {
-        auto result = makeZeroMatrix<Type, Size, Size>();
+        auto result = zero<Type, Size, Size>();
         
         for(int i=0; i<Size; ++i) {
             result(i, i) = scale[i];
@@ -704,9 +709,9 @@ namespace exeng {
     }
     
     template<typename Type>
-    Matrix<Type, 4, 4> makeTranslationMatrix(const Vector<Type, 3> &RelPos)
+    Matrix<Type, 4, 4> translate(const Vector<Type, 3> &RelPos)
     {
-        auto result = makeZeroMatrix<Type, 4, 4>();
+        auto result = identity<Type, 4>();
         
         result.at(0, 3) = RelPos.x;
         result.at(1, 3) = RelPos.y;
@@ -716,9 +721,9 @@ namespace exeng {
     }
     
     template<typename Type>
-    Matrix<Type, 4, 4> makeRotationMatrixX(const Type radians)
+    Matrix<Type, 4, 4> rotatex(const Type radians)
     {
-        auto result = makeZeroMatrix<Type, 4, 4>();
+        auto result = identity<Type, 4>();
         
         Type Cos = std::cos(radians);
         Type Sin = std::sin(radians);
@@ -732,9 +737,9 @@ namespace exeng {
     }
     
     template<typename Type>
-    Matrix<Type, 4, 4> makeRotationMatrixY(const Type radians)
+    Matrix<Type, 4, 4> rotatey(const Type radians)
     {
-        auto result = makeZeroMatrix<Type, 4, 4>();
+        auto result = identity<Type, 4>();
         
         Type Cos = std::cos(radians);
         Type Sin = std::sin(radians);
@@ -748,9 +753,9 @@ namespace exeng {
     }
     
     template<typename Type>
-    Matrix<Type, 4, 4> makeRotationMatrixZ(const Type radians)
+    Matrix<Type, 4, 4> rotatez(const Type radians)
     {
-        auto result = makeZeroMatrix<Type, 4, 4>();
+        auto result = identity<Type, 4>();
         
         Type Cos = std::cos(radians);
         Type Sin = std::sin(radians);
@@ -764,16 +769,16 @@ namespace exeng {
     }
     
     template<typename Type>
-    Matrix<Type, 4, 4> makeRotationMatrix(Type radians, const Vector<Type, 3> &Axis)
+    Matrix<Type, 4, 4> rotate(Type radians, const Vector<Type, 3> &Axis)
     {
         Type Cos = std::cos(radians);
         Type Sin = std::sin(radians);
         
         Vector<Type, 3> U(Axis), V(normalize(Axis));
         
-        auto MatS = makeZeroMatrix<Type, 3, 3>();
-        auto MatUut = makeZeroMatrix<Type, 3, 3>();
-        auto MatId = makeIdentityMatrix<Type, 3>();
+        auto MatS = exeng::zero<Type, 3, 3>();
+        auto MatUut = exeng::zero<Type, 3, 3>();
+        auto MatId = exeng::identity<Type, 3>();
         
         //Iniciar S
         MatS.at(0, 1) = -V.z;
@@ -800,7 +805,7 @@ namespace exeng {
         
         auto tempResult = MatUut + Cos * (MatId - MatUut) + Sin * MatS;
         
-        auto result = makeIdentityMatrix<Type, 4>();
+        auto result = identity<Type, 4>();
         
         for (int i=0; i<3; ++i) {
             for (int j=0; j<3; ++j) {
@@ -812,12 +817,12 @@ namespace exeng {
     }
     
     template<typename Type>
-    Matrix<Type, 4, 4> makePerspectiveMatrix(Type fov, Type aspect, Type znear, Type zfar)
+    Matrix<Type, 4, 4> perspective(Type fov, Type aspect, Type znear, Type zfar)
     {
         Type f = Type(1) / std::tan(fov / Type(2));
         Type zdiff = zfar - znear;
         
-        auto result = makeIdentityMatrix<Type, 4>();
+        auto result = identity<Type, 4>();
         
         result.at(0, 0) = f / aspect;
         result.at(1, 1) = f;
@@ -829,13 +834,13 @@ namespace exeng {
     }
     
     template<typename Type>
-    Matrix<Type, 4, 4> makeLookAtMatrix(const Vector<Type, 3> &Eye, const Vector<Type, 3> &At, const Vector<Type, 3> &Up)
+    Matrix<Type, 4, 4> lookat(const Vector<Type, 3> &Eye, const Vector<Type, 3> &At, const Vector<Type, 3> &Up)
     {
         auto forward = normalize(At - Eye);
         auto side = normalize(cross(forward, Up));
         auto up = cross(side, forward);
         
-        auto result = makeIdentityMatrix<Type, 4>();
+        auto result = identity<Type, 4>();
 
         result.at(0, 0) = side.x;
         result.at(0, 1) = side.y;
@@ -849,7 +854,7 @@ namespace exeng {
         result.at(2, 1) = -forward.y;
         result.at(2, 2) = -forward.z;
         
-        result *= makeTranslationMatrix<Type>(-Eye);
+        result *= translate<Type>(-Eye);
         
         return result;
     }
@@ -867,7 +872,7 @@ namespace exeng {
         Type near = Volume.GetSide(Side3::Near);
         Type far = Volume.GetSide(Side3::Far);
         
-        auto result = makeIdentityMatrix<Type, 4>();
+        auto result = identity<Type, 4>();
         
         result.at(0, 0) = Type(2) / ( right - left);
         result.at(1, 1) = Type(2) / ( top - bottom );
@@ -961,6 +966,8 @@ namespace exeng {
         return exeng::__private::MatrixTranformation<Type, Size>::compute(matrix, vector);
     }
     
+	typedef Matrix<float, 3, 3> Matrix3f;
+    typedef Matrix<double, 3, 3> Matrix3d;
     typedef Matrix<float, 4, 4> Matrix4f;
     typedef Matrix<double, 4, 4> Matrix4d;
 }

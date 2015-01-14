@@ -1,4 +1,4 @@
-/*
+
 #include <iostream>
 #include <iomanip>
 #include <typeinfo>
@@ -130,29 +130,23 @@ SUITE(TestVectorSuite)
         aux /= v2;
         CHECK_EQUAL( aux, v1 );
 
-        //Operaciones de desigualdad
-        CHECK( v5 < v7 );   // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v7 > v5 );   // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v1 <= v1 );  // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v1 >= v1 );  // TODO: Cambiar por la comprobacion correspondiente
-        
         //Metodos varios
-        CHECK( v5.getMagnitude() < v7.getMagnitude() );     // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v7.getMagnitude() > v5.getMagnitude() );     // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v1.getMagnitude() <= v1.getMagnitude() );    // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v1.getMagnitude() >= v1.getMagnitude() );    // TODO: Cambiar por la comprobacion correspondiente
+        CHECK(abs(v5) <  abs(v7));     // TODO: Cambiar por la comprobacion correspondiente
+        CHECK(abs(v7) >  abs(v5));     // TODO: Cambiar por la comprobacion correspondiente
+        CHECK(abs(v1) <= abs(v1));    // TODO: Cambiar por la comprobacion correspondiente
+        CHECK(abs(v1) >= abs(v1));    // TODO: Cambiar por la comprobacion correspondiente
 
         CHECK_EQUAL(v1.getPtr(), cv1.getPtr() );
 
         aux = v1;
-        aux.setMagnitude(10.0f);
+        aux = 10.0f * normalize(aux);
 
-        CHECK_EQUAL( aux.getMagnitude(), 10.0f);
+        CHECK_EQUAL(abs(aux), 10.0f);
 
         //Funciones estaticas
-        CHECK_EQUAL(v7, v4.maximize(v5) );
-        CHECK_EQUAL(v6, v4.minimize(v5) );
-        CHECK_EQUAL(-4.0f, v2.dot(v4) );
+        CHECK_EQUAL(v7, maximize(v4, v5));
+        CHECK_EQUAL(v6, minimize(v4, v5));
+        CHECK_EQUAL(-4.0f, dot(v2, v4));
     }
 }
 
@@ -167,10 +161,9 @@ struct MatrixFixture {
     float detA;
     
     MatrixFixture() {
-        this->subIdentity.identity();
-            
-        this->identity.identity();
-        this->zero.setup(0.0f);
+        this->subIdentity = exeng::identity<float, 3>();
+        this->identity = exeng::identity<float, 4>();
+        this->zero = exeng::zero<float, 4, 4>();
         
         this->matA.setRowVector(0, Vector4f(1.0f, 2.0f, 1.0f, 0.0f));
         this->matA.setRowVector(1, Vector4f(2.0f, 1.0f, -3.0f, -1.0f));
@@ -301,23 +294,22 @@ SUITE( TesMatrixSuite )
         CHECK_EQUAL(subIdentity, identity.getSubMatrix(0, 0) );
         
         //Determinante
-        CHECK_EQUAL( identity.getDeterminant(), 1.0f );
-        CHECK_EQUAL( matA.getDeterminant(), detA );
+        CHECK_EQUAL( abs(identity), 1.0f );
+        CHECK_EQUAL( abs(matA), detA );
         
         //Multiplicacion
         CHECK_EQUAL(matMulResult, matA * matB);
         CHECK_EQUAL(matMulResult, ((aux = this->matA) *= matB));
         
         //Matriz inversa
-        aux = this->matA;
-        aux.inverse();
+        aux = inverse(this->matA);
+
         CHECK_EQUAL( invMatA, aux );
     }
 }
 
-*/
-
 int main(int argc, char** argv) {   
-    // UnitTest::RunAllTests();
+    UnitTest::RunAllTests();
+
     return 0;
 }

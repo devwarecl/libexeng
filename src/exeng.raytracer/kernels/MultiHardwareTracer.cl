@@ -56,7 +56,21 @@ typedef struct {
     float4 rows[4];
 } Matrix;
 
-float4 transform(Matrix matrix, float4 vector) 
+
+float3 transform(Matrix matrix, float3 vector) 
+{
+	float4 v = (float4)(vector, 1.0f);
+    float4 result = {
+        dot(matrix.rows[0], v),
+        dot(matrix.rows[1], v),
+        dot(matrix.rows[2], v),
+        dot(matrix.rows[3], v)
+    };
+    
+    return result.xyz;
+}
+
+float4 transform4(Matrix matrix, float4 vector) 
 {
     float4 result = {
         dot(matrix.rows[0], vector),
@@ -159,6 +173,26 @@ int coordToIndex(int x, int y, int width, int height)
 	return y*width + x;
 }
 
+Ray castRayFromMatrix(const float2 screenCoord, const float2 screenSize, const float2 sample, const Matrix viewMatrix, const Matrix invViewMatrix) 
+{
+	float2 coordsf = screenCoord + sample;
+
+	float3 cam_pos = {0.0f, 0.0f, 0.0f};
+	float3 cam_up = {0.0f, 1.0f, 0.0f};
+	float3 cam_dir = {0.0f, 0.0f, 1.0f};
+    float3 cam_right = cross(cam_up, cam_dir);
+    
+    float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
+    float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
+    
+    Ray ray = {
+        cam_pos, 
+        normalize(image_point - cam_pos) + (float3)(sample, 0.0f)
+    };
+    
+    return ray;
+}
+
 /**
  * @brief Cast a perspective ray from the camera
  */
@@ -212,7 +246,7 @@ kernel void GenerateRays (
  */
 kernel void GenerateRaysFromWorldMatrix (
     global Ray *rays, 
-    global Matrix *viewMatrix, global Matrix *invViewMatrix,
+    global float *viewBuffer,
     int screenWidth, int screenHeight)
 {
     int x = get_global_id(0);
@@ -223,17 +257,14 @@ kernel void GenerateRaysFromWorldMatrix (
     float2 screenCoord = {(float) x, (float)y};
     float2 screenSize = {(float)screenWidth, (float)screenHeight};
     
-    Camera camera = {
-        {0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 1.0f},
-        {0.0f, 1.0f, 0.0f},
-    };
-    
-    Ray ray = castRay(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
-    
-    ray.point = transform(*viewMatrix, (float4)(ray.point, 1.0f)).xyz;
-    ray.direction = transform(*invViewMatrix, (float4)(ray.direction, 0.0f)).xyz;
-    
+	Matrix viewMatrix		= *((global Matrix*)viewBuffer + 0 );
+	Matrix viewInvMatrix	= *((global Matrix*)viewBuffer + 16);
+
+	Ray ray = castRayFromMatrix(screenCoord, screenSize, (float2)(0.0f, 0.0f), viewMatrix, viewInvMatrix);
+
+	ray.point = transform(viewInvMatrix, ray.point);
+	// ray.direction = transform(viewMatrix, ray.direction);
+	
     *(rays + i) = ray;
 }
 

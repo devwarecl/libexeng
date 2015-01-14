@@ -34,7 +34,7 @@ namespace exeng { namespace scenegraph {
         Private() {   
             this->data = nullptr;
             this->parentPtr = nullptr;
-            this->transform = makeIdentityMatrix<float, 4> ();
+            this->transform = identity<float, 4>();
         }
                 
         ~Private() {}

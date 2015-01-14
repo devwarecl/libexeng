@@ -1,31 +1,24 @@
-/*
 #include <unittest++/UnitTest++.h>
 
-#include <exeng/math/Size.hpp>
-#include <exeng/math/Boundary.hpp>
-#include <exeng/math/Matrix.hpp>
-#include <exeng/math/Vector.hpp>
+#include <exeng/Size.hpp>
+#include <exeng/Boundary.hpp>
+#include <exeng/Matrix.hpp>
+#include <exeng/Vector.hpp>
 
 using namespace exeng;
-using namespace exeng::math;
 
 struct BoxFixture
 {
-    float size;
-    Size3f vsize;
-    Vector3f center2;
-    Vector3f center4;
+    float size = 4.0f;
+    Size3f vsize = Size3f(1.0f, 2.0f, 3.0f);
+    Vector3f center2 = Vector3f(2.0f, 0.0f, 0.0f);
+    Vector3f center4 = Vector3f(10.0f, 10.0f, -4.0f);
 
     Boxf box1, box2, box3, box4, box5; 
     Boxf aux; 
     
     BoxFixture()
     {
-        size = 4.0f;
-        vsize = Size3f(1.0f, 2.0f, 3.0f);
-        center2 = Vector3f(2.0f, 0.0f, 0.0f);
-        center4 = Vector3f(10.0f, 10.0f, -4.0f);
-        
         this->box1.set(size); //(0, 0, 0) - (4, 4, 4)
         
         this->box2.set(size); //(0, -2, -2), (4, 2, 2)
@@ -39,12 +32,8 @@ struct BoxFixture
         this->box5.set(100.0f);
     }
     
-    ~BoxFixture()
-    {
-    }
+    ~BoxFixture() {}
 };
-
-
 
 struct VectorFixture
 {
@@ -77,12 +66,8 @@ struct VectorFixture
         this->v1 = Vector2f(1.0f, 2.0f);
     }
     
-    ~VectorFixture()
-    {
-    }
+    ~VectorFixture() {}
 };
-
-
 
 struct MatrixFixture
 {
@@ -107,13 +92,11 @@ struct MatrixFixture
 
     float detA;
     
-    
     MatrixFixture()
     {
-        this->subIdentity.identity();
-            
-        this->identity.identity();
-        this->zero.setup(0.0f);
+        this->subIdentity = exeng::identity<float, 3>();
+        this->identity = exeng::identity<float, 4>();
+        this->zero = exeng::zero<float, 4, 4>();
         
         this->matA.setRowVector(0, Vector4f(1.0f, 2.0f, 1.0f, 0.0f));
         this->matA.setRowVector(1, Vector4f(2.0f, 1.0f, -3.0f, -1.0f));
@@ -158,12 +141,8 @@ struct MatrixFixture
         detA = -32;
     }
     
-    ~MatrixFixture()
-    {
-    }
+    ~MatrixFixture() { }
 };
-
-
 
 SUITE(MathTestSuite)
 {
@@ -216,31 +195,23 @@ SUITE(MathTestSuite)
         aux /= v2;
         CHECK_EQUAL( aux, v1 );
 
-        //Operaciones de desigualdad
-        CHECK( v5 < v7 );   // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v7 > v5 );   // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v1 <= v1 );  // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v1 >= v1 );  // TODO: Cambiar por la comprobacion correspondiente
-        
         //Metodos varios
-        CHECK( v5.getMagnitude() < v7.getMagnitude() );     // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v7.getMagnitude() > v5.getMagnitude() );     // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v1.getMagnitude() <= v1.getMagnitude() );    // TODO: Cambiar por la comprobacion correspondiente
-        CHECK( v1.getMagnitude() >= v1.getMagnitude() );    // TODO: Cambiar por la comprobacion correspondiente
+        CHECK( abs(v5) < abs(v7) ); 
+        CHECK( abs(v7) > abs(v5) ); 
+        CHECK( abs(v1) <= abs(v1) );
+        CHECK( abs(v1) >= abs(v1) );
 
         CHECK_EQUAL(v1.getPtr(), cv1.getPtr() );
 
-        aux = v1;
-        aux.setMagnitude(10.0f);
-
-        CHECK_EQUAL( aux.getMagnitude(), 10.0f);
-
-		CHECK( aux.getMagnitudeSq() > 0.0f );
+        aux = normalize(v1) * 10.0f;
+        
+        CHECK_EQUAL(abs(aux), 10.0f);
+		CHECK(abs2(aux) > 0.0f );
 
         //Funciones estaticas
-        CHECK_EQUAL(v7, v4.maximize(v5) );
-        CHECK_EQUAL(v6, v4.minimize(v5) );
-        CHECK_EQUAL(-4.0f, v2.dot(v4) );
+        CHECK_EQUAL(v7, maximize(v4, v5) );
+        CHECK_EQUAL(v6, minimize(v4, v5) );
+        CHECK_EQUAL(-4.0f, dot(v2, v4) );
     }
 
     
@@ -324,17 +295,17 @@ SUITE(MathTestSuite)
         CHECK_EQUAL(subIdentity, identity.getSubMatrix(0, 0) );
         
         //Determinante
-        CHECK_EQUAL( identity.getDeterminant(), 1.0f );
-        CHECK_EQUAL( matA.getDeterminant(), detA );
+        CHECK_EQUAL( abs(identity), 1.0f );
+        CHECK_EQUAL( abs(matA), detA );
         
         //Multiplicacion
         CHECK_EQUAL(matMulResult, matA * matB);
         CHECK_EQUAL(matMulResult, ((aux = this->matA) *= matB));
         
         //Matriz inversa
-        aux = this->matA;
-        aux.inverse();
+        aux = inverse(this->matA);
+        
         CHECK_EQUAL( invMatA, aux );
     }
 }
-*/
+

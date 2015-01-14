@@ -49,9 +49,10 @@ namespace raytracer { namespace tracers {
 
         cl::Kernel clearSynthBufferKernel;
 		cl::Kernel rayGeneratorKernel;
+		cl::Kernel rayGeneratorFromMatrixKernel;
 		cl::Kernel synthesisDataComputerKernel;
 		cl::Kernel imageSynthetizerKernel;
-        
+
         std::vector<exeng::scenegraph::Ray> raysData;
         
 		cl::Buffer raysBuffer;
@@ -68,8 +69,7 @@ namespace raytracer { namespace tracers {
 		
 		cl::NDRange localSize = cl::NDRange(16, 8);
         
-        cl::Buffer viewMatrixBuffer;
-        cl::Buffer invViewMatrixBuffer;
+        cl::Buffer viewBuffer;
 	};
 }}
 

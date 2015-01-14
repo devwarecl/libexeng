@@ -18,7 +18,6 @@
 
 #include <exeng/Buffer.hpp>
 
-
 using namespace exeng;
 using namespace exeng::math;
 using namespace exeng::graphics;
@@ -35,14 +34,15 @@ namespace raytracer { namespace tracers {
         cl_int		material;	// Material index/id (will be defined later).
     };
     
-    class PlatformBuffer : public exeng::Buffer
-    {
+	/*
+    class PlatformBuffer : public exeng::Buffer {
     public:
         PlatformBuffer(cl::Context &context_) : context(context_) {}
         
     private:
         cl::Context &context;
     };
+	*/
     
 	const int MaterialSize = 4;	// Size of the material (number of float's)
 
@@ -188,11 +188,13 @@ namespace raytracer { namespace tracers {
     }
 	*/
 	
-	static std::string getRootPath() {
+	static std::string getRootPath() 
+	{
 		return std::string(RAYTRACER_ROOT_FOLDER);
 	}
 
-	static std::string loadFile(const std::string &file) {
+	static std::string loadFile(const std::string &file) 
+	{
 		std::ifstream fs;
 		fs.open(file.c_str(), std::ios_base::in);
 
@@ -224,7 +226,7 @@ namespace raytracer { namespace tracers {
 	MultiHardwareTracer::MultiHardwareTracer(const Scene *scene, const Sampler *sampler) : Tracer(scene, nullptr)
     {
 		BOOST_LOG_TRIVIAL(trace) << "Initializing Multi-Object ray tracer ...";
-    
+		
         cl::Platform platform;  // selected platform
         cl::Device device;      // selected device
         bool deviceFound = false;
@@ -287,12 +289,16 @@ namespace raytracer { namespace tracers {
 		cl::Context context = cl::Context(device, properties);
         
 		// pass the samples to OpenCL
-		BOOST_LOG_TRIVIAL(trace) << "Creating sampling buffer from " << sampler->getSampleCount() << " sample(s)...";
-		size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
-		cl_mem_flags bufferFlags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-		void* bufferData = (void*)(sampler->getSampleData());
+		cl::Buffer samplesBuffer;
 
-		cl::Buffer samplesBuffer = cl::Buffer(context, bufferFlags, bufferSize, bufferData);
+		if (sampler) {
+			BOOST_LOG_TRIVIAL(trace) << "Creating sampling buffer from " << sampler->getSampleCount() << " sample(s)...";
+			size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
+			cl_mem_flags bufferFlags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
+			void* bufferData = (void*)(sampler->getSampleData());
+
+			samplesBuffer = cl::Buffer(context, bufferFlags, bufferSize, bufferData);
+		}
 
 		// Create a Program object from all the kernels
 		std::list<std::string> sourceFiles = {
@@ -332,6 +338,7 @@ namespace raytracer { namespace tracers {
 
 		cl::Kernel clearSynthBufferKernel       = cl::Kernel(program, "ClearSynthesisData");
 		cl::Kernel rayGeneratorKernel			= cl::Kernel(program, "GenerateRays");
+		cl::Kernel rayGeneratorFromMatrixKernel	= cl::Kernel(program, "GenerateRaysFromWorldMatrix");
 		cl::Kernel synthesisDataComputerKernel	= cl::Kernel(program, "ComputeSynthesisData");
 		cl::Kernel imageSynthetizerKernel		= cl::Kernel(program, "SynthetizeImage");
         
@@ -349,11 +356,16 @@ namespace raytracer { namespace tracers {
         
         this->clearSynthBufferKernel = clearSynthBufferKernel;
         this->rayGeneratorKernel = rayGeneratorKernel;
+		this->rayGeneratorFromMatrixKernel = rayGeneratorFromMatrixKernel;
         this->synthesisDataComputerKernel = synthesisDataComputerKernel;
         this->imageSynthetizerKernel = imageSynthetizerKernel;
 		this->queue = queue;
 		this->samplesBuffer = samplesBuffer;
-		this->samplesCount = sampler->getSampleCount();
+
+		if (sampler) {
+			this->samplesCount = sampler->getSampleCount();
+		}
+
         this->materialBuffer = materialBuffer;
 
 		this->executeGetStructuresSizeKernel();
@@ -405,6 +417,38 @@ namespace raytracer { namespace tracers {
 
 	void MultiHardwareTracer::executeGenerateRaysKernelFromMatrix(const exeng::scenegraph::Camera *camera)
     {
+		this->syncCamera(camera);
+
+		BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRaysFromMatrix kernel with params: "
+			<< "Pos={" << camera->getPosition() << "}, "
+			<< "LookAt={" << camera->getLookAt() << "}, "
+			<< "Up={" << camera->getUp() << "}, "
+			<< "Screen= {" << this->getRenderTarget()->getSize() << "}";
+
+		cl_int errCode = 0;
+        cl::Event event;
+
+        // Prepare the 'GenerateRays' kernel
+        cl::Kernel &kernel = this->rayGeneratorFromMatrixKernel;
+
+        Vector3i size = this->getRenderTarget()->getSize();
+		
+        kernel.setArg(0, this->raysBuffer);
+        kernel.setArg(1, this->viewBuffer);
+		kernel.setArg(2, size.x);
+        kernel.setArg(3, size.y);
+
+        // Execute the kernel
+        errCode = this->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), this->localSize, nullptr, &event);
+        if (errCode != CL_SUCCESS) {
+			std::string msg = "MultiHardwareTracer::generateRays: Error at trying to enqueue the GenerateRays Kernel:" + clErrorToString(errCode);
+			BOOST_LOG_TRIVIAL(error) << msg;
+
+            throw std::runtime_error(msg);
+        }
+        event.wait();
+		
+        this->queue.finish();
     }
 	
     void MultiHardwareTracer::executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera) 
@@ -517,8 +561,8 @@ namespace raytracer { namespace tracers {
     
 	void MultiHardwareTracer::executeComputeSynthesisDataKernel() 
     {
-        std::ofstream fs;
-        fs.open("C:/synth.txt", std::ios_base::out);
+        // std::ofstream fs;
+        // fs.open("C:/synth.txt", std::ios_base::out);
 
         std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
         
@@ -651,31 +695,32 @@ namespace raytracer { namespace tracers {
     {
 		BOOST_LOG_TRIVIAL(trace) << "Rendering scene ...";
         
-        this->syncCamera(camera);
+        // this->syncCamera(camera);
         this->executeClearSynthBufferKernel();
         this->executeGenerateRaysKernel(camera);
+		// this->executeGenerateRaysKernelFromMatrix(camera);
         this->executeComputeSynthesisDataKernel();
         this->executeSynthetizeImageKernel();
 	}
     
 	void MultiHardwareTracer::syncCamera(const exeng::scenegraph::Camera *camera) 
     {
-        Matrix4f viewMatrix = makeLookAtMatrix<float> (
+		Matrix4f cameraData[2];
+
+        cameraData[0] = lookat<float> (
             camera->getPosition(), 
             camera->getLookAt(),
             camera->getUp()
         );
-        
-        Matrix4f invViewMatrix = inverse(viewMatrix);
+        cameraData[1] = inverse(cameraData[0]);
         
         cl::Context &context = this->context;
         
         const cl_mem_flags flags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-        const std::size_t dataSize = sizeof(float) * 16;
+        const std::size_t dataSize = sizeof(Matrix4f) * 2;
         
         //! TODO: I'm recreating the buffers for app development speedup.
-        this->viewMatrixBuffer = cl::Buffer(context, flags, dataSize, viewMatrix.getPtr());
-        this->invViewMatrixBuffer = cl::Buffer(context, flags, dataSize, invViewMatrix.getPtr());
+        this->viewBuffer = cl::Buffer(context, flags, dataSize, cameraData);
     }
 	
 	void MultiHardwareTracer::executeGetStructuresSizeKernel() 

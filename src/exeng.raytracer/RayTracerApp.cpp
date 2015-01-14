@@ -209,7 +209,7 @@ namespace raytracer {
             rotate = rotateDelta;
         }
         
-        Matrix4f rotationMatrix = makeRotationMatrix<float>(toRad(rotate), this->camera.getUp());
+        Matrix4f rotationMatrix = exeng::rotate<float>(rad(rotate), this->camera.getUp());
         
         direction = transform(rotationMatrix, direction);
         
@@ -280,11 +280,8 @@ namespace exeng { namespace main {
     using namespace exeng::input;
     using namespace exeng::graphics;
 
-	int main(int argc, char **argv) {
-        // TestApp app;
-        // app.run();
-        // return app.getExitCode();
-
+	int main(int argc, char **argv) 
+	{
 		using namespace raytracer;
         using namespace exeng;
         using namespace exeng::framework;
@@ -299,4 +296,22 @@ namespace exeng { namespace main {
 
         return exitCode;
 	}
+	
+	/*
+	int main(int argc, char **argv) 
+	{
+        using namespace exeng;
+
+		Matrix4f m = identity<float, 4>();
+		Matrix4f m1 = rotatex(rad(180.0f));
+		Matrix4f m2 = rotatey(rad(-70.0f));
+		Matrix4f m3 = rotatez(rad(90.0f));
+
+		Vector4f v1 = Vector4f(0.0f, 1.0f, 0.0f, 0.0f);
+
+		std::cout << abs(m1) << std::endl;
+
+        return 0;
+	}
+	*/
 }}

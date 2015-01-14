@@ -1,4 +1,4 @@
-/*
+
 #include <unittest++/UnitTest++.h>
 
 #include <exeng/scenegraph/Sphere.hpp>
@@ -9,7 +9,6 @@
 #include <exeng/scenegraph/Light.hpp>
 
 using namespace exeng;
-using namespace exeng::math;
 using namespace exeng::scenegraph;
 
 struct SphereFixture {
@@ -113,4 +112,3 @@ SUITE(ScenegraphTestSuite) {
 		CHECK_EQUAL( ray1.getPointAt(0.5f), ray1.getPoint() + 0.5f * ray1.getDirection() );
 	}
 }
-*/
