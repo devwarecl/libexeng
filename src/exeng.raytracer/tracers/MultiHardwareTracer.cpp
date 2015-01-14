@@ -33,17 +33,7 @@ namespace raytracer { namespace tracers {
 		cl_float	distance;	// Distance from the origin of the ray.
         cl_int		material;	// Material index/id (will be defined later).
     };
-    
-	/*
-    class PlatformBuffer : public exeng::Buffer {
-    public:
-        PlatformBuffer(cl::Context &context_) : context(context_) {}
-        
-    private:
-        cl::Context &context;
-    };
-	*/
-    
+	
 	const int MaterialSize = 4;	// Size of the material (number of float's)
 
     static std::string clErrorToString(cl_int errCode) 
