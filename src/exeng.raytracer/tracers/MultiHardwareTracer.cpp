@@ -345,6 +345,8 @@ namespace raytracer { namespace tracers {
 		this->context = context;
 		this->program = program;
         
+		this->localTransformBuffer = cl::Buffer(context, CL_MEM_READ_WRITE, 2*sizeof(Matrix4f), nullptr);
+
         this->clearSynthBufferKernel = clearSynthBufferKernel;
         this->rayGeneratorKernel = rayGeneratorKernel;
 		this->rayGeneratorFromMatrixKernel = rayGeneratorFromMatrixKernel;
@@ -406,41 +408,39 @@ namespace raytracer { namespace tracers {
 
 	MultiHardwareTracer::~MultiHardwareTracer() {}
 
-	void MultiHardwareTracer::executeGenerateRaysKernelFromMatrix(const exeng::scenegraph::Camera *camera)
-    {
-		this->syncCamera(camera);
+	//void MultiHardwareTracer::executeGenerateRaysKernelFromMatrix(const exeng::scenegraph::Camera *camera)
+ //   {
+	//	BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRaysFromMatrix kernel with params: "
+	//		<< "Pos={" << camera->getPosition() << "}, "
+	//		<< "LookAt={" << camera->getLookAt() << "}, "
+	//		<< "Up={" << camera->getUp() << "}, "
+	//		<< "Screen= {" << this->getRenderTarget()->getSize() << "}";
 
-		BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRaysFromMatrix kernel with params: "
-			<< "Pos={" << camera->getPosition() << "}, "
-			<< "LookAt={" << camera->getLookAt() << "}, "
-			<< "Up={" << camera->getUp() << "}, "
-			<< "Screen= {" << this->getRenderTarget()->getSize() << "}";
+	//	cl_int errCode = 0;
+ //       cl::Event event;
 
-		cl_int errCode = 0;
-        cl::Event event;
+ //       // Prepare the 'GenerateRays' kernel
+ //       cl::Kernel &kernel = this->rayGeneratorFromMatrixKernel;
 
-        // Prepare the 'GenerateRays' kernel
-        cl::Kernel &kernel = this->rayGeneratorFromMatrixKernel;
+ //       Vector3i size = this->getRenderTarget()->getSize();
+	//	
+ //       kernel.setArg(0, this->raysBuffer);
+ //       kernel.setArg(1, this->viewBuffer);
+	//	kernel.setArg(2, size.x);
+ //       kernel.setArg(3, size.y);
 
-        Vector3i size = this->getRenderTarget()->getSize();
-		
-        kernel.setArg(0, this->raysBuffer);
-        kernel.setArg(1, this->viewBuffer);
-		kernel.setArg(2, size.x);
-        kernel.setArg(3, size.y);
+ //       // Execute the kernel
+ //       errCode = this->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), this->localSize, nullptr, &event);
+ //       if (errCode != CL_SUCCESS) {
+	//		std::string msg = "MultiHardwareTracer::generateRays: Error at trying to enqueue the GenerateRays Kernel:" + clErrorToString(errCode);
+	//		BOOST_LOG_TRIVIAL(error) << msg;
 
-        // Execute the kernel
-        errCode = this->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), this->localSize, nullptr, &event);
-        if (errCode != CL_SUCCESS) {
-			std::string msg = "MultiHardwareTracer::generateRays: Error at trying to enqueue the GenerateRays Kernel:" + clErrorToString(errCode);
-			BOOST_LOG_TRIVIAL(error) << msg;
-
-            throw std::runtime_error(msg);
-        }
-        event.wait();
-		
-        this->queue.finish();
-    }
+ //           throw std::runtime_error(msg);
+ //       }
+ //       event.wait();
+	//	
+ //       this->queue.finish();
+ //   }
 	
     void MultiHardwareTracer::executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera) 
     {
@@ -571,6 +571,8 @@ namespace raytracer { namespace tracers {
 			cl::Event event;
 			cl::Kernel &kernel = this->synthesisDataComputerKernel;
 
+			this->syncLocalTransform(transformStack.top());
+
 			Mesh *mesh = static_cast<Mesh*>(sceneNode->getData());
 
 			for (int i=0; i<mesh->getMeshSubsetCount(); ++i) {
@@ -599,6 +601,7 @@ namespace raytracer { namespace tracers {
 				kernel.setArg(5, indexBuffer);
 				kernel.setArg(6, indexCount);
 				kernel.setArg(7, this->getScene()->getMaterialIndex(subset->getMaterial())); // material index
+				kernel.setArg(8, this->localTransformBuffer);
                 
 				std::vector<cl::Memory> buffers = {vertexBuffer, indexBuffer};
                 
@@ -718,24 +721,26 @@ namespace raytracer { namespace tracers {
         this->executeSynthetizeImageKernel();
 	}
     
-	void MultiHardwareTracer::syncCamera(const exeng::scenegraph::Camera *camera) 
+	void MultiHardwareTracer::syncLocalTransform(const Matrix4f &localTransform)
     {
-		Matrix4f cameraData[2];
+		cl::Event event;
+		cl_int errCode;
 
-        cameraData[0] = lookat<float> (
-            camera->getPosition(), 
-            camera->getLookAt(),
-            camera->getUp()
-        );
-        cameraData[1] = inverse(cameraData[0]);
-        
-        cl::Context &context = this->context;
-        
+		Matrix4f localTransformData[] = {
+			localTransform,
+			inverse(localTransform)
+		};
+
         const cl_mem_flags flags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
         const std::size_t dataSize = sizeof(Matrix4f) * 2;
         
-        //! TODO: I'm recreating the buffers for app development speedup.
-        this->viewBuffer = cl::Buffer(context, flags, dataSize, cameraData);
+		errCode = this->queue.enqueueWriteBuffer(this->localTransformBuffer, CL_TRUE, 0, 2*sizeof(Matrix4f), localTransformData, nullptr, &event);
+		if (errCode != CL_SUCCESS) {
+			std::string msg = "MultiHardwareTracer::executeGetSynthesisElementSizeKernel: Error :" + clErrorToString(errCode);
+			BOOST_LOG_TRIVIAL(trace) << msg;
+            throw std::runtime_error(msg);
+		}
+		event.wait();
     }
 	
 	void MultiHardwareTracer::executeGetStructuresSizeKernel() 

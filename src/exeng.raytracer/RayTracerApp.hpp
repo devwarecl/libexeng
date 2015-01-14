@@ -5,6 +5,8 @@
 #include <vector>
 #include <list>
 #include <memory>
+#include <map>
+
 #include <exeng/Exeng.hpp>
 #include <exeng/Vector.hpp>
 #include <exeng/framework/GraphicsApplication.hpp>
@@ -21,6 +23,12 @@ namespace raytracer {
     typedef std::list<exeng::scenegraph::SceneNode*> SceneNodeList;
     typedef SceneNodeList::iterator SceneNodeListIt;
     
+	class SceneNodeAnimator {
+	public:
+		virtual ~SceneNodeAnimator() {}
+		virtual void animateNode(const float seconds, exeng::scenegraph::SceneNode *node) = 0;
+	};
+
     class RayTracerApp : public exeng::framework::GraphicsApplication, public exeng::input::IEventHandler {
     public:
         RayTracerApp();
@@ -71,6 +79,8 @@ namespace raytracer {
         exeng::framework::ApplicationStatus::Enum applicationStatus;
         exeng::graphics::ButtonStatus::Enum buttonStatus[exeng::graphics::ButtonCode::Count];
         
+		std::map<exeng::scenegraph::SceneNode*, std::unique_ptr<SceneNodeAnimator>> animators;
+
         float rotationAngle = 0.0f;
     };
 }

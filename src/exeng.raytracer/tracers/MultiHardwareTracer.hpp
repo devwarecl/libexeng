@@ -30,12 +30,12 @@ namespace raytracer { namespace tracers {
 		virtual void setRenderTarget(exeng::graphics::Texture *renderTarget);
 
 	private:
-        void syncCamera(const exeng::scenegraph::Camera *camera);
+        void syncLocalTransform(const exeng::Matrix4f &localTransform);
         
 		void executeGetStructuresSizeKernel();
         void executeClearSynthBufferKernel();
         
-        void executeGenerateRaysKernelFromMatrix(const exeng::scenegraph::Camera *camera);
+        // void executeGenerateRaysKernelFromMatrix(const exeng::scenegraph::Camera *camera);
         void executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera);
 		void executeSynthetizeImageKernel();
 
@@ -71,9 +71,10 @@ namespace raytracer { namespace tracers {
 		cl_int synthesisElementSize = 0;
 		cl_int raySize = 0;
 		
-		cl::NDRange localSize = cl::NDRange(16, 8);
+		// TODO: Determine the appropiate range at run-time
+		cl::NDRange localSize = cl::NDRange(16, 8);	
         
-        cl::Buffer viewBuffer;
+        cl::Buffer localTransformBuffer;
 	};
 }}
 

@@ -404,15 +404,19 @@ kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int scr
  */
 kernel void ComputeSynthesisData (
 	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
-	global float *vertices, global int *indices, int indexCount, int materialIndex)
+	global float *vertices, global int *indices, int indexCount, int materialIndex, global float *localTransform)
 {
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 
 	int i = coordToIndex(x, y, screenWidth, screenHeight);
     
-	const Ray ray = rays[i];
-	
+	global Matrix *transforms = (global Matrix*)localTransform;
+
+	Ray ray = rays[i];
+	ray.point		= transform(transforms[1], ray.point);
+	// ray.direction	= transform(transforms[1], ray.direction);
+
 	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices, indices, indexCount, materialIndex);
 }
 

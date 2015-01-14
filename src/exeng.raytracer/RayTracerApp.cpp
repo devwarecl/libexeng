@@ -55,6 +55,54 @@ namespace raytracer {
     using namespace raytracer::samplers;
     using namespace raytracer::tracers;
     
+	class RotateSceneNodeAnimator : public SceneNodeAnimator {
+	public:
+		virtual void animateNode(const float seconds, SceneNode *node) override
+		{
+			const float rotationSpeed = 180.0f;
+
+			angle += seconds * rotationSpeed;
+			if (angle >= 360.0f) {
+				angle = std::fmod(angle, 360.0f);
+			}
+
+			Matrix4f transform = rotatey(angle);
+
+			node->setTransform(transform);
+		}
+
+	private:
+		float angle = 0.0f;
+	};
+
+	/**
+	 * @brief Moves the scene node along the X axis
+	 */
+	class TranslateSceneNodeAnimator : public SceneNodeAnimator {
+	public:
+		virtual void animateNode(const float seconds, SceneNode *node) override
+		{
+			this->position.x += direction * seconds * speed;
+
+			if (this->position.x > 5.0f) {
+				direction = -1.0f;
+			}
+
+			if (this->position.x < -5.0f) {
+				direction = 1.0f;
+			}
+
+			Matrix4f transform = translate(this->position);
+			node->setTransform(transform);
+		}
+	
+	private:
+		const float speed = 0.125f;
+		float direction = 1.0f;
+
+		Vector3f position = {0.0f, 0.0f, 0.0f};
+	};
+
     RayTracerApp::RayTracerApp() {
         this->applicationStatus = ApplicationStatus::Running;
         this->lastTime = Timer::getTime();
@@ -156,6 +204,12 @@ namespace raytracer {
         this->camera.setPosition({0.0f, 0.0f, -1.0f});
         this->camera.setUp({0.0f, 1.0f, 0.0f});
 
+		// attach a rotation animator to the central cube
+		// auto rotationalAnimator = std::unique_ptr<SceneNodeAnimator>(new RotateSceneNodeAnimator());
+		auto animator = std::unique_ptr<SceneNodeAnimator>(new TranslateSceneNodeAnimator());
+
+		this->animators[this->scene->getRootNode()->getChild("boxNode3")] = std::move(animator);
+
 		BOOST_LOG_TRIVIAL(trace) << "Application initialization done.";
     }
     
@@ -168,14 +222,12 @@ namespace raytracer {
     }
     
     void RayTracerApp::update(double seconds) {
-        // Actualizar los cuadros por segundo
-        /*
-        this->frameCounter.update(seconds);
-        if (frameCounter.overflow()) {
-            std::cout << this->frameCounter.getCurrentFps() << std::endl;
-        }
-        */
-        
+		// Animate the scene nodes
+		for (auto it=this->animators.begin(); it!=this->animators.end(); ++it) {
+			it->second->animateNode(float(seconds), it->first);
+		}
+
+		// camera update
         Vector3f delta(0.0f);
         const float moveSpeed = 1.5f;
         const float rotationSpeed = 60.0f;
