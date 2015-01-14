@@ -15,6 +15,7 @@
 #include <vector>
 #include <stdexcept>
 #include <boost/checked_delete.hpp>
+#include <boost/range/algorithm/find.hpp>
 
 #include <exeng/scenegraph/SceneNode.hpp>
 

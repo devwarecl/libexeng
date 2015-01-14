@@ -4,6 +4,7 @@
 
 #include <exeng/Exeng.hpp>
 #include <memory>
+#include <stack>
 
 #include "Tracer.hpp"
 #include "../samplers/Sampler.hpp"
@@ -36,8 +37,11 @@ namespace raytracer { namespace tracers {
         
         void executeGenerateRaysKernelFromMatrix(const exeng::scenegraph::Camera *camera);
         void executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera);
-		void executeComputeSynthesisDataKernel();
 		void executeSynthetizeImageKernel();
+
+		void synthetize();
+
+		void executeComputeSynthesisDataKernel(std::stack<exeng::Matrix4f> &transformStack, const exeng::scenegraph::SceneNode *sceneNode);
 
 	private:
 		cl::Platform platform;

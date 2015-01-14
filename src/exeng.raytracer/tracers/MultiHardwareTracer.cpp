@@ -12,6 +12,7 @@
 #include <fstream>
 #include <list>
 #include <iomanip>
+#include <stack>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
@@ -499,7 +500,7 @@ namespace raytracer { namespace tracers {
             return;
         }
 
-        if (node->getData()==nullptr) {
+        if (node->getData() == nullptr) {
             if (node->getChildCount() > 0) {
                 for (SceneNode *childNode : node->getChilds()) {
                     linearizeSceneBranch(nodes, childNode);
@@ -549,83 +550,99 @@ namespace raytracer { namespace tracers {
         event.wait();
     }
     
-	void MultiHardwareTracer::executeComputeSynthesisDataKernel() 
+	void MultiHardwareTracer::executeComputeSynthesisDataKernel(std::stack<Matrix4f> &transformStack, const SceneNode *sceneNode)
     {
-        // std::ofstream fs;
-        // fs.open("C:/synth.txt", std::ios_base::out);
+		if (!sceneNode) {
+			return;
+		}
 
-        std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
+		// TODO: Add support for another types of geometry.
+		if (sceneNode->getData()) {
+			// std::ofstream fs;
+			// fs.open("C:/synth.txt", std::ios_base::out);
+			// std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
         
-        // Invoke the ComputeSynthesisData kernel
-        Vector2i screenSize = this->getRenderTarget()->getSize();
+			// Invoke the ComputeSynthesisData kernel
+			Vector2i screenSize = this->getRenderTarget()->getSize();
+			Matrix4f transform = transformStack.top();
 
-        cl_int errCode = 0;
+			cl_int errCode = 0;
 
-        cl::Event event;
-        cl::Kernel &kernel = this->synthesisDataComputerKernel;
+			cl::Event event;
+			cl::Kernel &kernel = this->synthesisDataComputerKernel;
 
-        for (const SceneNode* node : nodes) {
-            Mesh *mesh = static_cast<Mesh*>(node->getData());
+			Mesh *mesh = static_cast<Mesh*>(sceneNode->getData());
 
-            for (int i=0; i<mesh->getMeshSubsetCount(); ++i) {
-                // Prepare the kernel for execution
-                MeshSubset *subset = mesh->getMeshSubset(i);
+			for (int i=0; i<mesh->getMeshSubsetCount(); ++i) {
+				// Prepare the kernel for execution
+				MeshSubset *subset = mesh->getMeshSubset(i);
 
-                GLuint vertexBufferId = static_cast<GLuint>(subset->getBuffer(0)->getHandle());
-                GLuint indexBufferId = static_cast<GLuint>(subset->getIndexBuffer()->getHandle());
+				GLuint vertexBufferId = static_cast<GLuint>(subset->getBuffer(0)->getHandle());
+				GLuint indexBufferId = static_cast<GLuint>(subset->getIndexBuffer()->getHandle());
                 
-                cl::BufferGL vertexBuffer = cl::BufferGL(this->context, CL_MEM_READ_WRITE, vertexBufferId);
-                cl::BufferGL indexBuffer = cl::BufferGL(this->context, CL_MEM_READ_WRITE, indexBufferId);
+				cl::BufferGL vertexBuffer = cl::BufferGL(this->context, CL_MEM_READ_WRITE, vertexBufferId);
+				cl::BufferGL indexBuffer = cl::BufferGL(this->context, CL_MEM_READ_WRITE, indexBufferId);
 
-                int indexFormatSize = IndexFormat::getSize(subset->getIndexFormat());
-                int indexCount = subset->getIndexBuffer()->getSize() / (indexFormatSize/8);
+				int indexFormatSize = IndexFormat::getSize(subset->getIndexFormat());
+				int indexCount = subset->getIndexBuffer()->getSize() / (indexFormatSize/8);
 
 				BOOST_LOG_TRIVIAL(trace) 
 					<< "[3] Invoking computeSynthesisData kernel with params: "
 					<< "ScreenSize={" << screenSize << "}, "
 					<< "TriangleCount=" << indexCount;
 
-                kernel.setArg(0, this->synthesisBuffer);
-                kernel.setArg(1, this->raysBuffer);
-                kernel.setArg(2, screenSize.x);
-                kernel.setArg(3, screenSize.y);
-                kernel.setArg(4, vertexBuffer);
-                kernel.setArg(5, indexBuffer);
-                kernel.setArg(6, indexCount);
-                kernel.setArg(7, this->getScene()->getMaterialIndex(subset->getMaterial())); // material index
+				kernel.setArg(0, this->synthesisBuffer);
+				kernel.setArg(1, this->raysBuffer);
+				kernel.setArg(2, screenSize.x);
+				kernel.setArg(3, screenSize.y);
+				kernel.setArg(4, vertexBuffer);
+				kernel.setArg(5, indexBuffer);
+				kernel.setArg(6, indexCount);
+				kernel.setArg(7, this->getScene()->getMaterialIndex(subset->getMaterial())); // material index
                 
-                std::vector<cl::Memory> buffers = {vertexBuffer, indexBuffer};
+				std::vector<cl::Memory> buffers = {vertexBuffer, indexBuffer};
                 
-                cl::CommandQueue &queue = this->queue;
+				cl::CommandQueue &queue = this->queue;
 
-                errCode = queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
-                if (errCode != CL_SUCCESS) {
+				errCode = queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
+				if (errCode != CL_SUCCESS) {
 					std::string msg = "MultiHardwareTracer::computeSynthesisData: Error at trying to acquire the GL buffer object:" + clErrorToString(errCode);
 					BOOST_LOG_TRIVIAL(error) << msg;
 
-                    throw std::runtime_error(msg);
-                }
-                event.wait();
+					throw std::runtime_error(msg);
+				}
+				event.wait();
                 
-                errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(screenSize.x, screenSize.y), this->localSize, nullptr, &event);
-                if (errCode != CL_SUCCESS) {
+				errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(screenSize.x, screenSize.y), this->localSize, nullptr, &event);
+				if (errCode != CL_SUCCESS) {
 					std::string msg = "MultiHardwareTracer::computeSynthesisData: Error at trying to execute the ComputeSynthesisBuffer kernel:" + clErrorToString(errCode);
 					BOOST_LOG_TRIVIAL(error) << msg;
-                    throw std::runtime_error(msg);
-                }
-                event.wait();
+					throw std::runtime_error(msg);
+				}
+				event.wait();
 
-                errCode = queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
-                if (errCode != CL_SUCCESS) {
+				errCode = queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
+				if (errCode != CL_SUCCESS) {
 					std::string msg = "MultiHardwareTracer::computeSynthesisData: Error at trying to release the GL buffer object:" + clErrorToString(errCode);
 					BOOST_LOG_TRIVIAL(error) << msg;
-                    throw std::runtime_error(msg);
-                }
-                event.wait();
+					throw std::runtime_error(msg);
+				}
+				event.wait();
 
-                queue.finish();
-            }
-        }
+				queue.finish();
+			}
+		}
+
+		for (int i=0; i<sceneNode->getChildCount(); ++i) {
+			const SceneNode *childNode = sceneNode->getChild(i);
+			Matrix4f childTransform = transformStack.top() * childNode->getTransform();
+
+			transformStack.push(childTransform);
+
+			this->executeComputeSynthesisDataKernel(transformStack, childNode);
+
+			transformStack.pop();
+		}
 	}
 
 	void MultiHardwareTracer::executeSynthetizeImageKernel() 
@@ -681,15 +698,23 @@ namespace raytracer { namespace tracers {
         queue.finish();
 	}
     
+	void MultiHardwareTracer::synthetize() 
+	{
+		std::stack<Matrix4f> transformStack;
+
+		const SceneNode *rootNode = this->getScene()->getRootNode();
+		transformStack.push(rootNode->getTransform());
+
+		this->executeComputeSynthesisDataKernel(transformStack, rootNode);
+	}
+
 	void MultiHardwareTracer::render(const exeng::scenegraph::Camera *camera) 
     {
 		BOOST_LOG_TRIVIAL(trace) << "Rendering scene ...";
         
-        // this->syncCamera(camera);
         this->executeClearSynthBufferKernel();
         this->executeGenerateRaysKernel(camera);
-		// this->executeGenerateRaysKernelFromMatrix(camera);
-        this->executeComputeSynthesisDataKernel();
+		this->synthetize();
         this->executeSynthetizeImageKernel();
 	}
     
