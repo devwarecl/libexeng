@@ -10,6 +10,10 @@ Ernie Wright  17 Sep 00
 #ifndef LWO2_H
 #define LWO2_H
 
+#if defined(__cplusplus)
+extern "C" {
+#endif 
+
 /* chunk and subchunk IDs */
 
 #define LWID_(a,b,c,d) (((a)<<24)|((b)<<16)|((c)<<8)|(d))
@@ -157,6 +161,8 @@ Ernie Wright  17 Sep 00
 #define ID_SHDR  LWID_('S','H','D','R')
 #define ID_DATA  LWID_('D','A','T','A')
 
+/* others */
+#define ID_TXUV LWID_('T', 'X', 'U', 'V')
 
 /* generic linked list */
 
@@ -645,5 +651,9 @@ char *sgetS0( unsigned char **bp );
 #else
   #define revbytes( b, s, c )
 #endif
+
+#if defined(__cplusplus)
+}
+#endif 
 
 #endif

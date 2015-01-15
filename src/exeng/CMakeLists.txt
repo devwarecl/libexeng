@@ -1,9 +1,15 @@
 
-add_definitions(-DEXENG_BUILD)
+add_definitions(-DEXENG_BUILD -DBOOST_ALL_NO_LIB)
 
 include_directories( ${PROJECT_SOURCE_DIR}/src )
 
-find_package(Boost REQUIRED)
+# Boost Configuration
+set (Boost_USE_STATIC_LIBS OFF)
+set (Boost_USE_MULTITHREADED ON)
+set (Boost_USE_STATIC_RUNTIME OFF)
+
+find_package(Boost COMPONENTS filesystem system REQUIRED)
+
 include_directories(${Boost_INCLUDE_DIRS})
 
 set (BaseFiles 
@@ -164,8 +170,12 @@ source_group(scenegraph FILES ${ScenegraphFiles})
 source_group(system	    FILES ${SystemFiles})
 
 if(UNIX AND NOT APPLE)
-  target_link_libraries(exeng dl rt)
+	SET (UNIX_libs dl rt)
+# ELSE()
+# 	SET (UNIX_libs )
 endif()
+
+target_link_libraries(exeng ${UNIX_libs} lwobject ${Boost_LIBRARIES})
 
 add_subdirectory(ui/win32)
 

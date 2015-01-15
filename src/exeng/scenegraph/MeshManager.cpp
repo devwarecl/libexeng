@@ -19,12 +19,15 @@
 #include <list>
 #include <boost/range/algorithm/find_if.hpp>
 #include <boost/range/algorithm/transform.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <exeng/Vector.hpp>
 #include <exeng/scenegraph/IMeshLoader.hpp>
 #include <exeng/scenegraph/MeshPart.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
+
+#include <lwobject/lwo2.h>
 
 namespace exeng { namespace scenegraph {
     using namespace exeng::graphics;
@@ -111,6 +114,195 @@ namespace exeng { namespace scenegraph {
             return std::unique_ptr<Mesh>(new Mesh(std::move(subset)));
         }
     };
+
+	class LwoMeshLoader : public IMeshLoader {
+	public:
+		virtual bool isSupported(const std::string &filename) override 
+		{
+			return boost::filesystem::path(filename).extension() == "lwo";
+        }
+
+		virtual std::unique_ptr<Mesh> loadMesh(const std::string &filename, GraphicsDriver *graphicsDriver) override 
+		{
+			auto vertexBuffer = graphicsDriver->createVertexBuffer(generateBoxVertices({0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}));
+            auto indexBuffer = graphicsDriver->createIndexBuffer(generateBoxIndices());
+
+            auto subset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), VertexFormat::makeVertex());
+
+            return std::unique_ptr<Mesh>(new Mesh(std::move(subset)));
+        }
+
+	private:
+
+		/**
+		 * @brief Texture proyection
+		 */
+		enum lwProj {
+			LW_PROJ_PLANAR = 0,
+			LW_PROJ_CYLINDRICAL = 1,
+			LW_PROJ_SPHERICAL = 2,
+			LW_PROJ_CUBIC = 3,
+			LW_PROJ_FRONT = 4,
+			LW_PROJ_UV = 5
+		};
+
+		enum lwAxis {
+			LW_AXIS_X = 0,
+			LW_AXIS_Y = 1,
+			LW_AXIS_Z = 2
+		};
+
+		/**
+		 * @brief Automatically generate the index array from the specified polygon size
+		 */
+		static void appendIndices(std::vector<int> &indices, int polygonSize, int indexBase, bool invert) 
+		{
+			if (invert) {
+				for(int j=1; j<polygonSize-1; j++) {
+					indices.push_back(indexBase + 0);
+					indices.push_back(indexBase + j);
+					indices.push_back(indexBase + j + 1);
+				}
+			} else {
+				for(int j=1; j<polygonSize-1; j++) {
+					indices.push_back(indexBase + 0);
+					indices.push_back(indexBase + j + 1);
+					indices.push_back(indexBase + j);
+				}
+			}
+		}
+
+		/**
+		 * @brief Search a clip with the specified index (id)
+		 */
+		static lwClip* findClipFromIndex(lwObject* Object, int index)
+		{
+			//Recorrer los clips hasta dar con el que tenga el índice indicado
+			lwClip *outClip = nullptr;
+			for (outClip=Object->clip; outClip!=nullptr; outClip=outClip->next) {
+				if (outClip->index == index) {
+					break;
+				}
+			}
+
+			return outClip;
+		}
+
+		/**
+		 * @brief Pending.
+		 */
+		static Vector3f setupTexturePoint(const Vector3f &point, const Vector3f &center, const Vector3f &ypr, const Vector3f &size, lwProj proj)
+		{
+			Vector3f q = point - center;
+
+			q = exeng::transform(exeng::rotate<float>(ypr.z, { 0.0f, 0.0f, -1.0f}), q);
+			q = exeng::transform(exeng::rotate<float>(ypr.y, { 0.0f, 1.0f,  0.0f}), q);
+			q = exeng::transform(exeng::rotate<float>(ypr.x, {-1.0f, 0.0f,  0.0f}), q);
+
+			if (proj != LW_PROJ_SPHERICAL) {
+				q = q / size;
+			}
+
+			return q;
+		}
+
+		static Vector3f computePolygonNormal(const lwPolygon *poly, const lwPointList *points, bool invertNormal)
+		{
+			Vector3f normal = {0.0f, 0.0f, 0.0f};
+
+			if (poly->nverts >= 3) {
+				Vector3f a = Vector3f(points->pt[ poly->v[0].index ].pos);
+				Vector3f b = Vector3f(points->pt[ poly->v[1].index ].pos);
+				Vector3f c = Vector3f(points->pt[ poly->v[2].index ].pos);
+
+				normal = exeng::normalize(exeng::cross(b-a, c-a));
+
+				if (invertNormal) {
+					normal = -normal;
+				}
+			}
+
+			return normal;
+		}
+
+		static float cylindricalAngle(float x, float y)
+		{
+			const float pi = exeng::Pi<float>::Value;
+			const float pi_2 = pi * 0.5f;
+
+			float r = std::sqrt(x*x + y*y);
+			float a = 0.0f;
+
+			if (r == 0.0f)  {
+				return 0.0f;
+			}
+
+			x /= r;
+
+			if (x < 0.0f && y >= 0.0f) {
+				a = pi_2 - acosf(-x);
+			} else if (x < 0.0f && y < 0.0f) {
+				a = acosf(-x) + pi_2;
+			} else if (x >= 0.0f && y >= 0.0f) {
+				a = acosf(x) + 3.0f * pi_2;
+			} else if (x >= 0.0f && y < 0.0f) {
+				a = 3.0f * pi_2 - acosf(x);
+			} else {
+				a = 0.0f;
+			}
+
+			return a/pi/2.0f;
+		}
+
+		static lwVMap* findVMap(lwVMap* Map, const std::string &vmapname, unsigned int type)
+		{
+			lwVMap* VMap = nullptr;
+
+			for(VMap=Map; VMap!=nullptr; VMap=VMap->next) {
+				if ((vmapname == VMap->name) && (type == VMap->type)){
+					break;
+				}
+			}
+
+			//Volver a buscar un vmap con el mismo nombre, pero mejor.
+			if ((VMap != nullptr) && (type == ID_TXUV)) {
+				lwVMap* BetterVMap = findVMap(VMap->next, vmapname, ID_TXUV);
+
+				if (BetterVMap != nullptr) {
+					VMap = BetterVMap;
+				}
+			}
+
+			return VMap;
+		}
+
+		static lwVMap* getVMap(lwLayer* Layer, char* Name, bool Continuous)
+		{
+			lwVMap* VMap = nullptr;
+
+			for(VMap=Layer->vmap; VMap!=nullptr; VMap=VMap->next) {
+				if (std::string(Name) == std::string(VMap->name)) {
+					if (Continuous==true) {
+						if (VMap->pindex==nullptr) {
+							return VMap;
+						}
+					} else {
+						if (VMap->pindex!=nullptr) {
+							return VMap;
+						}
+					}
+				}
+			}
+
+			return nullptr;
+		}
+
+		static void buildMeshSubset(std::unique_ptr<MeshSubset> &meshSubset, lwLayer *layer, lwSurface *surf)
+		{
+
+		}
+	};
+
 }}
 
 namespace exeng { namespace scenegraph {
