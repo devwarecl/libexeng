@@ -66,7 +66,7 @@ namespace raytracer {
 				angle = std::fmod(angle, 360.0f);
 			}
 
-			Matrix4f transform = rotatey(angle);
+			Matrix4f transform = rotatey(exeng::rad(angle));
 
 			node->setTransform(transform);
 		}
@@ -205,8 +205,8 @@ namespace raytracer {
         this->camera.setUp({0.0f, 1.0f, 0.0f});
 
 		// attach a rotation animator to the central cube
-		// auto rotationalAnimator = std::unique_ptr<SceneNodeAnimator>(new RotateSceneNodeAnimator());
-		auto animator = std::unique_ptr<SceneNodeAnimator>(new TranslateSceneNodeAnimator());
+		auto animator = std::unique_ptr<SceneNodeAnimator>(new RotateSceneNodeAnimator());
+		// auto animator = std::unique_ptr<SceneNodeAnimator>(new TranslateSceneNodeAnimator());
 
 		this->animators[this->scene->getRootNode()->getChild("boxNode3")] = std::move(animator);
 

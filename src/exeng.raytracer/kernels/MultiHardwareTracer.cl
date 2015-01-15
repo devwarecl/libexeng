@@ -57,7 +57,7 @@ typedef struct {
 } Matrix;
 
 
-float3 transform(Matrix matrix, float3 vector) 
+float3 transp(Matrix matrix, float3 vector) 
 {
 	float4 v = (float4)(vector, 1.0f);
     float4 result = {
@@ -70,16 +70,17 @@ float3 transform(Matrix matrix, float3 vector)
     return result.xyz;
 }
 
-float4 transform4(Matrix matrix, float4 vector) 
+float3 transv(Matrix matrix, float3 vector) 
 {
+	float4 v = (float4)(vector, 0.0f);
     float4 result = {
-        dot(matrix.rows[0], vector),
-        dot(matrix.rows[1], vector),
-        dot(matrix.rows[2], vector),
-        dot(matrix.rows[3], vector)
+        dot(matrix.rows[0], v),
+        dot(matrix.rows[1], v),
+        dot(matrix.rows[2], v),
+        dot(matrix.rows[3], v)
     };
     
-    return result;
+    return result.xyz;
 }
 
 /*sample cube data*/
@@ -262,9 +263,6 @@ kernel void GenerateRaysFromWorldMatrix (
 
 	Ray ray = castRayFromMatrix(screenCoord, screenSize, (float2)(0.0f, 0.0f), viewMatrix, viewInvMatrix);
 
-	ray.point = transform(viewInvMatrix, ray.point);
-	// ray.direction = transform(viewMatrix, ray.direction);
-	
     *(rays + i) = ray;
 }
 
@@ -414,8 +412,8 @@ kernel void ComputeSynthesisData (
 	global Matrix *transforms = (global Matrix*)localTransform;
 
 	Ray ray = rays[i];
-	ray.point		= transform(transforms[1], ray.point);
-	// ray.direction	= transform(transforms[1], ray.direction);
+	ray.point		= transp(transforms[1], ray.point);
+	ray.direction	= transv(transforms[1], ray.direction);
 
 	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices, indices, indexCount, materialIndex);
 }

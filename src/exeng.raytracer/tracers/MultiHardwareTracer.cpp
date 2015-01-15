@@ -731,9 +731,6 @@ namespace raytracer { namespace tracers {
 			inverse(localTransform)
 		};
 
-        const cl_mem_flags flags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-        const std::size_t dataSize = sizeof(Matrix4f) * 2;
-        
 		errCode = this->queue.enqueueWriteBuffer(this->localTransformBuffer, CL_TRUE, 0, 2*sizeof(Matrix4f), localTransformData, nullptr, &event);
 		if (errCode != CL_SUCCESS) {
 			std::string msg = "MultiHardwareTracer::executeGetSynthesisElementSizeKernel: Error :" + clErrorToString(errCode);
