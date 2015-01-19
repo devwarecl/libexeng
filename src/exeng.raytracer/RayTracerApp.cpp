@@ -168,12 +168,12 @@ namespace raytracer {
 
         VertexFormat screenVertexFormat = VertexFormat::makeVertex2D();
 
-        auto vertexBuffer = std::unique_ptr<Buffer>(this->driver->createVertexBuffer(4*screenVertexFormat.getSize(), screenVertices));
+        auto vertexBuffer = this->driver->createVertexBuffer(4*screenVertexFormat.getSize(), screenVertices);
 
         std::vector<std::unique_ptr<Buffer>> vertexBuffers;
         vertexBuffers.push_back(std::move(vertexBuffer));
 
-        this->screenMeshSubset = std::unique_ptr<MeshSubset>(this->driver->createMeshSubset(std::move(vertexBuffers), screenVertexFormat));
+        this->screenMeshSubset = this->driver->createMeshSubset(std::move(vertexBuffers), screenVertexFormat);
         
         // Initialize the scene.
         this->sceneLoader = std::unique_ptr<SceneLoader>(new SceneLoader(this->driver.get(), this->getRoot()->getMeshManager()));
@@ -349,20 +349,10 @@ namespace exeng { namespace main {
         return exitCode;
 	}
 	
+
 	/*
 	int main(int argc, char **argv) 
 	{
-        using namespace exeng;
-
-		Matrix4f m = identity<float, 4>();
-		Matrix4f m1 = rotatex(rad(180.0f));
-		Matrix4f m2 = rotatey(rad(-70.0f));
-		Matrix4f m3 = rotatez(rad(90.0f));
-
-		Vector4f v1 = Vector4f(0.0f, 1.0f, 0.0f, 0.0f);
-
-		std::cout << abs(m1) << std::endl;
-
         return 0;
 	}
 	*/

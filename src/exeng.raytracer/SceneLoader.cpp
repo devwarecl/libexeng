@@ -25,6 +25,7 @@ namespace raytracer {
         // empty object
         auto scene = std::unique_ptr<Scene>(new Scene());
 
+		/*
 		this->addBoxNode ( 
 			scene.get(), "boxNode1", 
 			"boxMaterial1", {1.0f, 0.3f, 0.2f, 1.0f},
@@ -42,7 +43,14 @@ namespace raytracer {
 			"boxMaterial3", {0.3f, 0.8f, 0.1f, 1.0f},
 			"boxMesh3", {0.0f, 0.0f, 0.0f}, {0.75f, 0.25f, 0.25f}
 		);
+		*/
 
+		std::string lwoFilename = "D:\\Felipe\\Desktop\\Assets\\Modelos\\Santiago3D\\Basurero\\BasureroLWO.lwo";
+		Mesh *mesh = this->meshManager->getMesh(lwoFilename, this->graphicsDriver);
+
+		SceneNode *node = scene->getRootNode()->addChild("boxNode3");
+		node->setData(mesh);
+		
         return scene;
     }
 

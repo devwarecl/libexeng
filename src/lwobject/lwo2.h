@@ -646,11 +646,19 @@ int   sgetVX( unsigned char **bp );
 float sgetF4( unsigned char **bp );
 char *sgetS0( unsigned char **bp );
 
-#ifdef _MSWIN
+#ifdef _WIN32
   void revbytes( void *bp, int elsize, int elcount );
 #else
   #define revbytes( b, s, c )
 #endif
+
+/*
+#if defined(WIN32)
+  void revbytes( void *bp, int elsize, int elcount );
+#else
+  #define revbytes( b, s, c )
+#endif
+*/
 
 #if defined(__cplusplus)
 }

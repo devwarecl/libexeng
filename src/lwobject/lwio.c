@@ -34,7 +34,9 @@ void set_flen( int i ) { flen = i; }
 int get_flen( void ) { return flen; }
 
 
-#ifdef _MSWIN
+// #ifdef _MSWIN
+#ifdef _WIN32
+
 /*
 =====================================================================
 revbytes()
