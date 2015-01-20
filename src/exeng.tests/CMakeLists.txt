@@ -12,7 +12,7 @@ SET (BaseFiles
 SOURCE_GROUP(\\ FILES ${BaseFiles})
 
 add_executable(exeng.tests ${BaseFiles})
-target_link_libraries(exeng.tests exeng unittest++)
+target_link_libraries(exeng.tests exeng UnitTest++)
 
 # ENDIF (UnitTestPP_FOUND)
 
