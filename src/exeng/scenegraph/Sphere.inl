@@ -146,9 +146,3 @@ inline bool Sphere::operator!= (const Sphere &sphere) const {
 }  
 
 }}
-
-
-inline std::ostream& operator<< (std::ostream &os, const exeng::scenegraph::Sphere &sphere) {
-    std::cout << sphere.getCenter() << ", " << sphere.getRadius();
-    return os;
-}

@@ -18,76 +18,79 @@
 
 namespace exeng { namespace scenegraph {
 
-class Ray;
-struct IntersectInfo;
+	class Ray;
+	struct IntersectInfo;
 
-/**
-    * @brief Esfera en el espacio tridimensional.
-    */
-class Sphere {
-public:
-    Sphere();
+	/**
+		* @brief Esfera en el espacio tridimensional.
+		*/
+	class Sphere {
+	public:
+		Sphere();
     
-    /**
-     * @brief Inicializa una esfera en el origen, y con radio arbitrario
-     */
-    explicit Sphere(float radius);
+		/**
+		 * @brief Inicializa una esfera en el origen, y con radio arbitrario
+		 */
+		explicit Sphere(float radius);
     
-    /**
-     * @brief Inicializa una esfera cuyo centro este en la posicion y con el radio indicados.
-     * @param radius El radio de la esfera, en unidades de mundo.
-     * @param center La posicion en el espacio, en donde estara ubicado el centro de la esfera.
-     */
-    explicit Sphere(float radius, const exeng::Vector3f &center);
+		/**
+		 * @brief Inicializa una esfera cuyo centro este en la posicion y con el radio indicados.
+		 * @param radius El radio de la esfera, en unidades de mundo.
+		 * @param center La posicion en el espacio, en donde estara ubicado el centro de la esfera.
+		 */
+		explicit Sphere(float radius, const exeng::Vector3f &center);
     
-    /**
-     * @brief Inicializa todos los atributos de la esfera de una sola vez.
-     */
-    void setAttributes(float radius, const exeng::Vector3f &center);
+		/**
+		 * @brief Inicializa todos los atributos de la esfera de una sola vez.
+		 */
+		void setAttributes(float radius, const exeng::Vector3f &center);
     
-    /**
-     * @brief Establece el radio de la esfera
-     */
-    void setRadius(float radius);
+		/**
+		 * @brief Establece el radio de la esfera
+		 */
+		void setRadius(float radius);
     
-    /**
-     * @brief Establece la posicion en donde estara ubicado el centro de la esfera.
-     */
-    void setCenter(const exeng::Vector3f &center);
+		/**
+		 * @brief Establece la posicion en donde estara ubicado el centro de la esfera.
+		 */
+		void setCenter(const exeng::Vector3f &center);
     
-    /**
-     * @brief Devuelve el radio actual de la esfera
-     */
-    float getRadius() const;
+		/**
+		 * @brief Devuelve el radio actual de la esfera
+		 */
+		float getRadius() const;
     
-    /**
-     * @brief Devuelve la posicion en donde esta ubicado el centro de la esfera
-     */
-    exeng::Vector3f getCenter() const;
+		/**
+		 * @brief Devuelve la posicion en donde esta ubicado el centro de la esfera
+		 */
+		exeng::Vector3f getCenter() const;
     
-    /**
-     * @brief Calcula la interseccion entre el rayo indicado, y la esfera.
-     */
-    bool intersect(const Ray& ray, IntersectInfo *intersectInfo=nullptr) const;
+		/**
+		 * @brief Calcula la interseccion entre el rayo indicado, y la esfera.
+		 */
+		bool intersect(const Ray& ray, IntersectInfo *intersectInfo=nullptr) const;
     
-    /**
-     * @brief Comprueba si dos esferas son iguales.
-     */
-    bool operator== (const Sphere &sphere) const;
+		/**
+		 * @brief Comprueba si dos esferas son iguales.
+		 */
+		bool operator== (const Sphere &sphere) const;
     
-    /**
-     * @brief Comprueba si dos esferas son distintas.
-     */
-    bool operator!= (const Sphere &sphere) const;
+		/**
+		 * @brief Comprueba si dos esferas son distintas.
+		 */
+		bool operator!= (const Sphere &sphere) const;
     
-private:
-    exeng::Vector3f center;
-    float radius;
-};
+	private:
+		exeng::Vector3f center;
+		float radius;
 
+		friend std::ostream& operator<< (std::ostream &os, const exeng::scenegraph::Sphere &sphere)
+		{
+			std::cout << sphere.getCenter() << ", " << sphere.getRadius();
+			return os;
+		}
+	};
 }}
-
-std::ostream& operator<< (std::ostream &os, const exeng::scenegraph::Sphere &sphere);
 
 #include "Sphere.inl"
 
