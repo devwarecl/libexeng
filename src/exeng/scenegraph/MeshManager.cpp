@@ -601,7 +601,7 @@ namespace exeng { namespace scenegraph {
 
 			auto vertexBuffer = graphicsDriver->createVertexBuffer(vertices);
 			auto indexBuffer = graphicsDriver->createIndexBuffer(indices);
-			auto meshSubset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), VertexFormat::makeVertex());
+			auto meshSubset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), Vertex::format());
 
 			return meshSubset;
 		}
@@ -685,7 +685,7 @@ namespace exeng { namespace scenegraph {
 		auto vertexBuffer = graphicsDriver->createVertexBuffer(vertices);
 		auto indexBuffer = graphicsDriver->createIndexBuffer(indices);
 
-		auto subset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), VertexFormat::makeVertex());
+		auto subset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), Vertex::format());
 		auto mesh = std::unique_ptr<Mesh>(new Mesh(std::move(subset)));
 
 		meshes[id] = std::move(mesh);

@@ -102,7 +102,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         case DataType::Int16:   return GL_SHORT;
         case DataType::Int32:   return GL_INT;
         case DataType::Float32: return GL_FLOAT;
-        case DataType::Float64: return GL_DOUBLE;
+        // case DataType::Float64: return GL_DOUBLE;
         default: return GL_FALSE;
         }
     }

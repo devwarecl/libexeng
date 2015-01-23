@@ -306,7 +306,7 @@ namespace exeng { namespace graphics { namespace gl3 {
                 break;
             }
             
-            dataTypeKey = static_cast<DataType::Enum>(field.dataType.getValue());
+            dataTypeKey = field.dataType;
             GLenum dataType = convDataType(dataTypeKey);
             
             ::glEnableVertexAttribArray(baseAttrib);
@@ -314,7 +314,7 @@ namespace exeng { namespace graphics { namespace gl3 {
                                     dataType, GL_FALSE, format.getSize(), 
                                     reinterpret_cast<const void*>(offset));
             
-            offset += field.count * field.dataType.geSize();
+            offset += field.count * DataType::getSize(field.dataType);
             ++baseAttrib;
         }
         
