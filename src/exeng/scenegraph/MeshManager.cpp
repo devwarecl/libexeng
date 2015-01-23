@@ -348,7 +348,7 @@ namespace exeng { namespace scenegraph {
 		
 		static void generateVertices_ProjUV (std::vector<Vertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
 		{
-			lwVMap *vmap = LwoMeshLoader::getVMap(layer, imageMap->vmap_name, true);
+			// lwVMap *vmap = LwoMeshLoader::getVMap(layer, imageMap->vmap_name, true);
 
 			for (int j=0; j<polygon->nverts; ++j) {
 				bool discontinuous = false;
