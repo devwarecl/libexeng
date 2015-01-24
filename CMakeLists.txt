@@ -11,7 +11,7 @@ add_definitions(-DEXENG_DYNAMIC)
 
 ## Compiler flags
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++0x -Wall")
+    set(CMAKE_CXX_FLAGS "-std=c++1y -Wall")
 endif()
 
 add_subdirectory(src)

@@ -29,8 +29,7 @@
 namespace exeng {
     
     /**
-     * @brief Encode a datatype description on a 16-bit value. Used for representation, 
-     * and serialization of those data.
+     * @brief Basic data type enumeration.
      */
     struct DataType : public Enum 
 	{

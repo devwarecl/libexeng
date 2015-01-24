@@ -5,6 +5,8 @@
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/graphics/Material.hpp>
 
+#include <memory>
+
 namespace raytracer {
     using namespace exeng;
     using namespace exeng::scenegraph;
@@ -22,7 +24,7 @@ namespace raytracer {
     std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename) 
 	{
         // empty object
-        auto scene = std::make_unique<Scene>();
+        auto scene = std::unique_ptr<Scene>(new Scene());;
 
 		this->addBoxNode ( 
 			scene.get(), "boxNode1", 
