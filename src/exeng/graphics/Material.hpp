@@ -67,7 +67,8 @@ namespace exeng { namespace graphics {
         
         int getSize() const 
         {
-            return dimension * DataType::getSize(this->dataType);
+            int size = dimension * DataType::getSize(this->dataType);
+            return size + size%alignment;
         }
     };
     
