@@ -166,7 +166,7 @@ namespace raytracer {
             {{ 1.0f, -1.0f, 0.0f}, {1.0f,  0.0f}}
         };
 
-        VertexFormat screenVertexFormat = Vertex::format();
+        VertexFormat screenVertexFormat = Vertex2::format();
 
         auto vertexBuffer = this->driver->createVertexBuffer(4*screenVertexFormat.getSize(), screenVertices);
 
