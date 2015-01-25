@@ -38,6 +38,7 @@ namespace exeng {
         };
         
         enum Enum {
+            Unknown,
             UInt8, UInt16, UInt32,
             Int8, Int16, Int32,
             Float16, Float32 

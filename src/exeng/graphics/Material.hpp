@@ -15,9 +15,10 @@
 #define __EXENG_GRAPHICS_MATERIAL_HPP__
 
 #include <vector>
+#include <tuple>
 #include <exeng/Object.hpp>
 #include <exeng/Vector.hpp>
-#include <exeng/graphics/Color.hpp>
+#include <exeng/DataType.hpp>
 
 namespace exeng { namespace graphics {
 
@@ -54,9 +55,49 @@ namespace exeng { namespace graphics {
         
     private:
         struct Private;
-        Private *impl;
+        Private *impl = nullptr;
     };
-
+    
+    struct MaterialAttrib 
+    {
+        std::string name;
+        DataType::Enum dataType = DataType::Float32;
+        int dimension = 4;
+        int alignment = 1;
+        
+        int getSize() const 
+        {
+            return dimension * DataType::getSize(this->dataType);
+        }
+    };
+    
+    struct MaterialFormat 
+    {
+        inline int getSize() const
+        {
+            int size = 0;
+            
+            for (const MaterialAttrib &attrib : this->attribs) {
+                size += attrib.getSize();
+            }
+            
+            return size;
+        }
+        
+        inline int getOffset(int attribIndex) const
+        {
+            int offset = 0;
+            
+            for (int i=0; i<=attribIndex; i++) {
+                offset += this->attribs[i].getSize();
+            }
+            
+            return offset;
+        }
+        
+        std::vector<MaterialAttrib> attribs;        
+    };
+    
     /**
      * @brief Describes the visual appearance of the objects.
      * @note Class interface subject to change.
@@ -109,7 +150,7 @@ namespace exeng { namespace graphics {
         
     private:
         struct Private;
-        Private *impl;
+        Private *impl = nullptr;
     };
 }}
 
