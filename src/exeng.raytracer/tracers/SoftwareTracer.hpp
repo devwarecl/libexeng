@@ -29,8 +29,8 @@ namespace raytracer { namespace tracers {
         exeng::scenegraph::Ray castRay(const exeng::Vector2f &pixel, const exeng::scenegraph::Camera *camera, const exeng::Vector2f &sample) const;
         exeng::scenegraph::IntersectInfo intersectRay(const std::list<const exeng::scenegraph::SceneNode*> &nodes, const exeng::scenegraph::Ray &ray) const;
 
-        exeng::graphics::Color traceRay(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
-        exeng::graphics::Color traceRayMultisampled(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
+        exeng::Vector4f traceRay(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
+        exeng::Vector4f traceRayMultisampled(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
         
         void flattenHierarchy(std::list<const exeng::scenegraph::SceneNode*> &out, const exeng::scenegraph::SceneNode* node) const;
     };

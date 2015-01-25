@@ -61,7 +61,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         virtual bool isInitialized() const override;
         
-        virtual void beginFrame(const Color &color, ClearFlags::Flags flags)  override;
+        virtual void beginFrame(const Vector4f &color, ClearFlags::Flags flags)  override;
         
         virtual void endFrame() override;
         

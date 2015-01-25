@@ -23,10 +23,10 @@
 #include <exeng/Enum.hpp>
 #include <exeng/TFlags.hpp>
 #include <exeng/Boundary.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/Matrix.hpp>
 #include <exeng/Buffer.hpp>
 #include <exeng/input/IEventRaiser.hpp>
-#include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/graphics/Screen.hpp>
@@ -154,7 +154,7 @@ namespace exeng { namespace graphics {
     */
 	class EXENGAPI GraphicsDriver : /*public exeng::ResourceManager, */ public exeng::input::IEventRaiser {
     public:
-        virtual ~GraphicsDriver();
+        virtual ~GraphicsDriver() {}
         
         /**
          * @brief Initializes the graphics driver, with the settings included. 
@@ -204,7 +204,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Start the rendering of a new frame, clearing the previous one
          */
-        virtual void beginFrame(const Color &color, ClearFlags::Flags flags) = 0;
+        virtual void beginFrame(const Vector4f &color, ClearFlags::Flags flags) = 0;
         
         /**
          * @brief Flip the backbuffer and the front buffer

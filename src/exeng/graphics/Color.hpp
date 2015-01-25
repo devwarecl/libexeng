@@ -11,6 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
+/*
 #ifndef __EXENG_GRAPHICS_COLOR_HPP__
 #define __EXENG_GRAPHICS_COLOR_HPP__
 
@@ -36,9 +37,6 @@ namespace exeng {
 
 namespace exeng { namespace graphics {
 
-/**
-    *	@brief Clase para almacenar numeros en punto flotante RGBA
-    */
 struct Color {
     Color();
 
@@ -92,3 +90,4 @@ struct Color {
 #include "Color.inl"
 
 #endif	//__EXENG_GRAPHICS_COLOR_HPP__
+*/

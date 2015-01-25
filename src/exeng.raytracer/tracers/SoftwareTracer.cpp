@@ -101,8 +101,8 @@ namespace raytracer { namespace tracers {
         return info;
     }
     
-    inline Color SoftwareTracer::traceRayMultisampled(const std::list<const SceneNode*> &nodeList, const Vector2i &pixel, const Camera* camera) const {
-        Color color(0.0f, 0.0f, 0.0f, 1.0f);
+    inline Vector4f SoftwareTracer::traceRayMultisampled(const std::list<const SceneNode*> &nodeList, const Vector2i &pixel, const Camera* camera) const {
+        Vector4f color(0.0f, 0.0f, 0.0f, 1.0f);
         Vector2f pixelSample = static_cast<Vector2f>(pixel);
         
         for (int i=0; i<this->getSampler()->getSampleCount(); ++i) {
@@ -115,8 +115,8 @@ namespace raytracer { namespace tracers {
             
             if (info.intersect == true)  {
                 // Determinar el color
-                auto vcolor = info.material->getProperty4f("diffuse");
-                color += Color(vcolor);
+                // auto vcolor = ;
+                color += info.material->getProperty4f("diffuse");
             } else {
                 color += this->getScene()->getBackColor();
             }
@@ -127,8 +127,8 @@ namespace raytracer { namespace tracers {
     }
     
     
-    inline Color SoftwareTracer::traceRay(const std::list<const SceneNode*> &nodeList, const Vector2i &pixel, const Camera *camera) const {
-        Color color(0.0f, 0.0f, 0.0f, 1.0f);
+    inline Vector4f SoftwareTracer::traceRay(const std::list<const SceneNode*> &nodeList, const Vector2i &pixel, const Camera *camera) const {
+        Vector4f color(0.0f, 0.0f, 0.0f, 1.0f);
     //    Vector2f pixelSample = static_cast<Vector2f>(pixel);
         Ray ray = this->castRay(pixel, camera);
         
@@ -137,14 +137,11 @@ namespace raytracer { namespace tracers {
         
         if (info.intersect == true)  {
             // Determinar el color
-            auto vcolor = info.material->getProperty4f("diffuse");
-            color = Color(vcolor);
+            color = info.material->getProperty4f("diffuse");
             
-            if (color.red < 0.0f)   {color.red = 0.0f;}
-            if (color.green < 0.0f) {color.green = 0.0f;}
-            if (color.blue < 0.0f)  {color.blue = 0.0f;}
-            if (color.alpha < 0.0f) {color.alpha = 0.0f;}
-            
+            for (int i=0; i<4; ++i) {
+                if (color[i] < 0.0f)   {color[i] = 0.0f;}
+            }
         } else {
             color = this->getScene()->getBackColor();
         }
@@ -171,6 +168,21 @@ namespace raytracer { namespace tracers {
     
     SoftwareTracer::~SoftwareTracer() {}
     
+    static std::uint32_t packColor(const Vector4f &color) 
+    {
+        union {
+            std::uint8_t values[4];
+            std::uint32_t value;
+        } screenColor;
+        
+        // Convertir las componentes de cada color
+        for (int i=0; i<4; ++i) {
+            screenColor.values[i] = static_cast<std::uint8_t>(color[i] * 255.0f);
+        }
+        
+        return screenColor.value;
+    }
+    
     void SoftwareTracer::render(const Camera *camera) {
 #if defined(EXENG_DEBUG)
         if (!this->getScene()) {
@@ -193,16 +205,16 @@ namespace raytracer { namespace tracers {
             // No sampler rendering
             for(pixel.y=0; pixel.y<screenSize.y; ++pixel.y) {
                 for(pixel.x=0; pixel.x<screenSize.x; ++pixel.x) {
-                    Color pixelColor = this->traceRay(nodeList, pixel, camera);
-                    this->putPixel(backbuffer, pixel, static_cast<uint32_t>(pixelColor));
+                    Vector4f pixelColor = this->traceRay(nodeList, pixel, camera);
+                    this->putPixel(backbuffer, pixel, packColor(pixelColor));
                 }
             }
         } else {
             // Sampler based rendering.
             for(pixel.y=0; pixel.y<screenSize.y; ++pixel.y) {
                 for(pixel.x=0; pixel.x<screenSize.x; ++pixel.x) {
-                    Color pixelColor = this->traceRayMultisampled(nodeList, pixel, camera);
-                    this->putPixel(backbuffer, pixel, static_cast<uint32_t>(pixelColor));
+                    Vector4f pixelColor = this->traceRayMultisampled(nodeList, pixel, camera);
+                    this->putPixel(backbuffer, pixel, packColor(pixelColor));
                 }
             }
         }

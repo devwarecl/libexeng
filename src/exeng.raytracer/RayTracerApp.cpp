@@ -178,8 +178,8 @@ namespace raytracer {
         // Initialize the scene.
         this->sceneLoader = std::unique_ptr<SceneLoader>(new SceneLoader(this->driver.get(), this->getRoot()->getMeshManager()));
         this->loadScene();
-        this->scene->setBackColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
-
+        this->scene->setBackColor({0.0f, 0.0f, 0.0f, 1.0f});
+        
         // Create the tracer before the render target texture AND the scene.
         this->sampler = std::unique_ptr<Sampler>(new JitteredSampler(25));
         this->sampler->generateSamples();

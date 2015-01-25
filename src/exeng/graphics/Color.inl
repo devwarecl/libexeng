@@ -1,4 +1,5 @@
 
+/*
 #include <cstring>
 #include <iostream>
 
@@ -155,3 +156,4 @@ inline void Color::set(float red, float green, float blue, float alpha) {
     this->alpha = alpha;
 }
 }}
+*/

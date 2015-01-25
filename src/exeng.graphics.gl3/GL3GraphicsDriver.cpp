@@ -215,7 +215,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         return this->initialized;
     }
 
-    void GL3GraphicsDriver::beginFrame(const Color &color, ClearFlags::Flags flags) {
+    void GL3GraphicsDriver::beginFrame(const Vector4f &color, ClearFlags::Flags flags) {
 #if defined(EXENG_DEBUG)
         if (this->renderingFrame == true) {
             std::string msg;
@@ -241,7 +241,7 @@ namespace exeng { namespace graphics { namespace gl3 {
             throw std::invalid_argument(msg);
         }
 #endif  
-        ::glClearColor(color.red, color.green, color.blue, color.alpha);
+        ::glClearColor(color.x, color.y, color.z, color.w);
         ::glClear(clearFlags);
         
         this->renderingFrame = true;

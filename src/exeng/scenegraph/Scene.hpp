@@ -55,12 +55,12 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Sets the scene background color.
          */
-        void setBackColor(const exeng::graphics::Color &color);
+        void setBackColor(const Vector4f &color);
         
         /**
          * @brief Gets the scene background color.
          */
-        exeng::graphics::Color getBackColor() const;
+        Vector4f getBackColor() const;
 
         const exeng::graphics::Material* getMaterial(const int index) const;
 

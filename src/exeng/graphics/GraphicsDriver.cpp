@@ -13,10 +13,3 @@
 
 
 #include <exeng/graphics/GraphicsDriver.hpp>
-
-namespace exeng {
-namespace graphics {
-GraphicsDriver::~GraphicsDriver() {
-}
-}
-}

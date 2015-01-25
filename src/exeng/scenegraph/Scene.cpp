@@ -28,7 +28,7 @@ namespace exeng { namespace scenegraph {
     using namespace exeng::scenegraph;
 
     struct Scene::Private {
-        Color backColor;
+        Vector4f backColor;
         
         std::list<SceneNode*> cameraNodes;
         std::list<SceneNode*> lightNodes;
@@ -57,12 +57,12 @@ namespace exeng { namespace scenegraph {
         return this->impl->rootNode.get();
     }
     
-    void Scene::setBackColor(const Color &color){
+    void Scene::setBackColor(const Vector4f &color){
         assert(this->impl != nullptr);
         this->impl->backColor = color;
     }
 
-    Color Scene::getBackColor() const{
+    Vector4f Scene::getBackColor() const{
         assert(this->impl != nullptr);
         return this->impl->backColor;
     }
