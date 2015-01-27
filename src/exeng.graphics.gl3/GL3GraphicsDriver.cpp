@@ -542,7 +542,19 @@ namespace exeng { namespace graphics { namespace gl3 {
         auto shaderProgram = std::unique_ptr<ShaderProgram>(new GL3ShaderProgram());
         return shaderProgram;
     }
-
+    
+    typedef void (CODEGEN_FUNCPTR *__glUniformfv)(GLint, GLsizei, const GLfloat *);
+    
+    inline __glUniformfv getUniformFunction(int dimension) 
+    {
+        switch (dimension) {
+            case 1: return glUniform1fv;
+            case 2: return glUniform2fv;
+            case 3: return glUniform3fv;
+            case 4: return glUniform4fv;
+        }
+    }
+    
     void GL3GraphicsDriver::preRenderMaterial(const Material *material) {
         assert(material != nullptr);
         
@@ -578,32 +590,28 @@ namespace exeng { namespace graphics { namespace gl3 {
         ::glUseProgram(programId);
         
         // Set material attributes
-        TypeInfo info;
-        std::string name;
         GLint uniformLocation = 0;
         
-        for(int i=0; i<material->getPropertyNameCount(); ++i ) {
-            info = material->getPropertyType(i);
-            name = material->getPropertyName(i);
+        const MaterialFormat *materialFormat = material->getFormat();
+        
+        for(int i=0; i<materialFormat->attribs.size(); ++i) {
+            const MaterialAttrib &attrib = materialFormat->attribs[i];
             
-            uniformLocation = ::glGetUniformLocation(programId, name.c_str());
+            uniformLocation = ::glGetUniformLocation(programId, attrib.name.c_str());
             
-            if (uniformLocation > -1) {
-                if (info == TypeId<float>()) {
-                    ::glUniform1f( uniformLocation, material->getPropertyf( name ) );
-                } else if (info == TypeId<Vector2f>()) {
-                    const Vector2f value = material->getProperty2f( name );
-                    ::glUniform2f( uniformLocation, value.x, value.y);
-                } else if (info == TypeId<Vector3f>()) {
-                    const Vector3f value = material->getProperty3f( name );
-                    ::glUniform3f( uniformLocation, value.x, value.y, value.z );
-                } else if (info == TypeId<Vector4f>() ) {
-                    const Vector4f value = material->getProperty4f(name);
-                    ::glUniform4f( uniformLocation, value.x, value.y, value.z, value.w );
-                } else {
-                    // TODO: Throw exception for unsupported type.
-                }
+            if (uniformLocation <= -1) {
+                continue;
             }
+            
+            if (attrib.dataType != DataType::Float32) {
+                continue;
+            }
+            
+            Vector4f value = material->getAttribute<Vector4f>();
+            
+            __glUniformfv glUniformfv = getUniformFunction(attrib.dimension);
+            
+            glUniformfv(uniformLocation, 1, &value);
         }
         
         GL3_CHECK();

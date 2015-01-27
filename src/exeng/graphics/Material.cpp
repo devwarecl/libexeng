@@ -16,14 +16,14 @@
 #include <boost/lexical_cast.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/io/Stream.hpp>
+#include <exeng/HeapBuffer.hpp>
 
 using namespace exeng;
 
 namespace exeng { namespace graphics {
 
 	struct MaterialLayer::Private {
-		Texture* texture;
-		Private() : texture(nullptr) {}
+		Texture* texture = nullptr;
 	};
     
 	MaterialLayer::MaterialLayer() : impl(nullptr) {
@@ -61,6 +61,7 @@ namespace exeng { namespace graphics {
 
 	static const int LayerCount = 4;
 
+    /*
 	// Holds the raw value for a property
 	struct PropertyValue {    
 		// Big enough to hold a four dimensional vector of doubles
@@ -113,121 +114,71 @@ namespace exeng { namespace graphics {
 
 	typedef std::map<std::string, PropertyValue> PropertyMap;
 	typedef PropertyMap::iterator PropertyMapIt;
-
-	struct Material::Private {
+    */
+    
+	struct Material::Private 
+	{
 		std::string name;
-		PropertyMap properties;
-		MaterialLayer layers[LayerCount];
+        const MaterialFormat *format = nullptr;
 		const ShaderProgram *shaderProgram = nullptr;
-		
-		inline PropertyMap::const_iterator getPosition(int index) const {
-			auto it = this->properties.end();
-			int i = 0;
-            
-			for(it=this->properties.begin(); it!=this->properties.end(); ++it ) {
-				if (index == i) {
-					break;
-				}
-				++i;
-			}
-        
-			return it;
-		}
-
-		inline bool existProperty(const std::string &propertyName) const {
-			auto propertyIterator = this->properties.find(propertyName);
-
-			bool result = propertyIterator!=this->properties.end();
-			return result;
-		}
+        MaterialLayer layers[LayerCount];
+        HeapBuffer buffer;
 	};
+    
+	Material::Material(const MaterialFormat *format) 
+    {
+        this->impl = new Material::Private();
+        this->impl->format = format;
+        this->impl->buffer.allocate(this->impl->format->getSize());
+    }
 
-	Material::Material() : impl(new Material::Private()) {
-	}
-
-	Material::Material(const std::string &name) : impl(new Material::Private()) {
+	Material::Material(const MaterialFormat *format, const std::string &name)
+    {
+        this->impl = new Material::Private();
+        this->impl->format = format;
+        this->impl->buffer.allocate(this->impl->format->getSize());
         this->setName(name);
     }
 	
-	Material::~Material() {
+	Material::~Material() 
+    {
 		boost::checked_delete(this->impl);
 	}
-
-	void Material::setProperty(const std::string &name, float value) {
-		assert( this->impl != nullptr );
-		this->impl->properties[name] = makePropertyValue(value);
-	}
-
-	void Material::setProperty(const std::string &name, const Vector2f &value) {
-		assert( this->impl != nullptr );
-		this->impl->properties[name] = makePropertyValue(value);
-	}
-
-	void Material::setProperty(const std::string &name, const Vector3f &value) {
-		assert( this->impl != nullptr );
-		this->impl->properties[name] = makePropertyValue(value);
-	}
-
-	void Material::setProperty(const std::string &name, const Vector4f &value) {
-		assert( this->impl != nullptr );
-		this->impl->properties[name] = makePropertyValue(value);
-	}
-
-	float Material::getPropertyf(const std::string &name) const {
-		assert(this->impl != nullptr);
-
-#if defined(EXENG_DEBUG)
-		if (!this->impl->existProperty(name)) {
-			throw std::runtime_error("Material::getPropertyf: The property '" + name + "' doesn't exist.");
-		}
-#endif
-		return this->impl->properties[name].getValue<float>();
-	}
-
-	Vector2f Material::getProperty2f(const std::string &name) const {
-		assert( this->impl != nullptr );
-
-#if defined(EXENG_DEBUG)
-		if (!this->impl->existProperty(name)) {
-			throw std::runtime_error("Material::getProperty2f: The property '" + name + "' doesn't exist.");
-		}
-#endif
-		return this->impl->properties[name].getValue<Vector2f>();
-	}
-
-	Vector3f Material::getProperty3f(const std::string &name) const {
-		assert( this->impl != nullptr );
-
-#if defined(EXENG_DEBUG)
-		if (!this->impl->existProperty(name)) {
-			throw std::runtime_error("Material::getProperty3f: The property '" + name + "' doesn't exist.");
-		}
-#endif
-		return this->impl->properties[name].getValue<Vector3f>();
-	}
-
-	Vector4f Material::getProperty4f(const std::string &name) const {
-		assert( this->impl != nullptr );
-
-#if defined(EXENG_DEBUG)
-		if (!this->impl->existProperty(name)) {
-			throw std::runtime_error("Material::getProperty4f: The property '" + name + "' doesn't exist.");
-		}
-#endif
-		return this->impl->properties[name].getValue<Vector4f>();
-	}
-
-	std::string Material::getName() const {
+	
+	void Material::setAttribute(const int index, const void* data, const int size)
+    {
+        assert(this->impl);
+        
+        int offset = this->getFormat()->getOffset(index);
+        std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer.getDataPtr();
+        
+        std::memcpy(materialData + offset, data, this->getFormat()->getAttrib(index)->getSize());
+    }
+        
+    void Material::getAttribute(const int index, void* data, const int size) const 
+    {
+        assert(this->impl);
+        
+        int offset = this->getFormat()->getOffset(index);
+        std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer.getDataPtr();
+        
+        std::memcpy(data, materialData + offset, this->getFormat()->getAttrib(index)->getSize());
+    }
+	
+	std::string Material::getName() const 
+	{
 		assert(this->impl != nullptr);
 		return this->impl->name;
 	}
 
-	void Material::setName(const std::string& name) {
+	void Material::setName(const std::string& name) 
+    {
 		assert(this->impl != nullptr);
 		this->impl->name = name;
 	}
     
-	MaterialLayer* Material::getLayer(int index) {
+	MaterialLayer* Material::getLayer(int index) 
+    {
 		assert(this->impl != nullptr);
 
 	#ifdef EXENG_DEBUG
@@ -239,7 +190,8 @@ namespace exeng { namespace graphics {
 		return &this->impl->layers[index];
 	}
 	
-	const MaterialLayer* Material::getLayer(int index) const {
+	const MaterialLayer* Material::getLayer(int index) const 
+	{
 		assert(this->impl != nullptr);
 
 	#ifdef EXENG_DEBUG
@@ -251,29 +203,34 @@ namespace exeng { namespace graphics {
 		return &this->impl->layers[index];
 	}
 
-	TypeInfo Material::getTypeInfo() const {
+	TypeInfo Material::getTypeInfo() const 
+	{
 		assert(this->impl != nullptr);
     
 		return TypeInfo(typeid(Material));
 	}
 
-	const int Material::getLayerCount() {
+	const int Material::getLayerCount() 
+    {
 		return LayerCount;
 	}
 
-	void Material::setShaderProgram(const ShaderProgram *shader) {
+	void Material::setShaderProgram(const ShaderProgram *shader) 
+    {
 		assert(this->impl != nullptr);
     
 		this->impl->shaderProgram = shader;
 	}
 
-	const ShaderProgram* Material::getShaderProgram() const {
+	const ShaderProgram* Material::getShaderProgram() const 
+	{
 		assert(this->impl != nullptr);
     
 		return this->impl->shaderProgram;
 	}
 
-	bool Material::checkTextureType(const TypeInfo &textureTypeInfo) const {
+	bool Material::checkTextureType(const TypeInfo &textureTypeInfo) const 
+	{
 		assert(this->impl != nullptr);
     
 		const MaterialLayer *layer = nullptr;
@@ -290,63 +247,23 @@ namespace exeng { namespace graphics {
     
 		return true;
 	}
-
-	int Material::getPropertyNameCount() const {
-		assert(this->impl != nullptr);
-    
-		return static_cast<int>(this->impl->properties.size());
-	}
-
-	std::string Material::getPropertyName( int index ) const {
-		assert(this->impl != nullptr);
-    
-		if (index < 0 || index >= this->getPropertyNameCount()) {
-			std::string msg;
-        
-			msg += "Material::getPropertyName: ";
-			msg += "Index is at '" + boost::lexical_cast<std::string>(index) + "', ";
-			msg += "but should be in the range [0, ";
-			msg += boost::lexical_cast<std::string>(this->getPropertyNameCount() - 1);
-			msg += "].";
-        
-			throw std::runtime_error(msg);
-		}
-		
-		return this->impl->getPosition( index )->first;
-	}
-
-	TypeInfo Material::getPropertyType(int index) const {
-		assert(this->impl != nullptr);
-		return this->impl->getPosition(index)->second.typeInfo;
-	}
-
-	void Material::removeProperty(const std::string &name) {
-		assert(this->impl != nullptr);
-    
-		auto &properties = this->impl->properties;
-    
-		auto it = properties.find(name);
-		if (it == properties.end()) {
-			std::string msg;
-        
-			msg += "Material::removeProperty: ";
-			msg += "The property named '" + name + " doesn't not exist.";
-        
-			throw std::runtime_error(msg);
-		}
-	}
 	
-	bool Material::isSerializable() const {
-        return true;
+	const MaterialFormat* Material::getFormat() const
+	{
+        return this->impl->format;
+    }
+	
+	bool Material::isSerializable() const 
+	{
+        return false;
     }
     
-    void Material::serialize(exeng::io::Stream *out) const {
-        // chunk based serialization
+    void Material::serialize(exeng::io::Stream *out) const {}
+    
+    bool Material::isDeserializable() const 
+    {
+        return false;
     }
     
-    bool Material::isDeserializable() const {
-        return true;
-    }
-    
-    void Material::deserialize(const exeng::io::Stream *inStream) {}
+    void Material::deserialize(const exeng::io::Stream *inStream)  {}
 }}

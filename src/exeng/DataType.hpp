@@ -20,10 +20,10 @@
 #include <iostream>
 #include <cstdint>
 
-#define EXENG_DATA_TYPE_TRAITS(KeyEnum, BasicType)  \
-    template<> struct DataTypeTraits<BasicType> {   \
+#define EXENG_DATA_TYPE_TRAITS(DataTypeEnum, BasicType)  \
+    template<> struct DataTypeTraits<DataTypeEnum> {   \
         typedef BasicType Type;                     \
-        static const int Enum=static_cast<int>(KeyEnum);	\
+        static const int Enum = static_cast<int>(KeyEnum);	\
     }
 
 namespace exeng {
@@ -51,8 +51,6 @@ namespace exeng {
 		static int getSize(DataType::Enum dataType);
     };
     
-	// template<typename Type> struct DataTypeTraits;
-
 	/* Implementation */
 
 	inline bool DataType::isSigned(DataType::Enum dt) 
@@ -101,16 +99,19 @@ namespace exeng {
 				return -1;
 		}
 	}
-
-	/*
-    EXENG_DATA_TYPE_TRAITS(DataType::UInt8,  std::uint8_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::UInt16, std::uint16_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::UInt32, std::uint32_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::Int8,  std::int8_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::Int16, std::int16_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::Int32, std::int32_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::Float32, float);
-	*/
+    
+    /*
+    template<int DataTypeEnum> struct DataTypeTraits;
+    
+    EXENG_DATA_TYPE_TRAITS(DataType::UInt8,     std::uint8_t);
+    EXENG_DATA_TYPE_TRAITS(DataType::UInt16,    std::uint16_t);
+    EXENG_DATA_TYPE_TRAITS(DataType::UInt32,    std::uint32_t);
+    EXENG_DATA_TYPE_TRAITS(DataType::Int8,      std::int8_t);
+    EXENG_DATA_TYPE_TRAITS(DataType::Int16,     std::int16_t);
+    EXENG_DATA_TYPE_TRAITS(DataType::Int32,     std::int32_t);
+    EXENG_DATA_TYPE_TRAITS(DataType::Float32,   float);
+    */
 }
+
 
 #endif

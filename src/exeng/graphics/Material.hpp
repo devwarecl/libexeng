@@ -70,10 +70,22 @@ namespace exeng { namespace graphics {
             int size = dimension * DataType::getSize(this->dataType);
             return size + size%alignment;
         }
+        
+        MaterialAttrib() {}
+        
+        MaterialAttrib (
+            std::string name_, 
+            DataType::Enum dataType_ = DataType::Float32, 
+            int dimension_ = 4, 
+            int alignment_ = 1) : name(name_), dataType(dataType_), dimension(dimension_), alignment(alignment_)
+        {}
     };
     
-    struct MaterialFormat 
-    {
+    class MaterialFormat {
+    public:
+        inline MaterialFormat() {}
+        inline MaterialFormat(const std::vector<MaterialAttrib> &attribs_) : attribs(attribs_) {}
+        
         inline int getSize() const
         {
             int size = 0;
@@ -96,7 +108,18 @@ namespace exeng { namespace graphics {
             return offset;
         }
         
-        std::vector<MaterialAttrib> attribs;        
+        inline int getAttribCount() const 
+        {
+            return this->attribs.size();
+        }
+        
+        inline const MaterialAttrib* getAttrib(const int index) const 
+        {
+            return &this->attribs[index];
+        }
+        
+    private:
+        std::vector<MaterialAttrib> attribs;
     };
     
     /**
@@ -105,19 +128,28 @@ namespace exeng { namespace graphics {
      */
     class EXENGAPI Material : public Object {
     public:
-        Material();
-        Material(const std::string &name);
+        Material(const MaterialFormat *format);
+        Material(const MaterialFormat *format, const std::string &name);
+        
         virtual ~Material();
         
-        void setProperty(const std::string &name, float value);
-        void setProperty(const std::string &name, const Vector2f &value);
-        void setProperty(const std::string &name, const Vector3f &value);
-        void setProperty(const std::string &name, const Vector4f &value);
+        const MaterialFormat* getFormat() const;
         
-        float getPropertyf(const std::string &name) const;
-        Vector2f getProperty2f(const std::string &name) const;
-        Vector3f getProperty3f(const std::string &name) const;
-        Vector4f getProperty4f(const std::string &name) const;
+        template<typename ValueType>
+        void setAttribute(const int index, const ValueType &value) 
+        {
+            this->setAttribute(index, &value, sizeof(value));
+        }
+        
+        template<typename ValueType>
+        ValueType getAttribute(const int index) const
+        {
+            ValueType value;
+            
+            this->getAttribute(index, &value, sizeof(value));
+            
+            return value;
+        }
         
         void setShaderProgram(const ShaderProgram *shader);
         
@@ -133,10 +165,9 @@ namespace exeng { namespace graphics {
         
         virtual TypeInfo getTypeInfo() const;
         
-        int getPropertyNameCount() const;
-        std::string getPropertyName(int index) const;
-        TypeInfo getPropertyType(int index) const;
-        void removeProperty(const std::string &name);
+        void setAttribute(const int index, const void* data, const int size);
+        
+        void getAttribute(const int index, void* data, const int size) const;
         
     public:
         static const int getLayerCount();
