@@ -15,9 +15,9 @@
 #define __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
 
 #include <exeng/graphics/GraphicsDriver.hpp>
-
+#include <exeng/HeapBuffer.hpp>
 #include <list>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace exeng { namespace graphics {
     /**
@@ -42,8 +42,54 @@ namespace exeng { namespace graphics {
         Matrix4f transforms[3];
         std::string transformNames[3];
     };
-}}
 
-#include "GraphicsDriverBase.inl"
+
+	inline GraphicsDriverBase::GraphicsDriverBase() {
+        this->viewport.set(0.0f);
+        this->material = nullptr;
+    }
+
+    inline GraphicsDriverBase::~GraphicsDriverBase() {}
+    
+    inline Matrix4f GraphicsDriverBase::getTransform(Transform::Enum transform) {
+        return this->transforms[static_cast<const int>(transform)];
+    }
+
+    inline const Material* GraphicsDriverBase::getMaterial() const {
+        return this->material;
+    }
+
+    inline Rectf GraphicsDriverBase::getViewport() const {
+        return this->viewport;
+    }
+
+    inline std::unique_ptr<Buffer> GraphicsDriverBase::createVertexBuffer(const std::int32_t size, const void* data)  {
+        auto buffer = std::unique_ptr<Buffer>(new HeapBuffer(size));
+
+        if (data) {
+            buffer->setData(data, size);
+        }
+
+        return buffer;
+    }
+
+    inline std::unique_ptr<Buffer> GraphicsDriverBase::createIndexBuffer(const std::int32_t size, const void* data) {
+        auto buffer = std::unique_ptr<Buffer>(new HeapBuffer(size));
+
+        if (data) {
+            buffer->setData(data, size);
+        }
+
+        return buffer;
+    }
+
+    inline void GraphicsDriverBase::setTransformName(Transform::Enum transform, const std::string &name) {
+        this->transformNames[static_cast<int>(transform)] = name;
+    }
+
+    inline std::string GraphicsDriverBase::getTransformName(Transform::Enum transform) const {
+        return this->transformNames[static_cast<int>(transform)];
+    }
+}}
 
 #endif  // __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__

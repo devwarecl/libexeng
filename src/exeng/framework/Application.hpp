@@ -56,7 +56,7 @@ namespace exeng { namespace framework {
         virtual int run(int argc, char **argv);
         
     private:
-        Root *root;
+        Root *root = nullptr;
         
     private:
         static Application *instance;

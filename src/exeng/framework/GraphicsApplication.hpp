@@ -9,6 +9,7 @@
 #define __EXENG_FRAMEWORK_GRAPHICSAPPLICATION_HPP__
 
 #include <exeng/framework/Application.hpp>
+#include <exeng/Timer.hpp>
 
 namespace exeng { namespace framework {
     
@@ -46,9 +47,64 @@ namespace exeng { namespace framework {
     private:
         Root *root;
     };
+
+
+	    inline GraphicsApplication::GraphicsApplication() : root(new Root()) {
+    }
+        
+    inline GraphicsApplication::~GraphicsApplication() {
+        delete this->root;
+    }
+    
+    inline int GraphicsApplication::run(int argc, char **argv) {
+        struct ApplicationGuard {
+            ApplicationGuard (GraphicsApplication* app_, int argc, char **argv) : app(app_) {
+                this->app->initialize(argc, argv);
+            }
+            
+            ~ApplicationGuard (){ this->app->terminate(); }
+            
+            GraphicsApplication *app;
+        };
+        
+        uint32_t lastTime = Timer::getTime();
+        uint32_t frameTimeMs = 0;
+        
+        ApplicationGuard appGuard(this, argc, argv);
+        
+        while (this->getStatus() == ApplicationStatus::Running) {
+            frameTimeMs = Timer::getTime() - lastTime;
+            lastTime = Timer::getTime();
+            
+            this->pollEvents();
+            this->update(frameTimeMs / 1000.0);
+            this->render();
+        }
+        
+        return this->getExitCode();
+    }
+    
+    inline void GraphicsApplication::initialize(int argc, char **argv) {}
+    inline void GraphicsApplication::terminate() {}
+    inline void GraphicsApplication::pollEvents() {}
+    inline void GraphicsApplication::update(double frameTime) {}
+    inline void GraphicsApplication::render() {}
+    
+    inline ApplicationStatus::Enum GraphicsApplication::getStatus() const {
+        return ApplicationStatus::Terminated;
+    }
+    
+    inline int GraphicsApplication::getExitCode() const {
+        return 0;
+    }
+    
+    inline Root* GraphicsApplication::getRoot() {
+        return this->root;
+    }
+
+    inline const Root* GraphicsApplication::getRoot() const {
+        return this->root;
+    }
 }}
-
-
-#include <exeng/framework/GraphicsApplication.inl>
 
 #endif // __EXENG_FRAMEWORK_GRAPHICSAPPLICATION_HPP__

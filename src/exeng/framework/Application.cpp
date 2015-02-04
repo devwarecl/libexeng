@@ -19,7 +19,6 @@ namespace exeng { namespace framework {
     Application* Application::instance = nullptr;
     
     Application::Application() : root(nullptr) {
-        
         if (Application::instance) {
             throw std::logic_error("Application::Application: Another application instance is still running. Concurrent application executions are not yet supported.");
         }
@@ -46,18 +45,9 @@ namespace exeng { namespace framework {
     
     int Application::execute(Application *app, int argc, char** argv) {
         if (!app) {
-            throw std::logic_error("Application::execute: The application cannot be 'nullptr'.");
+            throw std::logic_error("Application::execute: The application object can't be 'nullptr'.");
         }
 
         return app->run(argc, argv);
-        /*
-        try {
-            
-        } catch(const std::exception &exp) {
-            std::cout << "Unexcepted exception thrown:" << std::endl ;
-            std::cout << "    " << exp.what() << std::endl;
-            return -1;
-        }
-        */
     }
 }}

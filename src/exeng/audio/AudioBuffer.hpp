@@ -16,18 +16,15 @@
 
 #include <exeng/Object.hpp>
 
-namespace exeng {
-namespace audio {
+namespace exeng { namespace audio {
 
-	struct AudioBufferFormat {
-	};
+	struct AudioBufferFormat {};
 
 	class EXENGAPI Buffer : public Object {
 	public:
-		virtual ~Buffer();
+		virtual ~Buffer() {};
 		virtual AudioBufferFormat getFormat() const = 0;
 	};
-}
-}
+}}
 
 #endif	//__EXENG_AUDIO_BUFFER_HPP__
