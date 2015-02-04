@@ -21,10 +21,10 @@ namespace raytracer {
     }
     
     // For now, just create a simple scene, boxed scene.
-    std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename) 
+    std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename, const MaterialFormat &materialFormat) 
 	{
         // empty object
-        auto scene = std::unique_ptr<Scene>(new Scene());;
+        auto scene = std::unique_ptr<Scene>(new Scene(materialFormat));
 
 		this->addBoxNode ( 
 			scene.get(), "boxNode1", 
@@ -62,7 +62,8 @@ namespace raytracer {
 	{
 		// box material
         Material *boxMaterial = scene->createMaterial(materialName);
-        boxMaterial->setProperty("diffuse", materialColor);
+
+		boxMaterial->setAttribute<Vector4f>("diffuse", materialColor);
 
         // box mesh
         // Mesh *boxMesh = this->meshManager->getMesh("/cube", this->graphicsDriver);

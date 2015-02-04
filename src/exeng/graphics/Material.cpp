@@ -123,13 +123,51 @@ namespace exeng { namespace graphics {
 		const ShaderProgram *shaderProgram = nullptr;
         MaterialLayer layers[LayerCount];
         HeapBuffer buffer;
+
+		template<typename Type>
+		void fillBuffer(void* bufferData, int dimension) {
+			Type* data = (Type*)bufferData;
+
+			for (int i=0; i<dimension; i++) {
+				data[i] = Type(0);
+			}
+		}
+
+		void fillBuffer(std::uint8_t *bufferData, DataType::Enum dataType, int dimension) 
+		{
+			if (dataType == DataType::Float32) {
+				fillBuffer<float>(bufferData, dimension);
+			} else if (dataType == DataType::Int32) {
+				fillBuffer<std::int32_t>(bufferData, dimension);
+			} else {
+				throw std::runtime_error("Material::fillBufferWithZero: 32-bit floating-point and integer");
+			}
+		}
+
+		/**
+		 * @brief Fill the internal data of the material with zero's
+		 */
+		void fill() 
+		{
+			std::uint8_t *bufferData = (std::uint8_t*) this->buffer.getDataPtr();
+
+			for (int i=0; i<this->format->getAttribCount(); i++) {
+				const MaterialAttrib *attrib = this->format->getAttrib(i);
+				const int offset = this->format->getOffset(i);
+
+				this->fillBuffer(&bufferData[offset], attrib->dataType, attrib->dimension);
+			}
+		}
 	};
     
+
+
 	Material::Material(const MaterialFormat *format) 
     {
         this->impl = new Material::Private();
         this->impl->format = format;
         this->impl->buffer.allocate(this->impl->format->getSize());
+		this->impl->fill();
     }
 
 	Material::Material(const MaterialFormat *format, const std::string &name)
@@ -137,6 +175,8 @@ namespace exeng { namespace graphics {
         this->impl = new Material::Private();
         this->impl->format = format;
         this->impl->buffer.allocate(this->impl->format->getSize());
+		this->impl->fill();
+
         this->setName(name);
     }
 	

@@ -103,9 +103,7 @@ namespace exeng { namespace graphics { namespace gl3 {
 
     int GL3GraphicsDriver::initializedCount = 0;
 
-    GL3GraphicsDriver::GL3GraphicsDriver() {
-        this->defaultMaterial = std::unique_ptr<Material>(new Material());
-    }
+    GL3GraphicsDriver::GL3GraphicsDriver() {}
 
     GL3GraphicsDriver::~GL3GraphicsDriver() {
         this->terminate();
@@ -179,9 +177,6 @@ namespace exeng { namespace graphics { namespace gl3 {
         shaderProgram->addShader(std::move(vertexShader));
         shaderProgram->addShader(std::move(fragmentShader));
         shaderProgram->link();
-        
-        // Default material
-        this->defaultMaterial->setShaderProgram(shaderProgram.get());
         
         // Hold all the default objects
         this->defaultProgram = std::move(shaderProgram);
@@ -379,9 +374,13 @@ namespace exeng { namespace graphics { namespace gl3 {
 
     void  GL3GraphicsDriver::setMaterial(const Material* material) {
 #if defined (EXENG_DEBUG)
+		// Check for a default material first
+		if (!this->defaultMaterial) {
+			throw std::runtime_error("GL3GraphicsDriver::preRenderMaterial: No default material available.");
+		}
+
         // Check texture type info
-        
-        if (material->checkTextureType(TypeId<GL3Texture>()) == false) {
+        if (material && material->checkTextureType(TypeId<GL3Texture>()) == false) {
             throw std::runtime_error("GL3GraphicsDriver::setMaterial: The supplied texture class implementation must be GL3Texture.");
         }
             
@@ -402,7 +401,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         // }
         
         // Check for shader program info and status
-        if ( material->getShaderProgram() != nullptr ) {
+        if (material && material->getShaderProgram() != nullptr ) {
             if ( material->getShaderProgram()->getTypeInfo() != TypeId<GL3ShaderProgram>() ) {
                 std::string msg;
                 
@@ -427,7 +426,7 @@ namespace exeng { namespace graphics { namespace gl3 {
         }
         
         if (material == nullptr) {
-            material = this->defaultMaterial.get();
+            material = this->defaultMaterial;
         }
         
         this->preRenderMaterial(material);
@@ -552,10 +551,12 @@ namespace exeng { namespace graphics { namespace gl3 {
             case 2: return glUniform2fv;
             case 3: return glUniform3fv;
             case 4: return glUniform4fv;
+			default: return nullptr;
         }
     }
     
-    void GL3GraphicsDriver::preRenderMaterial(const Material *material) {
+    void GL3GraphicsDriver::preRenderMaterial(const Material *material) 
+	{
         assert(material != nullptr);
         
         const GL3Texture *texture = nullptr;
@@ -594,8 +595,8 @@ namespace exeng { namespace graphics { namespace gl3 {
         
         const MaterialFormat *materialFormat = material->getFormat();
         
-        for(int i=0; i<materialFormat->attribs.size(); ++i) {
-            const MaterialAttrib &attrib = materialFormat->attribs[i];
+        for(int i=0; i<materialFormat->getAttribCount(); ++i) {
+            const MaterialAttrib &attrib = *materialFormat->getAttrib(i);
             
             uniformLocation = ::glGetUniformLocation(programId, attrib.name.c_str());
             
@@ -607,11 +608,12 @@ namespace exeng { namespace graphics { namespace gl3 {
                 continue;
             }
             
-            Vector4f value = material->getAttribute<Vector4f>();
+            Vector4f value = material->getAttribute<Vector4f>(i);
             
-            __glUniformfv glUniformfv = getUniformFunction(attrib.dimension);
-            
-            glUniformfv(uniformLocation, 1, &value);
+            // __glUniformfv glUniformfv = getUniformFunction(attrib.dimension);
+            // glUniformfv(uniformLocation, 1, value.data);
+
+			getUniformFunction(attrib.dimension)(uniformLocation, 1, value.data);
         }
         
         GL3_CHECK();
@@ -664,4 +666,9 @@ namespace exeng { namespace graphics { namespace gl3 {
 
         return meshSubset;
     }
+
+	void GL3GraphicsDriver::setDefaultMaterial(const Material *material) {
+		this->defaultMaterial = const_cast<Material*>(material);
+        this->defaultMaterial->setShaderProgram(this->defaultProgram.get());
+	}
 }}}

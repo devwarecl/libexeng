@@ -126,12 +126,14 @@ namespace exeng { namespace graphics { namespace gl3 {
         */
         void updateTransforms();
         
+		void setDefaultMaterial(const Material *material) override;
+
     private:
         std::unique_ptr<GL3Context> context;
-        std::unique_ptr<Material> defaultMaterial;
         std::unique_ptr<const ShaderProgram> defaultProgram;
         std::list<exeng::input::IEventHandler*> eventHandlers;
         
+		Material *defaultMaterial = nullptr;
         const GL3ShaderProgram *shaderProgram = nullptr;
         
         GL3Buffer *vertexBuffer = nullptr;

@@ -72,7 +72,11 @@ namespace raytracer {
         std::unique_ptr<exeng::graphics::Material> screenMaterial;
         std::unique_ptr<exeng::graphics::MeshSubset> screenMeshSubset;
 
+		std::unique_ptr<exeng::graphics::Material> defaultMaterial;
+
         std::unique_ptr<SceneLoader> sceneLoader;
+
+		exeng::graphics::MaterialFormat materialFormat;
 
         mutable uint32_t lastTime;
         FrameCounter frameCounter;

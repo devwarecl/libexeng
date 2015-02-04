@@ -42,20 +42,18 @@ namespace exeng { namespace scenegraph {
         std::list<Material*> materialList;
         
         MaterialFormat materialFormat;
-        
-        Private() 
-        {
-            std::vector<MaterialAttrib> attribs = {
-                {"Diffuse"}
-            };
-            
-            this->materialFormat = MaterialFormat(attribs);
-        }
     };
     
-    Scene::Scene() : impl(new Scene::Private()) {}
+    Scene::Scene(const exeng::graphics::MaterialFormat &materialFormat)
+	{
+		this->impl = new Scene::Private();
+		this->impl->materialFormat = materialFormat;
+	}
 
-    Scene::~Scene() {}
+    Scene::~Scene() 
+	{
+		delete this->impl;
+	}
     
     SceneNode* Scene::getRootNode() 
     {

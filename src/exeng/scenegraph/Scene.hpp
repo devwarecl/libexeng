@@ -23,7 +23,7 @@ namespace exeng { namespace scenegraph {
      */
     class EXENGAPI Scene : public Object {
     public:
-        Scene();
+        Scene(const exeng::graphics::MaterialFormat &materialFormat);
         virtual ~Scene();
         
         /**

@@ -134,6 +134,15 @@ namespace raytracer {
     }
     
     void RayTracerApp::initialize(int argc, char **argv) {
+		// Material
+		std::vector<MaterialAttrib> attribs = {
+			{"ambient", DataType::Float32, 4},
+			{"diffuse", DataType::Float32, 4},
+			{"specular", DataType::Float32, 4},
+			{"ambient", DataType::Float32, 1}
+		};
+
+		this->materialFormat = MaterialFormat(attribs);
 
 		boost::log::add_file_log (
 			boost::log::keywords::file_name="raytracer.%N.log",
@@ -197,7 +206,7 @@ namespace raytracer {
         
         this->tracer->setRenderTarget(screenTexture.get());
         
-        this->screenMaterial = std::unique_ptr<Material>(new Material());
+        this->screenMaterial = std::unique_ptr<Material>(new Material(&this->materialFormat));
         this->screenMaterial->getLayer(0)->setTexture(screenTexture.get());
         
         this->camera.setLookAt({0.0f, 0.0f, 0.0f});
@@ -209,6 +218,9 @@ namespace raytracer {
 		// auto animator = std::unique_ptr<SceneNodeAnimator>(new TranslateSceneNodeAnimator());
 
 		this->animators[this->scene->getRootNode()->getChild("boxNode3")] = std::move(animator);
+
+		this->defaultMaterial = std::unique_ptr<Material>(new Material(&this->materialFormat));
+		this->driver->setDefaultMaterial(this->defaultMaterial.get());
 
 		BOOST_LOG_TRIVIAL(trace) << "Application initialization done.";
     }
@@ -301,7 +313,7 @@ namespace raytracer {
     }
     
     void RayTracerApp::loadScene() {
-        this->scene = this->sceneLoader->loadScene("scene.xml");
+        this->scene = this->sceneLoader->loadScene("scene.xml", this->materialFormat);
     }
     
     void RayTracerApp::handleEvent(const EventData &data) {
@@ -348,12 +360,4 @@ namespace exeng { namespace main {
 
         return exitCode;
 	}
-	
-
-	/*
-	int main(int argc, char **argv) 
-	{
-        return 0;
-	}
-	*/
 }}

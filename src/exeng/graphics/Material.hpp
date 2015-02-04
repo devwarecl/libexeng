@@ -20,6 +20,10 @@
 #include <exeng/Vector.hpp>
 #include <exeng/DataType.hpp>
 
+#if defined(EXENG_DEBUG)
+#  include <sstream>
+#endif
+
 namespace exeng { namespace graphics {
 
     class EXENGAPI Texture;
@@ -115,9 +119,47 @@ namespace exeng { namespace graphics {
         
         inline const MaterialAttrib* getAttrib(const int index) const 
         {
+#if defined(EXENG_DEBUG)
+			if (index < 0 || index >= this->getAttribCount()) {
+				std::stringstream ss;
+
+				ss << "MaterialFormat::getAttrib: ";
+				ss << "Index out of bounds: " << index;
+
+				throw std::runtime_error(ss.str());
+			}
+#endif
             return &this->attribs[index];
         }
         
+		inline const int getAttribIndex(const std::string &name) const 
+		{
+			for (int i=0; i<this->getAttribCount(); ++i) {
+				if (this->getAttrib(i)->name == name) {
+					return i;
+				}
+			}
+
+			return -1;
+		}
+
+		inline const MaterialAttrib* getAttrib(const std::string &name) const 
+		{
+#if defined (EXENG_DEBUG)
+			const int index = this->getAttribIndex(name);
+
+			if (index == -1) {
+				std::stringstream ss;
+
+				ss << "MaterialFormat::getAttrib: ";
+				ss << "Unknown attribute name '" << name << "'.";
+
+				throw std::runtime_error(ss.str());
+			}
+#endif
+			return this->getAttrib(this->getAttribIndex(name));
+		}
+
     private:
         std::vector<MaterialAttrib> attribs;
     };
@@ -151,6 +193,24 @@ namespace exeng { namespace graphics {
             return value;
         }
         
+		template<typename ValueType>
+        void setAttribute(const std::string &name, const ValueType &value) 
+        {
+			const int index = this->getFormat()->getAttribIndex(name);
+            this->setAttribute(index, &value, sizeof(value));
+        }
+        
+        template<typename ValueType>
+        ValueType getAttribute(const std::string &name) const
+        {
+			const int index = this->getFormat()->getAttribIndex(name);
+
+            ValueType value;
+            this->getAttribute(index, &value, sizeof(value));
+            
+            return value;
+        }
+
         void setShaderProgram(const ShaderProgram *shader);
         
         const ShaderProgram* getShaderProgram() const;

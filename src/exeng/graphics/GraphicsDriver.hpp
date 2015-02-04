@@ -339,6 +339,8 @@ namespace exeng { namespace graphics {
          * @brief Get the name of the specified transformation matrix in shaders.
          */
         virtual std::string getTransformName(Transform::Enum transform) const = 0;
+
+		virtual void setDefaultMaterial(const Material *material) = 0;
     };
 }}
 

@@ -116,7 +116,7 @@ namespace raytracer { namespace tracers {
             if (info.intersect == true)  {
                 // Determinar el color
                 // auto vcolor = ;
-                color += info.material->getProperty4f("diffuse");
+                color += info.material->getAttribute<Vector4f>("diffuse");
             } else {
                 color += this->getScene()->getBackColor();
             }
@@ -137,7 +137,7 @@ namespace raytracer { namespace tracers {
         
         if (info.intersect == true)  {
             // Determinar el color
-            color = info.material->getProperty4f("diffuse");
+            color = info.material->getAttribute<Vector4f>("diffuse");
             
             for (int i=0; i<4; ++i) {
                 if (color[i] < 0.0f)   {color[i] = 0.0f;}
