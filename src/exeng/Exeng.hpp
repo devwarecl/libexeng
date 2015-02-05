@@ -63,6 +63,7 @@
 #include <exeng/scenegraph/Scene.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/Segment.hpp>
+#include <exeng/scenegraph/TSolidGeometry.hpp>
 
 /**
  * @brief The common namespace for the engine.

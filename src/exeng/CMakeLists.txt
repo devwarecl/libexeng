@@ -116,6 +116,8 @@ set (ScenegraphFiles
   scenegraph/Light.hpp          scenegraph/Light.cpp
   scenegraph/SceneNodeData.hpp  scenegraph/SceneNodeData.cpp 
   scenegraph/Geometry.hpp       scenegraph/Geometry.cpp
+  scenegraph/TSolidGeometry.hpp 
+  scenegraph/Segment.hpp 
   scenegraph/Box.hpp            
   scenegraph/Ray.hpp            
   scenegraph/Plane.hpp          
