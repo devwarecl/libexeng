@@ -116,25 +116,25 @@ set (ScenegraphFiles
   scenegraph/Light.hpp          scenegraph/Light.cpp
   scenegraph/SceneNodeData.hpp  scenegraph/SceneNodeData.cpp 
   scenegraph/Geometry.hpp       scenegraph/Geometry.cpp
-  scenegraph/Box.hpp            scenegraph/Box.inl
-  scenegraph/Ray.hpp            scenegraph/Ray.inl
-  scenegraph/Plane.hpp          scenegraph/Plane.inl
-  scenegraph/Intersect.hpp      scenegraph/Intersect.inl
-  scenegraph/IntersectInfo.hpp  scenegraph/IntersectInfo.inl
-  scenegraph/Sphere.hpp         scenegraph/Sphere.inl
+  scenegraph/Box.hpp            
+  scenegraph/Ray.hpp            
+  scenegraph/Plane.hpp          
+  scenegraph/Intersect.hpp      
+  scenegraph/IntersectInfo.hpp  
+  scenegraph/Sphere.hpp         
   scenegraph/Mesh.hpp           scenegraph/Mesh.cpp
   scenegraph/MeshPart.hpp       scenegraph/MeshPart.cpp
   scenegraph/MeshManager.hpp    scenegraph/MeshManager.cpp
   scenegraph/IMeshLoader.hpp    scenegraph/IMeshLoader.cpp
   scenegraph/SceneManager.hpp   scenegraph/SceneManager.cpp
   scenegraph/ISceneRenderer.hpp scenegraph/ISceneRenderer.cpp
-  scenegraph/Triangle.hpp       scenegraph/Triangle.inl
+  scenegraph/Triangle.hpp       
 )
 
 set (SystemFiles
   system/Library.hpp        system/Library.cpp 
   system/Plugin.hpp         system/Plugin.cpp 
-  system/PluginLibrary.hpp  system/PluginLibrary.inl
+  system/PluginLibrary.hpp  
   system/PluginManager.hpp  system/PluginManager.cpp 
   system/LibraryPrivate.hpp system/LibraryPrivatePosix.cpp system/LibraryPrivateWin32.cpp
 )

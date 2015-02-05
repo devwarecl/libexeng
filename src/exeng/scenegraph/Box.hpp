@@ -9,8 +9,16 @@ namespace exeng { namespace scenegraph {
     exeng::Boxf box(const OtherSolid &solid);
     
     exeng::Boxf box(const exeng::Boxf &solid);
-}}
 
-#include <exeng/scenegraph/Box.inl>
+	 template<typename OtherSolid>
+    inline exeng::Boxf box(const OtherSolid &solid) {
+        return exeng::Boxf();
+    }
+    
+    inline exeng::Boxf box(const exeng::Boxf &solid) {
+        return solid;
+    }
+
+}}
 
 #endif  

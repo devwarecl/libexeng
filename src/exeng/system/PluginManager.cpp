@@ -17,11 +17,11 @@
 #include <stdexcept>
 #include <map>
 #include <memory>
-// #include <iostream>
+
 #include <exeng/Root.hpp>
 #include <exeng/system/Library.hpp>
 #include <exeng/system/Plugin.hpp>
-#include <exeng/system/PluginLibrary.inl>
+#include <exeng/system/PluginLibrary.hpp>
 
 namespace exeng { namespace system {
     /**
