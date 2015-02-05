@@ -15,12 +15,12 @@ include_directories(${Boost_INCLUDE_DIRS})
 set (BaseFiles 
   Exeng.hpp DetectEnv.hpp Config.hpp 
   Enum.hpp              Enum.cpp
-  DataType.hpp          DataType.inl
+  DataType.hpp          
   Object.hpp            Object.cpp 
   Version.hpp           Version.cpp 
   Root.hpp              Root.cpp
   TypeInfo.hpp          TypeInfo.cpp
-  TFlags.hpp            TFlags.inl
+  TFlags.hpp            
   Buffer.hpp            Buffer.cpp 
   HeapBuffer.hpp        HeapBuffer.cpp 
   Resource.hpp          Resource.cpp 
@@ -28,12 +28,7 @@ set (BaseFiles
   ISerializable.hpp     ISerializable.cpp 
   Timer.hpp				Timer_Win.cpp Timer_Unix.cpp 
 
-  Operations.hpp		Operations.inl
-  Common.hpp			Common.inl 
-  Boundary.hpp			Boundary.inl 
-  Matrix.hpp			Matrix.inl 
-  Size.hpp				Size.inl 
-  Vector.hpp			Vector.inl 
+  Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp
 )
 
 set (IoFiles 
@@ -65,7 +60,7 @@ set (GraphicsFiles
   graphics/ShaderType.hpp           
   graphics/TextureType.hpp			graphics/TextureType.cpp 
   graphics/GraphicsDriver.hpp       graphics/GraphicsDriver.cpp 
-  graphics/GraphicsDriverBase.hpp   graphics/GraphicsDriverBase.inl 
+  graphics/GraphicsDriverBase.hpp   
   graphics/GraphicsManager.hpp      graphics/GraphicsManager.cpp 
   graphics/Image.hpp                graphics/Image.cpp 
   graphics/Material.hpp             graphics/Material.cpp 
@@ -79,7 +74,6 @@ set (GraphicsFiles
   graphics/HeapIndexBuffer.hpp      graphics/HeapIndexBuffer.cpp 
   graphics/IndexBuffer.hpp          graphics/IndexBuffer.cpp
   graphics/IndexFormat.hpp          graphics/IndexFormat.cpp
-  graphics/Color.hpp                graphics/Color.inl
   graphics/Texture.hpp              graphics/Texture.cpp
   graphics/ColorFormat.hpp          graphics/ColorFormat.cpp
   graphics/IndexArray.hpp           graphics/VertexArray.hpp
@@ -90,12 +84,12 @@ set (GraphicsFiles
 )
 
 set (UiFiles
-  ui/Container.hpp                  ui/Container.cpp 
+  ui/Container.hpp				ui/Container.cpp 
   
-  ui/Control.hpp                    ui/Control.cpp 
-  ui/Window.hpp                     ui/Window.cpp
-  ui/Label.hpp                      ui/Label.cpp 
-  ui/Button.hpp                     ui/Button.cpp 
+  ui/Control.hpp                ui/Control.cpp 
+  ui/Window.hpp                 ui/Window.cpp
+  ui/Label.hpp                  ui/Label.cpp 
+  ui/Button.hpp                 ui/Button.cpp 
   
   ui/ControlPrivate.hpp         ui/ControlPrivate.cpp 
   ui/WindowPrivate.hpp          ui/WindowPrivate.cpp 

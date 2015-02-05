@@ -35,7 +35,6 @@
 #include <exeng/system/PluginManager.hpp>
 
 #include <exeng/graphics/GraphicsManager.hpp>
-#include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/Shader.hpp>
 #include <exeng/graphics/ShaderProgram.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>

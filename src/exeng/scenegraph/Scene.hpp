@@ -10,7 +10,6 @@
 
 #include <exeng/Object.hpp>
 #include <exeng/Vector.hpp>
-#include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/Material.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
