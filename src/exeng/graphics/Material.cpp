@@ -160,8 +160,6 @@ namespace exeng { namespace graphics {
 		}
 	};
     
-
-
 	Material::Material(const MaterialFormat *format) 
     {
         this->impl = new Material::Private();

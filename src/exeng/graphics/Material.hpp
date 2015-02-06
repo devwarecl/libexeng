@@ -88,24 +88,22 @@ namespace exeng { namespace graphics {
     class MaterialFormat {
     public:
         inline MaterialFormat() {}
-        inline MaterialFormat(const std::vector<MaterialAttrib> &attribs_) : attribs(attribs_) {}
+        
+        inline MaterialFormat(const std::vector<MaterialAttrib> &attribs) 
+        {
+            this->attribs = attribs;
+        }
         
         inline int getSize() const
         {
-            int size = 0;
-            
-            for (const MaterialAttrib &attrib : this->attribs) {
-                size += attrib.getSize();
-            }
-            
-            return size;
+            return this->getOffset(this->getAttribCount());
         }
         
         inline int getOffset(int attribIndex) const
         {
             int offset = 0;
             
-            for (int i=0; i<=attribIndex; i++) {
+            for (int i=0; i<attribIndex; i++) {
                 offset += this->attribs[i].getSize();
             }
             
