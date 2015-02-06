@@ -20,10 +20,10 @@
 #include <iostream>
 #include <cstdint>
 
-#define EXENG_DATA_TYPE_TRAITS(DataTypeEnum, BasicType)  \
-    template<> struct DataTypeTraits<DataTypeEnum> {   \
-        typedef BasicType Type;                     \
-        static const int Enum = static_cast<int>(KeyEnum);	\
+#define EXENG_DATA_TYPE_TRAITS(BasicType, DataTypeEnum)     \
+    template<> struct DataTypeTraits<BasicType> {           \
+        typedef BasicType Type;                             \
+        static const DataType::Enum Enum = DataTypeEnum;	\
     }
 
 namespace exeng {
@@ -49,6 +49,9 @@ namespace exeng {
 		static DataType::Kind getKind(DataType::Enum dataType);
 
 		static int getSize(DataType::Enum dataType);
+        
+        template<typename BasicType>
+        static bool isEqual(DataType::Enum dataType);
     };
     
 	/* Implementation */
@@ -100,18 +103,14 @@ namespace exeng {
 		}
 	}
     
-    /*
-    template<int DataTypeEnum> struct DataTypeTraits;
-    
-    EXENG_DATA_TYPE_TRAITS(DataType::UInt8,     std::uint8_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::UInt16,    std::uint16_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::UInt32,    std::uint32_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::Int8,      std::int8_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::Int16,     std::int16_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::Int32,     std::int32_t);
-    EXENG_DATA_TYPE_TRAITS(DataType::Float32,   float);
-    */
+    template<typename BasicType> struct DataTypeTraits;
+    EXENG_DATA_TYPE_TRAITS(std::uint8_t , DataType::UInt8);
+    EXENG_DATA_TYPE_TRAITS(std::uint16_t, DataType::UInt16);
+    EXENG_DATA_TYPE_TRAITS(std::uint32_t, DataType::UInt32);
+    EXENG_DATA_TYPE_TRAITS(std::int8_t  , DataType::Int8);
+    EXENG_DATA_TYPE_TRAITS(std::int16_t , DataType::Int16);
+    EXENG_DATA_TYPE_TRAITS(std::int32_t , DataType::Int32);
+    EXENG_DATA_TYPE_TRAITS(float        , DataType::Float32);
 }
-
 
 #endif
