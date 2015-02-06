@@ -352,10 +352,4 @@ namespace exeng { namespace graphics {
     }
 }}
 
-namespace exeng { namespace graphics {
-
-       
-    
-}}
-
 #endif
