@@ -4,3 +4,6 @@
 [submodule "plugins/libexeng.audio.al"]
 	path = plugins/libexeng.audio.al
 	url = https://github.com/soultaker/libexeng.audio.al.git
+[submodule "plugins/libexeng.graphics.d3d10"]
+	path = plugins/libexeng.graphics.d3d10
+	url = https://github.com/soultaker/libexeng.graphics.d3d10.git
