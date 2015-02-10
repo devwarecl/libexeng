@@ -214,10 +214,8 @@ namespace raytracer {
         this->camera.setUp({0.0f, 1.0f, 0.0f});
 
 		// attach a rotation animator to the central cube
-		auto animator = std::unique_ptr<SceneNodeAnimator>(new RotateSceneNodeAnimator());
-		// auto animator = std::unique_ptr<SceneNodeAnimator>(new TranslateSceneNodeAnimator());
-
-		this->animators[this->scene->getRootNode()->getChild("boxNode3")] = std::move(animator);
+		// auto animator = std::unique_ptr<SceneNodeAnimator>(new RotateSceneNodeAnimator());
+		// this->animators[this->scene->getRootNode()->getChild("boxNode3")] = std::move(animator);
 
 		this->defaultMaterial = std::unique_ptr<Material>(new Material(&this->materialFormat));
 		this->driver->setDefaultMaterial(this->defaultMaterial.get());
@@ -235,9 +233,11 @@ namespace raytracer {
     
     void RayTracerApp::update(double seconds) {
 		// Animate the scene nodes
+		/*
 		for (auto it=this->animators.begin(); it!=this->animators.end(); ++it) {
 			it->second->animateNode(float(seconds), it->first);
 		}
+		*/
 
 		// camera update
         Vector3f delta(0.0f);
@@ -313,6 +313,10 @@ namespace raytracer {
     }
     
     void RayTracerApp::loadScene() {
+		// TODO: this should be done at initialization time...
+
+		// this->getRoot()->getMeshManager()->set
+
         this->scene = this->sceneLoader->loadScene("scene.xml", this->materialFormat);
     }
     

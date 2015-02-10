@@ -38,6 +38,17 @@ namespace exeng { namespace scenegraph {
         MeshManager();
         ~MeshManager();
         
+		/**
+         * @brief Set the default location to search for mesh files when a non-full
+		 * path is given.
+         */
+		void setPath(const std::string &path);
+
+		/**
+         * @brief Get the default location for mesh files.
+         */
+		std::string getPath() const;
+
         /**
          * @brief Add a new mesh loader in the mesh manager.
          */

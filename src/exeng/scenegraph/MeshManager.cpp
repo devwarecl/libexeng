@@ -21,6 +21,7 @@
 #include <boost/range/algorithm/find_if.hpp>
 #include <boost/range/algorithm/transform.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include <exeng/Vector.hpp>
 #include <exeng/scenegraph/IMeshLoader.hpp>
@@ -96,30 +97,6 @@ namespace exeng { namespace scenegraph {
 
 		return indices;
 	}
-
-    /**
-     * @brief Simple mesh loader. 
-     */
-	/*
-    class CubeMeshLoader : public IMeshLoader {
-    public:
-        virtual ~CubeMeshLoader() {}
-        
-        virtual bool isSupported(const std::string &filename) override 
-		{
-            return filename == "/cube";
-        }
-        
-        virtual std::unique_ptr<Mesh> loadMesh(const std::string &filename, GraphicsDriver *graphicsDriver) override 
-		{
-			auto vertexBuffer = graphicsDriver->createVertexBuffer(generateBoxVertices({0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}));
-            auto indexBuffer = graphicsDriver->createIndexBuffer(generateBoxIndices());
-            auto subset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), VertexFormat::makeVertex());
-
-            return std::unique_ptr<Mesh>(new Mesh(std::move(subset)));
-        }
-    };
-	*/
 
 	class LwoMeshLoader : public IMeshLoader {
 	private:
@@ -610,9 +587,14 @@ namespace exeng { namespace scenegraph {
 }}
 
 namespace exeng { namespace scenegraph {
+
+	namespace fs = boost::filesystem;
+
     struct MeshManager::Private {
         std::list<std::unique_ptr<IMeshLoader>> loaders;
         std::map<std::string, std::unique_ptr<Mesh>> meshes;
+
+		std::string path;
     };
     
     MeshManager::MeshManager() : impl(new MeshManager::Private()) 
@@ -691,5 +673,23 @@ namespace exeng { namespace scenegraph {
 		meshes[id] = std::move(mesh);
 
 		return meshes[id].get();
+	}
+
+	void MeshManager::setPath(const std::string &path) 
+	{
+		fs::path checkPath(path);
+
+		if (!fs::exists(checkPath) || !fs::is_directory(path)) {
+			throw std::runtime_error("MeshManager::setPath: the path '" + path + "' is not a valid directory.");
+		}
+
+		assert(this->impl != nullptr);
+		this->impl->path = path;
+	}
+
+	std::string MeshManager::getPath() const
+	{
+		assert(this->impl != nullptr);
+		return this->impl->path;
 	}
 }}
