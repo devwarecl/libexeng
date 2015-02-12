@@ -4,7 +4,7 @@
 
 #include <exeng/scenegraph/Camera.hpp>
 #include <exeng/scenegraph/Scene.hpp>
-#include <exeng/scenegraph/ISceneRenderer.hpp>
+#include <exeng/scenegraph/SceneRenderer.hpp>
 
 #include <exeng.raytracer/tracers/Tracer.hpp>
 
@@ -12,7 +12,7 @@ namespace raytracer {
     /**
      * @brief Ray tracer scene renderer
      */
-    class RayTracerSceneRenderer : public exeng::scenegraph::ISceneRenderer {
+    class RayTracerSceneRenderer : public exeng::scenegraph::SceneRenderer {
     public:
         RayTracerSceneRenderer(const exeng::scenegraph::Scene *scene, raytracer::tracers::Tracer *tracer);
         

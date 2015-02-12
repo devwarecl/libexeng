@@ -160,7 +160,7 @@ set (ScenegraphFiles_cpp
     scenegraph/MeshManager.cpp
     scenegraph/IMeshLoader.cpp
     scenegraph/SceneManager.cpp
-    scenegraph/ISceneRenderer.cpp
+    scenegraph/SceneRenderer.cpp
 )
 
 set (ScenegraphFiles_hpp
@@ -183,7 +183,7 @@ set (ScenegraphFiles_hpp
     scenegraph/MeshManager.hpp    
     scenegraph/IMeshLoader.hpp    
     scenegraph/SceneManager.hpp   
-    scenegraph/ISceneRenderer.hpp 
+    scenegraph/SceneRenderer.hpp
     scenegraph/Triangle.hpp       
 )
 set (ScenegraphFiles ${ScenegraphFiles_hpp} ${ScenegraphFiles_cpp})

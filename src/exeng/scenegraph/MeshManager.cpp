@@ -31,6 +31,8 @@
 
 #include <lwobject/lwo2.h>
 
+namespace fs = boost::filesystem;
+
 namespace exeng { namespace scenegraph {
 	const float pi = exeng::Pi<float>::Value;
 	const float pi_2 = pi * 0.5f;
@@ -140,9 +142,10 @@ namespace exeng { namespace scenegraph {
 
 		virtual bool isSupported(const std::string &filename) override 
 		{
-			std::string ext = boost::filesystem::path(filename).extension().string();
-
-			return ext == ".lwo";
+            fs::path path = fs::path(filename);
+			std::string ext = path.extension().string();
+            
+            return ext == ".lwo";
         }
 
 		virtual std::unique_ptr<Mesh> loadMesh(const std::string &filename, GraphicsDriver *graphicsDriver) override 
@@ -588,8 +591,6 @@ namespace exeng { namespace scenegraph {
 
 namespace exeng { namespace scenegraph {
 
-	namespace fs = boost::filesystem;
-
     struct MeshManager::Private {
         std::list<std::unique_ptr<IMeshLoader>> loaders;
         std::map<std::string, std::unique_ptr<Mesh>> meshes;
@@ -634,6 +635,11 @@ namespace exeng { namespace scenegraph {
             return meshIterator->second.get();
         }
 
+        fs::path path = fs::path(filename);
+        if (!fs::is_regular_file(path) || !fs::exists(path)) {
+            throw std::runtime_error("MeshManager::getMesh: Invalid file:'" + path.string() + "'");
+        }
+        
         // search for a suitable loader
         for (std::unique_ptr<IMeshLoader> &loader : this->impl->loaders) {
             if (loader->isSupported(filename) == true) {

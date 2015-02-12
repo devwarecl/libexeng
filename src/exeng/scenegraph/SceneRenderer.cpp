@@ -12,9 +12,8 @@
  */
 
 
-#include <exeng/scenegraph/ISceneRenderer.hpp>
+#include "SceneRenderer.hpp"
 
 namespace exeng { namespace scenegraph {
-    ISceneRenderer::~ISceneRenderer() {
-    }
+    
 }}
