@@ -636,18 +636,23 @@ namespace exeng { namespace scenegraph {
         }
 
         fs::path path = fs::path(filename);
-        if (!fs::is_regular_file(path) || !fs::exists(path)) {
+
+		if (!path.has_parent_path()) {
+			path = fs::path(this->getPath() + "/" + filename);
+		}
+
+		if (!fs::is_regular_file(path) || !fs::exists(path)) {
             throw std::runtime_error("MeshManager::getMesh: Invalid file:'" + path.string() + "'");
         }
-        
+
         // search for a suitable loader
         for (std::unique_ptr<IMeshLoader> &loader : this->impl->loaders) {
-            if (loader->isSupported(filename) == true) {
-                auto meshPtr = loader->loadMesh(filename, graphicsDriver);
+            if (loader->isSupported(path.string()) == true) {
+                auto meshPtr = loader->loadMesh(path.string(), graphicsDriver);
 
                 mesh = meshPtr.get();
 
-                this->impl->meshes[filename] = std::move(meshPtr);
+                this->impl->meshes[path.string()] = std::move(meshPtr);
                 break;
             }
         }
@@ -683,13 +688,14 @@ namespace exeng { namespace scenegraph {
 
 	void MeshManager::setPath(const std::string &path) 
 	{
+		assert(this->impl != nullptr);
+
 		fs::path checkPath(path);
 
 		if (!fs::exists(checkPath) || !fs::is_directory(path)) {
 			throw std::runtime_error("MeshManager::setPath: the path '" + path + "' is not a valid directory.");
 		}
 
-		assert(this->impl != nullptr);
 		this->impl->path = path;
 	}
 

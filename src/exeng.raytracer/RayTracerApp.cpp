@@ -315,7 +315,7 @@ namespace raytracer {
     void RayTracerApp::loadScene() {
 		// TODO: this should be done at initialization time...
 
-		// this->getRoot()->getMeshManager()->set
+		this->getRoot()->getMeshManager()->setPath("C:\\Users\\fapablaza\\Downloads\\Easel");
 
         this->scene = this->sceneLoader->loadScene("scene.xml", this->materialFormat);
     }
