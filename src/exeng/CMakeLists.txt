@@ -238,8 +238,6 @@ source_group(system	    FILES ${SystemFiles})
 
 if(UNIX AND NOT APPLE)
 	SET (UNIX_libs dl rt)
-# ELSE()
-# 	SET (UNIX_libs )
 endif()
 
 target_link_libraries(exeng ${UNIX_libs} lwobject ${Boost_LIBRARIES})
