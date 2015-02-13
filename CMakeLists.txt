@@ -16,15 +16,16 @@ endif()
 
 add_subdirectory(src)
 
-if (WIN32)
-    set_property(TARGET exeng.raytracer PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-    set_property(TARGET exeng.tests PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-    set_property(TARGET exeng PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-    set_property(TARGET exeng.graphics.gl3 PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-	set_property(TARGET exeng.ui.demo PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-endif (WIN32)
+add_subdirectory(plugins/libexeng.graphics.gl3)
 
-# TODO: Ver como ejecutar post
-# Pruebas unitarias
+
+# if (WIN32)
+#     set_property(TARGET exeng.raytracer PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+#     set_property(TARGET exeng.tests PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+#     set_property(TARGET exeng PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+#     set_property(TARGET exeng.graphics.gl3 PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+# 	set_property(TARGET exeng.ui.demo PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+# endif (WIN32)
+
 # enable_testing()
 # add_test(exeng-test test)
