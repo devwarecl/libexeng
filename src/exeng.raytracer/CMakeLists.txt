@@ -31,7 +31,6 @@ link_directories(${OpenGL_LIBRARY_DIR})
 set (BaseFiles
 	RayTracerApp.hpp                RayTracerApp.cpp 
     RayTracerSceneRenderer.hpp      RayTracerSceneRenderer.cpp 
-    FrameCounter.hpp                FrameCounter.cpp 
     SceneLoader.hpp                 SceneLoader.cpp 
 )
 

@@ -2,11 +2,13 @@
 #ifndef __RAYTRACER_FPSCOUNTER_HPP__
 #define __RAYTRACER_FPSCOUNTER_HPP__
 
-namespace raytracer {
+#include <exeng/Config.hpp>
+
+namespace exeng { namespace util {
     /**
      * @brief Simple frames per second counter
      */
-    class FrameCounter {
+    class EXENGAPI FrameCounter {
     public:
         FrameCounter();
         
@@ -27,6 +29,6 @@ namespace raytracer {
         double framesPerSecond = 0.0f; //! Current frames per second total.
         bool overTime = false;
     };
-}
+}}
 
 #endif  //__RAYTRACER_FPSCOUNTER_HPP__

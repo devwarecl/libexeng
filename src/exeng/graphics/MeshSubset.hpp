@@ -35,7 +35,21 @@ namespace exeng { namespace graphics {
 
         virtual const Material* getMaterial() const = 0;
         virtual void setMaterial(const Material *material) = 0;
+        
+        int getSize() const;
     };
+    
+    inline int MeshSubset::getSize() const 
+    {
+        int size = 0;
+        
+        for (int i=0; i<this->getBufferCount(); ++i) {
+            size += this->getBuffer(i)->getSize();
+        }
+        
+        return size;
+    }
+    
 }}
 
 #endif  // __EXENG_GRAPHICS_MESHSUBSET_HPP__

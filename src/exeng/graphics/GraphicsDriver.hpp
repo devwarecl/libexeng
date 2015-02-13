@@ -241,13 +241,8 @@ namespace exeng { namespace graphics {
         /**
          * @brief Bound the specified MeshSubset object.
          */
-        virtual void setMeshSubset(MeshSubset *meshSubset) = 0;
-
-        /**
-         * @brief Gets the currently bound MeshSubset.
-         */
-        virtual MeshSubset* getMeshSubset() = 0;
-
+        virtual void setMeshSubset(const MeshSubset *meshSubset) = 0;
+        
         /**
          * @brief Gets the currently bound MeshSubset.
          */

@@ -9,12 +9,13 @@
 
 #include <exeng/Exeng.hpp>
 #include <exeng/Vector.hpp>
+#include <exeng/util/FrameCounter.hpp>
+
 #include <exeng/framework/GraphicsApplication.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/scenegraph/SceneManager.hpp>
 #include <exeng.raytracer/SceneLoader.hpp>
-#include <exeng.raytracer/FrameCounter.hpp>
 #include <exeng.raytracer/samplers/Sampler.hpp>
 #include <exeng.raytracer/tracers/Tracer.hpp>
 #include <exeng.raytracer/tracers/TracerFactory.hpp>
@@ -79,12 +80,12 @@ namespace raytracer {
 		exeng::graphics::MaterialFormat materialFormat;
 
         mutable uint32_t lastTime;
-        FrameCounter frameCounter;
+        exeng::util::FrameCounter frameCounter;
         exeng::framework::ApplicationStatus::Enum applicationStatus;
         exeng::graphics::ButtonStatus::Enum buttonStatus[exeng::graphics::ButtonCode::Count];
         
 		std::map<exeng::scenegraph::SceneNode*, std::unique_ptr<SceneNodeAnimator>> animators;
-
+        
         float rotationAngle = 0.0f;
     };
 }

@@ -13,17 +13,17 @@ find_package(Boost COMPONENTS filesystem system REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 set (BaseFiles_hpp 
-  Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
-  Object.hpp Version.hpp Root.hpp
-  TypeInfo.hpp TFlags.hpp Buffer.hpp
-  HeapBuffer.hpp Resource.hpp ResourceManager.hpp ISerializable.hpp Timer.hpp
-  Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp
+    Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
+    Object.hpp Version.hpp Root.hpp
+    TypeInfo.hpp TFlags.hpp Buffer.hpp
+    HeapBuffer.hpp Resource.hpp ResourceManager.hpp ISerializable.hpp Timer.hpp
+    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp
 )
 set (BaseFiles_cpp Enum.cpp Object.cpp 
-  Version.cpp  Root.cpp TypeInfo.cpp
-  Buffer.cpp HeapBuffer.cpp 
-  Resource.cpp ResourceManager.cpp 
-  ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp 
+    Version.cpp  Root.cpp TypeInfo.cpp
+    Buffer.cpp HeapBuffer.cpp 
+    Resource.cpp ResourceManager.cpp 
+    ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp 
 )
 set (BaseFiles ${BaseFiles_hpp} ${BaseFiles_cpp})
 
@@ -161,6 +161,7 @@ set (ScenegraphFiles_cpp
     scenegraph/IMeshLoader.cpp
     scenegraph/SceneManager.cpp
     scenegraph/SceneRenderer.cpp
+    scenegraph/GenericSceneRenderer.cpp
 )
 
 set (ScenegraphFiles_hpp
@@ -184,7 +185,8 @@ set (ScenegraphFiles_hpp
     scenegraph/IMeshLoader.hpp    
     scenegraph/SceneManager.hpp   
     scenegraph/SceneRenderer.hpp
-    scenegraph/Triangle.hpp       
+    scenegraph/Triangle.hpp
+    scenegraph/GenericSceneRenderer.hpp
 )
 set (ScenegraphFiles ${ScenegraphFiles_hpp} ${ScenegraphFiles_cpp})
 
@@ -204,7 +206,12 @@ set (SystemFiles_hpp
 )
 set (SystemFiles ${SystemFiles_hpp} ${SystemFiles_cpp})
 
-add_library(exeng SHARED 
+
+set (UtilFiles_cpp util/FrameCounter.cpp)
+set (UtilFiles_hpp util/FrameCounter.hpp)
+set (UtilFiles ${UtilFiles_hpp} ${UtilFiles_cpp})
+
+add_library (exeng SHARED
     ${BaseFiles}
     ${IoFiles}
     ${AudioFiles}
@@ -215,6 +222,7 @@ add_library(exeng SHARED
     ${InputFiles}
     ${ScenegraphFiles}
     ${SystemFiles}
+    ${UtilFiles}
 )
 
 source_group(\\			FILES ${BaseFiles})

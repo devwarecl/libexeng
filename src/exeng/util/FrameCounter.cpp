@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-namespace raytracer {
+namespace exeng { namespace util {
     FrameCounter::FrameCounter() {}
     
     void FrameCounter::update(double seconds) 
@@ -41,4 +41,4 @@ namespace raytracer {
 	{
         return this->overTime;
     }
-}
+}}
