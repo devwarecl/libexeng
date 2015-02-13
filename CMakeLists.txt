@@ -15,8 +15,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 add_subdirectory(src)
-
-add_subdirectory(plugins/libexeng.graphics.gl3)
+add_subdirectory(plugins)
 
 
 # if (WIN32)

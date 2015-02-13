@@ -1,7 +1,6 @@
 add_subdirectory(exeng.sandbox)
 add_subdirectory(exeng.tests)
 add_subdirectory(exeng.raytracer)
-# add_subdirectory(exeng.graphics.gl3)
 add_subdirectory(exeng.ui.demo)
 add_subdirectory(exeng.main)
 add_subdirectory(lwobject)
