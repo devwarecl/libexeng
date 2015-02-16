@@ -54,7 +54,7 @@ namespace exeng { namespace system {
          * again, without the extension.
          * @param path The folder for wich load the specified plugin.
          */
-        void load(const std::string &name, const std::string &path);
+        void loadPlugin(const std::string &name);
         
         /**
          * @brief Unload a plugin from the current list of loaded plugins.
@@ -62,8 +62,12 @@ namespace exeng { namespace system {
          * without prefix and filename extension. Undex Windows platforms, is the name of the DLL name,
          * again, without the extension.
          */
-        void unload(const std::string &name);
-
+        void unloadPlugin(const std::string &name);
+        
+        void setPluginPath(const std::string &path);
+        
+        std::string getPluginPath() const;
+        
     private:
         struct Private;
         Private* impl = nullptr;

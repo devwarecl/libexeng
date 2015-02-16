@@ -41,7 +41,7 @@ std::string getPluginPath() {
     return "../../bin/Release/";
 #  endif
 #else 
-    return "../exeng.graphics.gl3/";
+    return "../../plugins/libexeng.graphics.gl3/";
 #endif
 }
 
@@ -154,8 +154,8 @@ namespace raytracer {
         // Initialize the exeng root class and plugins.
 		BOOST_LOG_TRIVIAL(trace) << "Loading plugins...";
 
-        std::string path = getPluginPath();
-        this->getRoot()->getPluginManager()->load("exeng.graphics.gl3", path);
+        this->getRoot()->getPluginManager()->setPluginPath(getPluginPath());
+        this->getRoot()->getPluginManager()->loadPlugin("exeng.graphics.gl3");
         
         // initialize the gl3 driver, in windowed mode
 		BOOST_LOG_TRIVIAL(trace) << "Initializing graphics driver...";

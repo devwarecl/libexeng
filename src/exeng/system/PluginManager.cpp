@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <map>
 #include <memory>
+#include <boost/filesystem.hpp>
 
 #include <exeng/Root.hpp>
 #include <exeng/system/Library.hpp>
@@ -24,17 +25,22 @@
 #include <exeng/system/PluginLibrary.hpp>
 
 namespace exeng { namespace system {
+    namespace fs = boost::filesystem;
+    
     /**
      * @brief Private attributes of the plugin manager.
      */
     typedef std::map<std::string, std::unique_ptr<Plugin>> PluginMap;
 
-    struct PluginManager::Private {
-        PluginMap plugins;      //! Currently loaded plugins.
-        Root* root = nullptr;   //! Root object
+    struct PluginManager::Private 
+    {
+        Root* root = nullptr;
+        PluginMap plugins;
+        fs::path pluginPath;
     };
     
-    PluginManager::PluginManager(Root* root) : impl(nullptr) {
+    PluginManager::PluginManager(Root* root) : impl(nullptr) 
+    {
         if (root == nullptr) {
             char msg[] = "PluginManager::PluginManager: The root object can't be nullptr.";
             throw std::invalid_argument(msg);
@@ -42,56 +48,58 @@ namespace exeng { namespace system {
         
         this->impl = new PluginManager::Private();
         this->impl->root = root;
+        
+        this->impl->pluginPath = fs::current_path();
     }
 
-    PluginManager::~PluginManager() {
+    PluginManager::~PluginManager() 
+    {
         delete this->impl;
         this->impl = nullptr;
     }
     
-    Root* PluginManager::getRoot() {
+    Root* PluginManager::getRoot() 
+    {
         assert(this->impl != nullptr);
         assert(this->impl->root != nullptr);
 
         return this->impl->root;
     }
         
-    const Root* PluginManager::getRoot() const {
+    const Root* PluginManager::getRoot() const 
+    {
         assert(this->impl != nullptr);
         assert(this->impl->root != nullptr);
 
         return this->impl->root;
     }
     
-    void PluginManager::load(const std::string &name, const std::string &path_) {
-        assert(this->impl != nullptr);
-            
-        std::string path = path_;
-        std::string libname;    // The library filename.
-        // std::cout << "PluginManager: Loading module '" << name << "'" << std::endl;
-            
+    std::string getPluginFilename(const std::string &pluginName) 
+    {
 #if defined(EXENG_WINDOWS)
-        libname = name + std::string(".dll");
+        return pluginName + std::string(".dll");
 #elif defined(EXENG_UNIX)
-        libname = std::string("lib") + name + std::string(".so");
+        return std::string("lib") + pluginName + std::string(".so");
 #else
 #  warning Unsupported platform. This can cause platform dependent code in client side.
-        libname = name;
-#endif
-        if (path.empty() == false) {
-            if (path[path.size()-1] != '/') {
-                path += '/';
-            }
-                
-            libname = path + libname;
-        }
+        return pluginName;
+#endif        
+    }
+    
+    void PluginManager::loadPlugin(const std::string &name) 
+    {
+        assert(this->impl != nullptr);
+        
+        std::string libname = getPluginFilename(name);
+        
+        fs::path pluginFilename = this->impl->pluginPath;
+        pluginFilename /= libname;
         
         // check if the library is loaded previously
         PluginMap &plugins = this->impl->plugins;
         
         if (plugins.find(name) == plugins.end()) {
-            // std::string keyName = name;
-            auto library = std::unique_ptr<Library>(new Library(libname));
+            auto library = std::unique_ptr<Library>(new Library(pluginFilename.string()));
             auto pluginLibrary = std::unique_ptr<Plugin>(new PluginLibrary(std::move(library)));
 
             plugins[name] = std::move(pluginLibrary);
@@ -99,7 +107,8 @@ namespace exeng { namespace system {
         }
     }
     
-    void PluginManager::unload(const std::string &name) {
+    void PluginManager::unloadPlugin(const std::string &name) 
+    {
         assert(this->impl != nullptr);
         
         auto &plugins = this->impl->plugins;
@@ -109,5 +118,31 @@ namespace exeng { namespace system {
             it->second->terminate();
             plugins.erase(name);
         }
+    }
+    
+    void PluginManager::setPluginPath(const std::string &path)
+    {
+        assert(this->impl != nullptr);
+        
+        fs::path pluginPath(path);
+        
+        if (pluginPath.is_relative()) {
+            pluginPath = fs::absolute(pluginPath);
+        }
+        
+        pluginPath = pluginPath.normalize().parent_path();
+        
+        if (!fs::is_directory(pluginPath) || !fs::exists(pluginPath)) {
+            throw std::runtime_error("PluginManager::setPluginPath: The directory '" + pluginPath.string() + "' is not valid.");
+        }
+        
+        this->impl->pluginPath = pluginPath;
+    }
+    
+    std::string PluginManager::getPluginPath() const
+    {
+        assert(this->impl != nullptr);
+        
+        return this->impl->pluginPath.string();
     }
 }}
