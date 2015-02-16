@@ -14,7 +14,7 @@
 #ifndef __EXENG_GRAPHICS_GRAPHICSMANAGER_HPP__
 #define __EXENG_GRAPHICS_GRAPHICSMANAGER_HPP__
 
-#include <vector>
+#include <list>
 
 #include <exeng/Object.hpp>
 #include <exeng/Version.hpp>
@@ -30,13 +30,14 @@ namespace exeng { namespace graphics {
      */
     struct GraphicsDriverInfo {
         std::string name = "";
-        Version version = {1, 0, 0, 0};
+        Version version = {0, 0, 0, 0};
         bool hardware = false;
         bool supportsVertexShaders = false;
         bool supportsPixelShader = false;
         bool supportsGeometryShaders = false;
             
-        inline bool operator== (const GraphicsDriverInfo &other) const {
+        inline bool operator== (const GraphicsDriverInfo &other) const 
+		{
             if (this->name != other.name) {
                 return false;
             }
@@ -48,11 +49,13 @@ namespace exeng { namespace graphics {
             return true;
         }
             
-        inline bool operator!= (const GraphicsDriverInfo &other) const {
+        inline bool operator!= (const GraphicsDriverInfo &other) const 
+		{
             return !(*this == other);
         }
             
-        inline bool operator< (const GraphicsDriverInfo &other) const {
+        inline bool operator< (const GraphicsDriverInfo &other) const 
+		{
             return this->name < other.name && this->version < other.version;
         }
     };
@@ -78,12 +81,12 @@ namespace exeng { namespace graphics {
         ~GraphicsManager();
 
         /**
-         * @brief 
+         * @brief Add a new known GraphicsDriverFactory.
          */
         void addDriverFactory(IGraphicsDriverFactory* factory);
 
         /**
-         * @brief
+         * @brief Remove a existing GraphicsDriverFactory
          */
         void removeDriverFactory(IGraphicsDriverFactory* factory);
         
@@ -98,7 +101,12 @@ namespace exeng { namespace graphics {
          * supplied driver desc.
          */
         std::unique_ptr<GraphicsDriver> createDriver(const GraphicsDriverInfo &info);
-        
+
+		/**
+		 * @brief Get available device descriptions.
+		 */
+		std::list<GraphicsDriverInfo> getAvailableDrivers() const;
+		
     private:
         struct Private;
         Private *impl = nullptr;

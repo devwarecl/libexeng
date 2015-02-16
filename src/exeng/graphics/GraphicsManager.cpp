@@ -21,21 +21,23 @@
 #include <boost/range/algorithm/find_if.hpp>
 
 namespace exeng { namespace graphics {
-    typedef std::map<GraphicsDriverInfo, IGraphicsDriverFactory*> GraphicsDriverFactoryMap;
-    
+
     struct GraphicsManager::Private {
-         GraphicsDriverFactoryMap factories;
+         std::map <GraphicsDriverInfo, IGraphicsDriverFactory*> factories;
     };
     
-    GraphicsManager::GraphicsManager() : impl(new GraphicsManager::Private()) {
+    GraphicsManager::GraphicsManager()
+	{
+		this->impl = new GraphicsManager::Private();
     }
 
-    GraphicsManager::~GraphicsManager() {
+    GraphicsManager::~GraphicsManager() 
+	{
         delete this->impl;
-        this->impl = nullptr;
     }
 
-    void GraphicsManager::addDriverFactory(IGraphicsDriverFactory* factory) {
+    void GraphicsManager::addDriverFactory(IGraphicsDriverFactory* factory) 
+	{
         assert( this->impl != nullptr );
         
         if (factory == nullptr) {
@@ -46,14 +48,15 @@ namespace exeng { namespace graphics {
         this->impl->factories.insert({driverInfo, factory});
     }
 
-    void GraphicsManager::removeDriverFactory(IGraphicsDriverFactory* factory) {
+    void GraphicsManager::removeDriverFactory(IGraphicsDriverFactory* factory) 
+	{
         assert( this->impl != nullptr );
         
         if (factory == nullptr) {
             throw std::invalid_argument("GraphicsManager::addDriverFactory -> The factory can't be a null pointer.");
         }
 
-        GraphicsDriverFactoryMap &factories = this->impl->factories;
+        auto &factories = this->impl->factories;
         auto key = factory->getDriverInfo();
         auto pos = factories.find(key);
         
@@ -64,7 +67,8 @@ namespace exeng { namespace graphics {
         factories.erase(pos);
     }
     
-    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver() {
+    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver() 
+	{
         assert( this->impl != nullptr );
         
         //! TODO: Actually, implement the algorithm
@@ -75,7 +79,8 @@ namespace exeng { namespace graphics {
         return nullptr;
     }
     
-    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver(const GraphicsDriverInfo &info) {
+    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver(const GraphicsDriverInfo &info) 
+	{
         assert( this->impl != nullptr );
         
         auto &factories = this->impl->factories;
@@ -87,4 +92,17 @@ namespace exeng { namespace graphics {
         
         return pos->second->create();
     }
+
+	std::list<GraphicsDriverInfo> GraphicsManager::getAvailableDrivers() const 
+	{
+		assert( this->impl != nullptr );
+
+		std::list<GraphicsDriverInfo> driverInfos;
+
+		for (auto driverIterator : this->impl->factories) {
+			driverInfos.push_back(driverIterator.first);
+		}
+
+		return driverInfos;
+	}
 }}
