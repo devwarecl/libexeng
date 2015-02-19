@@ -18,7 +18,7 @@ namespace raytracer {
         explicit SceneLoader(exeng::graphics::GraphicsDriver *driver, exeng::scenegraph::MeshManager *meshManager);
         virtual ~SceneLoader();
 
-        std::unique_ptr<exeng::scenegraph::Scene> loadScene(const std::string &filename, const exeng::graphics::MaterialFormat &materialFormat);
+        std::unique_ptr<exeng::scenegraph::Scene> loadScene(const std::string &filename, const exeng::graphics::MaterialFormat *materialFormat);
 
 	private:
 		exeng::scenegraph::SceneNode* addBoxNode(exeng::scenegraph::Scene *scene, const std::string &boxNodeName, const std::string &materialName, const exeng::Vector4f &materialColor, const std::string &boxMeshName, const exeng::Vector3f &boxCenter, const exeng::Vector3f &sizeCenter);

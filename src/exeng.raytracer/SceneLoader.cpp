@@ -21,7 +21,7 @@ namespace raytracer {
     }
     
     // For now, just create a simple scene, boxed scene.
-    std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename, const MaterialFormat &materialFormat) 
+    std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename, const MaterialFormat *materialFormat) 
 	{
 		auto scene = std::unique_ptr<Scene>(new Scene(materialFormat));
 

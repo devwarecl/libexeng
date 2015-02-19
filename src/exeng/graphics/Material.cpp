@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2013 Felipe Apablaza.
  *
@@ -14,42 +15,48 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/checked_delete.hpp>
 #include <boost/lexical_cast.hpp>
+
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/io/Stream.hpp>
 #include <exeng/HeapBuffer.hpp>
 
-using namespace exeng;
-
 namespace exeng { namespace graphics {
 
-	struct MaterialLayer::Private {
+	struct MaterialLayer::Private 
+	{
 		Texture* texture = nullptr;
 	};
     
-	MaterialLayer::MaterialLayer() : impl(nullptr) {
+	MaterialLayer::MaterialLayer() : impl(nullptr) 
+    {
         this->impl = new MaterialLayer::Private();
     }
 
-	MaterialLayer::~MaterialLayer() {
+	MaterialLayer::~MaterialLayer() 
+    {
 		boost::checked_delete(this->impl);
 	}
 
-	const Texture* MaterialLayer::getTexture() const {
+	const Texture* MaterialLayer::getTexture() const 
+	{
 		assert(this->impl != nullptr);
 		return this->impl->texture;
 	}
 
-	Texture* MaterialLayer::getTexture() {
+	Texture* MaterialLayer::getTexture() 
+    {
 		assert(this->impl != nullptr);
 		return this->impl->texture;
 	}
     
-	void MaterialLayer::setTexture(Texture* texture) {
+	void MaterialLayer::setTexture(Texture* texture) 
+    {
 		assert(this->impl != nullptr);
 		this->impl->texture = texture;
 	}
 
-	bool MaterialLayer::hasTexture() const {
+	bool MaterialLayer::hasTexture() const 
+	{
 		assert(this->impl != nullptr);
 		return this->impl->texture != nullptr;
 	}
@@ -60,61 +67,6 @@ namespace exeng { namespace graphics {
 namespace exeng { namespace graphics {
 
 	static const int LayerCount = 4;
-
-    /*
-	// Holds the raw value for a property
-	struct PropertyValue {    
-		// Big enough to hold a four dimensional vector of doubles
-		uint8_t rawData[32];
-    
-		// Used for error checking
-		TypeInfo typeInfo;
-    
-		inline PropertyValue() : typeInfo( TypeId<void>() ) {
-			::memset(rawData, sizeof(rawData), 0);
-		}
-    
-		inline PropertyValue(const TypeInfo &info) : typeInfo(info) {
-			::memset(rawData, sizeof(rawData), 0);
-		}
-	    	
-		template<typename ValueType>
-		inline bool checkType() const {
-			return typeInfo == TypeId<ValueType>();
-		}
-		
-		template<typename ValueType>
-		inline void setValue( const ValueType &value ) {
-#if defined(EXENG_DEBUG)
-			if (!this->checkType<void>() &&  !this->checkType<ValueType>()) {
-				throw std::runtime_error("PropertyMap::setValue: The types doesn't coincides.");
-			}
-#endif
-			*reinterpret_cast<ValueType*>(this->rawData) = value;
-		}
-		
-		template<typename ValueType>
-		inline ValueType getValue() const {
-#if defined(EXENG_DEBUG)
-			if (this->checkType<ValueType>() == false) {
-				throw std::runtime_error("PropertyMap::setValue: The types doesn't coincides.");
-			}
-#endif
-			return *reinterpret_cast<const ValueType*>(this->rawData);
-		}
-	};
-
-	template<typename ValueType>
-	inline PropertyValue makePropertyValue(const ValueType &value) {
-		PropertyValue propertyValue( TypeId<ValueType>() );
-		propertyValue.setValue(value);
-    
-		return propertyValue;
-	}
-
-	typedef std::map<std::string, PropertyValue> PropertyMap;
-	typedef PropertyMap::iterator PropertyMapIt;
-    */
     
 	struct Material::Private 
 	{
@@ -124,6 +76,11 @@ namespace exeng { namespace graphics {
         MaterialLayer layers[LayerCount];
         HeapBuffer buffer;
 
+        Private() 
+        {
+            std::memset(layers, 0, sizeof(layers));
+        }
+        
 		template<typename Type>
 		void fillBuffer(void* bufferData, int dimension) {
 			Type* data = (Type*)bufferData;
@@ -164,17 +121,23 @@ namespace exeng { namespace graphics {
     {
         this->impl = new Material::Private();
         this->impl->format = format;
-        this->impl->buffer.allocate(this->impl->format->getSize());
-		this->impl->fill();
+        
+        if (this->getFormat()) {
+            this->impl->buffer.allocate(this->impl->format->getSize());
+            this->impl->fill();
+        }
     }
 
 	Material::Material(const MaterialFormat *format, const std::string &name)
     {
         this->impl = new Material::Private();
         this->impl->format = format;
-        this->impl->buffer.allocate(this->impl->format->getSize());
-		this->impl->fill();
-
+        
+        if (this->getFormat()) {
+            this->impl->buffer.allocate(this->impl->format->getSize());
+            this->impl->fill();
+        }
+        
         this->setName(name);
     }
 	
@@ -187,6 +150,11 @@ namespace exeng { namespace graphics {
     {
         assert(this->impl);
         
+#if defined(EXENG_DEBUG)
+        if (!this->getFormat()) {
+            throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
+        }
+#endif
         int offset = this->getFormat()->getOffset(index);
         std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer.getDataPtr();
         
@@ -196,7 +164,12 @@ namespace exeng { namespace graphics {
     void Material::getAttribute(const int index, void* data, const int size) const 
     {
         assert(this->impl);
-        
+
+#if defined(EXENG_DEBUG)
+        if (!this->getFormat()) {
+            throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
+        }
+#endif
         int offset = this->getFormat()->getOffset(index);
         std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer.getDataPtr();
         
@@ -219,11 +192,11 @@ namespace exeng { namespace graphics {
     {
 		assert(this->impl != nullptr);
 
-	#ifdef EXENG_DEBUG
+#ifdef EXENG_DEBUG
 		if (index < 0 || index >= LayerCount) {
 			throw std::out_of_range("Material::getLayer: Index out of range.");
 		}
-	#endif
+#endif
 
 		return &this->impl->layers[index];
 	}
@@ -232,11 +205,11 @@ namespace exeng { namespace graphics {
 	{
 		assert(this->impl != nullptr);
 
-	#ifdef EXENG_DEBUG
+#ifdef EXENG_DEBUG
 		if (index < 0 || index >= LayerCount) {
 			throw std::out_of_range("Material::getLayer: Index out of range.");
 		}
-	#endif
+#endif
 
 		return &this->impl->layers[index];
 	}
@@ -288,20 +261,33 @@ namespace exeng { namespace graphics {
 	
 	const MaterialFormat* Material::getFormat() const
 	{
+        assert(this->impl != nullptr);
+        
         return this->impl->format;
     }
 	
 	bool Material::isSerializable() const 
 	{
+        assert(this->impl != nullptr);
+        
         return false;
     }
     
-    void Material::serialize(exeng::io::Stream *out) const {}
+    void Material::serialize(exeng::io::Stream *out) const 
+    {
+        assert(this->impl != nullptr);
+        
+    }
     
     bool Material::isDeserializable() const 
     {
+        assert(this->impl != nullptr);
+        
         return false;
     }
     
-    void Material::deserialize(const exeng::io::Stream *inStream)  {}
+    void Material::deserialize(const exeng::io::Stream *inStream)  
+    {
+        assert(this->impl != nullptr);
+    }
 }}

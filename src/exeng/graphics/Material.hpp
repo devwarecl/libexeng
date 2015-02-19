@@ -262,10 +262,7 @@ namespace exeng { namespace graphics {
 
 
 namespace exeng { namespace graphics {
-    inline MaterialFormat::MaterialFormat() 
-    {
-        
-    }
+    inline MaterialFormat::MaterialFormat() {}
     
     inline MaterialFormat::MaterialFormat(const std::vector<MaterialAttrib> &attribs) 
     {

@@ -1,3 +1,4 @@
+
 /**
  * @file Scene.cpp
  * @brief Scene class implementation.
@@ -29,7 +30,7 @@ namespace exeng { namespace scenegraph {
 
     struct Scene::Private 
     {
-        Vector4f backColor;
+        Vector4f backColor = {0.0f, 0.0f, 0.0f, 1.0f};
         
         std::list<SceneNode*> cameraNodes;
         std::list<SceneNode*> lightNodes;
@@ -41,10 +42,15 @@ namespace exeng { namespace scenegraph {
         std::map<std::string, std::unique_ptr<Material>> materials;
         std::list<Material*> materialList;
         
-        MaterialFormat materialFormat;
+        const MaterialFormat *materialFormat = nullptr;
     };
     
-    Scene::Scene(const exeng::graphics::MaterialFormat &materialFormat)
+    Scene::Scene() 
+    {
+        this->impl = new Scene::Private();
+    }
+    
+    Scene::Scene(const exeng::graphics::MaterialFormat *materialFormat)
 	{
 		this->impl = new Scene::Private();
 		this->impl->materialFormat = materialFormat;
@@ -105,7 +111,7 @@ namespace exeng { namespace scenegraph {
     {
         assert(this->impl != nullptr);
         
-        auto material = std::unique_ptr<Material>(new Material(&this->impl->materialFormat));
+        auto material = std::unique_ptr<Material>(new Material(this->impl->materialFormat));
         material->setName(materialName);
         
 		this->impl->materialList.push_back(material.get());	
@@ -113,7 +119,7 @@ namespace exeng { namespace scenegraph {
 		
         return this->impl->materials[materialName].get();
     }
-
+    
     SceneNode* Scene::createSceneNode(const std::string &nodeName, SceneNodeData* nodeData) 
     {
         assert(this->impl != nullptr);

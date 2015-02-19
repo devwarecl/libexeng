@@ -25,7 +25,7 @@ public:
         this->graphicsDriver = this->getRoot()->getGraphicsManager()->createDriver();
         this->graphicsDriver->initialize();
 
-		// this->scene = std::unique_ptr<Scene>(new Scene());
+		this->scene = std::unique_ptr<Scene>(new Scene());
 
 		this->sceneRenderer = std::unique_ptr<SceneRenderer>(new GenericSceneRenderer(this->graphicsDriver.get()));
 		this->sceneRenderer->setScene(this->scene.get());

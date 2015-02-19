@@ -15,6 +15,7 @@
 #define __EXENG_GRAPHICS_GRAPHICSMANAGER_HPP__
 
 #include <list>
+#include <vector>
 
 #include <exeng/Object.hpp>
 #include <exeng/Version.hpp>
@@ -25,39 +26,50 @@ namespace exeng {
 }
 
 namespace exeng { namespace graphics {
+    
+    /**
+     * @brief Shader programming language description.
+     */
+    struct ShaderLanguage 
+    {
+        enum Type {
+            GLSL,
+            HLSL,
+            CG
+        };
+        
+        Type type;
+        Version version;
+        
+        ShaderLanguage();
+        ShaderLanguage(ShaderLanguage::Type type, const Version &version);
+    };
+    
+    
+    /**
+     * @brief Type of GraphicsDriver
+     */
+    struct DriverType : public Enum 
+    {
+        enum Enum {
+            Software,
+            Hardware
+        };
+    };
+    
     /**
      * @brief Basic information about a specific graphics driver.
      */
-    struct GraphicsDriverInfo {
+    struct GraphicsDriverInfo 
+    {
         std::string name = "";
         Version version = {0, 0, 0, 0};
-        bool hardware = false;
-        bool supportsVertexShaders = false;
-        bool supportsPixelShader = false;
-        bool supportsGeometryShaders = false;
-            
-        inline bool operator== (const GraphicsDriverInfo &other) const 
-		{
-            if (this->name != other.name) {
-                return false;
-            }
-                
-            if (this->version != other.version) {
-                return false;
-            }
-                
-            return true;
-        }
-            
-        inline bool operator!= (const GraphicsDriverInfo &other) const 
-		{
-            return !(*this == other);
-        }
-            
-        inline bool operator< (const GraphicsDriverInfo &other) const 
-		{
-            return this->name < other.name && this->version < other.version;
-        }
+        DriverType::Enum type = DriverType::Software;
+        std::vector<ShaderLanguage> shadingLanguages;
+        
+        bool operator== (const GraphicsDriverInfo &other) const;
+        bool operator!= (const GraphicsDriverInfo &other) const;
+        bool operator< (const GraphicsDriverInfo &other) const;
     };
     
     /**
@@ -113,4 +125,42 @@ namespace exeng { namespace graphics {
     };
 }}
 
+
+namespace exeng { namespace graphics {
+
+    inline bool GraphicsDriverInfo::operator== (const GraphicsDriverInfo &other) const 
+    {
+        if (this->name != other.name) {
+            return false;
+        }
+            
+        if (this->version != other.version) {
+            return false;
+        }
+            
+        return true;
+    }
+        
+    inline bool GraphicsDriverInfo::operator!= (const GraphicsDriverInfo &other) const 
+    {
+        return !(*this == other);
+    }
+        
+    inline bool GraphicsDriverInfo::operator< (const GraphicsDriverInfo &other) const 
+    {
+        return this->name < other.name && this->version < other.version;
+    }
+}}
+
+namespace exeng { namespace graphics {
+    
+    inline ShaderLanguage::ShaderLanguage() {}
+    
+    inline ShaderLanguage::ShaderLanguage(ShaderLanguage::Type type, const Version &version)
+    {
+        this->type = type;
+        this->version = version;
+    }
+}}
+        
 #endif  //__EXENG_GRAPHICS_GRAPHICSMANAGER_HPP__
