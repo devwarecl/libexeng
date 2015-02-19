@@ -68,6 +68,11 @@ namespace exeng { namespace system {
         
         std::string getPluginPath() const;
         
+        /**
+         * @brief Load all available plugins
+         */
+        void loadPlugins();
+        
     private:
         struct Private;
         Private* impl = nullptr;

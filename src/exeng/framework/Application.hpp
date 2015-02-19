@@ -39,6 +39,14 @@ namespace exeng { namespace framework {
         virtual ~Application() = 0;
         
         /**
+         * @brief Run the application.
+         * 
+         * Must be implemented in derived classes.
+         */
+        virtual int run(int argc, char **argv) = 0;
+        
+    protected:
+        /**
          * @brief Get the root object associated with the application instance.
          */
         Root* getRoot();
@@ -48,26 +56,10 @@ namespace exeng { namespace framework {
          */
         const Root* getRoot() const;
         
-        /**
-         * @brief Run the application.
-         * 
-         * Must be implemented in derived classes.
-         */
-        virtual int run(int argc, char **argv);
-        
     private:
         Root *root = nullptr;
         
-    private:
-        static Application *instance;
-        
     public:
-        /**
-         * @brief Get the currenly running application. If is null, 
-         * then the application has been terminated.
-         */
-        static Application* getInstance();
-        
         /**
          * @brief Executes the specified application
          * 
@@ -76,13 +68,25 @@ namespace exeng { namespace framework {
          * 
          * When execution completes, the Application object is destroyed.
          */
-        static int execute(Application *app, int argc, char **argv);
+        static int execute(Application &app, int argc, char **argv);
         
         template<typename ApplicationClass>
         static int execute(int argc, char **argv);
     };
 }}
 
-#include <exeng/framework/Application.inl>
+namespace exeng { namespace framework {
+    
+    inline Root* Application::getRoot()             {return this->root;}
+    inline const Root* Application::getRoot() const {return this->root;}
+    
+    template<typename ApplicationClass>
+    inline int Application::execute(int argc, char **argv) 
+    {
+        ApplicationClass app;
+        
+        return Application::execute(app, argc, argv);
+    }
+}}
 
 #endif  // __EXENG_FRAMEWORK_APPLICATION_HPP__

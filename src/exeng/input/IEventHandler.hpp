@@ -18,23 +18,20 @@
 #include <exeng/TypeInfo.hpp>
 #include <exeng/input/EventData.hpp>
 
-namespace exeng {
-    namespace input {
+namespace exeng { namespace input {
+    /**
+     * @brief Interface to a event handler. The event handler is the 
+     * object responsible of do a action in response for a event.
+     */        
+    class EXENGAPI IEventHandler {
+    public:
+        virtual ~IEventHandler();
+        
         /**
-         * @brief Interface to a event handler. The event handler is the 
-         * object responsible of do a action in response for a event.
-         */        
-        class EXENGAPI IEventHandler {
-        public:
-            virtual ~IEventHandler();
-            
-            /**
-             * @brief Called when a undetermined event is called.
-             * @param data
-             */
-            virtual void handleEvent(const EventData &data) = 0;
-        };
-    }
-}
+         * @brief Called when a undetermined event is called.
+         */
+        virtual void handleEvent(const EventData &data) = 0;
+    };
+}}
 
 #endif // __EXENG_INPUT_IEVTHANDLER_HPP__

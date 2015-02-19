@@ -22,7 +22,8 @@ namespace exeng { namespace framework {
         
         virtual ~GraphicsApplication() = 0;
         
-        virtual int run(int argc, char **argv);
+        virtual int run(int argc, char **argv) override;
+        
         
     protected:
         virtual int getExitCode() const;
@@ -38,23 +39,11 @@ namespace exeng { namespace framework {
         virtual void update(double frameTime);
         
         virtual void render();
-        
-    protected:
-        /* App wide root object */
-        Root* getRoot();
-        const Root* getRoot() const;
-        
-    private:
-        Root *root;
     };
-
-
-	    inline GraphicsApplication::GraphicsApplication() : root(new Root()) {
-    }
-        
-    inline GraphicsApplication::~GraphicsApplication() {
-        delete this->root;
-    }
+    
+    inline GraphicsApplication::GraphicsApplication() {}
+    
+    inline GraphicsApplication::~GraphicsApplication() {}
     
     inline int GraphicsApplication::run(int argc, char **argv) {
         struct ApplicationGuard {
@@ -90,20 +79,14 @@ namespace exeng { namespace framework {
     inline void GraphicsApplication::update(double frameTime) {}
     inline void GraphicsApplication::render() {}
     
-    inline ApplicationStatus::Enum GraphicsApplication::getStatus() const {
+    inline ApplicationStatus::Enum GraphicsApplication::getStatus() const 
+    {
         return ApplicationStatus::Terminated;
     }
     
-    inline int GraphicsApplication::getExitCode() const {
+    inline int GraphicsApplication::getExitCode() const 
+    {
         return 0;
-    }
-    
-    inline Root* GraphicsApplication::getRoot() {
-        return this->root;
-    }
-
-    inline const Root* GraphicsApplication::getRoot() const {
-        return this->root;
     }
 }}
 

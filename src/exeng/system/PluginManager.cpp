@@ -145,4 +145,9 @@ namespace exeng { namespace system {
         
         return this->impl->pluginPath.string();
     }
+    
+    void PluginManager::loadPlugins() 
+    {
+        throw std::runtime_error("PluginManager::loadPlugins: Not implemented.");
+    }
 }}
