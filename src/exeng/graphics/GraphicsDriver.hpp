@@ -53,7 +53,8 @@ namespace exeng { namespace graphics {
         enum Enum {
             Color = 1,
             Depth = 2,
-            Stencil = 4
+            Stencil = 4,
+			ColorDepth = Color | Depth
         };
         
         typedef TFlags<Enum> Flags;
