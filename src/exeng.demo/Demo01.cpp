@@ -19,7 +19,15 @@ class Demo01 : public GraphicsApplication, public IEventHandler {
 public:
     virtual void initialize(int argc, char **argv) override 
     {
+#if defined(EXENG_UNIX)
         this->getRoot()->getPluginManager()->setPluginPath("../../plugins/libexeng.graphics.gl3/");
+#else
+#  if defined (EXENG_DEBUG)
+		this->getRoot()->getPluginManager()->setPluginPath("../../bin/Debug/");
+#  else 
+		this->getRoot()->getPluginManager()->setPluginPath("../../bin/Release/");
+#  endif
+#endif
         this->getRoot()->getPluginManager()->loadPlugin("exeng.graphics.gl3");
         
 		this->getRoot()->getSceneManager()->setScene(this->scene.get());
