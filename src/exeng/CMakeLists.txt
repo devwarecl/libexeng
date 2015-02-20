@@ -16,13 +16,13 @@ set (BaseFiles_hpp
     Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
     Object.hpp Version.hpp Root.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
-    HeapBuffer.hpp Resource.hpp ResourceManager.hpp ISerializable.hpp Timer.hpp
-    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp
+    HeapBuffer.hpp Resource.hpp ResourceLoader.hpp ResourceManager.hpp ISerializable.hpp Timer.hpp
+    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp 
 )
 set (BaseFiles_cpp Enum.cpp Object.cpp 
     Version.cpp  Root.cpp TypeInfo.cpp
     Buffer.cpp HeapBuffer.cpp 
-    Resource.cpp ResourceManager.cpp 
+    Resource.cpp ResourceLoader.cpp ResourceManager.cpp 
     ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp 
 )
 set (BaseFiles ${BaseFiles_hpp} ${BaseFiles_cpp})
@@ -75,6 +75,7 @@ set (GraphicsFiles_hpp
     graphics/ShaderProgram.hpp        
     graphics/MeshSubset.hpp			
     graphics/MeshSubsetBase.hpp		
+	graphics/TextureManager.hpp
 )
 
 set (GraphicsFiles_cpp
@@ -99,6 +100,7 @@ set (GraphicsFiles_cpp
     graphics/Shader.cpp
     graphics/ShaderProgram.cpp
     graphics/MeshSubset.cpp
+	graphics/TextureManager.cpp
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 
@@ -235,6 +237,7 @@ source_group(ui         FILES ${UiFiles})
 source_group(input      FILES ${InputFiles})
 source_group(scenegraph FILES ${ScenegraphFiles})
 source_group(system	    FILES ${SystemFiles})
+source_group(util		FILES ${UtilFiles})
 
 if(UNIX AND NOT APPLE)
 	SET (UNIX_libs dl rt)

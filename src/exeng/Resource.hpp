@@ -14,6 +14,7 @@
 #ifndef __EXENG_RESOURCE_HPP__
 #define __EXENG_RESOURCE_HPP__
 
+#include <cstdint>
 #include <exeng/Object.hpp>
 #include <exeng/Enum.hpp>
 #include <exeng/TFlags.hpp>
@@ -24,26 +25,25 @@ namespace exeng {
     */
     struct ResourceStatus : public Enum {
         enum Enum {
-            
             //! Usable state.
-            Ready = 0x00000001,
+            Ready = 1,
             
             //! The internal data has been freed. Is the state for empty resources, also.
-            Released = 0x00000002,
+            Released = 2,
             
             //! Lost. Used when the parent factory changed some important status, and the internal data is no longer valid.
-            Lost = 0x00000004,
+            Lost = 4,
             
             //! The resource is currently initialized.
-            Initializing = 0x00000008
+            Initializing = 8
         };
         
         typedef TFlags<Enum> Flags;
     };
 
     /**
-    * @brief Object with internal data asociated, dependent on another object.
-    */
+     * @brief Object with special memory requerimients.
+     */
     class EXENGAPI Resource : public Object {    
     public:
         Resource();
@@ -51,21 +51,24 @@ namespace exeng {
         virtual ~Resource();
         
         /**
-         * @brief Release all the data associated with the resource, without deleting it.
-         * Called by the resource factory when this one has been eliminated or terminated on any form.
+         * @brief Release all the data associated with the resource.
          */
-        virtual void release();
+        virtual void release() = 0;
         
         /**
-         * @brief Restore the resource to a usable state. Only used when the resource have
-         * the 'Lost' status flag.
+         * @brief Restore the resource to a usable state, in case the internal handler has been released.
          */
-        virtual void restore();
-        
+        virtual void restore() = 0;
+
+		/**
+		 * @brief Get the native handle of the resource.
+		 */
+		virtual std::uint64_t getHandle() const = 0;
+
         /**
          * @brief Get the current states of the resource.
          */
-        virtual ResourceStatus::Flags getStatusFlags() const;
+        virtual ResourceStatus::Flags getResourceStatus() const = 0;
     };
 }
 
