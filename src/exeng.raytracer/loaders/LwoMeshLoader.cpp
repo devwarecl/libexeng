@@ -26,8 +26,6 @@ namespace raytracer { namespace loaders {
 		LW_AXIS_Z = 2
 	};
 
-	
-	
 	const float pi = 3.14159265358979f;
 	const float pi_2 = pi / 2.0f;
 

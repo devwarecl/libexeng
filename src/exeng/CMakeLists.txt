@@ -17,13 +17,13 @@ set (BaseFiles_hpp
     Object.hpp Version.hpp Root.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
     HeapBuffer.hpp Resource.hpp ResourceLoader.hpp ResourceManager.hpp ISerializable.hpp Timer.hpp
-    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp 
+    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp
 )
 set (BaseFiles_cpp Enum.cpp Object.cpp 
     Version.cpp  Root.cpp TypeInfo.cpp
     Buffer.cpp HeapBuffer.cpp 
     Resource.cpp ResourceLoader.cpp ResourceManager.cpp 
-    ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp 
+    ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp Exception.cpp
 )
 set (BaseFiles ${BaseFiles_hpp} ${BaseFiles_cpp})
 
@@ -208,9 +208,14 @@ set (SystemFiles_hpp
 )
 set (SystemFiles ${SystemFiles_hpp} ${SystemFiles_cpp})
 
+set (UtilFiles_cpp 
+	util/FrameCounter.cpp 
+	util/MessageBox.cpp)
 
-set (UtilFiles_cpp util/FrameCounter.cpp)
-set (UtilFiles_hpp util/FrameCounter.hpp)
+set (UtilFiles_hpp 
+	util/FrameCounter.hpp 
+	util/MessageBox.hpp)
+
 set (UtilFiles ${UtilFiles_hpp} ${UtilFiles_cpp})
 
 add_library (exeng SHARED

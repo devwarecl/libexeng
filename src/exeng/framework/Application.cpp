@@ -11,10 +11,13 @@
  */
 
 #include "Application.hpp"
-#include <iostream>
+
+#include <exeng/util/MessageBox.hpp>
 
 namespace exeng { namespace framework {
     
+	using namespace exeng::util;
+
     Application::Application()
     {
         this->root = new Root();
@@ -34,8 +37,7 @@ namespace exeng { namespace framework {
         try {
             exitCode = app.run(argc, argv);
         } catch (std::exception &exp) {
-            std::cout << "Unhandled Exception:" << std::endl;
-            std::cout << exp.what() << std::endl;
+			MessageBox::show("Unhandled Exception", exp.what(), MessageBoxIcon::Error);
         }
         
         return exitCode;
