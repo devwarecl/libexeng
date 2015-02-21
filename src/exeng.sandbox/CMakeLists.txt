@@ -30,7 +30,7 @@ set (SandboxFiles
 	Main.cpp gl_core_3_3.h gl_core_3_3.c
 )
 
-source_group(sandbox FILES ${SandboxFiles})
+source_group(\\ FILES ${SandboxFiles})
 
 add_executable(exeng.sandbox ${SandboxFiles} ${RES_FILES})
 

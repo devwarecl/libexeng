@@ -41,7 +41,7 @@ std::string getPluginPath() {
     return "../../bin/Release/";
 #  endif
 #else 
-    return "../exeng.graphics.gl3/";
+    return "../../plugins/libexeng.graphics.gl3/";
 #endif
 }
 
@@ -103,7 +103,8 @@ namespace raytracer {
 		Vector3f position = {0.0f, 0.0f, 0.0f};
 	};
 
-    RayTracerApp::RayTracerApp() {
+    RayTracerApp::RayTracerApp() 
+    {
         this->applicationStatus = ApplicationStatus::Running;
         this->lastTime = Timer::getTime();
         
@@ -112,14 +113,16 @@ namespace raytracer {
         }
     }
     
-    RayTracerApp::~RayTracerApp() {
+    RayTracerApp::~RayTracerApp() 
+    {
         this->terminate();
     }
     
     /**
      * @brief Create a texture with a default color
      */
-    std::unique_ptr<Texture> RayTracerApp::createTexture(GraphicsDriver *driver, const Vector3f& size, const Vector4f &color) {
+    std::unique_ptr<Texture> RayTracerApp::createTexture(GraphicsDriver *driver, const Vector3f& size, const Vector4f &color) 
+    {
         std::unique_ptr<Texture> texture = driver->createTexture(TextureType::Tex2D, size, ColorFormat::getColorFormatR8G8B8A8());
         
 		typedef Vector<std::uint8_t, 4> Vector4ub;
@@ -133,7 +136,17 @@ namespace raytracer {
         return texture;
     }
     
-    void RayTracerApp::initialize(int argc, char **argv) {
+    void RayTracerApp::initialize(int argc, char **argv) 
+    {
+		// Material
+		std::vector<MaterialAttrib> attribs = {
+			{"ambient", DataType::Float32, 4},
+			{"diffuse", DataType::Float32, 4},
+			{"specular", DataType::Float32, 4},
+			{"ambient", DataType::Float32, 1}
+		};
+
+		this->materialFormat = MaterialFormat(attribs);
 
 		boost::log::add_file_log (
 			boost::log::keywords::file_name="raytracer.%N.log",
@@ -145,8 +158,8 @@ namespace raytracer {
         // Initialize the exeng root class and plugins.
 		BOOST_LOG_TRIVIAL(trace) << "Loading plugins...";
 
-        std::string path = getPluginPath();
-        this->getRoot()->getPluginManager()->load("exeng.graphics.gl3", path);
+        this->getRoot()->getPluginManager()->setPluginPath(getPluginPath());
+        this->getRoot()->getPluginManager()->loadPlugin("exeng.graphics.gl3");
         
         // initialize the gl3 driver, in windowed mode
 		BOOST_LOG_TRIVIAL(trace) << "Initializing graphics driver...";
@@ -159,14 +172,14 @@ namespace raytracer {
         DisplayMode mode = this->driver->getDisplayMode();
         
         // create the geometry (a single triangle)
-        Vertex2D screenVertices[] = {
+        Vertex2 screenVertices[] = {
             {{-1.0f,  1.0f, 0.0f}, {0.0f,  1.0f}},
             {{ 1.0f,  1.0f, 0.0f}, {1.0f,  1.0f}},
             {{-1.0f, -1.0f, 0.0f}, {0.0f,  0.0f}},
             {{ 1.0f, -1.0f, 0.0f}, {1.0f,  0.0f}}
         };
 
-        VertexFormat screenVertexFormat = VertexFormat::makeVertex2D();
+        VertexFormat screenVertexFormat = Vertex2::format();
 
         auto vertexBuffer = this->driver->createVertexBuffer(4*screenVertexFormat.getSize(), screenVertices);
 
@@ -178,8 +191,8 @@ namespace raytracer {
         // Initialize the scene.
         this->sceneLoader = std::unique_ptr<SceneLoader>(new SceneLoader(this->driver.get(), this->getRoot()->getMeshManager()));
         this->loadScene();
-        this->scene->setBackColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
-
+        this->scene->setBackColor({0.0f, 0.0f, 0.0f, 1.0f});
+        
         // Create the tracer before the render target texture AND the scene.
         this->sampler = std::unique_ptr<Sampler>(new JitteredSampler(25));
         this->sampler->generateSamples();
@@ -197,7 +210,7 @@ namespace raytracer {
         
         this->tracer->setRenderTarget(screenTexture.get());
         
-        this->screenMaterial = std::unique_ptr<Material>(new Material());
+        this->screenMaterial = std::unique_ptr<Material>(new Material(&this->materialFormat));
         this->screenMaterial->getLayer(0)->setTexture(screenTexture.get());
         
         this->camera.setLookAt({0.0f, 0.0f, 0.0f});
@@ -205,27 +218,33 @@ namespace raytracer {
         this->camera.setUp({0.0f, 1.0f, 0.0f});
 
 		// attach a rotation animator to the central cube
-		auto animator = std::unique_ptr<SceneNodeAnimator>(new RotateSceneNodeAnimator());
-		// auto animator = std::unique_ptr<SceneNodeAnimator>(new TranslateSceneNodeAnimator());
+		// auto animator = std::unique_ptr<SceneNodeAnimator>(new RotateSceneNodeAnimator());
+		// this->animators[this->scene->getRootNode()->getChild("boxNode3")] = std::move(animator);
 
-		this->animators[this->scene->getRootNode()->getChild("boxNode3")] = std::move(animator);
+		this->defaultMaterial = std::unique_ptr<Material>(new Material(&this->materialFormat));
+		this->driver->setDefaultMaterial(this->defaultMaterial.get());
 
 		BOOST_LOG_TRIVIAL(trace) << "Application initialization done.";
     }
     
-    void RayTracerApp::pollEvents() {
+    void RayTracerApp::pollEvents() 
+    {
         this->driver->pollEvents();
     }
     
-    ApplicationStatus::Enum RayTracerApp::getStatus() const {
+    ApplicationStatus::Enum RayTracerApp::getStatus() const 
+    {
         return this->applicationStatus;
     }
     
-    void RayTracerApp::update(double seconds) {
+    void RayTracerApp::update(double seconds) 
+    {
 		// Animate the scene nodes
+		/*
 		for (auto it=this->animators.begin(); it!=this->animators.end(); ++it) {
 			it->second->animateNode(float(seconds), it->first);
 		}
+		*/
 
 		// camera update
         Vector3f delta(0.0f);
@@ -275,36 +294,46 @@ namespace raytracer {
         this->camera.setOrientation(position, lookAt);
     }
     
-    void RayTracerApp::render() {
+    void RayTracerApp::render() 
+    {
         this->clear();
         this->tracer->render(&this->camera);
         this->present();
     }
     
-    int RayTracerApp::getExitCode() const {
+    int RayTracerApp::getExitCode() const 
+    {
         return 0;
     }
     
-    void RayTracerApp::terminate() {
+    void RayTracerApp::terminate() 
+    {
         this->driver->terminate();
     }
     
-    void RayTracerApp::clear() {
+    void RayTracerApp::clear() 
+    {
         this->driver->beginFrame({0.0f, 0.0f, 0.0f, 1.0f}, ClearFlags::Color | ClearFlags::Depth);
     }
     
-    void RayTracerApp::present() {
+    void RayTracerApp::present()
+    {
         this->driver->setMaterial(this->screenMaterial.get());
-        this->driver->setMeshSubset( this->screenMeshSubset.get());
+        this->driver->setMeshSubset(this->screenMeshSubset.get());
         this->driver->render(Primitive::TriangleStrip, 4);
         this->driver->endFrame();
     }
     
-    void RayTracerApp::loadScene() {
-        this->scene = this->sceneLoader->loadScene("scene.xml");
+    void RayTracerApp::loadScene() 
+    {
+		// TODO: this should be done at initialization time...
+		this->getRoot()->getMeshManager()->setPath("C:\\Users\\fapablaza\\Downloads\\Easel");
+
+        this->scene = this->sceneLoader->loadScene("scene.xml", &this->materialFormat);
     }
     
-    void RayTracerApp::handleEvent(const EventData &data) {
+    void RayTracerApp::handleEvent(const EventData &data) 
+    {
         if (data.eventType == TypeId<InputEventData>()) {
             const InputEventData &inputEventData = data.cast<InputEventData>();
             this->buttonStatus[ inputEventData.buttonCode ] = inputEventData.buttonStatus;
@@ -348,12 +377,4 @@ namespace exeng { namespace main {
 
         return exitCode;
 	}
-	
-
-	/*
-	int main(int argc, char **argv) 
-	{
-        return 0;
-	}
-	*/
 }}

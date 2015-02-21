@@ -25,7 +25,6 @@ namespace exeng {
          */
         static uint32_t getTime();
     };
-
 }
 
 #endif  //__EXENG_TIMER_HPP__

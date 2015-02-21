@@ -83,7 +83,7 @@ namespace exeng {
          * @brief Gets the size of the buffer, in bytes.
          */
         virtual std::uint32_t getSize() const = 0;
-
+        
         /**
          * @brief Copy and allocate the buffer internal data.
          */

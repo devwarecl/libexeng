@@ -134,7 +134,7 @@ namespace raytracer { namespace tracers {
                 Vector4f color;
                 
                 if (material) {
-                    color = scene->getMaterial(i)->getProperty4f("diffuse");
+                    color = scene->getMaterial(i)->getAttribute<Vector4f>("diffuse");
                 } else {
                     color = {1.0f, 1.0f, 1.0f, 1.0f};
                     BOOST_LOG_TRIVIAL(trace) << "Material " << i << " is null.";

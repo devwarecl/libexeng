@@ -10,3 +10,4 @@
  * found in the file LICENSE in this distribution.
  */
  
+#include "AudioBuffer.hpp"

@@ -18,7 +18,7 @@
 #include <exeng/Root.hpp>
 #include <exeng/graphics/Material.hpp>
 
-#include <exeng/scenegraph/ISceneRenderer.hpp>
+#include <exeng/scenegraph/SceneRenderer.hpp>
 #include <exeng/scenegraph/Scene.hpp>
 #include <exeng/scenegraph/Camera.hpp>
 
@@ -46,17 +46,17 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Set the current scene renderer.
          */
-        void setSceneRenderer(ISceneRenderer *renderer);
+        void setSceneRenderer(SceneRenderer *renderer);
         
         /**
          * @brief Get the currently scene renderer.
          */
-        ISceneRenderer* getSceneRenderer();
+        SceneRenderer* getSceneRenderer();
         
         /**
          * @brief Get the currently used scene renderer.
          */
-        const ISceneRenderer* getSceneRenderer() const;
+        const SceneRenderer* getSceneRenderer() const;
         
         /**
          * @brief Set the scene to render.
@@ -80,8 +80,8 @@ namespace exeng { namespace scenegraph {
         
     private:
         struct Private;
-        Private *impl;
+        Private *impl = nullptr;
     }; 
 }}
 
-#endif // SCENEMANAGER_HPP
+#endif // __EXENG_SCENEGRAPH_SCENEMANAGER_HPP__

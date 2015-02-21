@@ -10,54 +10,34 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include <exeng/framework/Application.hpp>
-#include <memory>
+#include "Application.hpp"
 #include <iostream>
 
 namespace exeng { namespace framework {
     
-    Application* Application::instance = nullptr;
-    
-    Application::Application() : root(nullptr) {
-        
-        if (Application::instance) {
-            throw std::logic_error("Application::Application: Another application instance is still running. Concurrent application executions are not yet supported.");
-        }
-        
+    Application::Application()
+    {
         this->root = new Root();
-        
-        Application::instance = this;
     }
     
-    
-    Application::~Application()  {
-        Application::instance = nullptr;
-        
+    Application::~Application()  
+    {
         if (this->root) {
             delete this->root;
         }
     }
     
-    
-    int Application::run(int argc, char **argv) {
-        throw std::logic_error("Application::run must be implemented.");
-    }
-    
-    
-    int Application::execute(Application *app, int argc, char** argv) {
-        if (!app) {
-            throw std::logic_error("Application::execute: The application cannot be 'nullptr'.");
-        }
-
-        return app->run(argc, argv);
-        /*
+    int Application::execute(Application &app, int argc, char** argv) 
+    {
+        int exitCode = 0;
+        
         try {
-            
-        } catch(const std::exception &exp) {
-            std::cout << "Unexcepted exception thrown:" << std::endl ;
-            std::cout << "    " << exp.what() << std::endl;
-            return -1;
+            exitCode = app.run(argc, argv);
+        } catch (std::exception &exp) {
+            std::cout << "Unhandled Exception:" << std::endl;
+            std::cout << exp.what() << std::endl;
         }
-        */
+        
+        return exitCode;
     }
 }}

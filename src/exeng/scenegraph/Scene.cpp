@@ -1,3 +1,4 @@
+
 /**
  * @file Scene.cpp
  * @brief Scene class implementation.
@@ -27,47 +28,65 @@ namespace exeng { namespace scenegraph {
     using namespace exeng::graphics;
     using namespace exeng::scenegraph;
 
-    struct Scene::Private {
-        Color backColor;
+    struct Scene::Private 
+    {
+        Vector4f backColor = {0.0f, 0.0f, 0.0f, 1.0f};
         
         std::list<SceneNode*> cameraNodes;
         std::list<SceneNode*> lightNodes;
-        std::unique_ptr<SceneNode> rootNode;
+        std::unique_ptr<SceneNode> rootNode = std::unique_ptr<SceneNode>(new SceneNode("rootNode"));
         
         std::list<std::unique_ptr<Light>> lights;
         std::list<std::unique_ptr<Camera>> cameras;
 
         std::map<std::string, std::unique_ptr<Material>> materials;
         std::list<Material*> materialList;
-
-        Private() : rootNode(new SceneNode("rootNode")) {}
+        
+        const MaterialFormat *materialFormat = nullptr;
     };
     
-    Scene::Scene() : impl(new Scene::Private()) {}
-
-    Scene::~Scene() {}
+    Scene::Scene() 
+    {
+        this->impl = new Scene::Private();
+    }
     
-    SceneNode* Scene::getRootNode() {
+    Scene::Scene(const exeng::graphics::MaterialFormat *materialFormat)
+	{
+		this->impl = new Scene::Private();
+		this->impl->materialFormat = materialFormat;
+	}
+
+    Scene::~Scene() 
+	{
+		delete this->impl;
+	}
+    
+    SceneNode* Scene::getRootNode() 
+    {
         assert(this->impl != nullptr);
         return this->impl->rootNode.get();
     }
 
-    const SceneNode* Scene::getRootNode() const {
+    const SceneNode* Scene::getRootNode() const 
+    {
         assert(this->impl != nullptr);
         return this->impl->rootNode.get();
     }
     
-    void Scene::setBackColor(const Color &color){
+    void Scene::setBackColor(const Vector4f &color)
+    {
         assert(this->impl != nullptr);
         this->impl->backColor = color;
     }
 
-    Color Scene::getBackColor() const{
+    Vector4f Scene::getBackColor() const
+    {
         assert(this->impl != nullptr);
         return this->impl->backColor;
     }
 
-    Camera* Scene::createCamera() {
+    Camera* Scene::createCamera() 
+    {
         assert(this->impl != nullptr);
 
         Camera* camera = new Camera();
@@ -77,7 +96,8 @@ namespace exeng { namespace scenegraph {
         return camera;
     }
 
-    Light* Scene::createLight() {
+    Light* Scene::createLight() 
+    {
         assert(this->impl != nullptr);
 
         Light* light = new Light();
@@ -87,10 +107,11 @@ namespace exeng { namespace scenegraph {
         return light;
     }
 
-    Material* Scene::createMaterial(const std::string &materialName) {
+    Material* Scene::createMaterial(const std::string &materialName) 
+    {
         assert(this->impl != nullptr);
         
-        auto material = std::unique_ptr<Material>(new Material());
+        auto material = std::unique_ptr<Material>(new Material(this->impl->materialFormat));
         material->setName(materialName);
         
 		this->impl->materialList.push_back(material.get());	
@@ -98,8 +119,9 @@ namespace exeng { namespace scenegraph {
 		
         return this->impl->materials[materialName].get();
     }
-
-    SceneNode* Scene::createSceneNode(const std::string &nodeName, SceneNodeData* nodeData) {
+    
+    SceneNode* Scene::createSceneNode(const std::string &nodeName, SceneNodeData* nodeData) 
+    {
         assert(this->impl != nullptr);
         
         std::list<SceneNode*> *nodes = nullptr;

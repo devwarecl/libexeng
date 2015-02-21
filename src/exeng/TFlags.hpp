@@ -17,10 +17,11 @@
 #include <cstdint>
 
 namespace exeng {
+
 	/**
-	 * @brief Flags management
+	 * @brief Flag management class.
 	 */
-	template < typename _EnumType, typename _StorageType = int >
+	template <typename _EnumType, typename _StorageType = int>
 	class TFlags {
 	public:
 		// Definir alias para posibilitar el uso en un ambiente de 
@@ -36,7 +37,7 @@ namespace exeng {
 		/**
          * @brief Almacenamiento interno de las flags
 		 */
-		StorageType value;
+		StorageType value = StorageType(0);
 		
 	public:
 		TFlags();
@@ -51,8 +52,49 @@ namespace exeng {
 		
         operator EnumType() const;
 	};
-}
 
-#include <exeng/TFlags.inl>
+	template< typename _EnumType, typename _StorageType>
+	TFlags<_EnumType, _StorageType>::TFlags() : value(StorageType()) { }
+
+	template< typename _EnumType, typename _StorageType>
+	TFlags<_EnumType, _StorageType>::TFlags(_EnumType FlagDetail) : value(FlagDetail) { }
+	
+    template< typename _EnumType, typename _StorageType>
+    TFlags<_EnumType, _StorageType>::TFlags(int value) {
+        this->value = value;
+    }
+
+	template< typename _EnumType, typename _StorageType>
+	void TFlags<_EnumType, _StorageType>::activate(_EnumType Flag, bool Status) {
+		bool flagStatus = this->isActivated(Flag);
+
+		if (flagStatus == false && Status == true) {
+			this->value |= Flag;
+        }
+		else if (flagStatus == true && Status == false) {
+			this->value ^= Flag;
+        }
+	}
+	
+	template< typename _EnumType, typename _StorageType>
+	bool TFlags<_EnumType, _StorageType>::isActivated(_EnumType Flag) const {
+		return this->value&Flag ? true : false;
+	}
+
+	template< typename _EnumType, typename _StorageType>
+	bool TFlags<_EnumType, _StorageType>::operator== (const TFlags<_EnumType>& Other) const {
+		return this->value == Other.value;
+	}
+	
+	template< typename _EnumType, typename _StorageType>
+	bool TFlags<_EnumType, _StorageType>::operator!= (const TFlags<_EnumType>& Other) const {
+		return this->value != Other.value;
+	}
+	
+    template< typename _EnumType, typename _StorageType>
+    TFlags<_EnumType, _StorageType>::operator EnumType() const {
+        return static_cast<EnumType>(this->value);
+    }
+}
 
 #endif	//__EXENG_TFLAGS_HPP__

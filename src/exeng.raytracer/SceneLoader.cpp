@@ -1,10 +1,11 @@
 
-
 #include "SceneLoader.hpp"
 
 #include <exeng/Vector.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/graphics/Material.hpp>
+
+#include <memory>
 
 namespace raytracer {
     using namespace exeng;
@@ -20,11 +21,11 @@ namespace raytracer {
     }
     
     // For now, just create a simple scene, boxed scene.
-    std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename) 
+    std::unique_ptr<Scene> SceneLoader::loadScene(const std::string &filename, const MaterialFormat *materialFormat) 
 	{
-        // empty object
-        auto scene = std::unique_ptr<Scene>(new Scene());
+		auto scene = std::unique_ptr<Scene>(new Scene(materialFormat));
 
+        // empty object
 		/*
 		this->addBoxNode ( 
 			scene.get(), "boxNode1", 
@@ -44,8 +45,10 @@ namespace raytracer {
 			"boxMesh3", {0.0f, 0.0f, 0.0f}, {0.75f, 0.25f, 0.25f}
 		);
 		*/
-
-		std::string lwoFilename = "D:\\Felipe\\Desktop\\Assets\\Modelos\\Santiago3D\\Basurero\\BasureroLWO.lwo";
+		
+		// std::string lwoFilename = "D:\\Felipe\\Desktop\\Assets\\Modelos\\Santiago3D\\Basurero\\BasureroLWO.lwo";
+		// std::string lwoFilename = "C:\\Users\\fapablaza\\Downloads\\Easel\\easel.lwo";
+		std::string lwoFilename = "easel.lwo";
 		Mesh *mesh = this->meshManager->getMesh(lwoFilename, this->graphicsDriver);
 
 		SceneNode *node = scene->getRootNode()->addChild("boxNode3");
@@ -61,7 +64,8 @@ namespace raytracer {
 	{
 		// box material
         Material *boxMaterial = scene->createMaterial(materialName);
-        boxMaterial->setProperty("diffuse", materialColor);
+
+		boxMaterial->setAttribute<Vector4f>("diffuse", materialColor);
 
         // box mesh
         // Mesh *boxMesh = this->meshManager->getMesh("/cube", this->graphicsDriver);

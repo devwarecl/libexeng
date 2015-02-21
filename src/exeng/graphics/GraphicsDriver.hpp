@@ -23,10 +23,12 @@
 #include <exeng/Enum.hpp>
 #include <exeng/TFlags.hpp>
 #include <exeng/Boundary.hpp>
+#include <exeng/Vector.hpp>
 #include <exeng/Matrix.hpp>
 #include <exeng/Buffer.hpp>
 #include <exeng/input/IEventRaiser.hpp>
-#include <exeng/graphics/Color.hpp>
+
+#include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/graphics/Screen.hpp>
@@ -51,15 +53,13 @@ namespace exeng { namespace graphics {
         enum Enum {
             Color = 1,
             Depth = 2,
-            Stencil = 4
+            Stencil = 4,
+			ColorDepth = Color | Depth
         };
         
         typedef TFlags<Enum> Flags;
     };
     
-    class EXENGAPI Texture;
-    class EXENGAPI Material;
-
     struct DisplayStatus : public Enum {
         enum Enum { Window, Fullscreen };
     };
@@ -68,40 +68,22 @@ namespace exeng { namespace graphics {
     * @brief Encapsulate a display mode.
     */
     struct DisplayMode {
-        exeng::Size2i size;                             //! Width and height, in pixels.
-        int redBits, greenBits, blueBits, alphaBits;    //! Frame buffer colors.
-        int depthBits, stencilBits;                     //! Frame buffer support
-        DisplayStatus::Enum status;                     //! Fullscreen or window?
+		//! Width and height, in pixels.
+        Size2i size = Size2i(640, 480);
+
+		//! Frame buffer colors.
+		Vector<std::uint8_t, 4> colorFormat = Vector<std::uint8_t, 4>(8, 8, 8, 8);
+
+		//! Other frame buffer 
+        int depthBits = 16;
+		int stencilBits = 0;
+
+		//! Fullscreen or window?
+        DisplayStatus::Enum status = DisplayStatus::Window;                     
         
-        inline DisplayMode() : size(640, 480) {
-            this->redBits = this->greenBits = this->blueBits = this->alphaBits = 8;
-            this->depthBits = this->stencilBits = 0;
-            this->status = DisplayStatus::Window;
-        }
-        
-        inline DisplayMode(exeng::Size2i size, int redBits, int greenBits, int blueBits, int alphaBits) {
-            this->size = size;
-            this->redBits = redBits;
-            this->greenBits = greenBits;
-            this->blueBits = blueBits;
-            this->alphaBits = alphaBits;
-            this->depthBits = 16;
-            this->stencilBits = 0;
-            this->status = DisplayStatus::Window;
-        }
-        
-        inline DisplayMode(exeng::Size2i size, 
-                        int redBits, int greenBits, int blueBits, int alphaBits,
-                        int depthBits, int stencilBits, DisplayStatus::Enum status) {
-            this->size = size;
-            this->redBits = redBits;
-            this->greenBits = greenBits;
-            this->blueBits = blueBits;
-            this->alphaBits = alphaBits;
-            this->depthBits = depthBits;
-            this->stencilBits = stencilBits;
-            this->status = status;
-        }
+        DisplayMode();
+        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat);
+        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status);
     };
 
     struct CloseReason : public Enum {
@@ -109,10 +91,10 @@ namespace exeng { namespace graphics {
     };
     
     struct CloseEventData : public exeng::input::EventDataImpl<CloseEventData> {
-        CloseReason::Enum reason;
+        CloseReason::Enum reason = CloseReason::Unknown;
 
-        CloseEventData() : reason(CloseReason::Unknown) {}
-        CloseEventData(CloseReason::Enum reason_) : reason(reason_) {}
+        CloseEventData();
+        CloseEventData(CloseReason::Enum reason);
     };
 
     struct ButtonStatus : public Enum {
@@ -131,22 +113,12 @@ namespace exeng { namespace graphics {
     };
 
     struct InputEventData : public exeng::input::EventDataImpl<InputEventData> {
-        ButtonStatus::Enum buttonStatus;
-        ButtonCode::Enum buttonCode;
+        ButtonStatus::Enum buttonStatus = ButtonStatus::Release;
+        ButtonCode::Enum buttonCode = ButtonCode::None;
 
-        InputEventData() : buttonStatus(ButtonStatus::Release), buttonCode(ButtonCode::None) {}
-
-        InputEventData(ButtonStatus::Enum buttonStatus_, ButtonCode::Enum buttonCode_) 
-            : buttonStatus(buttonStatus_), buttonCode(buttonCode_) {
-        }
-
-        InputEventData(ButtonCode::Enum buttonCode_, ButtonStatus::Enum buttonStatus_) 
-            : buttonStatus(buttonStatus_), buttonCode(buttonCode_) {
-        }
-
-        bool check(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) const {
-            return this->buttonStatus==buttonStatus && this->buttonCode==buttonCode;
-        }
+        InputEventData();
+        InputEventData(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode);
+        bool check(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) const;
     };
 
     /**
@@ -154,7 +126,7 @@ namespace exeng { namespace graphics {
     */
 	class EXENGAPI GraphicsDriver : /*public exeng::ResourceManager, */ public exeng::input::IEventRaiser {
     public:
-        virtual ~GraphicsDriver();
+        virtual ~GraphicsDriver() {}
         
         /**
          * @brief Initializes the graphics driver, with the settings included. 
@@ -167,8 +139,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Initializes the graphics driver, with the states specified by default
          * on the DisplayMode structure.
-         * Throws exception if the graphics drives can't be initialized with the
-         * supplied settings.
+         * Throws exception if the graphics drives can't be initialized with the supplied settings.
          * @param displayMode The settings requested.
          */
         virtual void initialize() = 0;
@@ -204,7 +175,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Start the rendering of a new frame, clearing the previous one
          */
-        virtual void beginFrame(const Color &color, ClearFlags::Flags flags) = 0;
+        virtual void beginFrame(const Vector4f &color, ClearFlags::Flags flags) = 0;
         
         /**
          * @brief Flip the backbuffer and the front buffer
@@ -271,13 +242,8 @@ namespace exeng { namespace graphics {
         /**
          * @brief Bound the specified MeshSubset object.
          */
-        virtual void setMeshSubset(MeshSubset *meshSubset) = 0;
-
-        /**
-         * @brief Gets the currently bound MeshSubset.
-         */
-        virtual MeshSubset* getMeshSubset() = 0;
-
+        virtual void setMeshSubset(const MeshSubset *meshSubset) = 0;
+        
         /**
          * @brief Gets the currently bound MeshSubset.
          */
@@ -309,16 +275,16 @@ namespace exeng { namespace graphics {
         virtual Rectf getViewport() const = 0;
         
         /**
-         * @brief Render, using the specified primitive and the currently setted material, 
-         * vertex and index buffers, if any. 
+         * @brief Render a primitive using the supplied parameter values and the current state of the graphics driver
+		 * (current material and meshsubset).
          * @param primitive The primitive type.
-         * @param count The vertex count to utilize from the currently setted buffers.
+         * @param count The vertex count to utilize from the currently setter meshsubset.
          */
         virtual void render(Primitive::Enum primitive, int count) = 0;
         
         /**
-         * @brief createShader
-         * @param type
+         * @brief Creates a new shader of the specified type.
+         * @param type A member of the ShaderType enumeration.
          * @return 
          */
         virtual std::unique_ptr<Shader> createShader(ShaderType::Enum type) = 0;
@@ -339,7 +305,53 @@ namespace exeng { namespace graphics {
          * @brief Get the name of the specified transformation matrix in shaders.
          */
         virtual std::string getTransformName(Transform::Enum transform) const = 0;
+
+		/**
+		 * @brief Set the material to use by the graphics driver when the current material has been not set, or 
+		 * has been set to a null pointer (nullptr).
+		 */
+		virtual void setDefaultMaterial(const Material *material) = 0;
     };
+
+	/*
+	 * DisplayMode Implementation
+	 */
+	inline DisplayMode::DisplayMode() {}
+        
+    inline DisplayMode::DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat) {
+        this->size = size;
+		this->colorFormat = colorFormat;
+    }
+
+	inline DisplayMode::DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status) {
+        this->size = size;
+		this->colorFormat = colorFormat;
+		this->depthBits = depthBits;
+        this->stencilBits = stencilBits;
+        this->status = status;
+    }
+
+	/*
+	 * CloseEventData Implementation
+	 */
+	inline CloseEventData::CloseEventData() {}
+    inline CloseEventData::CloseEventData(CloseReason::Enum reason) {
+		this->reason = reason;
+	}
+
+	/*
+	 * InputEventData Implementation
+	 */
+	inline InputEventData::InputEventData() {}
+
+	inline InputEventData::InputEventData(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode)  {
+		this->buttonStatus = buttonStatus;
+		this->buttonCode = buttonCode;
+	}
+
+	inline bool InputEventData::check(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) const  {
+		return this->buttonStatus==buttonStatus && this->buttonCode==buttonCode;
+	}
 }}
 
 #endif

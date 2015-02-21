@@ -35,7 +35,6 @@
 #include <exeng/system/PluginManager.hpp>
 
 #include <exeng/graphics/GraphicsManager.hpp>
-#include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/Shader.hpp>
 #include <exeng/graphics/ShaderProgram.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
@@ -64,6 +63,7 @@
 #include <exeng/scenegraph/Scene.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/Segment.hpp>
+#include <exeng/scenegraph/TSolidGeometry.hpp>
 
 /**
  * @brief The common namespace for the engine.

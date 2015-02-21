@@ -10,7 +10,6 @@
 
 #include <exeng/Object.hpp>
 #include <exeng/Vector.hpp>
-#include <exeng/graphics/Color.hpp>
 #include <exeng/graphics/Material.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
@@ -24,6 +23,8 @@ namespace exeng { namespace scenegraph {
     class EXENGAPI Scene : public Object {
     public:
         Scene();
+        Scene(const exeng::graphics::MaterialFormat *materialFormat);
+        
         virtual ~Scene();
         
         /**
@@ -55,12 +56,12 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Sets the scene background color.
          */
-        void setBackColor(const exeng::graphics::Color &color);
+        void setBackColor(const Vector4f &color);
         
         /**
          * @brief Gets the scene background color.
          */
-        exeng::graphics::Color getBackColor() const;
+        Vector4f getBackColor() const;
 
         const exeng::graphics::Material* getMaterial(const int index) const;
 
