@@ -55,8 +55,11 @@ set (Samplers
     samplers/JitteredSampler.hpp    samplers/JitteredSampler.cpp 
 )
 
+set (Loaders
+	loaders/LwoMeshLoader.hpp		loaders/LwoMeshLoader.cpp
+)
 
-add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Kernels})
+add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Kernels} ${Loaders})
 
 target_link_libraries(exeng.raytracer exeng exeng.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
@@ -64,6 +67,4 @@ source_group(\\			FILES ${BaseFiles})
 source_group(tracers	FILES ${Tracers})
 source_group(samplers	FILES ${Samplers})
 source_group(kernels	FILES ${Kernels})
-
-add_subdirectory(samplers)
-add_subdirectory(tracers)
+source_group(loaders	FILES ${Loaders})

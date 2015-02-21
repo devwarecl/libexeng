@@ -23,8 +23,3 @@ if (WIN32)
     set_property(TARGET exeng.graphics.gl3 PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 	set_property(TARGET exeng.ui.demo PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 endif (WIN32)
-
-# TODO: Ver como ejecutar post
-# Pruebas unitarias
-# enable_testing()
-# add_test(exeng-test test)
