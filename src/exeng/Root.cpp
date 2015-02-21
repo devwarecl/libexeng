@@ -47,9 +47,8 @@ namespace exeng {
             "The license and distribution terms for this library may be\n"
             "found in the file LICENSE in this distribution\n";
     
-    Root::Root() : impl(new Root::Private()) {
-        // std::cout << licenseMsg << std::endl;
-        
+    Root::Root() {
+		this->impl = new Root::Private();
         this->impl->graphicsManager.reset(new GraphicsManager());
         this->impl->pluginManager.reset(new PluginManager(this));
         this->impl->meshManager.reset(new MeshManager());

@@ -59,7 +59,7 @@ namespace exeng {
         
     private:
         struct Private;
-        Private *impl;
+        Private *impl = nullptr;
     };
 }
 
