@@ -13,50 +13,33 @@
 #ifndef __EXENG_RESOURCEMANAGER_HPP__
 #define __EXENG_RESOURCEMANAGER_HPP__
 
-#include <exeng/Object.hpp>
+#include <exeng/Resource.hpp>
+#include <exeng/ResourceLoader.hpp>
 
 namespace exeng {
+
     /**
-     * @brief Resource factory abstract base class.
+     * @brief Resource manager class.
+	 *
+	 * This abstract class hold the logic for a basic management of resources 
+	 * (simply boils down to the lifetime management of those resources)
      */
-    class EXENGAPI Resource;
-    class EXENGAPI ResourceManager : public Object {
-        friend class Resource;
+    class EXENGAPI ResourceManager {
     public:
-        ResourceManager();
-        
-        virtual ~ResourceManager();
-        
-        /**
-         * @brief Add a resource to the internal list.
-         * 
-         * The ResourceManager is now the manager of the object
-         */
-        void putResource(Resource* resource, const std::string &name);
-        
-        
-        /**
-         * @brief Add a resource to the internal list.
-         * 
-         * The ResourceManager is now the manager of the object
-         */
-        void addResource(Resource* resource);
-        
-        
-        /**
-         * @brief Remove the resource from the resource factory.
-         */
-        void removeResource(Resource* resource);
-        
-        /**
-         * @brief Remove the resource from the resource factory.
-         */
-        void removeResource(const std::string &name);
-        
-    private:
-        struct Private;
-        Private *impl;
+		ResourceManager();
+		virtual ~ResourceManager() = 0;
+
+		virtual Resource* get(const std::string &uri);
+		virtual const Resource* get(const std::string &uri) const;
+
+	protected:
+		virtual void addLoader(ResourceLoader *loader);
+		virtual void removeLoader(ResourceLoader *loader);
+
+	private:
+		struct Impl;
+		Impl *impl = nullptr;
     };
 }
- 
+
 #endif //__EXENG_RESOURCEFACTORY_HPP__

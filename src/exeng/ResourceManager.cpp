@@ -11,98 +11,95 @@
  * found in the file LICENSE in this distribution.
  */
 
+#include "ResourceManager.hpp"
+
+#include <cassert>
 #include <map>
 #include <list>
-#include <cassert>
-#include <iostream>
-#include <exeng/Resource.hpp>
-#include <exeng/ResourceManager.hpp>
+#include <boost/checked_delete.hpp>
+#include <exeng/Exception.hpp>
 
 namespace exeng {
-    
-    struct ResourceManager::Private {
-        //! Unnamed resources
-        std::list<Resource*> resources;
-        
-        //! Named resources
-        std::map<std::string, Resource*> namedResources;
-    };
-    
-    
-    ResourceManager::ResourceManager() : impl(nullptr) {
-        this->impl = new ResourceManager::Private();
-    }
-    
-    
-    ResourceManager::~ResourceManager() {
-        if (!this->impl) {
-            return;
-        }
-        
-#if defined (EXENG_DEBUG)
-        std::cout << "ResourceManager::~ResourceManager: Releasing ";
-        std::cout << this->impl->resources.size() << " objects:" << std::endl;
-#endif
-        
-        for (Resource *resource : this->impl->resources) {
-            // assert(resource->resourceManager == this);
-#if defined (EXENG_DEBUG)
-            std::cout << "    " << resource->toString() << std::endl;
-#endif
-            // resource->resourceManager = nullptr;
-            resource->release();
-        }
-        
-        this->impl->resources.clear();
-        
-#if defined (EXENG_DEBUG)
-        std::cout << std::endl;
-#endif
-        
-        delete this->impl;
-        this->impl = nullptr;
-    }
-    
-    void ResourceManager::addResource(Resource* resource) {
-        assert(this->impl != nullptr);
-        
-        this->impl->resources.push_back(resource);
-    }
 
-    void ResourceManager::putResource(Resource* resource, const std::string &name)  {
-        assert(this->impl != nullptr);
-        
-        /*
-        if (name == "") {
-            throw std::logic_error("ResourceManager::putResource: The name cannot be \"\". ");
-        }
-        */
-        
-        // validate previous instance
-		// this->impl->namedResources[name] = resource;
-    }
-    
-    void ResourceManager::removeResource(const std::string &name) {
-        /*
-        assert(this->impl != nullptr);
+	struct ResourceManager::Impl 
+	{
+		mutable std::map<std::string, std::unique_ptr<Resource>> resources;
+		std::list<ResourceLoader*> loaders;
 
-		auto &resources = this->impl->namedResources;
-		auto pos = resources.find(name);
+		Resource* get(const std::string &uri) 
+		{
+			// Search for already loaded resources
+			auto resourceIterator = this->resources.find(uri);
+			if (resourceIterator != std::end(this->resources)) {
+				return resourceIterator->second.get();
+			}
 
-		if (pos != resources.end()) {
-			pos->second->release();
-			delete pos->second;
-			resources.erase(name);
+			//! TODO: Validate the supplied uri
+
+			// search for a suitable loader
+			Resource* resource = nullptr;
+			for (ResourceLoader *loader : this->loaders) {
+
+				if (loader->tryLoad(uri)) {
+					std::unique_ptr<Resource> resourcePtr = loader->load(uri);
+
+					resource = resourcePtr.get();
+					this->resources[uri] = std::move(resourcePtr);
+					break;
+				}
+			}
+
+			return resource;
 		}
-        */
-    }
-    
-	void ResourceManager::removeResource(Resource* resource) {
-        assert(this->impl != nullptr);
-        
-        // resource->resourceManager = nullptr;
-		// resource->release();
-		// delete resource;
-        // this->impl->resources.remove(resource);
-    }
+	};
+
+	ResourceManager::ResourceManager()
+	{
+		this->impl = new ResourceManager::Impl();
+	}
+
+	ResourceManager::~ResourceManager()
+	{
+		boost::checked_delete(this->impl);
+	}
+
+	Resource* ResourceManager::get(const std::string &uri) 
+	{
+		assert(this->impl != nullptr);
+
+		return this->impl->get(uri);
+	}
+
+	const Resource* ResourceManager::get(const std::string &uri) const 
+	{
+		assert(this->impl != nullptr);
+
+		return this->impl->get(uri);
+	}
+
+	void ResourceManager::addLoader(ResourceLoader *loader)
+	{
+		assert(this->impl != nullptr);
+
+#if defined(EXENG_DEBUG)
+		if (loader == nullptr) {
+			EXENG_THROW_EXCEPTION("The supplied ResourceLoader instance can't be a null pointer.");
+		}
+#endif
+
+		this->impl->loaders.push_back(loader);
+	}
+
+	void ResourceManager::removeLoader(ResourceLoader *loader)
+	{
+		assert(this->impl != nullptr);
+
+#if defined(EXENG_DEBUG)
+		if (loader == nullptr) {
+			EXENG_THROW_EXCEPTION("The supplied ResourceLoader instance can't be a null pointer.");
+		}
+#endif
+
+		this->impl->loaders.remove(loader);
+	}
 }

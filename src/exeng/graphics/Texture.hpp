@@ -85,7 +85,7 @@ namespace exeng { namespace graphics {
          * For graphics devices implemented for the exeng library, it just return 
          * the 'this' pointer, casted to std::uint64_t.
          */
-        virtual std::uint64_t getHandle() const = 0;
+        virtual int getHandle() const override = 0;
     };
 }}
 

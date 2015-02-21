@@ -15,8 +15,8 @@ namespace exeng {
 	public:
 		virtual ~ResourceLoader();
 
-		virtual bool tryLoad(const std::string &filename) = 0;
-		virtual std::unique_ptr<Resource> load(const std::string &filename) = 0;
+		virtual bool tryLoad(const std::string &uri) = 0;
+		virtual std::unique_ptr<Resource> load(const std::string &uri) = 0;
 	};
 }
 

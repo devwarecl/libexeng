@@ -61,7 +61,7 @@ namespace exeng {
 		/**
 		 * @brief Get the native handle of the resource.
 		 */
-		virtual std::uint64_t getHandle() const;
+		virtual int getHandle() const;
 
         /**
          * @brief Get the current states of the resource.

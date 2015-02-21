@@ -12,27 +12,25 @@
  */
 
 #include "Resource.hpp"
+#include <exeng/Exception.hpp>
 
 namespace exeng {
-    Resource::~Resource() {}
-
-    void Resource::release() 
+    Resource::~Resource() 
 	{
-		throw std::runtime_error("Resource::release: Not Implemented");
-	}
-        
-    void Resource::restore() 
-	{
-		throw std::runtime_error("Resource::restore: Not Implemented");
+		this->release();
 	}
 
-	std::uint64_t Resource::getHandle() const 
+    void Resource::release()  {}
+    
+    void Resource::restore() {}
+
+	int Resource::getHandle() const 
 	{
-		throw std::runtime_error("Resource::getHandle: Not Implemented");
+		return reinterpret_cast<int>(this);
 	}
 
     ResourceStatus::Flags Resource::getResourceStatus() const
 	{
-		throw std::runtime_error("Resource::getResourceStatus: Not Implemented");
+		return ResourceStatus::Ready;
 	}
 }

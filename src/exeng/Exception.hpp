@@ -16,7 +16,7 @@ namespace exeng {
 	};
 }
 
-#define EXENG_THROW_EXCEPTION(Message) throw exeng::Exception(Message, __FILE__, __LINE__);
-#define EXENG_THROW(Message, ExceptionClass) throw ExceptionClass(Message, __FILE__, __LINE__);
+#define EXENG_THROW_EXCEPTION(Message) throw exeng::Exception(Message, __FILE__, __LINE__)
+#define EXENG_THROW(Message, ExceptionClass) throw ExceptionClass(Message, __FILE__, __LINE__)
 
 #endif // __EXENG_EXCEPTION_HPP__
