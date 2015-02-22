@@ -14,97 +14,99 @@
 
 #include <cassert>
 #include <memory>
-// #include <iostream>
-
 #include <boost/checked_delete.hpp>
 
 #include <exeng/system/PluginManager.hpp>
 #include <exeng/graphics/GraphicsManager.hpp>
+#include <exeng/graphics/TextureManager.hpp>
 #include <exeng/scenegraph/MeshManager.hpp>
 #include <exeng/scenegraph/SceneManager.hpp>
 
-using namespace exeng;
-using namespace exeng::system;
-using namespace exeng::scenegraph;
-using namespace exeng::graphics;
-
 namespace exeng {
-#if defined(EXENG_DEBUG)
-    extern int count;
-#endif
-    
-    struct Root::Private {
-        /* The order of the declaration of the different submodules is important.*/
+	using namespace exeng::system;
+	using namespace exeng::scenegraph;
+	using namespace exeng::graphics;
+
+    struct Root::Private 
+	{
+        // The order of the declaration of the different submodules is important.
         std::unique_ptr<GraphicsManager> graphicsManager;
+		std::unique_ptr<TextureManager> textureManager;
         std::unique_ptr<MeshManager> meshManager;
         std::unique_ptr<SceneManager> sceneManager;
         std::unique_ptr<PluginManager> pluginManager;
     };
 
     static const char licenseMsg[] = 
-            "The C++ Multimedia Engine\n"
-            "Copyright (c) 2013 Felipe Apablaza\n\n"
-            "The license and distribution terms for this library may be\n"
-            "found in the file LICENSE in this distribution\n";
+        "The C++ Multimedia Engine\n"
+        "Copyright (c) 2013 Felipe Apablaza\n\n"
+        "The license and distribution terms for this library may be\n"
+        "found in the file LICENSE in this distribution\n";
     
-    Root::Root() {
+    Root::Root() 
+	{
 		this->impl = new Root::Private();
         this->impl->graphicsManager.reset(new GraphicsManager());
+		this->impl->textureManager.reset(new TextureManager());
         this->impl->pluginManager.reset(new PluginManager(this));
         this->impl->meshManager.reset(new MeshManager());
         this->impl->sceneManager.reset(new SceneManager(this));
     }
 
-    Root::~Root() {
+    Root::~Root() 
+	{
         boost::checked_delete(this->impl);
-        
-#if defined (EXENG_DEBUG)
-        if (count !=0) {
-            // std::cout << "Root::~Root: Detected object leaks!. " << count << " objects non freed." << std::endl;
-        }   
-#endif
     }
 
-    PluginManager* Root::getPluginManager() {
+    PluginManager* Root::getPluginManager() 
+	{
         assert(this->impl != nullptr);
         return this->impl->pluginManager.get();
     }
 
-    const PluginManager* Root::getPluginManager() const {
+    const PluginManager* Root::getPluginManager() const 
+	{
         assert(this->impl != nullptr);
         return this->impl->pluginManager.get();
     }
 
-    MeshManager* Root::getMeshManager() {
+    MeshManager* Root::getMeshManager() 
+	{
         assert(this->impl != nullptr);
         return this->impl->meshManager.get();
     }
 
-    const MeshManager* Root::getMeshManager() const {
+    const MeshManager* Root::getMeshManager() const 
+	{
         assert(this->impl != nullptr);
         return this->impl->meshManager.get();
     }
 
-    GraphicsManager* Root::getGraphicsManager() {
+    GraphicsManager* Root::getGraphicsManager() 
+	{
         assert(this->impl != nullptr);
         return this->impl->graphicsManager.get();
     }
 
-    const GraphicsManager* Root::getGraphicsManager() const {
+    const GraphicsManager* Root::getGraphicsManager() const 
+	{
         assert(this->impl != nullptr);
         return this->impl->graphicsManager.get();
     }
 
-    Version Root::getVersion() const {
+    Version Root::getVersion() const 
+	{
         return Version(0, 0, 1, 1);
     }
         
-    exeng::scenegraph::SceneManager* Root::getSceneManager() {
+    exeng::scenegraph::SceneManager* Root::getSceneManager() 
+	{
         assert(this->impl != nullptr);
         return this->impl->sceneManager.get();
     }
 
-    const exeng::scenegraph::SceneManager* Root::getSceneManager() const {
+    const exeng::scenegraph::SceneManager* Root::getSceneManager() const 
+	{
         assert(this->impl != nullptr);
         return this->impl->sceneManager.get();
     }

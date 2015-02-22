@@ -39,7 +39,6 @@ namespace exeng {
 			// search for a suitable loader
 			Resource* resource = nullptr;
 			for (ResourceLoader *loader : this->loaders) {
-
 				if (loader->tryLoad(uri)) {
 					std::unique_ptr<Resource> resourcePtr = loader->load(uri);
 
@@ -101,5 +100,10 @@ namespace exeng {
 #endif
 
 		this->impl->loaders.remove(loader);
+	}
+
+	std::list<ResourceLoader*>& ResourceManager::getLoaders()
+	{
+		return this->impl->loaders;
 	}
 }

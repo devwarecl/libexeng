@@ -2,31 +2,28 @@
 #ifndef __EXENG_GRAPHICS_TEXTUREMANAGER_HPP__
 #define __EXENG_GRAPHICS_TEXTUREMANAGER_HPP__
 
-#include <exeng/Config.hpp>
+#include <exeng/ResourceManager.hpp>
 #include <exeng/graphics/Texture.hpp>
+#include <exeng/graphics/TextureLoader.hpp>
 
 namespace exeng { namespace graphics {
-
-	template<typename AbstractResource>
-	class ResourceLoader {
+	
+	class EXENGAPI GraphicsDriver;
+	class EXENGAPI TextureManager : public ResourceManager {
 	public:
-		virtual ~ResourceLoader() = 0 {}
-		std::unique_ptr<AbstractResource> load();
-	};
+		GraphicsDriver* getGraphicsDriver();
+		const GraphicsDriver* getGraphicsDriver() const;
 
-	class EXENGAPI TextureLoader {
-	public:
-		virtual ~TextureLoader() = 0;
-	};
+		void setGraphicsDriver(GraphicsDriver *graphicsDriver);
 
-	class EXENGAPI TextureManager {
-	public:
-		TextureManager();
-		~TextureManager();
+		virtual Texture* get(const std::string &uri) override;
+		virtual const Texture* get(const std::string &uri) const override;
+
+		virtual void addLoader(TextureLoader *loader);
+		virtual void removeLoader(TextureLoader *loader);
 
 	private:
-		struct Impl;
-		Impl *impl = nullptr;
+		GraphicsDriver* graphicsDriver = nullptr;
 	};
 }}
 

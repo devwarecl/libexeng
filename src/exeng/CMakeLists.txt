@@ -76,6 +76,7 @@ set (GraphicsFiles_hpp
     graphics/MeshSubset.hpp			
     graphics/MeshSubsetBase.hpp		
 	graphics/TextureManager.hpp
+	graphics/TextureLoader.hpp
 )
 
 set (GraphicsFiles_cpp
@@ -101,6 +102,7 @@ set (GraphicsFiles_cpp
     graphics/ShaderProgram.cpp
     graphics/MeshSubset.cpp
 	graphics/TextureManager.cpp
+	graphics/TextureLoader.cpp
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 

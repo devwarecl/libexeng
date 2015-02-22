@@ -13,11 +13,11 @@
 #ifndef __EXENG_RESOURCEMANAGER_HPP__
 #define __EXENG_RESOURCEMANAGER_HPP__
 
+#include <list>
 #include <exeng/Resource.hpp>
 #include <exeng/ResourceLoader.hpp>
 
 namespace exeng {
-
     /**
      * @brief Resource manager class.
 	 *
@@ -36,7 +36,9 @@ namespace exeng {
 		virtual void addLoader(ResourceLoader *loader);
 		virtual void removeLoader(ResourceLoader *loader);
 
-	private:
+		std::list<ResourceLoader*>& getLoaders();
+
+	protected:
 		struct Impl;
 		Impl *impl = nullptr;
     };

@@ -56,6 +56,9 @@ namespace exeng {
         
         exeng::scenegraph::SceneManager* getSceneManager();
         const exeng::scenegraph::SceneManager* getSceneManager() const;
+
+		exeng::graphics::TextureManager* getTextureManager();
+        const exeng::graphics::TextureManager* getTextureManager() const;
         
     private:
         struct Private;
