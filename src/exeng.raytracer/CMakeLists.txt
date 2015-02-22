@@ -1,5 +1,6 @@
+
 if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "-std=c++0x")
+  set(CMAKE_CXX_FLAGS "-std=c++11")
 endif()
 
 add_definitions(-DBOOST_ALL_DYN_LINK -DRAYTRACER_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.raytracer/")

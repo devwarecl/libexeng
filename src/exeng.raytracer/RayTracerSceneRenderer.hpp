@@ -23,6 +23,5 @@ namespace raytracer {
 		exeng::scenegraph::Scene* scene = nullptr;
         raytracer::tracers::Tracer* tracer = nullptr;
     };
-
 }
 #endif // __RAYTRACER_RAYTRACERSCENERENDERER_HPP__

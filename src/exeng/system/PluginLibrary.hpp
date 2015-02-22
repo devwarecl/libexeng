@@ -22,7 +22,7 @@
 #include <exeng/system/Plugin.hpp>
 #include <exeng/system/Library.hpp>
 
-namespace exeng { namespace system {    
+namespace exeng { namespace system {
     /**
      * @brief Manage a plugin loaded from an external library
      */

@@ -17,70 +17,59 @@
 #include <string>
 #include <exeng/Object.hpp>
 
-namespace exeng {
-    namespace system  {
-        typedef void* FunctionPtr;
+namespace exeng { namespace system  {
+    typedef void* FunctionPtr;
 
-        class EXENGAPI Library : public Object {
-        public:
-            Library();
-            
-            explicit Library(const std::string &libraryName);
-            
-            virtual ~Library();
-            
-            /**
-             * @brief Carga la biblioteca dinamica indicada. Si no se puede cargar por alguna 
-             * razon, lanza una excepcion en tiempo de ejecucion.
-             * @param libraryName
-             */
-            void load(const std::string &libraryName);
-            
-            /**
-             * @brief Descarga la biblioteca dinamica de la memoria.
-             */
-            void unload();
-            
-            /**
-             * @brief Comprueba si la biblioteca dinamica ya esta cargada.
-             * @return 
-             */
-            bool isValid() const;
-            
-            /**
-             * @brief Devuelve la ruta completa del archivo de la biblioteca que fue cargada.
-             * @return 
-             */
-            std::string getFileName() const;
+	/**
+	 * @brief 
+	 */
+    class EXENGAPI Library : public Object {
+    public:
+        Library();    
+        explicit Library(const std::string &libraryName);
+        
+        virtual ~Library();
 
-            /**
-             * @brief Devuelve el nombre de la libreria.
-             * @return 
-             */
-            std::string getName() const;
+        /**
+         * @brief Loads the specified dynamic library.
+         */
+        void load(const std::string &libraryName);
             
-            /**
-             * @brief Devuelve un puntero con la direccion de memoria hacia la funcion con el nombre indicado.
-             * @param name Una cadena std::string con el nombre de la biblioteca en tiempo de ejecucion.
-             * @return 
-             */
-            FunctionPtr getFunctionPtr(const std::string& name);
+        /**
+         * @brief Unload the library
+         */
+        void unload();
             
-            /**
-             * @brief Devuelve la representacion en cadena de la biblioteca en tiempo de ejecucion.
-             * @return 
-             */
-            virtual std::string toString() const;
+        /**
+         * @brief Check if the current library object is valid or not.
+         */
+        bool isValid() const;
+            
+        /**
+         * @brief Get the full path (directory plus filename) of the current loaded object.
+         */
+        std::string getFileName() const;
 
-        private:
-            struct Private;
-            Private* impl;
+        /**
+		 * @brief Get the name of the library.
+         */
+        std::string getName() const;
+            
+        /**
+         * @brief Get a function pointer for the specified ordinal name.
+         */
+        FunctionPtr getFunctionPtr(const std::string& name);
+        
+        virtual std::string toString() const override;
 
-		private:
-			Library(const Library& lib);
-            Library& operator=(const Library& lib);
-        };
-    }
-}
+    private:
+        struct Private;
+        Private* impl = nullptr;
+
+	private:
+		Library(const Library& lib) = delete;
+        Library& operator=(const Library& lib) = delete;
+    };
+}}
 
 #endif	//__EXENG_SYSTEM_LIBRARY_HPP__

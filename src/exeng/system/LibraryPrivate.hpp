@@ -16,19 +16,15 @@
 
 #include <exeng/system/Library.hpp>
 
-namespace exeng {
-    namespace system {
-        struct Library::Private {
-            std::string name;
-            void* handle;
+namespace exeng { namespace system {
+    struct Library::Private {
+        std::string name;
+        void* handle = nullptr;
 
-            Private();
-
-            FunctionPtr getFunctionPtr(const std::string &name);
-            void load(const std::string &name);
-            void unload();
-        };
-    }
-}
+        FunctionPtr getFunctionPtr(const std::string &name);
+        void load(const std::string &name);
+        void unload();
+    };
+}}
 
 #endif	//__EXENG_SYSTEM_LIBRARYPRIVATE_HPP__
