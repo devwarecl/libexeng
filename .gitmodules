@@ -7,3 +7,6 @@
 [submodule "plugins/libexeng.graphics.d3d10"]
 	path = plugins/libexeng.graphics.d3d10
 	url = https://github.com/soultaker/libexeng.graphics.d3d10.git
+[submodule "plugins/libexeng.graphics.gl1"]
+	path = plugins/libexeng.graphics.gl1
+	url = https://github.com/pescadini/libexeng.graphics.gl1
