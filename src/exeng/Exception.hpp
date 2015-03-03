@@ -4,6 +4,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <sstream>
 
 namespace exeng {
 	/**
@@ -14,6 +15,28 @@ namespace exeng {
 		Exception(const std::string &msg);
 		Exception(const std::string &msg, const std::string &fileName, int line);
 	};
+}
+
+namespace exeng {
+
+	namespace __private {
+		inline std::string formatMessage(const std::string &msg, const std::string &fileName, int line)
+		{
+			std::stringstream ss;
+			ss << fileName << ":" << line << ": " << msg;
+			return ss.str();
+		}	
+	}
+
+	inline Exception::Exception(const std::string &msg) 
+		: std::runtime_error(msg)
+	{
+	}
+
+	inline Exception::Exception(const std::string &msg, const std::string &functionName, int line) 
+		: std::runtime_error(__private::formatMessage(msg, functionName, line))
+	{
+	}
 }
 
 #define EXENG_THROW_EXCEPTION(Message) throw exeng::Exception(Message, __FILE__, __LINE__)

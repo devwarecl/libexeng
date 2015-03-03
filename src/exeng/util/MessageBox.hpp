@@ -4,6 +4,7 @@
 
 #include <string>
 #include <exeng/Enum.hpp>
+#include <exeng/Config.hpp>
 
 namespace exeng { namespace util {
 
@@ -15,7 +16,7 @@ namespace exeng { namespace util {
 		};
 	};
 
-	class MessageBox {
+	class EXENGAPI MessageBox {
 	public:
 		static void show(const std::string &title, const std::string &message, MessageBoxIcon::Enum icon);
 
