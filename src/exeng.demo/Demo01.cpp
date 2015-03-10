@@ -23,6 +23,13 @@ public:
 		pluginPath = "../../bin/Release/";
 #  endif
 #endif
+		this->materialFormat = MaterialFormat({ 
+			{"ambient", DataType::Float32, 4}, 
+			{"diffuse", DataType::Float32, 4}, 
+			{"specular", DataType::Float32, 4}
+		});
+
+		this->material = std::make_unique<Material>(&this->materialFormat);
 
 		this->getPluginManager()->setPluginPath(pluginPath);
         this->getPluginManager()->loadPlugin("exeng.graphics.gl3");
@@ -30,7 +37,8 @@ public:
         this->graphicsDriver = this->getRoot()->getGraphicsManager()->createDriver();
         this->graphicsDriver->addEventHandler(this);
         this->graphicsDriver->initialize();
-        
+		this->graphicsDriver->setDefaultMaterial(this->material.get());
+
 		this->scene = std::unique_ptr<Scene>(new Scene());
         this->scene->setBackColor({0.2f, 0.3f, 0.8f, 1.0f});
 
@@ -81,7 +89,9 @@ private:
     std::unique_ptr<GraphicsDriver> graphicsDriver;
 	std::unique_ptr<Scene> scene;
 	std::unique_ptr<SceneRenderer> sceneRenderer;
-    
+	std::unique_ptr<Material> material;
+	MaterialFormat materialFormat;
+
 	Camera *camera = nullptr;
     ApplicationStatus::Enum status = ApplicationStatus::Running;
 };

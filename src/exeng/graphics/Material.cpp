@@ -27,7 +27,7 @@ namespace exeng { namespace graphics {
 		Texture* texture = nullptr;
 	};
     
-	MaterialLayer::MaterialLayer() : impl(nullptr) 
+	MaterialLayer::MaterialLayer()
     {
         this->impl = new MaterialLayer::Private();
     }
@@ -76,11 +76,6 @@ namespace exeng { namespace graphics {
         MaterialLayer layers[LayerCount];
         HeapBuffer buffer;
 
-        Private() 
-        {
-            std::memset(layers, 0, sizeof(layers));
-        }
-        
 		template<typename Type>
 		void fillBuffer(void* bufferData, int dimension) {
 			Type* data = (Type*)bufferData;
