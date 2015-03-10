@@ -68,7 +68,7 @@ namespace exeng { namespace system {
      *
      * All plugins must at least export a function with this signature.
      */
-    typedef std::unique_ptr<Plugin> (*ExengGetPluginObjectProc)(); 
+    typedef EXENG_EXPORT void (EXENG_CALLCONV *ExengGetPluginObjectProc)(std::unique_ptr<Plugin> &plugin); 
 }}
 
 /**
@@ -81,15 +81,20 @@ namespace exeng { namespace system {
 /**
  * @brief Aids in implementing plugins.
  */
-#define EXENG_EXPORT_PLUGIN(PluginImpl)                             \
-    std::unique_ptr<Plugin>											\
-        EXENG_CALLCONV EXENG_GET_PLUGIN_OBJECT_NAME() EXENGAPI {    \
-        static PluginImpl *plugin = nullptr;                        \
-        if (plugin == nullptr) {                                    \
-            plugin = new PluginImpl();                              \
-        }                                                           \
-        return plugin;                                              \
-    }																
+template<typename PluginClass>
+void ExengGetPluginObjectImpl(std::unique_ptr<exeng::system::Plugin> &plugin) 
+{
+	plugin = std::unique_ptr<exeng::system::Plugin>(new PluginClass());
+}
 
+/**
+ * @brief Export a plugin class on a DLL/SO
+ */
+#define EXENG_EXPORT_PLUGIN(PluginImpl)																			\
+extern "C" {																									\
+    EXENG_EXPORT void EXENG_CALLCONV ExengGetPluginObject(std::unique_ptr<exeng::system::Plugin> &plugin) {		\
+		ExengGetPluginObjectImpl<PluginImpl>(plugin);															\
+    }																											\
+}
 
 #endif //__EXENG_SYSTEM_PLUGIN_HPP__

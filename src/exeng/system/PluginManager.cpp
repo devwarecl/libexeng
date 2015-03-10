@@ -20,6 +20,7 @@
 #include <boost/filesystem.hpp>
 
 #include <exeng/Root.hpp>
+#include <exeng/Exception.hpp>
 #include <exeng/system/Library.hpp>
 #include <exeng/system/Plugin.hpp>
 #include <exeng/system/PluginLibrary.hpp>
@@ -42,8 +43,7 @@ namespace exeng { namespace system {
     PluginManager::PluginManager(Root* root) : impl(nullptr) 
     {
         if (root == nullptr) {
-            char msg[] = "PluginManager::PluginManager: The root object can't be nullptr.";
-            throw std::invalid_argument(msg);
+			EXENG_THROW_EXCEPTION("The root object can't be nullptr.");
         }
         
         this->impl = new PluginManager::Private();
@@ -133,7 +133,7 @@ namespace exeng { namespace system {
         pluginPath = pluginPath.normalize().parent_path();
         
         if (!fs::is_directory(pluginPath) || !fs::exists(pluginPath)) {
-            throw std::runtime_error("PluginManager::setPluginPath: The directory '" + pluginPath.string() + "' is not valid.");
+			EXENG_THROW_EXCEPTION("The directory '" + pluginPath.string() + "' is not valid.");
         }
         
         this->impl->pluginPath = pluginPath;
@@ -148,6 +148,6 @@ namespace exeng { namespace system {
     
     void PluginManager::loadPlugins() 
     {
-        throw std::runtime_error("PluginManager::loadPlugins: Not implemented.");
+		EXENG_THROW_EXCEPTION("Not implemented.");
     }
 }}

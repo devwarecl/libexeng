@@ -19,6 +19,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <cassert>
+#include <exeng/Exception.hpp>
 #include <exeng/system/Plugin.hpp>
 #include <exeng/system/Library.hpp>
 
@@ -44,29 +45,43 @@ namespace exeng { namespace system {
 	inline PluginLibrary::PluginLibrary(std::unique_ptr<Library> library_) : library(std::move(library_)) {
 	    // check for a valid library
         if (!library) {
-            throw std::invalid_argument("PluginLibrary::PluginLibrary -> Library pointer can't be nullptr");
+			EXENG_THROW_EXCEPTION("Library pointer can't be nullptr.");
         }
     
 	    if (library->isValid() == false) {
-		    throw std::logic_error("PluginLibrary::PluginLibrary -> The library object must be valid.");
+			EXENG_THROW_EXCEPTION("The library object must be valid.");
 	    }
 
+		std::string getPluginObjectNameStr = "";
+
+#if defined(EXENG_WINDOWS)
+#  if defined(EXENG_32)
+		getPluginObjectNameStr += "_";
+		getPluginObjectNameStr += EXENG_GET_PLUGIN_OBJECT_NAME_STR;
+		getPluginObjectNameStr += "@4";
+#  else 
+		getPluginObjectNameStr = EXENG_GET_PLUGIN_OBJECT_NAME_STR;
+#  endif
+#endif
+
         // get the plugin entry point from the library.
-        void* ptr = library->getFunctionPtr(EXENG_GET_PLUGIN_OBJECT_NAME_STR);
+        void* ptr = library->getFunctionPtr(getPluginObjectNameStr);
         ExengGetPluginObjectProc getPluginObject = reinterpret_cast<ExengGetPluginObjectProc>(ptr);
 
 	    if (!getPluginObject) {
 		    std::string msg;
-		    msg += "PluginLibrary::PluginLibrary -> The loaded library object ";
+		    msg += "The loaded library object ";
 		    msg += "'" + library->getFileName() + "' doesn't have the exported function " ;
 		    msg += "'" EXENG_GET_PLUGIN_OBJECT_NAME_STR "'.";
 
-		    throw std::runtime_error(msg);
+			EXENG_THROW_EXCEPTION(msg);
 	    }
 
-        auto plugin = getPluginObject();
+        std::unique_ptr<Plugin> plugin;
+
+		getPluginObject(plugin);
         if (!plugin) {
-            throw std::runtime_error("PluginLibrary::PluginLibrary -> The library returned a nullptr object.");
+			EXENG_THROW_EXCEPTION("The library returned a nullptr object.");
         }
 
         this->plugin = std::move(plugin);

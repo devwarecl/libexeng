@@ -12,8 +12,8 @@
  */
 
 #include <exeng/DetectEnv.hpp>
+#include <exeng/Exception.hpp>
 #include <exeng/system/LibraryPrivate.hpp>
-#include <stdexcept>
 
 #if defined (EXENG_WINDOWS)
 #include <Windows.h>
@@ -40,7 +40,7 @@ namespace exeng { namespace system {
 	void Library::Private::load(const std::string &name) 
 	{
 		if (name.empty() == true) {
-			throw std::runtime_error("Library::Private::load: The library name must be non empty.");
+			EXENG_THROW_EXCEPTION("The library name must be non empty.");
 		}
 
 		HANDLE handle = ::LoadLibraryA(name.c_str()); 
@@ -52,7 +52,7 @@ namespace exeng { namespace system {
 			msg += "'" + name + "' (Windows specific error: ";
 			msg += getLastErrorStrWin32() + ").";
 
-			throw std::runtime_error(msg);
+			EXENG_THROW_EXCEPTION(msg);
 		}
 
 		this->handle = handle;
@@ -74,34 +74,24 @@ namespace exeng { namespace system {
 		FARPROC procAddress = NULL;
 
 		if (this->handle == NULL) {
-			throw std::runtime_error("Library::Private::getFunctionPtr: The library must be loaded first.");
+			EXENG_THROW_EXCEPTION("The library must be loaded first.");
 		}
 
 		if (name.empty() == true) {
-			throw std::runtime_error("Library::Private::getFunctionPtr: The function name must be non-empty.");
+			EXENG_THROW_EXCEPTION("The function name must be non-empty.");
 		}
 
 		handle = static_cast<HMODULE>(this->handle);
 
-#if defined(EXENG_32)
-		std::string functionName;
-
-		functionName += "_";
-		functionName += name;
-		functionName += "@0";
-
-		procAddress = ::GetProcAddress(handle, functionName.c_str());
-#else
 		procAddress = ::GetProcAddress(handle, name.c_str());
-#endif
 
 		if (procAddress == NULL) {
 			std::string msg;
 
-			msg += "Library::Private::getFunctionPtr: The function name must be non-empty";
-			msg += "(Windows specific error:'" +  getLastErrorStrWin32() + "').";
+			msg += "The function name must be non-empty ";
+			msg += "(Windows specific error: '" +  getLastErrorStrWin32() + "').";
 
-			throw std::runtime_error(msg);
+			EXENG_THROW_EXCEPTION(msg);
 		}
 
 		return reinterpret_cast<FunctionPtr>(procAddress);
