@@ -79,20 +79,9 @@ namespace exeng { namespace graphics {
             int dimension = 4, 
             int alignment = 1);
         
-        bool operator== (const MaterialAttrib &other);
-        
-        bool operator!= (const MaterialAttrib &other);
+        bool operator== (const MaterialAttrib &other) const;
+        bool operator!= (const MaterialAttrib &other) const;
     };
-    
-    /*
-    template<typename Type>
-    struct MaterialAttribChecker 
-    {
-        static_assert(1 == 0, "exeng::graphics::MaterialAttribChecker: Invalid supplied data type.");
-        
-        static void check(const MaterialAttrib& attrib) {}
-    };
-    */
     
     class MaterialFormat {
     public:
@@ -112,9 +101,9 @@ namespace exeng { namespace graphics {
 
 		const MaterialAttrib* getAttrib(const std::string &name) const;
         
-		bool operator== (const MaterialFormat &other);
+		bool operator== (const MaterialFormat &other) const;
         
-        bool operator!= (const MaterialFormat &other);
+        bool operator!= (const MaterialFormat &other) const;
 		
     private:
         std::vector<MaterialAttrib> attribs;
@@ -233,7 +222,7 @@ namespace exeng { namespace graphics {
         return size + size%alignment;
     }
     
-    inline bool MaterialAttrib::operator== (const MaterialAttrib &other) 
+    inline bool MaterialAttrib::operator== (const MaterialAttrib &other) const
     {
         if (name != other.name) {
             return false;
@@ -254,7 +243,7 @@ namespace exeng { namespace graphics {
         return true;
     }
     
-    inline bool MaterialAttrib::operator!= (const MaterialAttrib &other) 
+    inline bool MaterialAttrib::operator!= (const MaterialAttrib &other) const
     {
         return ! (*this == other);
     }  
@@ -333,7 +322,7 @@ namespace exeng { namespace graphics {
         return this->getAttrib(this->getAttribIndex(name));
     }
     
-    inline bool MaterialFormat::operator== (const MaterialFormat &other) 
+    inline bool MaterialFormat::operator== (const MaterialFormat &other) const 
     {
         if (this->getAttribCount() != other.getAttribCount()) {
             return false;
@@ -347,6 +336,11 @@ namespace exeng { namespace graphics {
         
         return true;
     }
+
+	inline bool MaterialFormat::operator!= (const MaterialFormat &other) const
+	{
+		return !(*this == other);
+	}
 }}
 
 #endif
