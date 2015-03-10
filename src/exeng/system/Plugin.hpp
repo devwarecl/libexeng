@@ -14,6 +14,7 @@
 #ifndef __EXENG_SYSTEM_PLUGIN_HPP__
 #define __EXENG_SYSTEM_PLUGIN_HPP__
 
+#include <memory>
 #include <exeng/Object.hpp>
 #include <exeng/Version.hpp>
 
@@ -67,7 +68,7 @@ namespace exeng { namespace system {
      *
      * All plugins must at least export a function with this signature.
      */
-    typedef Plugin* (* ExengGetPluginObjectProc)(); 
+    typedef std::unique_ptr<Plugin> (*ExengGetPluginObjectProc)(); 
 }}
 
 /**
@@ -81,14 +82,14 @@ namespace exeng { namespace system {
  * @brief Aids in implementing plugins.
  */
 #define EXENG_EXPORT_PLUGIN(PluginImpl)                             \
-    extern "C" { exeng::system::Plugin*                             \
+    std::unique_ptr<Plugin>											\
         EXENG_CALLCONV EXENG_GET_PLUGIN_OBJECT_NAME() EXENGAPI {    \
         static PluginImpl *plugin = nullptr;                        \
         if (plugin == nullptr) {                                    \
             plugin = new PluginImpl();                              \
         }                                                           \
         return plugin;                                              \
-    }																\
-}
+    }																
+
 
 #endif //__EXENG_SYSTEM_PLUGIN_HPP__

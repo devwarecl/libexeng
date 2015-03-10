@@ -38,10 +38,10 @@ namespace exeng { namespace system {
         
     private:
         std::unique_ptr<Library> library;
-        Plugin* plugin = nullptr;
+		std::unique_ptr<Plugin> plugin;
     };
 
-	PluginLibrary::PluginLibrary(std::unique_ptr<Library> library_) : library(std::move(library_)) {
+	inline PluginLibrary::PluginLibrary(std::unique_ptr<Library> library_) : library(std::move(library_)) {
 	    // check for a valid library
         if (!library) {
             throw std::invalid_argument("PluginLibrary::PluginLibrary -> Library pointer can't be nullptr");
@@ -64,54 +64,41 @@ namespace exeng { namespace system {
 		    throw std::runtime_error(msg);
 	    }
 
-        Plugin *plugin = getPluginObject();
+        auto plugin = getPluginObject();
         if (!plugin) {
             throw std::runtime_error("PluginLibrary::PluginLibrary -> The library returned a nullptr object.");
         }
 
-        this->plugin = plugin;
+        this->plugin = std::move(plugin);
     }
     
-    PluginLibrary::~PluginLibrary() {
-        /*
-        The plugin object depends on the library object, because 
-        we get the plugin object from a routine from the library, AND
-        that library is responsible of the lifetime of the plugin object.
-        So, to avoid hard-to-find segmentation faults, first we must 
-        terminate the plugin, and later, destroy the library object.
-        */
-        
-        if (this->plugin) {
-            this->plugin->terminate();
-            this->plugin = nullptr;
-        }
-    }
+    inline PluginLibrary::~PluginLibrary() {}
     
-    std::string PluginLibrary::getName() const {
+    inline std::string PluginLibrary::getName() const {
         assert(this->plugin != nullptr);
 
         return this->plugin->getName();
     }
     
-    std::string PluginLibrary::getDescription() const {
+    inline std::string PluginLibrary::getDescription() const {
         assert(this->plugin != nullptr);
 
         return this->plugin->getDescription();
     }
     
-    Version PluginLibrary::getVersion() const {
+    inline Version PluginLibrary::getVersion() const {
         assert(this->plugin != nullptr);
 
         return this->plugin->getVersion();
     }
     
-    void PluginLibrary::initialize(Root *root) {
+    inline void PluginLibrary::initialize(Root *root) {
         assert(this->plugin != nullptr);
 
         this->plugin->initialize(root);
     }
     
-    void PluginLibrary::terminate() {
+    inline void PluginLibrary::terminate() {
         assert(this->plugin != nullptr);
 
         this->plugin->terminate();
