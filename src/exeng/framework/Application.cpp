@@ -21,6 +21,12 @@ namespace exeng { namespace framework {
     Application::Application()
     {
         this->root = new Root();
+		
+		this->graphicsManager = this->getRoot()->getGraphicsManager();
+		this->textureManager = this->getRoot()->getTextureManager();
+		this->meshManager = this->getRoot()->getMeshManager();
+		this->sceneManager = this->getRoot()->getSceneManager();
+		this->pluginManager = this->getRoot()->getPluginManager();
     }
     
     Application::~Application()  

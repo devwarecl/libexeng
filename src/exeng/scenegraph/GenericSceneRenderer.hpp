@@ -15,7 +15,7 @@ namespace exeng { namespace scenegraph {
      */
     class EXENGAPI GenericSceneRenderer : public SceneRenderer {
     public:
-        GenericSceneRenderer(exeng::graphics::GraphicsDriver *graphicsDriver);
+        explicit GenericSceneRenderer(exeng::graphics::GraphicsDriver *graphicsDriver);
         virtual ~GenericSceneRenderer();
         
         virtual void renderScene(const Camera *camera) override;

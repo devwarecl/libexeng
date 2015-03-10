@@ -110,4 +110,16 @@ namespace exeng {
         assert(this->impl != nullptr);
         return this->impl->sceneManager.get();
     }
+
+	exeng::graphics::TextureManager * Root::getTextureManager() 
+	{
+        assert(this->impl != nullptr);
+        return this->impl->textureManager.get();
+    }
+
+	const exeng::graphics::TextureManager * Root::getTextureManager() const
+	{
+        assert(this->impl != nullptr);
+        return this->impl->textureManager.get();
+    }
 }

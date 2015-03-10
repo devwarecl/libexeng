@@ -23,6 +23,7 @@
 #include <exeng/HeapBuffer.hpp>
 #include <exeng/TypeInfo.hpp>
 #include <exeng/Timer.hpp>
+#include <exeng/Exception.hpp>
 
 #include <exeng/Common.hpp>
 #include <exeng/Size.hpp>
@@ -61,9 +62,13 @@
 #include <exeng/scenegraph/Sphere.hpp>
 #include <exeng/scenegraph/Plane.hpp>
 #include <exeng/scenegraph/Scene.hpp>
+#include <exeng/scenegraph/SceneManager.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
+#include <exeng/scenegraph/SceneNodeData.hpp>
 #include <exeng/scenegraph/Segment.hpp>
 #include <exeng/scenegraph/TSolidGeometry.hpp>
+#include <exeng/scenegraph/SceneRenderer.hpp>
+#include <exeng/scenegraph/GenericSceneRenderer.hpp>
 
 /**
  * @brief The common namespace for the engine.

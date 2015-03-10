@@ -56,9 +56,21 @@ namespace exeng { namespace framework {
          */
         const Root* getRoot() const;
         
+		graphics::GraphicsManager* getGraphicsManager();
+		graphics::TextureManager* getTextureManager();
+		scenegraph::MeshManager* getMeshManager();
+		scenegraph::SceneManager* getSceneManager();
+		system::PluginManager* getPluginManager();
+
     private:
         Root *root = nullptr;
-        
+
+		graphics::GraphicsManager *graphicsManager = nullptr;
+		graphics::TextureManager *textureManager = nullptr;
+		scenegraph::MeshManager *meshManager = nullptr;
+		scenegraph::SceneManager *sceneManager = nullptr;
+		system::PluginManager *pluginManager = nullptr;
+
     public:
         /**
          * @brief Executes the specified application
@@ -79,12 +91,17 @@ namespace exeng { namespace framework {
     
     inline Root* Application::getRoot()             {return this->root;}
     inline const Root* Application::getRoot() const {return this->root;}
+
+	inline graphics::GraphicsManager* Application::getGraphicsManager() { return this->graphicsManager;}
+	inline graphics::TextureManager* Application::getTextureManager() { return this->textureManager; }
+	inline scenegraph::MeshManager* Application::getMeshManager() { return this->meshManager; }
+	inline scenegraph::SceneManager* Application::getSceneManager() { return this->sceneManager; }
+	inline system::PluginManager* Application::getPluginManager() { return this->pluginManager; }
     
     template<typename ApplicationClass>
     inline int Application::execute(int argc, char **argv) 
     {
         ApplicationClass app;
-        
         return Application::execute(app, argc, argv);
     }
 }}
