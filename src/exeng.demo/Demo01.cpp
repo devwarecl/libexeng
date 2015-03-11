@@ -8,6 +8,22 @@ using namespace exeng::graphics;
 using namespace exeng::scenegraph;
 using namespace exeng::input;
 
+class SpatialAnimator : public SceneNodeAnimator {
+public:
+	SpatialAnimator() {}
+	explicit SpatialAnimator(SceneNode *node) : SceneNodeAnimator(node) {}
+
+	virtual void update(double seconds) override {
+		this->angle += 60.0f * seconds;
+		auto transform = rotate<float>(rad(angle), {0.0f, 1.0f, 0.0f});
+
+		this->getSceneNode()->setTransform(transform);
+	}
+
+private:
+	float angle = 0.0f;
+};
+
 class Demo01 : public GraphicsApplication, public IEventHandler {
 public:
     virtual void initialize(int argc, char **argv) override 
@@ -34,13 +50,20 @@ public:
 		this->getPluginManager()->setPluginPath(pluginPath);
         this->getPluginManager()->loadPlugin("exeng.graphics.gl3");
 		
-        this->graphicsDriver = this->getRoot()->getGraphicsManager()->createDriver();
+        this->graphicsDriver = this->getGraphicsManager()->createDriver();
         this->graphicsDriver->addEventHandler(this);
         this->graphicsDriver->initialize();
 		this->graphicsDriver->setDefaultMaterial(this->material.get());
 
-		this->scene = std::unique_ptr<Scene>(new Scene());
-        this->scene->setBackColor({0.2f, 0.3f, 0.8f, 1.0f});
+		auto scene = std::make_unique<Scene>();
+        scene->setBackColor({0.2f, 0.3f, 0.8f, 1.0f});
+
+		auto sceneRenderer = std::unique_ptr<SceneRenderer>(new GenericSceneRenderer(this->graphicsDriver.get()));
+
+		this->sceneManager = std::make_unique<SceneManager>(std::move(scene));
+		this->sceneManager->setSceneRenderer(std::move(sceneRenderer));
+		
+		this->scene = this->sceneManager->getScene();
 
         this->camera = this->scene->createCamera();
 		this->camera->setPosition({0.0f, 2.0f, 4.0f});
@@ -48,12 +71,13 @@ public:
 
 		this->camera->setViewport(Rectf((Size2f)this->graphicsDriver->getDisplayMode().size));
 		
-		this->sceneRenderer = std::unique_ptr<SceneRenderer>(new GenericSceneRenderer(this->graphicsDriver.get()));
-		this->sceneRenderer->setScene(this->scene.get());
-
 		Mesh *boxMesh = this->getMeshManager()->generateBoxMesh("boxMesh", this->graphicsDriver.get(), {0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f});
 
 		this->scene->createSceneNode("boxSceneNode", boxMesh);
+
+		this->animator = std::make_unique<SpatialAnimator>();
+		this->animator->setSceneNode(this->scene->getRootNode()->getChild("boxSceneNode"));
+		this->sceneManager->addAnimator(this->animator.get());
     }
     
     virtual ApplicationStatus::Enum getStatus() const override 
@@ -68,12 +92,12 @@ public:
     
     virtual void update(double seconds) override 
     {
-        
+		this->sceneManager->update(seconds);
     }
     
     virtual void render() override 
     {
-		this->sceneRenderer->renderScene(this->camera);
+		this->sceneManager->render(this->camera);
     }
     
     virtual void handleEvent(const EventData &data) override 
@@ -84,14 +108,16 @@ public:
             this->status = ApplicationStatus::Terminated;
         }
     }
-    
+
 private:
     std::unique_ptr<GraphicsDriver> graphicsDriver;
-	std::unique_ptr<Scene> scene;
-	std::unique_ptr<SceneRenderer> sceneRenderer;
 	std::unique_ptr<Material> material;
 	MaterialFormat materialFormat;
 
+	std::unique_ptr<SceneManager> sceneManager;
+	std::unique_ptr<SceneNodeAnimator> animator;
+	
+	Scene* scene = nullptr;
 	Camera *camera = nullptr;
     ApplicationStatus::Enum status = ApplicationStatus::Running;
 };

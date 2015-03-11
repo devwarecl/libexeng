@@ -158,12 +158,12 @@ namespace raytracer {
         // Initialize the exeng root class and plugins.
 		BOOST_LOG_TRIVIAL(trace) << "Loading plugins...";
 
-        this->getRoot()->getPluginManager()->setPluginPath(getPluginPath());
-        this->getRoot()->getPluginManager()->loadPlugin("exeng.graphics.gl3");
+        this->getPluginManager()->setPluginPath(getPluginPath());
+        this->getPluginManager()->loadPlugin("exeng.graphics.gl3");
         
         // initialize the gl3 driver, in windowed mode
 		BOOST_LOG_TRIVIAL(trace) << "Initializing graphics driver...";
-        this->driver = std::unique_ptr<GraphicsDriver>(this->getRoot()->getGraphicsManager()->createDriver());
+        this->driver = std::unique_ptr<GraphicsDriver>(this->getGraphicsManager()->createDriver());
         this->driver->addEventHandler(this);
         this->driver->initialize();
 
@@ -189,7 +189,7 @@ namespace raytracer {
         this->screenMeshSubset = this->driver->createMeshSubset(std::move(vertexBuffers), screenVertexFormat);
         
         // Initialize the scene.
-        this->sceneLoader = std::unique_ptr<SceneLoader>(new SceneLoader(this->driver.get(), this->getRoot()->getMeshManager()));
+        this->sceneLoader = std::unique_ptr<SceneLoader>(new SceneLoader(this->driver.get(), this->getMeshManager()));
         this->loadScene();
         this->scene->setBackColor({0.0f, 0.0f, 0.0f, 1.0f});
         
@@ -327,7 +327,7 @@ namespace raytracer {
     void RayTracerApp::loadScene() 
     {
 		// TODO: this should be done at initialization time...
-		this->getRoot()->getMeshManager()->setPath("C:\\Users\\fapablaza\\Downloads\\Easel");
+		this->getMeshManager()->setPath("C:\\Users\\fapablaza\\Downloads\\Easel");
 
         this->scene = this->sceneLoader->loadScene("scene.xml", &this->materialFormat);
     }

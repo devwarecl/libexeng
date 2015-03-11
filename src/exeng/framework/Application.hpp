@@ -30,9 +30,9 @@ namespace exeng { namespace framework {
     };
     
     /**
-     * @brief Basic application framework.
+     * @brief Basic application framework
      */
-    class EXENGAPI Application {
+    class EXENGAPI Application : public Root {
     public:
         Application();
         
@@ -44,32 +44,6 @@ namespace exeng { namespace framework {
          * Must be implemented in derived classes.
          */
         virtual int run(int argc, char **argv) = 0;
-        
-    protected:
-        /**
-         * @brief Get the root object associated with the application instance.
-         */
-        Root* getRoot();
-        
-        /**
-         * @brief Get the root object associated with the application instance.
-         */
-        const Root* getRoot() const;
-        
-		graphics::GraphicsManager* getGraphicsManager();
-		graphics::TextureManager* getTextureManager();
-		scenegraph::MeshManager* getMeshManager();
-		scenegraph::SceneManager* getSceneManager();
-		system::PluginManager* getPluginManager();
-
-    private:
-        Root *root = nullptr;
-
-		graphics::GraphicsManager *graphicsManager = nullptr;
-		graphics::TextureManager *textureManager = nullptr;
-		scenegraph::MeshManager *meshManager = nullptr;
-		scenegraph::SceneManager *sceneManager = nullptr;
-		system::PluginManager *pluginManager = nullptr;
 
     public:
         /**
@@ -88,15 +62,6 @@ namespace exeng { namespace framework {
 }}
 
 namespace exeng { namespace framework {
-    
-    inline Root* Application::getRoot()             {return this->root;}
-    inline const Root* Application::getRoot() const {return this->root;}
-
-	inline graphics::GraphicsManager* Application::getGraphicsManager() { return this->graphicsManager;}
-	inline graphics::TextureManager* Application::getTextureManager() { return this->textureManager; }
-	inline scenegraph::MeshManager* Application::getMeshManager() { return this->meshManager; }
-	inline scenegraph::SceneManager* Application::getSceneManager() { return this->sceneManager; }
-	inline system::PluginManager* Application::getPluginManager() { return this->pluginManager; }
     
     template<typename ApplicationClass>
     inline int Application::execute(int argc, char **argv) 

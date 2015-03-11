@@ -39,7 +39,7 @@ namespace exeng {
 
     static const char licenseMsg[] = 
         "The C++ Multimedia Engine\n"
-        "Copyright (c) 2013 Felipe Apablaza\n\n"
+        "Copyright (c) 2013 - 2015 Felipe Apablaza\n\n"
         "The license and distribution terms for this library may be\n"
         "found in the file LICENSE in this distribution\n";
     
@@ -50,7 +50,6 @@ namespace exeng {
 		this->impl->graphicsManager.reset(new GraphicsManager());
 		this->impl->textureManager.reset(new TextureManager());
         this->impl->meshManager.reset(new MeshManager());
-        this->impl->sceneManager.reset(new SceneManager(this));
     }
 
     Root::~Root() 
@@ -98,19 +97,7 @@ namespace exeng {
 	{
         return Version(0, 0, 1, 1);
     }
-        
-    exeng::scenegraph::SceneManager* Root::getSceneManager() 
-	{
-        assert(this->impl != nullptr);
-        return this->impl->sceneManager.get();
-    }
-
-    const exeng::scenegraph::SceneManager* Root::getSceneManager() const 
-	{
-        assert(this->impl != nullptr);
-        return this->impl->sceneManager.get();
-    }
-
+    
 	exeng::graphics::TextureManager * Root::getTextureManager() 
 	{
         assert(this->impl != nullptr);

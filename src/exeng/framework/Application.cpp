@@ -18,23 +18,8 @@ namespace exeng { namespace framework {
     
 	using namespace exeng::util;
 
-    Application::Application()
-    {
-        this->root = new Root();
-		
-		this->graphicsManager = this->getRoot()->getGraphicsManager();
-		this->textureManager = this->getRoot()->getTextureManager();
-		this->meshManager = this->getRoot()->getMeshManager();
-		this->sceneManager = this->getRoot()->getSceneManager();
-		this->pluginManager = this->getRoot()->getPluginManager();
-    }
-    
-    Application::~Application()  
-    {
-        if (this->root) {
-            delete this->root;
-        }
-    }
+    Application::Application() {}
+    Application::~Application() {}
     
     int Application::execute(Application &app, int argc, char** argv) 
     {

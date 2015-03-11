@@ -25,7 +25,6 @@ namespace exeng {
     
     namespace scenegraph {
         class EXENGAPI MeshManager;
-        class EXENGAPI SceneManager;
     }
     
     namespace graphics {
@@ -54,9 +53,6 @@ namespace exeng {
         exeng::graphics::GraphicsManager* getGraphicsManager();
         const exeng::graphics::GraphicsManager* getGraphicsManager() const;
         
-        exeng::scenegraph::SceneManager* getSceneManager();
-        const exeng::scenegraph::SceneManager* getSceneManager() const;
-
 		exeng::graphics::TextureManager* getTextureManager();
         const exeng::graphics::TextureManager* getTextureManager() const;
         

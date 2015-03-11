@@ -13,92 +13,96 @@
 
 #include "SceneManager.hpp"
 
+#include <memory>
 #include <cassert>
-#include <stdexcept>
 #include <string>
 #include <list>
+#include <exeng/Exception.hpp>
 #include <exeng/scenegraph/SceneRenderer.hpp>
 
 namespace exeng { namespace scenegraph {
 
     struct SceneManager::Private {
-        Root *root = nullptr;
-        SceneRenderer *renderer = nullptr;
-        Scene *scene = nullptr;
-        
-        Private(Root *root_) 
-        {
-            this->root = root_;
-        }
+        std::unique_ptr<SceneRenderer> renderer;
+        std::unique_ptr<Scene> scene;
+		std::list<SceneNodeAnimator*> animators;
     };
     
-    SceneManager::SceneManager(Root *root) : impl() 
-    {
-        this->impl = new SceneManager::Private(root);
-        this->impl->root = root;
-    }
-    
-    const Root* SceneManager::getRoot() const 
-    {
-        assert(this->impl != nullptr);
-        return this->impl->root;
-    }
-    
-    Root* SceneManager::getRoot() 
+	SceneManager::SceneManager(std::unique_ptr<Scene> scene)
+	{
+		this->impl = new SceneManager::Private();
+		this->impl->scene = std::move(scene);
+	}
+
+    void SceneManager::setSceneRenderer(std::unique_ptr<SceneRenderer> renderer) 
     {
         assert(this->impl != nullptr);
-        return this->impl->root;
-    }
-    
-    void SceneManager::setSceneRenderer(SceneRenderer *renderer) 
-    {
-        assert(this->impl != nullptr);
-        this->impl->renderer = renderer;
+        this->impl->renderer = std::move(renderer);
+		this->impl->renderer->setScene(this->getScene());
     }
     
     SceneRenderer* SceneManager::getSceneRenderer() 
     {
         assert(this->impl != nullptr);
-        return this->impl->renderer;
+        return this->impl->renderer.get();
     }
     
     const SceneRenderer* SceneManager::getSceneRenderer() const 
     {
         assert(this->impl != nullptr);
-        return this->impl->renderer;
-    }
-    
-    void SceneManager::setScene(Scene *scene) 
-    {
-        assert(this->impl != nullptr);
-        this->impl->scene = scene;
+        return this->impl->renderer.get();
     }
     
     Scene* SceneManager::getScene() 
     {
         assert(this->impl != nullptr);
-        return this->impl->scene;
+        return this->impl->scene.get();
     }
     
     const Scene* SceneManager::getScene() const 
     {
         assert(this->impl != nullptr);
-        return this->impl->scene;
+        return this->impl->scene.get();
     }
     
-    void SceneManager::render(const Camera *camera) 
+	void SceneManager::addAnimator(SceneNodeAnimator *animator)
+	{
+		assert(this->impl != nullptr);
+		this->impl->animators.push_back(animator);
+	}
+
+	void SceneManager::removeAnimator(SceneNodeAnimator *animator)
+	{
+		assert(this->impl != nullptr);
+		this->impl->animators.remove(animator);
+	}
+
+	void SceneManager::update(double seconds)
+	{
+		assert(this->impl != nullptr);
+
+		for (SceneNodeAnimator *animator : this->impl->animators) {
+			animator->update(seconds);
+		}
+	}
+
+    void SceneManager::render(const Camera *camera)
     {
         assert(this->impl != nullptr);
         
         if (this->impl->renderer == nullptr) {
-            throw std::runtime_error("SceneManager::render: non null renderer must be used");
+            EXENG_THROW_EXCEPTION("SceneManager::render: Must have a renderer.");
         }
         
         if (this->impl->scene == nullptr) {
-            throw std::runtime_error("SceneManager::render: Must have a scene to render.");
+            EXENG_THROW_EXCEPTION("SceneManager::render: Must have a scene to render.");
         }
         
-        this->impl->renderer->setScene(this->impl->scene);
+		if (camera == nullptr) {
+			EXENG_THROW_EXCEPTION("SceneManager::render: Must specify a valid camera.");
+		}
+
+        this->impl->renderer->setScene(this->impl->scene.get());
         this->impl->renderer->renderScene(camera);
     }
 }}

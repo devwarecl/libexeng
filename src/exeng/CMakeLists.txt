@@ -166,6 +166,7 @@ set (ScenegraphFiles_cpp
     scenegraph/SceneManager.cpp
     scenegraph/SceneRenderer.cpp
     scenegraph/GenericSceneRenderer.cpp
+	scenegraph/SceneNodeAnimator.cpp
 )
 
 set (ScenegraphFiles_hpp
@@ -191,6 +192,7 @@ set (ScenegraphFiles_hpp
     scenegraph/SceneRenderer.hpp
     scenegraph/Triangle.hpp
     scenegraph/GenericSceneRenderer.hpp
+	scenegraph/SceneNodeAnimator.hpp
 )
 set (ScenegraphFiles ${ScenegraphFiles_hpp} ${ScenegraphFiles_cpp})
 

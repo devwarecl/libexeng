@@ -65,6 +65,7 @@
 #include <exeng/scenegraph/SceneManager.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/SceneNodeData.hpp>
+#include <exeng/scenegraph/SceneNodeAnimator.hpp>
 #include <exeng/scenegraph/Segment.hpp>
 #include <exeng/scenegraph/TSolidGeometry.hpp>
 #include <exeng/scenegraph/SceneRenderer.hpp>

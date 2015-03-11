@@ -14,39 +14,30 @@
 #ifndef __EXENG_SCENEGRAPH_SCENEMANAGER_HPP__
 #define __EXENG_SCENEGRAPH_SCENEMANAGER_HPP__
 
+#include <memory>
 #include <exeng/Config.hpp>
 #include <exeng/Root.hpp>
 #include <exeng/graphics/Material.hpp>
-
 #include <exeng/scenegraph/SceneRenderer.hpp>
+#include <exeng/scenegraph/SceneNodeAnimator.hpp>
 #include <exeng/scenegraph/Scene.hpp>
 #include <exeng/scenegraph/Camera.hpp>
 
 namespace exeng { namespace scenegraph {
+
     /**
-     * @brief Scene Manager. Handles the rendering of the scene.
+     * @brief Scene Manager. Handles the rendering and dynamic updating of the scene.
      */
     class EXENGAPI SceneManager {
-        friend class exeng::Root;
-
-    private:
-        SceneManager(Root* root);
-    
     public:
-        /**
-         * @brief Get the parent root object.
-         */
-        const Root* getRoot() const;
-        
-        /**
-         * @brief Get the parent root object.
-         */
-        Root* getRoot();
-        
+		SceneManager(std::unique_ptr<Scene> scene);
+
         /**
          * @brief Set the current scene renderer.
+		 * 
+		 * Destroy the previously setted renderer.
          */
-        void setSceneRenderer(SceneRenderer *renderer);
+        void setSceneRenderer(std::unique_ptr<SceneRenderer> renderer);
         
         /**
          * @brief Get the currently scene renderer.
@@ -59,11 +50,6 @@ namespace exeng { namespace scenegraph {
         const SceneRenderer* getSceneRenderer() const;
         
         /**
-         * @brief Set the scene to render.
-         */
-        void setScene(Scene *scene);
-        
-        /**
          * @brief Get the current scene.
          */
         Scene* getScene();
@@ -73,8 +59,17 @@ namespace exeng { namespace scenegraph {
          */
         const Scene* getScene() const;
         
+		void addAnimator(SceneNodeAnimator *animator);
+
+		void removeAnimator(SceneNodeAnimator *animator);
+
+		/**
+		 * @brief Update all animators.
+		 */
+		void update(double seconds);
+
         /**
-         * @brief Renders the scene using the currently setted renderer.
+         * @brief Renders the current scene using the current renderer.
          */
         void render(const Camera *camera);
         
