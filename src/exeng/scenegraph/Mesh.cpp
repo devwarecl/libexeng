@@ -310,14 +310,17 @@ namespace exeng { namespace scenegraph {
     }
     
     MeshSubset* Mesh::getMeshSubset(int index) {
+		assert(this->impl != nullptr);
         return this->impl->subsets[index].get();
     }
     
     const MeshSubset* Mesh::getMeshSubset(int index) const {
+		assert(this->impl != nullptr);
         return this->impl->subsets[index].get();
     }
 
     TypeInfo Mesh::getTypeInfo() const {
+		assert(this->impl != nullptr);
         return TypeId<Mesh>();
     }
 }}

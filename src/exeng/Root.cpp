@@ -30,11 +30,11 @@ namespace exeng {
     struct Root::Private 
 	{
         // The order of the declaration of the different submodules is important.
-        std::unique_ptr<GraphicsManager> graphicsManager;
+		std::unique_ptr<GraphicsManager> graphicsManager;
+		std::unique_ptr<PluginManager> pluginManager;
 		std::unique_ptr<TextureManager> textureManager;
         std::unique_ptr<MeshManager> meshManager;
         std::unique_ptr<SceneManager> sceneManager;
-        std::unique_ptr<PluginManager> pluginManager;
     };
 
     static const char licenseMsg[] = 
@@ -46,9 +46,9 @@ namespace exeng {
     Root::Root() 
 	{
 		this->impl = new Root::Private();
-        this->impl->graphicsManager.reset(new GraphicsManager());
+		this->impl->pluginManager.reset(new PluginManager(this));
+		this->impl->graphicsManager.reset(new GraphicsManager());
 		this->impl->textureManager.reset(new TextureManager());
-        this->impl->pluginManager.reset(new PluginManager(this));
         this->impl->meshManager.reset(new MeshManager());
         this->impl->sceneManager.reset(new SceneManager(this));
     }
