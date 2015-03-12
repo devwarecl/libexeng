@@ -26,7 +26,6 @@ namespace exeng { namespace scenegraph {
         
         // render node content (if any)
         if (node->getData() != nullptr) {
-			this->graphicsDriver->setTransform(Transform::World, matrixStack->top());
 			this->renderSceneNodeData(node->getData());
         }
             

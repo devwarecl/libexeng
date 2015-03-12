@@ -15,7 +15,11 @@ public:
 
 	virtual void update(double seconds) override {
 		this->angle += static_cast<float>(60.0 * seconds);
-		auto transform = rotate<float>(rad(angle), {0.0f, 1.0f, 0.0f});
+
+		auto transform = identity<float, 4>();
+		transform *= rotatex<float>(rad(angle));
+		transform *= rotatey<float>(rad(angle));
+		transform *= rotatez<float>(rad(angle));
 
 		this->getSceneNode()->setTransform(transform);
 	}
