@@ -26,6 +26,7 @@ namespace exeng { namespace scenegraph {
         
         // render node content (if any)
         if (node->getData() != nullptr) {
+			this->graphicsDriver->setTransform(Transform::World, matrixStack->top());
 			this->renderSceneNodeData(node->getData());
         }
             
@@ -59,7 +60,7 @@ namespace exeng { namespace scenegraph {
                 int bufferSize = subset->getSize();
                 int vertexSize = subset->getVertexFormat().getSize();
                 int count = bufferSize / vertexSize;
-                    
+
                 this->graphicsDriver->setMaterial(subset->getMaterial());
                 this->graphicsDriver->setMeshSubset(subset);
                 this->graphicsDriver->render(primitive, count);

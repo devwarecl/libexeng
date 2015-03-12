@@ -47,6 +47,10 @@ namespace exeng { namespace graphics {
 	inline GraphicsDriverBase::GraphicsDriverBase() {
         this->viewport.set(0.0f);
         this->material = nullptr;
+
+		this->transformNames[0] = "WorldTransform";
+		this->transformNames[1] = "ViewTransform";
+		this->transformNames[2] = "ProjectionTransform";
     }
 
     inline GraphicsDriverBase::~GraphicsDriverBase() {}
