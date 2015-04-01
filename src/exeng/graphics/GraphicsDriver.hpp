@@ -39,12 +39,11 @@
 
 namespace exeng { namespace graphics {
 
-    /**
-     * @brief Transformation types
-     */
+	/*
     struct Transform : public Enum {
         enum Enum { View, World, Projection };
     };
+	*/
     
     /**
      * @brief Framebuffer clearing flags
@@ -124,7 +123,7 @@ namespace exeng { namespace graphics {
     /**
     * @brief Software interface to graphics hardware
     */
-	class EXENGAPI GraphicsDriver : /*public exeng::ResourceManager, */ public exeng::input::IEventRaiser {
+	class EXENGAPI GraphicsDriver : public exeng::input::IEventRaiser {
     public:
         virtual ~GraphicsDriver() {}
         
@@ -255,16 +254,6 @@ namespace exeng { namespace graphics {
         virtual std::unique_ptr<Texture> createTexture(TextureType::Enum textureType, const Vector3f& textureSize, const ColorFormat &format) = 0;
         
         /**
-         * @brief Set the current transformation matrix
-         */
-        virtual void setTransform(Transform::Enum transform, const Matrix4f& matrix) = 0;
-        
-        /**
-         * @brief Get the current transformation applied on the device.
-         */
-        virtual Matrix4f getTransform(Transform::Enum transform) = 0;
-        
-        /**
          * @brief Set the area of the screen that can be rendered
          */
         virtual void setViewport(const Rectf& viewport) = 0;
@@ -295,22 +284,22 @@ namespace exeng { namespace graphics {
          * ShaderProgram abstract class.
          */
         virtual std::unique_ptr<ShaderProgram> createShaderProgram() = 0;
-        
-        /**
-         * @brief Set the name of the specified transformation matrix in shaders.
-         */
-        virtual void setTransformName(Transform::Enum transform, const std::string &name) = 0;
-        
-        /**
-         * @brief Get the name of the specified transformation matrix in shaders.
-         */
-        virtual std::string getTransformName(Transform::Enum transform) const = 0;
-
+		
 		/**
 		 * @brief Set the material to use by the graphics driver when the current material has been not set, or 
 		 * has been set to a null pointer (nullptr).
 		 */
 		virtual void setDefaultMaterial(const Material *material) = 0;
+  
+		/**
+		 * @brief Set the value of the specified global variable in the currently setted material's shader program.
+		 */
+		virtual void setProgramGlobal(const std::string &globalName, const Vector4f &value) = 0;
+
+		/**
+		 * @brief Set the value of the specified global variable in the currently setted material's shader program.
+		 */
+		virtual void setProgramGlobal(const std::string &globalName, const Matrix4f &value) = 0;
     };
 
 	/*

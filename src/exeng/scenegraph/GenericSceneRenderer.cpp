@@ -59,7 +59,7 @@ namespace exeng { namespace scenegraph {
                 int bufferSize = subset->getSize();
                 int vertexSize = subset->getVertexFormat().getSize();
                 int count = bufferSize / vertexSize;
-                    
+
                 this->graphicsDriver->setMaterial(subset->getMaterial());
                 this->graphicsDriver->setMeshSubset(subset);
                 this->graphicsDriver->render(primitive, count);

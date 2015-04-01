@@ -28,19 +28,14 @@ namespace exeng { namespace graphics {
     public:
         GraphicsDriverBase();
         virtual ~GraphicsDriverBase();
-        virtual exeng::Matrix4f getTransform(Transform::Enum transform) override;
         virtual exeng::Rectf getViewport() const override;
         virtual const exeng::graphics::Material* getMaterial() const override;
         virtual std::unique_ptr<Buffer> createVertexBuffer(const std::int32_t size, const void* data) override;
         virtual std::unique_ptr<Buffer> createIndexBuffer(const std::int32_t size, const void* data) override;
-        virtual void setTransformName(Transform::Enum transform, const std::string &name) override;
-        virtual std::string getTransformName(Transform::Enum transform) const  override;
-        
+
     protected:
         const Material *material = nullptr;
         Rectf viewport;
-        Matrix4f transforms[3];
-        std::string transformNames[3];
     };
 
 
@@ -51,10 +46,6 @@ namespace exeng { namespace graphics {
 
     inline GraphicsDriverBase::~GraphicsDriverBase() {}
     
-    inline Matrix4f GraphicsDriverBase::getTransform(Transform::Enum transform) {
-        return this->transforms[static_cast<const int>(transform)];
-    }
-
     inline const Material* GraphicsDriverBase::getMaterial() const {
         return this->material;
     }
@@ -81,14 +72,6 @@ namespace exeng { namespace graphics {
         }
 
         return buffer;
-    }
-
-    inline void GraphicsDriverBase::setTransformName(Transform::Enum transform, const std::string &name) {
-        this->transformNames[static_cast<int>(transform)] = name;
-    }
-
-    inline std::string GraphicsDriverBase::getTransformName(Transform::Enum transform) const {
-        return this->transformNames[static_cast<int>(transform)];
     }
 }}
 

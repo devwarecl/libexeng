@@ -14,8 +14,12 @@ public:
 	explicit SpatialAnimator(SceneNode *node) : SceneNodeAnimator(node) {}
 
 	virtual void update(double seconds) override {
-		this->angle += 60.0f * static_cast<float>(seconds);
-		auto transform = rotate<float>(rad(angle), {0.0f, 1.0f, 0.0f});
+		this->angle += static_cast<float>(60.0 * seconds);
+
+		auto transform = identity<float, 4>();
+		transform *= rotatex<float>(rad(angle));
+		transform *= rotatey<float>(rad(angle));
+		transform *= rotatez<float>(rad(angle));
 
 		this->getSceneNode()->setTransform(transform);
 	}
