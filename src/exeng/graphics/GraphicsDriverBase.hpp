@@ -14,10 +14,10 @@
 #ifndef __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
 #define __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
 
+#include <memory>
+#include <list>
 #include <exeng/graphics/GraphicsDriver.hpp>
 #include <exeng/HeapBuffer.hpp>
-#include <list>
-#include <memory>
 
 namespace exeng { namespace graphics {
     /**
@@ -26,12 +26,16 @@ namespace exeng { namespace graphics {
      */
     class GraphicsDriverBase : public GraphicsDriver {
     public:
-        GraphicsDriverBase();
-        virtual ~GraphicsDriverBase();
+		GraphicsDriverBase();
+		virtual ~GraphicsDriverBase() {}
         virtual exeng::Rectf getViewport() const override;
         virtual const exeng::graphics::Material* getMaterial() const override;
-        virtual std::unique_ptr<Buffer> createVertexBuffer(const std::int32_t size, const void* data) override;
-        virtual std::unique_ptr<Buffer> createIndexBuffer(const std::int32_t size, const void* data) override;
+        virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data) override;
+        virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data) override;
+
+		virtual ModernModule* getModernModule() override;
+
+		virtual LegacyModule* getLegacyModule() override;
 
     protected:
         const Material *material = nullptr;
@@ -41,11 +45,8 @@ namespace exeng { namespace graphics {
 
 	inline GraphicsDriverBase::GraphicsDriverBase() {
         this->viewport.set(0.0f);
-        this->material = nullptr;
     }
 
-    inline GraphicsDriverBase::~GraphicsDriverBase() {}
-    
     inline const Material* GraphicsDriverBase::getMaterial() const {
         return this->material;
     }
@@ -73,6 +74,14 @@ namespace exeng { namespace graphics {
 
         return buffer;
     }
+
+	inline ModernModule* GraphicsDriverBase::getModernModule() {
+		return nullptr;
+	}
+
+	inline LegacyModule* GraphicsDriverBase::getLegacyModule() {
+		return nullptr;
+	}
 }}
 
 #endif  // __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__

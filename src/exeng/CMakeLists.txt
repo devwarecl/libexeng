@@ -54,6 +54,8 @@ set (GraphicsFiles_hpp
     graphics/ShaderType.hpp           
     graphics/TextureType.hpp			
     graphics/GraphicsDriver.hpp       
+	graphics/LegacyGraphicsDriver.hpp
+	graphics/ModernGraphicsDriver.hpp
     graphics/GraphicsDriverBase.hpp   
     graphics/GraphicsManager.hpp      
     graphics/Image.hpp                
@@ -82,6 +84,8 @@ set (GraphicsFiles_hpp
 set (GraphicsFiles_cpp
     graphics/TextureType.cpp 
     graphics/GraphicsDriver.cpp 
+	graphics/LegacyGraphicsDriver.cpp
+	graphics/ModernGraphicsDriver.cpp
     graphics/GraphicsManager.cpp 
     graphics/Image.cpp 
     graphics/Material.cpp 
@@ -103,6 +107,8 @@ set (GraphicsFiles_cpp
     graphics/MeshSubset.cpp
 	graphics/TextureManager.cpp
 	graphics/TextureLoader.cpp
+	
+	
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 

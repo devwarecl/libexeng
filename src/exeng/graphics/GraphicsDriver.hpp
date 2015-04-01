@@ -37,14 +37,11 @@
 #include <exeng/graphics/ShaderProgram.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
 
+#include <exeng/graphics/ModernModule.hpp>
+#include <exeng/graphics/LegacyModule.hpp>
+
 namespace exeng { namespace graphics {
 
-	/*
-    struct Transform : public Enum {
-        enum Enum { View, World, Projection };
-    };
-	*/
-    
     /**
      * @brief Framebuffer clearing flags
      */
@@ -119,14 +116,16 @@ namespace exeng { namespace graphics {
         InputEventData(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode);
         bool check(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) const;
     };
-
+	
     /**
-    * @brief Software interface to graphics hardware
-    */
+     * @brief Software interface to graphics hardware
+     */
 	class EXENGAPI GraphicsDriver : public exeng::input::IEventRaiser {
     public:
         virtual ~GraphicsDriver() {}
         
+		virtual DisplayMode getDisplayMode() const = 0;
+
         /**
          * @brief Initializes the graphics driver, with the settings included. 
          * Throws exception if the graphics drives can't be initialized with the
@@ -155,22 +154,7 @@ namespace exeng { namespace graphics {
          * and false in other case.
          */
         virtual bool isInitialized() const = 0;
-        
-        /**
-         * @brief Set the current display mode
-         */
-        virtual void setDisplayMode(const DisplayMode &displayMode) = 0;
-        
-        /**
-         * @brief Get the current display mode.
-         */
-        virtual DisplayMode getDisplayMode() const = 0;
-        
-        /**
-         * @brief Restore the current display mode to the original one.
-         */
-        virtual void restoreDisplayMode() = 0;
-        
+		
         /**
          * @brief Start the rendering of a new frame, clearing the previous one
          */
@@ -194,10 +178,10 @@ namespace exeng { namespace graphics {
         /**
          * @brief Create a new hardware-based vertex buffer. 
          */
-        virtual std::unique_ptr<Buffer> createVertexBuffer(const std::int32_t size, const void* data) = 0;
+        virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data) = 0;
         
 		template<typename StdVector>
-		std::unique_ptr<Buffer> createVertexBuffer(const StdVector &vertices) 
+		BufferPtr createVertexBuffer(const StdVector &vertices) 
 		{
 			const int bufferSize = sizeof(typename StdVector::value_type) * vertices.size();
 			const void *bufferData = vertices.data();
@@ -208,10 +192,10 @@ namespace exeng { namespace graphics {
         /**
          * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
          */
-        virtual std::unique_ptr<Buffer> createIndexBuffer(const std::int32_t size, const void* data) = 0;
+        virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data) = 0;
         
 		template<typename StdVector>
-		std::unique_ptr<Buffer> createIndexBuffer(const StdVector &indices) 
+		BufferPtr createIndexBuffer(const StdVector &indices) 
 		{
 			const int bufferSize = sizeof(typename StdVector::value_type) * indices.size();
 			const void *bufferData = indices.data();
@@ -219,15 +203,14 @@ namespace exeng { namespace graphics {
 			return this->createIndexBuffer(bufferSize, bufferData);
 		}
 		
-
-        inline std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &format) {
-            std::unique_ptr<Buffer> indexBuffer;
+        inline MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format) {
+            BufferPtr indexBuffer;
 
             return this->createMeshSubset(std::move(vertexBuffers), std::move(indexBuffer), format);
         }
 
-        inline std::unique_ptr<MeshSubset> createMeshSubset(std::unique_ptr<Buffer> vertexBuffer, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) {
-            std::vector<std::unique_ptr<Buffer>> vertexBuffers;
+        inline MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, BufferPtr indexBuffer, const VertexFormat &format) {
+            std::vector<BufferPtr> vertexBuffers;
             vertexBuffers.push_back(std::move(vertexBuffer));
 
             return this->createMeshSubset(std::move(vertexBuffers), std::move(indexBuffer), format);
@@ -236,7 +219,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Create a new mesh subset object.
          */
-        virtual std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) = 0;
+        virtual MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vertexBuffers, BufferPtr indexBuffer, const VertexFormat &format) = 0;
 
         /**
          * @brief Bound the specified MeshSubset object.
@@ -251,7 +234,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Create a new texture object.
          */
-        virtual std::unique_ptr<Texture> createTexture(TextureType::Enum textureType, const Vector3f& textureSize, const ColorFormat &format) = 0;
+        virtual TexturePtr createTexture(TextureType::Enum textureType, const Vector3f& textureSize, const ColorFormat &format) = 0;
         
         /**
          * @brief Set the area of the screen that can be rendered
@@ -270,36 +253,16 @@ namespace exeng { namespace graphics {
          * @param count The vertex count to utilize from the currently setter meshsubset.
          */
         virtual void render(Primitive::Enum primitive, int count) = 0;
-        
-        /**
-         * @brief Creates a new shader of the specified type.
-         * @param type A member of the ShaderType enumeration.
-         * @return 
-         */
-        virtual std::unique_ptr<Shader> createShader(ShaderType::Enum type) = 0;
-        
-        /**
-         * @brief Create a new shader program, specific to the current graphics driver.
-         * @return A new shader program, instance of an derived implementation class of the 
-         * ShaderProgram abstract class.
-         */
-        virtual std::unique_ptr<ShaderProgram> createShaderProgram() = 0;
 		
 		/**
 		 * @brief Set the material to use by the graphics driver when the current material has been not set, or 
 		 * has been set to a null pointer (nullptr).
 		 */
 		virtual void setDefaultMaterial(const Material *material) = 0;
-  
-		/**
-		 * @brief Set the value of the specified global variable in the currently setted material's shader program.
-		 */
-		virtual void setProgramGlobal(const std::string &globalName, const Vector4f &value) = 0;
 
-		/**
-		 * @brief Set the value of the specified global variable in the currently setted material's shader program.
-		 */
-		virtual void setProgramGlobal(const std::string &globalName, const Matrix4f &value) = 0;
+		virtual LegacyModule* getLegacyModule() = 0;
+
+		virtual ModernModule* getModernModule() = 0;
     };
 
 	/*

@@ -3,6 +3,7 @@
 #define __EXENG_GRAPHICS_MESHSUBSET_HPP__
 
 #include <vector>
+#include <memory>
 
 #include <exeng/Object.hpp>
 #include <exeng/Buffer.hpp>
@@ -39,6 +40,8 @@ namespace exeng { namespace graphics {
         int getSize() const;
     };
     
+	typedef std::unique_ptr<MeshSubset> MeshSubsetPtr;
+
     inline int MeshSubset::getSize() const 
     {
         int size = 0;
@@ -49,7 +52,6 @@ namespace exeng { namespace graphics {
         
         return size;
     }
-    
 }}
 
 #endif  // __EXENG_GRAPHICS_MESHSUBSET_HPP__

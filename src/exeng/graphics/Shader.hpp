@@ -15,6 +15,7 @@
 #ifndef __EXENG_GRAPHICS_SHADER_HPP__
 #define __EXENG_GRAPHICS_SHADER_HPP__
 
+#include <memory>
 #include <exeng/Resource.hpp>
 #include <exeng/graphics/ShaderType.hpp>
 
@@ -62,6 +63,8 @@ namespace exeng { namespace graphics {
          */
         virtual ShaderType::Enum getType() const = 0;
     };
+
+	typedef std::unique_ptr<Shader> ShaderPtr;
 }}
 
 #endif // __EXENG_GRAPHICS_SHADER_HPP__

@@ -15,6 +15,7 @@
 #ifndef __EXENG_GRAPHICS_TEXTURE_HPP__
 #define __EXENG_GRAPHICS_TEXTURE_HPP__
 
+#include <memory>
 #include <exeng/Enum.hpp>
 #include <exeng/Resource.hpp>
 #include <exeng/Vector.hpp>
@@ -87,6 +88,8 @@ namespace exeng { namespace graphics {
          */
         virtual int getHandle() const override = 0;
     };
+
+	typedef std::unique_ptr<Texture> TexturePtr;
 }}
 
 #endif  // __EXENG_GRAPHICS_TEXTURE_HPP__

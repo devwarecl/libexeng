@@ -14,6 +14,7 @@
 #define __EXENG_BUFFER_HPP__
 
 #include <cstdint>
+#include <memory>
 #include <exeng/Object.hpp>
 #include <exeng/Enum.hpp>
 #include <exeng/TFlags.hpp>
@@ -94,6 +95,8 @@ namespace exeng {
          */
         virtual void getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const = 0;
     };
+
+	typedef std::unique_ptr<Buffer> BufferPtr;
 }
 
 #endif // __EXENG_BUFFER_HPP__

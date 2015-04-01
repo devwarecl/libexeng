@@ -11,7 +11,6 @@
  * found in the file LICENSE in this distribution.
  */
 
-
 #ifndef __EXENG_GRAPHICS_SHADERPROGRAM_HPP__
 #define __EXENG_GRAPHICS_SHADERPROGRAM_HPP__
 
@@ -54,6 +53,8 @@ namespace exeng { namespace graphics {
          */
         virtual bool mustRelink() const = 0;
     };
+
+	typedef std::unique_ptr<ShaderProgram> ShaderProgramPtr;
 }}
 
 #endif // __EXENG_GRAPHICS_SHADERPROGRAM_HPP__
