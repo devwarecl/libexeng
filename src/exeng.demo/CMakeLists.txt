@@ -1,14 +1,19 @@
 
-set (Boost_USE_STATIC_LIBS OFF)
-set (Boost_USE_MULTITHREADED ON)
-set (Boost_USE_STATIC_RUNTIME OFF)
+SET (Boost_USE_STATIC_LIBS OFF)
+SET (Boost_USE_MULTITHREADED ON)
+SET (Boost_USE_STATIC_RUNTIME OFF)
 
-find_package(Boost COMPONENTS filesystem REQUIRED)
-add_definitions(-DBOOST_ALL_DYN_LINK)
+FIND_PACKAGE(Boost COMPONENTS filesystem REQUIRED)
+ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
+ADD_DEFINITIONS(-DDEMO_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.raytracer/")
 
-include_directories(${Boost_INCLUDE_DIRS})
-include_directories(${PROJECT_SOURCE_DIR}/src)
-link_directories(${Boost_LIBRARY_DIRS})
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
-add_executable(exeng.demo Demo01.cpp)
-target_link_libraries(exeng.demo exeng ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+SET (demo_src Demo01.cpp Vertex.glsl Fragment.glsl)
+
+SOURCE_GROUP(\\ FILES ${demo_src})
+
+ADD_EXECUTABLE(exeng.demo ${demo_src})
+TARGET_LINK_LIBRARIES(exeng.demo exeng ${Boost_LIBRARIES})
