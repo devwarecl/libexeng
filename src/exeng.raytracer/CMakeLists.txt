@@ -13,7 +13,7 @@ set (Boost_USE_STATIC_RUNTIME OFF)
 find_package(OpenGL REQUIRED)
 find_package(OpenCL REQUIRED)
 find_package(Boost COMPONENTS system timer log thread REQUIRED)
-find_package(glfw REQUIRED)
+find_package(glfw3 REQUIRED)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   find_package(Threads REQUIRED)
@@ -21,11 +21,11 @@ endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${GLFW_INCLUDE_DIR})
+include_directories(${GLFW3_INCLUDE_DIR})
 include_directories(${OPENCL_INCLUDE_DIRS})
 
 link_directories(${Boost_LIBRARY_DIRS})
-link_directories(${GLFW_LIBRARY_DIR})
+link_directories(${GLFW3_LIBRARY_DIR})
 link_directories(${OpenGL_LIBRARY_DIR})
 
 # Grouping

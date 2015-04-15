@@ -12,16 +12,16 @@ set (Boost_USE_STATIC_RUNTIME OFF)
 
 find_package(OpenCL REQUIRED)
 find_package(Boost COMPONENTS system timer REQUIRED)
-find_package(glfw REQUIRED)
+find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${GLFW_INCLUDE_DIR})
+include_directories(${GLFW3_INCLUDE_DIR})
 include_directories(${OPENCL_INCLUDE_DIRS})
 
 link_directories(${Boost_LIBRARY_DIRS})
-link_directories(${GLFW_LIBRARY_DIR})
+link_directories(${GLFW3_LIBRARY_DIR})
 
 # Grouping
 file (GLOB RES_FILES *.cl *.glsl)
@@ -35,4 +35,4 @@ source_group(\\ FILES ${SandboxFiles})
 add_executable(exeng.sandbox ${SandboxFiles} ${RES_FILES})
 
 # 
-target_link_libraries(exeng.sandbox exeng ${Boost_LIBRARIES} ${GLFW_LIBRARY} ${OPENCL_LIBRARIES}  ${OPENGL_LIBRARIES})
+target_link_libraries(exeng.sandbox exeng ${Boost_LIBRARIES} ${GLFW3_LIBRARY} ${OPENCL_LIBRARIES}  ${OPENGL_LIBRARIES})
