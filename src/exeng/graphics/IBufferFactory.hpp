@@ -9,8 +9,8 @@ namespace exeng { namespace graphics {
     class EXENGAPI IBufferFactory {
     public:
         virtual ~IBufferFactory();
-        virtual VertexBuffer* createVertexBuffer();
-        virtual IndexBuffer* createIndexBuffer();
+        // virtual VertexBuffer* createVertexBuffer();
+        // virtual IndexBuffer* createIndexBuffer();
     };
 }}
 

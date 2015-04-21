@@ -12,51 +12,46 @@
 #include <stdexcept>
 #include <cstring>
 #include <map>
+#include <memory>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/checked_delete.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <exeng/Exception.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/io/Stream.hpp>
 #include <exeng/HeapBuffer.hpp>
 
 namespace exeng { namespace graphics {
-
-	struct MaterialLayer::Private 
-	{
+	struct MaterialLayer::Private {
 		Texture* texture = nullptr;
 	};
     
-	MaterialLayer::MaterialLayer()
-    {
+	MaterialLayer::MaterialLayer() {
         this->impl = new MaterialLayer::Private();
     }
 
-	MaterialLayer::~MaterialLayer() 
-    {
+	MaterialLayer::~MaterialLayer() {
 		boost::checked_delete(this->impl);
 	}
 
-	const Texture* MaterialLayer::getTexture() const 
-	{
+	const Texture* MaterialLayer::getTexture() const {
 		assert(this->impl != nullptr);
 		return this->impl->texture;
 	}
 
-	Texture* MaterialLayer::getTexture() 
-    {
+	Texture* MaterialLayer::getTexture() {
 		assert(this->impl != nullptr);
 		return this->impl->texture;
 	}
     
-	void MaterialLayer::setTexture(Texture* texture) 
-    {
+	void MaterialLayer::setTexture(Texture* texture) {
 		assert(this->impl != nullptr);
 		this->impl->texture = texture;
 	}
 
-	bool MaterialLayer::hasTexture() const 
-	{
+	bool MaterialLayer::hasTexture() const {
 		assert(this->impl != nullptr);
 		return this->impl->texture != nullptr;
 	}
@@ -68,13 +63,13 @@ namespace exeng { namespace graphics {
 
 	static const int LayerCount = 4;
     
-	struct Material::Private 
-	{
+	struct Material::Private {
 		std::string name;
         const MaterialFormat *format = nullptr;
 		const ShaderProgram *shaderProgram = nullptr;
         MaterialLayer layers[LayerCount];
-        HeapBuffer buffer;
+
+		std::unique_ptr<HeapBuffer> buffer;
 
 		template<typename Type>
 		void fillBuffer(void* bufferData, int dimension) {
@@ -87,12 +82,17 @@ namespace exeng { namespace graphics {
 
 		void fillBuffer(std::uint8_t *bufferData, DataType::Enum dataType, int dimension) 
 		{
-			if (dataType == DataType::Float32) {
-				fillBuffer<float>(bufferData, dimension);
-			} else if (dataType == DataType::Int32) {
+			switch (dataType) {
+			case DataType::Float32:	
+				fillBuffer<float>(bufferData, dimension);	
+				break;
+
+			case DataType::Int32:
 				fillBuffer<std::int32_t>(bufferData, dimension);
-			} else {
-				throw std::runtime_error("Material::fillBufferWithZero: 32-bit floating-point and integer");
+				break;
+
+			default:
+				EXENG_THROW_EXCEPTION("DataType don't supported.");
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace exeng { namespace graphics {
 		 */
 		void fill() 
 		{
-			std::uint8_t *bufferData = (std::uint8_t*) this->buffer.getDataPtr();
+			std::uint8_t *bufferData = (std::uint8_t*) this->buffer->getPointer();
 
 			for (int i=0; i<this->format->getAttribCount(); i++) {
 				const MaterialAttrib *attrib = this->format->getAttrib(i);
@@ -112,37 +112,37 @@ namespace exeng { namespace graphics {
 		}
 	};
     
-	Material::Material(const MaterialFormat *format) 
-    {
+	Material::Material(const MaterialFormat *format) {
         this->impl = new Material::Private();
-        this->impl->format = format;
-        
-        if (this->getFormat()) {
-            this->impl->buffer.allocate(this->impl->format->getSize());
-            this->impl->fill();
-        }
+
+		if (!format) {
+			EXENG_THROW_EXCEPTION("Format can't be a null pointer.");
+		}
+
+		this->impl->format = format;
+		this->impl->buffer = std::make_unique<HeapBuffer>(format->getSize());
+		this->impl->fill();
     }
 
-	Material::Material(const MaterialFormat *format, const std::string &name)
-    {
+	Material::Material(const MaterialFormat *format, const std::string &name) {
         this->impl = new Material::Private();
-        this->impl->format = format;
-        
-        if (this->getFormat()) {
-            this->impl->buffer.allocate(this->impl->format->getSize());
-            this->impl->fill();
-        }
+
+		if (!format) {
+			EXENG_THROW_EXCEPTION("Format can't be a null pointer.");
+		}
+
+		this->impl->format = format;
+		this->impl->buffer = std::make_unique<HeapBuffer>(format->getSize());
+		this->impl->fill();
         
         this->setName(name);
     }
 	
-	Material::~Material() 
-    {
+	Material::~Material() {
 		boost::checked_delete(this->impl);
 	}
 	
-	void Material::setAttribute(const int index, const void* data, const int size)
-    {
+	void Material::setAttribute(const int index, const void* data, const int size) {
         assert(this->impl);
         
 #if defined(EXENG_DEBUG)
@@ -151,13 +151,12 @@ namespace exeng { namespace graphics {
         }
 #endif
         int offset = this->getFormat()->getOffset(index);
-        std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer.getDataPtr();
+        std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer->getPointer();
         
         std::memcpy(materialData + offset, data, this->getFormat()->getAttrib(index)->getSize());
     }
         
-    void Material::getAttribute(const int index, void* data, const int size) const 
-    {
+    void Material::getAttribute(const int index, void* data, const int size) const {
         assert(this->impl);
 
 #if defined(EXENG_DEBUG)
@@ -166,25 +165,22 @@ namespace exeng { namespace graphics {
         }
 #endif
         int offset = this->getFormat()->getOffset(index);
-        std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer.getDataPtr();
+        std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer->getPointer();
         
         std::memcpy(data, materialData + offset, this->getFormat()->getAttrib(index)->getSize());
     }
 	
-	std::string Material::getName() const 
-	{
+	std::string Material::getName() const {
 		assert(this->impl != nullptr);
 		return this->impl->name;
 	}
 
-	void Material::setName(const std::string& name) 
-    {
+	void Material::setName(const std::string& name) {
 		assert(this->impl != nullptr);
 		this->impl->name = name;
 	}
     
-	MaterialLayer* Material::getLayer(int index) 
-    {
+	MaterialLayer* Material::getLayer(int index) {
 		assert(this->impl != nullptr);
 
 #ifdef EXENG_DEBUG
@@ -196,8 +192,7 @@ namespace exeng { namespace graphics {
 		return &this->impl->layers[index];
 	}
 	
-	const MaterialLayer* Material::getLayer(int index) const 
-	{
+	const MaterialLayer* Material::getLayer(int index) const {
 		assert(this->impl != nullptr);
 
 #ifdef EXENG_DEBUG
@@ -209,34 +204,29 @@ namespace exeng { namespace graphics {
 		return &this->impl->layers[index];
 	}
 
-	TypeInfo Material::getTypeInfo() const 
-	{
+	TypeInfo Material::getTypeInfo() const {
 		assert(this->impl != nullptr);
     
 		return TypeInfo(typeid(Material));
 	}
 
-	const int Material::getLayerCount() 
-    {
+	const int Material::getLayerCount() {
 		return LayerCount;
 	}
 
-	void Material::setShaderProgram(const ShaderProgram *shader) 
-    {
+	void Material::setShaderProgram(const ShaderProgram *shader) {
 		assert(this->impl != nullptr);
     
 		this->impl->shaderProgram = shader;
 	}
 
-	const ShaderProgram* Material::getShaderProgram() const 
-	{
+	const ShaderProgram* Material::getShaderProgram() const {
 		assert(this->impl != nullptr);
     
 		return this->impl->shaderProgram;
 	}
 
-	bool Material::checkTextureType(const TypeInfo &textureTypeInfo) const 
-	{
+	bool Material::checkTextureType(const TypeInfo &textureTypeInfo) const {
 		assert(this->impl != nullptr);
     
 		const MaterialLayer *layer = nullptr;
@@ -254,35 +244,29 @@ namespace exeng { namespace graphics {
 		return true;
 	}
 	
-	const MaterialFormat* Material::getFormat() const
-	{
+	const MaterialFormat* Material::getFormat() const {
         assert(this->impl != nullptr);
         
         return this->impl->format;
     }
 	
-	bool Material::isSerializable() const 
-	{
+	bool Material::isSerializable() const {
         assert(this->impl != nullptr);
         
         return false;
     }
     
-    void Material::serialize(exeng::io::Stream *out) const 
-    {
+    void Material::serialize(exeng::io::Stream *out) const {
         assert(this->impl != nullptr);
-        
     }
     
-    bool Material::isDeserializable() const 
-    {
+    bool Material::isDeserializable() const {
         assert(this->impl != nullptr);
         
         return false;
     }
     
-    void Material::deserialize(const exeng::io::Stream *inStream)  
-    {
+    void Material::deserialize(const exeng::io::Stream *inStream) {
         assert(this->impl != nullptr);
     }
 }}

@@ -123,10 +123,18 @@ public:
 #endif
 	}
 
+	MaterialFormat initMaterialFormat() {
+		return MaterialFormat({ 
+			{"ambient", DataType::Float32, 4},
+			{"diffuse", DataType::Float32, 4},
+			{"specular", DataType::Float32, 4}
+		});
+	}
+
 	ScenePtr initScene() {
 		Mesh *boxMesh = this->getMeshManager()->generateBoxMesh("boxMesh", {0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f});
 
-		ScenePtr scene = std::make_unique<Scene>();
+		ScenePtr scene = std::make_unique<Scene>(&this->materialFormat);
 		scene->setBackColor({0.2f, 0.3f, 0.8f, 1.0f});
 		scene->createSceneNode("boxSceneNode", boxMesh);
 
@@ -211,6 +219,7 @@ private:
 	std::unique_ptr<SceneNodeAnimator> animator;
 	ShaderProgramPtr shaderProgram;
 	ScenePtr scene;
+	MaterialFormat materialFormat;
 
 	Camera *camera = nullptr;
     ApplicationStatus::Enum status = ApplicationStatus::Running;

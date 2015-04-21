@@ -59,7 +59,7 @@ namespace exeng { namespace graphics {
         auto buffer = std::unique_ptr<Buffer>(new HeapBuffer(size));
 
         if (data) {
-            buffer->setData(data, size);
+            buffer->setData(data);
         }
 
         return buffer;
@@ -69,7 +69,7 @@ namespace exeng { namespace graphics {
         auto buffer = std::unique_ptr<Buffer>(new HeapBuffer(size));
 
         if (data) {
-            buffer->setData(data, size);
+            buffer->setData(data);
         }
 
         return buffer;

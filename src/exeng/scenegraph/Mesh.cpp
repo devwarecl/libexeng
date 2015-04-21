@@ -183,7 +183,7 @@ namespace exeng { namespace scenegraph {
         Buffer *vertexBuffer = subset->getBuffer(0);
         
         VertexFormat vertexFormat = subset->getVertexFormat();
-        void* vertexData = vertexBuffer->getDataPtr();
+        const void* vertexData = vertexBuffer->getPointer();
         
         int vertexOffset = vertexFormat.getAttribOffset(VertexAttrib::Position);
         int vertexStride = vertexFormat.getSize();
@@ -222,9 +222,9 @@ namespace exeng { namespace scenegraph {
             }
             
             // TODO: Get the normal vector from the mesh data, if exists.
-            Vector3f &p1 = *reinterpret_cast<Vector3f*>(static_cast<float*>(vertexData) + i1*vertexStride + vertexOffset);
-            Vector3f &p2 = *reinterpret_cast<Vector3f*>(static_cast<float*>(vertexData) + i2*vertexStride + vertexOffset);
-            Vector3f &p3 = *reinterpret_cast<Vector3f*>(static_cast<float*>(vertexData) + i3*vertexStride + vertexOffset);
+            const Vector3f &p1 = *reinterpret_cast<const Vector3f*>(static_cast<const float*>(vertexData) + i1*vertexStride + vertexOffset);
+            const Vector3f &p2 = *reinterpret_cast<const Vector3f*>(static_cast<const float*>(vertexData) + i2*vertexStride + vertexOffset);
+            const Vector3f &p3 = *reinterpret_cast<const Vector3f*>(static_cast<const float*>(vertexData) + i3*vertexStride + vertexOffset);
             
             Vector3f n = computeNormal(p1, p2, p3);
             
@@ -239,8 +239,6 @@ namespace exeng { namespace scenegraph {
         if (intersectInfo) {
             *intersectInfo = info;
         }
-        
-        vertexBuffer->write();
         
         return info.intersect;
     }

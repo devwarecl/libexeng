@@ -1,6 +1,6 @@
 /**
  * @file Buffer.hpp
- * @brief Define the Buffer abstract class.
+ * @brief Buffer class definition.
  */
 
 /*
@@ -23,23 +23,22 @@ namespace exeng {
     /**
      * @brief Abstract interface to a huge memory block.
      */
-    class EXENGAPI Buffer : public Object {
+    class EXENGAPI Buffer2 : public Object {
     public:
         enum Enum {
             Empty = 0x00000001,
-            Local = 0x00000002,
-            __Force32 = 0xFFFFFFFF
+            Local = 0x00000002
         };
 
         typedef TFlags<Enum> Flags;
         
     public:
-        virtual ~Buffer();
+		virtual ~Buffer2() {}
 
         /**
          * @brief 
          */
-        virtual Buffer::Flags getFlags() const = 0;
+        virtual Buffer2::Flags getFlags() const = 0;
 
         /**
          * @brief 
@@ -76,7 +75,7 @@ namespace exeng {
         virtual void read() = 0;
 
         /**
-         * @brief Get the native handle of the buffer. If its a local buffer, return the value Buffer::getDataPtr
+         * @brief Get the native handle of the buffer. If its a local memory buffer, return the value Buffer::getDataPtr
          */
         virtual std::uint64_t getHandle() const = 0;
 
@@ -96,7 +95,50 @@ namespace exeng {
         virtual void getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const = 0;
     };
 
+	
+	/**
+	 * @brief Class for manipulation of memory areas.
+	 */
+	class EXENGAPI Buffer : public Object {
+	public:
+		virtual ~Buffer() {}
+
+		/**
+		 * @brief Get the identifier of the buffer object.
+		 */
+		virtual int getHandle() const = 0;
+
+		/**
+		 * @brief Get the current size of the buffer.
+		 */
+		virtual int getSize() const = 0;
+
+		/**
+		 * @brief Get buffer data
+		 */
+		virtual void getData(void* data, const int size, const int dataOffset, const int bufferOffset) const = 0;
+
+		inline void getData(void* data) const {
+			this->getData(data, this->getSize(), 0, 0);
+		}
+
+		/**
+		 * @brief Set buffer data
+		 */
+		virtual void setData(const void *data, const int size, const int dataOffset, const int bufferOffset) = 0;
+
+		inline void setData(const void* data) {
+			this->setData(data, this->getSize(), 0, 0);
+		}
+
+		/**
+		 * @brief Get a pointer to a read-only location
+		 */
+		virtual const void* getPointer() const = 0;
+	};
+
 	typedef std::unique_ptr<Buffer> BufferPtr;
+	typedef std::unique_ptr<Buffer2> Buffer2Ptr;
 }
 
 #endif // __EXENG_BUFFER_HPP__

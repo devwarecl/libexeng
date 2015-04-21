@@ -11,35 +11,72 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include <exeng/HeapBuffer.hpp>
+#include "HeapBuffer.hpp"
+
+#include <exeng/Exception.hpp>
+
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
 #include <memory>
 
 namespace exeng {
-    HeapBuffer::HeapBuffer() {}
+	HeapBuffer::HeapBuffer(const int size) {
+		void* data = std::malloc(size);
 
-    HeapBuffer::HeapBuffer(const std::uint32_t size) {
+		if (!data) {
+			EXENG_THROW_EXCEPTION("No enough memory.");
+		}
+
+		if (data) {
+			this->data = data;
+			this->size = size;
+		}
+	}
+
+	HeapBuffer::~HeapBuffer() {
+		if (this->data) {
+			std::free(this->data);
+		}
+	}
+
+	void HeapBuffer::getData(void* data, const int size, const int dataOffset, const int bufferOffset) const {
+		const std::uint8_t* srcData = static_cast<const std::uint8_t*>(this->data) + bufferOffset;
+		std::uint8_t* dstData = static_cast<std::uint8_t*>(data) + dataOffset;
+
+		std::memcpy(dstData, srcData, size);
+	}
+
+	void HeapBuffer::setData(const void *data, const int size, const int dataOffset, const int bufferOffset) {
+		const std::uint8_t* srcData = static_cast<const std::uint8_t*>(data) + dataOffset;
+		std::uint8_t* dstData = static_cast<std::uint8_t*>(this->data) + bufferOffset;
+		std::memcpy(dstData, srcData, size);
+	}
+}
+
+namespace exeng {
+    HeapBuffer2::HeapBuffer2() {}
+
+    HeapBuffer2::HeapBuffer2(const std::uint32_t size) {
         this->allocate(size);
     }
 
-    Buffer::Flags HeapBuffer::getFlags() const {
+    Buffer2::Flags HeapBuffer2::getFlags() const {
         if (this->data) {
-            return Buffer::Local;
+            return Buffer2::Local;
         } else {
-            return Buffer::Local | Buffer::Empty;
+            return Buffer2::Local | Buffer2::Empty;
         }
     }
 
-    void HeapBuffer::allocate(const std::uint32_t size) {
+    void HeapBuffer2::allocate(const std::uint32_t size) {
         this->release();
 
         this->data = std::malloc(size);
         this->size = size;
     }
 
-    void HeapBuffer::release() {
+    void HeapBuffer2::release() {
         if (this->data) {
             std::free(this->data);
 
@@ -48,35 +85,35 @@ namespace exeng {
         }
     }
 
-    HeapBuffer::~HeapBuffer() {
+    HeapBuffer2::~HeapBuffer2() {
         this->release();
     }
 
-    std::uint32_t HeapBuffer::getSize() const {
+    std::uint32_t HeapBuffer2::getSize() const {
         return this->size;
     }
 
-    void* HeapBuffer::getDataPtr() {
+    void* HeapBuffer2::getDataPtr() {
         return this->data;
     }
 
-    const void* HeapBuffer::getDataPtr() const {
+    const void* HeapBuffer2::getDataPtr() const {
         return this->data;
     }
 
-    void HeapBuffer::write() {}
-    void HeapBuffer::read() {}
+    void HeapBuffer2::write() {}
+    void HeapBuffer2::read() {}
 
-    std::uint64_t HeapBuffer::getHandle() const {
+    std::uint64_t HeapBuffer2::getHandle() const {
         return reinterpret_cast<std::uint64_t>(this->data);
     }
 
-    void HeapBuffer::setData(const void* dataSrc, const std::uint32_t size) {
+    void HeapBuffer2::setData(const void* dataSrc, const std::uint32_t size) {
         this->allocate(size);
         std::memcpy(this->data, dataSrc, size);
     }
 
-    void HeapBuffer::getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const {
+    void HeapBuffer2::getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const {
         std::memcpy(dataDst, reinterpret_cast<std::uint8_t*>(this->data) + offset, size );
     }
 }

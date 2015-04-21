@@ -45,11 +45,6 @@ namespace exeng { namespace scenegraph {
         const MaterialFormat *materialFormat = nullptr;
     };
     
-    Scene::Scene() 
-    {
-        this->impl = new Scene::Private();
-    }
-    
     Scene::Scene(const exeng::graphics::MaterialFormat *materialFormat)
 	{
 		this->impl = new Scene::Private();
