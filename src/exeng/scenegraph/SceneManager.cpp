@@ -24,61 +24,53 @@ namespace exeng { namespace scenegraph {
 
     struct SceneManager::Private {
         std::unique_ptr<SceneRenderer> renderer;
-        std::unique_ptr<Scene> scene;
 		std::list<SceneNodeAnimator*> animators;
+
+		Scene* scene = nullptr;
     };
     
-	SceneManager::SceneManager(std::unique_ptr<Scene> scene)
-	{
+	SceneManager::SceneManager(Scene *scene) {
 		this->impl = new SceneManager::Private();
-		this->impl->scene = std::move(scene);
+		this->impl->scene = scene;
 	}
 
-    void SceneManager::setSceneRenderer(std::unique_ptr<SceneRenderer> renderer) 
-    {
+    void SceneManager::setSceneRenderer(std::unique_ptr<SceneRenderer> renderer) {
         assert(this->impl != nullptr);
         this->impl->renderer = std::move(renderer);
 		this->impl->renderer->setScene(this->getScene());
     }
     
-    SceneRenderer* SceneManager::getSceneRenderer() 
-    {
+    SceneRenderer* SceneManager::getSceneRenderer() {
         assert(this->impl != nullptr);
         return this->impl->renderer.get();
     }
     
-    const SceneRenderer* SceneManager::getSceneRenderer() const 
-    {
+    const SceneRenderer* SceneManager::getSceneRenderer() const {
         assert(this->impl != nullptr);
         return this->impl->renderer.get();
     }
     
-    Scene* SceneManager::getScene() 
-    {
+    Scene* SceneManager::getScene() {
         assert(this->impl != nullptr);
-        return this->impl->scene.get();
+        return this->impl->scene;
     }
     
-    const Scene* SceneManager::getScene() const 
-    {
+    const Scene* SceneManager::getScene() const {
         assert(this->impl != nullptr);
-        return this->impl->scene.get();
+        return this->impl->scene;
     }
     
-	void SceneManager::addAnimator(SceneNodeAnimator *animator)
-	{
+	void SceneManager::addAnimator(SceneNodeAnimator *animator) {
 		assert(this->impl != nullptr);
 		this->impl->animators.push_back(animator);
 	}
 
-	void SceneManager::removeAnimator(SceneNodeAnimator *animator)
-	{
+	void SceneManager::removeAnimator(SceneNodeAnimator *animator) {
 		assert(this->impl != nullptr);
 		this->impl->animators.remove(animator);
 	}
 
-	void SceneManager::update(double seconds)
-	{
+	void SceneManager::update(double seconds) {
 		assert(this->impl != nullptr);
 
 		for (SceneNodeAnimator *animator : this->impl->animators) {
@@ -86,8 +78,7 @@ namespace exeng { namespace scenegraph {
 		}
 	}
 
-    void SceneManager::render(const Camera *camera)
-    {
+    void SceneManager::render(const Camera *camera) {
         assert(this->impl != nullptr);
         
         if (this->impl->renderer == nullptr) {
@@ -102,7 +93,7 @@ namespace exeng { namespace scenegraph {
 			EXENG_THROW_EXCEPTION("SceneManager::render: Must specify a valid camera.");
 		}
 
-        this->impl->renderer->setScene(this->impl->scene.get());
+        this->impl->renderer->setScene(this->getScene());
         this->impl->renderer->renderScene(camera);
     }
 }}

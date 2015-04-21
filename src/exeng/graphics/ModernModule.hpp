@@ -4,6 +4,7 @@
 #define __EXENG_GRAPHICS_MODERNMODULE_HPP__
 
 #include <memory>
+#include <list>
 #include <exeng/Vector.hpp>
 #include <exeng/Matrix.hpp>
 #include <exeng/graphics/Shader.hpp>
@@ -11,9 +12,9 @@
 
 namespace exeng { namespace graphics {
 
-	class ModernModule {
+	class EXENGAPI ModernModule {
 	protected:
-		virtual ~ModernModule() {}
+		virtual ~ModernModule();
 
 	public:
         /**
@@ -23,6 +24,10 @@ namespace exeng { namespace graphics {
          */
         virtual ShaderPtr createShader(ShaderType::Enum type) = 0;
         
+		virtual ShaderPtr createShader(ShaderType::Enum type, const char* dataSource, const int dataSize);
+
+		virtual ShaderPtr createShader(ShaderType::Enum type, const std::string &shaderSource);
+
         /**
          * @brief Create a new shader program, specific to the current graphics driver.
          * @return A new shader program, instance of an derived implementation class of the 
@@ -39,6 +44,12 @@ namespace exeng { namespace graphics {
 		 * @brief Set the value of the specified global variable in the currently setted material's shader program.
 		 */
 		virtual void setProgramGlobal(const std::string &globalName, const Matrix4f &value) = 0;
+
+		virtual ShaderProgramPtr createShaderProgram(const std::list<std::string> &vertexShaderSrcs, const std::list<std::string> &fragmentShaderSrcs);
+
+		virtual ShaderProgramPtr createShaderProgram(std::string &vertexShaders, std::string &fragmentShaders);
+
+		// virtual ShaderProgramPtr createShaderProgram(const std::list<std::pair<int, char*>> &vertexShaders,  const std::list<std::pair<int, char*>> &fragmentShaders);
 	};
 }}
 

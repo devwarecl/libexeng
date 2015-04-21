@@ -2,6 +2,7 @@
 #ifndef __EXENG_GRAPHICS_LEGACYMODULE_HPP__
 #define __EXENG_GRAPHICS_LEGACYMODULE_HPP__
 
+#include <exeng/Config.hpp>
 #include <exeng/Enum.hpp>
 #include <exeng/Matrix.hpp>
 
@@ -10,9 +11,9 @@ namespace exeng { namespace graphics {
         enum Enum {View, World, Projection};
     };
 	
-	class LegacyModule {
+	class EXENGAPI LegacyModule {
 	protected:
-		virtual ~LegacyModule() {}
+		virtual ~LegacyModule();
 
 	public:
 		virtual void setTransform(Transform::Enum transform, const Matrix4f &matrix) = 0;

@@ -24,13 +24,12 @@
 #include <exeng/scenegraph/Camera.hpp>
 
 namespace exeng { namespace scenegraph {
-
     /**
      * @brief Scene Manager. Handles the rendering and dynamic updating of the scene.
      */
     class EXENGAPI SceneManager {
     public:
-		SceneManager(std::unique_ptr<Scene> scene);
+		explicit SceneManager(Scene* scene);
 
         /**
          * @brief Set the current scene renderer.

@@ -49,7 +49,7 @@ namespace raytracer {
 		// std::string lwoFilename = "D:\\Felipe\\Desktop\\Assets\\Modelos\\Santiago3D\\Basurero\\BasureroLWO.lwo";
 		// std::string lwoFilename = "C:\\Users\\fapablaza\\Downloads\\Easel\\easel.lwo";
 		std::string lwoFilename = "easel.lwo";
-		Mesh *mesh = this->meshManager->getMesh(lwoFilename, this->graphicsDriver);
+		Mesh *mesh = this->meshManager->getMesh(lwoFilename);
 
 		SceneNode *node = scene->getRootNode()->addChild("boxNode3");
 		node->setData(mesh);
@@ -69,7 +69,7 @@ namespace raytracer {
 
         // box mesh
         // Mesh *boxMesh = this->meshManager->getMesh("/cube", this->graphicsDriver);
-		Mesh *boxMesh = this->meshManager->generateBoxMesh(boxMeshName, this->graphicsDriver, boxCenter, boxSize);
+		Mesh *boxMesh = this->meshManager->generateBoxMesh(boxMeshName, boxCenter, boxSize);
         boxMesh->getMeshSubset(0)->setMaterial(boxMaterial);
 
         // box scenenode

@@ -36,7 +36,7 @@ namespace exeng { namespace scenegraph {
     class EXENGAPI MeshManager {
     public:
         MeshManager();
-        ~MeshManager();
+        virtual ~MeshManager();
         
 		/**
          * @brief Set the default location to search for mesh files when a non-full
@@ -59,15 +59,21 @@ namespace exeng { namespace scenegraph {
          */
         void removeMeshLoader(IMeshLoader *loader);
         
+		void setGraphicsDriver(exeng::graphics::GraphicsDriver *driver);
+
+		exeng::graphics::GraphicsDriver* getGraphicsDriver();
+
+		const exeng::graphics::GraphicsDriver* getGraphicsDriver() const;
+
         /**
          * @brief Load a mesh from the specified file.
          */
-        Mesh* getMesh(const std::string &id, exeng::graphics::GraphicsDriver *graphicsDriver);
+        Mesh* getMesh(const std::string &id);
 
 		/**
 		 * @brief Generate a cube mesh
 		 */
-		Mesh* generateBoxMesh(const std::string &id, exeng::graphics::GraphicsDriver *graphicsDriver, const Vector3f &center, const Vector3f &size);
+		Mesh* generateBoxMesh(const std::string &id, const Vector3f &center, const Vector3f &size);
 
     private:
         struct Private;

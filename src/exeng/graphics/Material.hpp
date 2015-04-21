@@ -17,6 +17,7 @@
 #include <cassert>
 #include <vector>
 #include <tuple>
+#include <memory>
 #include <exeng/Object.hpp>
 #include <exeng/Vector.hpp>
 #include <exeng/DataType.hpp>
@@ -115,19 +116,21 @@ namespace exeng { namespace graphics {
      */
     class EXENGAPI Material : public Object {
     public:
-        Material(const MaterialFormat *format);
-        Material(const MaterialFormat *format, const std::string &name);
+        explicit Material(const MaterialFormat *format);
+        explicit Material(const MaterialFormat *format, const std::string &name);
         
         virtual ~Material();
         
         const MaterialFormat* getFormat() const;
         
         template<typename ValueType>
-        void setAttribute(const int index, const ValueType &value) 
+        Material* setAttribute(const int index, const ValueType &value) 
         {
             assert(sizeof(ValueType) == this->getFormat()->getAttrib(index)->getSize());
             
             this->setAttribute(index, &value, sizeof(value));
+
+			return this;
         }
         
         template<typename ValueType>
@@ -143,12 +146,14 @@ namespace exeng { namespace graphics {
         }
         
 		template<typename ValueType>
-        void setAttribute(const std::string &name, const ValueType &value) 
+        Material* setAttribute(const std::string &name, const ValueType &value) 
         {
             assert(sizeof(ValueType) == this->getFormat()->getAttrib(name)->getSize());
             
 			const int index = this->getFormat()->getAttribIndex(name);
             this->setAttribute(index, &value, sizeof(value));
+
+			return this;
         }
         
         template<typename ValueType>
@@ -197,6 +202,8 @@ namespace exeng { namespace graphics {
         struct Private;
         Private *impl = nullptr;
     };
+
+	typedef std::unique_ptr<Material> MaterialPtr;
 }}
 
 

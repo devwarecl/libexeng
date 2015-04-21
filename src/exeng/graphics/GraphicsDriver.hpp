@@ -77,9 +77,20 @@ namespace exeng { namespace graphics {
 		//! Fullscreen or window?
         DisplayStatus::Enum status = DisplayStatus::Window;                     
         
-        DisplayMode();
-        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat);
-        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status);
+		DisplayMode() {}
+
+        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat) {
+			this->size = size;
+			this->colorFormat = colorFormat;
+		}
+
+        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status) {
+			this->size = size;
+			this->colorFormat = colorFormat;
+			this->depthBits = depthBits;
+			this->stencilBits = stencilBits;
+			this->status = status;
+		}
     };
 
     struct CloseReason : public Enum {
@@ -89,8 +100,10 @@ namespace exeng { namespace graphics {
     struct CloseEventData : public exeng::input::EventDataImpl<CloseEventData> {
         CloseReason::Enum reason = CloseReason::Unknown;
 
-        CloseEventData();
-        CloseEventData(CloseReason::Enum reason);
+		CloseEventData() {}
+        CloseEventData(CloseReason::Enum reason) {
+			this->reason = reason;
+		}
     };
 
     struct ButtonStatus : public Enum {
@@ -112,9 +125,16 @@ namespace exeng { namespace graphics {
         ButtonStatus::Enum buttonStatus = ButtonStatus::Release;
         ButtonCode::Enum buttonCode = ButtonCode::None;
 
-        InputEventData();
-        InputEventData(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode);
-        bool check(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) const;
+		InputEventData() {}
+
+        InputEventData(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) {
+			this->buttonStatus = buttonStatus;
+			this->buttonCode = buttonCode;
+		}
+
+        bool check(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) const {
+			return this->buttonStatus==buttonStatus && this->buttonCode==buttonCode;
+		}
     };
 	
     /**
@@ -255,55 +275,15 @@ namespace exeng { namespace graphics {
         virtual void render(Primitive::Enum primitive, int count) = 0;
 		
 		/**
-		 * @brief Set the material to use by the graphics driver when the current material has been not set, or 
-		 * has been set to a null pointer (nullptr).
+		 * @brief Get an interface to a fixed-function pipeline functionality.
 		 */
-		virtual void setDefaultMaterial(const Material *material) = 0;
-
 		virtual LegacyModule* getLegacyModule() = 0;
 
+		/**
+		 * @brief Get an interface to a fully-programmable pipeline functionality.
+		 */
 		virtual ModernModule* getModernModule() = 0;
     };
-
-	/*
-	 * DisplayMode Implementation
-	 */
-	inline DisplayMode::DisplayMode() {}
-        
-    inline DisplayMode::DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat) {
-        this->size = size;
-		this->colorFormat = colorFormat;
-    }
-
-	inline DisplayMode::DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status) {
-        this->size = size;
-		this->colorFormat = colorFormat;
-		this->depthBits = depthBits;
-        this->stencilBits = stencilBits;
-        this->status = status;
-    }
-
-	/*
-	 * CloseEventData Implementation
-	 */
-	inline CloseEventData::CloseEventData() {}
-    inline CloseEventData::CloseEventData(CloseReason::Enum reason) {
-		this->reason = reason;
-	}
-
-	/*
-	 * InputEventData Implementation
-	 */
-	inline InputEventData::InputEventData() {}
-
-	inline InputEventData::InputEventData(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode)  {
-		this->buttonStatus = buttonStatus;
-		this->buttonCode = buttonCode;
-	}
-
-	inline bool InputEventData::check(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) const  {
-		return this->buttonStatus==buttonStatus && this->buttonCode==buttonCode;
-	}
 }}
 
 #endif

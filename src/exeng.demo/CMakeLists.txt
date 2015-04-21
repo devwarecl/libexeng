@@ -8,10 +8,28 @@ ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
 ADD_DEFINITIONS(-DDEMO_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.raytracer/")
 
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
-SET (demo_src Demo01.cpp Vertex.glsl Fragment.glsl)
+# prepare resources filenames
+SET (demo_resources_src Vertex.glsl Fragment.glsl)
+SET (demo_resources )
+
+# iterate over resource files and compile those resources
+FOREACH(resource_src ${demo_resources_src})
+	ADD_CUSTOM_COMMAND (
+		OUTPUT	${CMAKE_CURRENT_BINARY_DIR}/${resource_src}.hpp 
+				${CMAKE_CURRENT_BINARY_DIR}/${resource_src}.cpp 
+		COMMAND file2cpp ${CMAKE_CURRENT_SOURCE_DIR}/${resource_src}
+		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${resource_src}
+	)
+
+	LIST (APPEND demo_resources ${resource_src}.hpp ${resource_src}.cpp)
+ENDFOREACH(resource_src)
+
+SET (demo_src Demo01.cpp ${demo_resources_src} ${demo_resources})
+# SET (demo_src Demo01.cpp ${demo_resources_src})
 
 SOURCE_GROUP(\\ FILES ${demo_src})
 

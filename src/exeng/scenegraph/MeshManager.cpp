@@ -104,39 +104,37 @@ namespace exeng { namespace scenegraph {
 namespace exeng { namespace scenegraph {
 
     struct MeshManager::Private {
+		GraphicsDriver *graphicsDriver = nullptr;
+
         std::list<std::unique_ptr<IMeshLoader>> loaders;
         std::map<std::string, std::unique_ptr<Mesh>> meshes;
 
 		std::string path;
     };
     
-    MeshManager::MeshManager() : impl(new MeshManager::Private()) 
-	{
+    MeshManager::MeshManager() : impl(new MeshManager::Private()) {
     }
     
-    MeshManager::~MeshManager() 
-	{
+    MeshManager::~MeshManager() {
         delete impl;
     }
     
-    void MeshManager::addMeshLoader(IMeshLoader *loader) 
-	{
+    void MeshManager::addMeshLoader(IMeshLoader *loader) {
 		assert(this->impl != nullptr);
 
         this->impl->loaders.push_front(std::unique_ptr<IMeshLoader>(loader));
     }
     
-    void MeshManager::removeMeshLoader(IMeshLoader *loader) 
-	{
+    void MeshManager::removeMeshLoader(IMeshLoader *loader) {
 		assert(this->impl != nullptr);
 
         this->impl->loaders.remove(std::unique_ptr<IMeshLoader>(loader));
     }
     
-    Mesh* MeshManager::getMesh(const std::string &filename, GraphicsDriver *graphicsDriver) 
-	{
+    Mesh* MeshManager::getMesh(const std::string &filename) {
 		assert(this->impl != nullptr);
 
+		GraphicsDriver *graphicsDriver = this->getGraphicsDriver();
         Mesh* mesh = nullptr;
         
         // search the mesh
@@ -171,17 +169,17 @@ namespace exeng { namespace scenegraph {
         return mesh;
     }
 
-	Mesh* MeshManager::generateBoxMesh(const std::string &id, exeng::graphics::GraphicsDriver *graphicsDriver, const Vector3f &center, const Vector3f &size)
-	{
+	Mesh* MeshManager::generateBoxMesh(const std::string &id, const Vector3f &center, const Vector3f &size) {
 		assert(this->impl != nullptr);
 
+		GraphicsDriver *graphicsDriver = this->getGraphicsDriver();
 		auto &meshes = this->impl->meshes;
 
 #if defined(EXENG_DEBUG)
 		if (meshes.find(id) != meshes.end()) {
 			throw std::runtime_error("MeshManager::generateBoxMesh: The mesh id '" + id + "' already exists.");
 		}
-#endif
+#endif	
 
 		std::vector<Vertex> vertices = generateBoxVertices(center, size);
 		std::vector<int> indices = generateBoxIndices();
@@ -197,8 +195,7 @@ namespace exeng { namespace scenegraph {
 		return meshes[id].get();
 	}
 
-	void MeshManager::setPath(const std::string &path) 
-	{
+	void MeshManager::setPath(const std::string &path) {
 		assert(this->impl != nullptr);
 
 		fs::path checkPath(path);
@@ -210,9 +207,23 @@ namespace exeng { namespace scenegraph {
 		this->impl->path = path;
 	}
 
-	std::string MeshManager::getPath() const
-	{
+	std::string MeshManager::getPath() const {
 		assert(this->impl != nullptr);
 		return this->impl->path;
+	}
+
+	void MeshManager::setGraphicsDriver(GraphicsDriver *driver) {
+		assert(this->impl != nullptr);
+		this->impl->graphicsDriver = driver;
+	}
+
+	GraphicsDriver* MeshManager::getGraphicsDriver() {
+		assert(this->impl != nullptr);
+		return this->impl->graphicsDriver;
+	}
+
+	const GraphicsDriver* MeshManager::getGraphicsDriver() const {
+		assert(this->impl != nullptr);
+		return this->impl->graphicsDriver;
 	}
 }}

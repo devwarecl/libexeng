@@ -222,7 +222,7 @@ namespace raytracer {
 		// this->animators[this->scene->getRootNode()->getChild("boxNode3")] = std::move(animator);
 
 		this->defaultMaterial = std::unique_ptr<Material>(new Material(&this->materialFormat));
-		this->driver->setDefaultMaterial(this->defaultMaterial.get());
+		// this->driver->setDefaultMaterial(this->defaultMaterial.get());
 
 		BOOST_LOG_TRIVIAL(trace) << "Application initialization done.";
     }

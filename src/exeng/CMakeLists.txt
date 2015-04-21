@@ -77,6 +77,9 @@ set (GraphicsFiles_hpp
     graphics/MeshSubsetBase.hpp		
 	graphics/TextureManager.hpp
 	graphics/TextureLoader.hpp
+	graphics/ModernModule.hpp
+	graphics/LegacyModule.hpp
+	graphics/TextureLoader.hpp
 )
 
 set (GraphicsFiles_cpp
@@ -103,8 +106,9 @@ set (GraphicsFiles_cpp
     graphics/MeshSubset.cpp
 	graphics/TextureManager.cpp
 	graphics/TextureLoader.cpp
-	
-	
+	graphics/LegacyModule.cpp
+	graphics/ModernModule.cpp
+	graphics/TextureLoader.cpp
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 

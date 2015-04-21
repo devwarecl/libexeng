@@ -40,6 +40,11 @@ set (Kernels
 	kernels/MultiHardwareTracer.cl
 )
 
+set (Shaders
+	shaders/VertexShader.glsl
+	shaders/FragmentShader.glsl
+)
+
 set (Tracers
 	tracers/Tracer.hpp              tracers/Tracer.cpp 
     tracers/SoftwareTracer.hpp      tracers/SoftwareTracer.cpp 
@@ -59,12 +64,13 @@ set (Loaders
 	loaders/LwoMeshLoader.hpp		loaders/LwoMeshLoader.cpp
 )
 
-add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Kernels} ${Loaders})
+add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Kernels} ${Loaders} ${Shaders})
 
 target_link_libraries(exeng.raytracer exeng exeng.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 source_group(\\			FILES ${BaseFiles})
 source_group(tracers	FILES ${Tracers})
 source_group(samplers	FILES ${Samplers})
+source_group(shaders	FILES ${Shaders})
 source_group(kernels	FILES ${Kernels})
 source_group(loaders	FILES ${Loaders})

@@ -8,6 +8,7 @@
 #ifndef __EXENG_SCENEGRAPH_SCENE_HPP__
 #define __EXENG_SCENEGRAPH_SCENE_HPP__
 
+#include <memory>
 #include <exeng/Object.hpp>
 #include <exeng/Vector.hpp>
 #include <exeng/graphics/Material.hpp>
@@ -16,14 +17,14 @@
 #include <exeng/scenegraph/Light.hpp>
 #include <exeng/scenegraph/Camera.hpp>
 
-namespace exeng { namespace scenegraph {    
+namespace exeng { namespace scenegraph { 
     /**
      * @brief Scenegraph 
      */
     class EXENGAPI Scene : public Object {
     public:
         Scene();
-        Scene(const exeng::graphics::MaterialFormat *materialFormat);
+        explicit Scene(const exeng::graphics::MaterialFormat *materialFormat);
         
         virtual ~Scene();
         
@@ -73,6 +74,8 @@ namespace exeng { namespace scenegraph {
         struct Private;
         Private* impl = nullptr;
     };
+
+	typedef std::unique_ptr<Scene> ScenePtr;
 }}
 
 #endif
