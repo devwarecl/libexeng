@@ -181,7 +181,7 @@ public:
 		this->sceneManager->addAnimator(this->animator.get());
     }
     
-    virtual ApplicationStatus::Enum getStatus() const override {
+    virtual ApplicationStatus::Enum getApplicationStatus() const override {
         return this->status;
     }
     
@@ -189,7 +189,7 @@ public:
         this->graphicsDriver->pollEvents();
     }
     
-    virtual void update(double seconds) override {
+    virtual void update(float seconds) override {
 		this->sceneManager->update(seconds);
     }
     

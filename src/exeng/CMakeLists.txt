@@ -38,7 +38,7 @@ set (AudioFiles ${AudioFiles_hpp} ${AudioFiles_cpp})
 set (FrameworkFiles
     framework/Main.hpp                framework/Main.inl
     framework/Application.hpp         framework/Application.cpp 
-    framework/GraphicsApplication.hpp framework/GraphicsApplication.inl
+    framework/GraphicsApplication.hpp framework/GraphicsApplication.cpp
 )
 
 set (ComputeFiles_hpp

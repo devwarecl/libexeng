@@ -15,20 +15,16 @@
 #include <exeng/util/MessageBox.hpp>
 
 namespace exeng { namespace framework {
-    
-	using namespace exeng::util;
+	using exeng::util::MessageBox;
+	using exeng::util::MessageBoxIcon;
 
-    Application::Application() {}
-    Application::~Application() {}
-    
-    int Application::execute(Application &app, int argc, char** argv) 
-    {
+    int Application::execute(Application &app, int argc, char** argv) {
         int exitCode = 0;
         
         try {
             exitCode = app.run(argc, argv);
         } catch (std::exception &exp) {
-			MessageBox::show("Unhandled Exception", exp.what(), MessageBoxIcon::Error);
+			MessageBox::show("Caught unhandled exception", exp.what(), MessageBoxIcon::Error);
         }
         
         return exitCode;

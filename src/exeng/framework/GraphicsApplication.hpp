@@ -12,82 +12,48 @@
 #include <exeng/Timer.hpp>
 
 namespace exeng { namespace framework {
-    
     /**
-     * @brief Default application interface for graphics applications
+     * @brief Basic application skeleton for graphics-based multimedia applications.
      */
-    class GraphicsApplication : public Application {
+    class EXENGAPI GraphicsApplication : public Application {
     public:
-        GraphicsApplication();
+		GraphicsApplication() {}
         
-        virtual ~GraphicsApplication() = 0;
+		virtual ~GraphicsApplication() {}
         
         virtual int run(int argc, char **argv) override;
-        
-        
+
+		virtual ApplicationStatus::Enum getApplicationStatus() const override {
+			return this->applicationStatus;
+		}
+
     protected:
-        virtual int getExitCode() const;
+		inline void setExitCode(int code) {
+			this->exitCode = code;
+		}
+
+        inline int getExitCode() const {
+			return this->exitCode;
+		}
+
+		inline void setApplicationStatus(ApplicationStatus::Enum status) {
+			this->applicationStatus = status;
+		}
         
-        virtual ApplicationStatus::Enum getStatus() const;
+	public:
+		virtual void initialize(int argc, char **argv) {}
+		virtual void terminate() {}
         
-        virtual void initialize(int argc, char **argv);
+		virtual void pollEvents() {}
         
-        virtual void terminate();
+		virtual void update(float frameTime) {}
         
-        virtual void pollEvents();
-        
-        virtual void update(double frameTime);
-        
-        virtual void render();
+		virtual void render() {}
+
+	private:
+		int exitCode = 0;
+		ApplicationStatus::Enum applicationStatus = ApplicationStatus::Terminated;
     };
-    
-    inline GraphicsApplication::GraphicsApplication() {}
-    
-    inline GraphicsApplication::~GraphicsApplication() {}
-    
-    inline int GraphicsApplication::run(int argc, char **argv) {
-        struct ApplicationGuard {
-            ApplicationGuard (GraphicsApplication* app_, int argc, char **argv) : app(app_) {
-                this->app->initialize(argc, argv);
-            }
-            
-            ~ApplicationGuard (){ this->app->terminate(); }
-            
-            GraphicsApplication *app;
-        };
-        
-        uint32_t lastTime = Timer::getTime();
-        uint32_t frameTimeMs = 0;
-        
-        ApplicationGuard appGuard(this, argc, argv);
-        
-        while (this->getStatus() == ApplicationStatus::Running) {
-            frameTimeMs = Timer::getTime() - lastTime;
-            lastTime = Timer::getTime();
-            
-            this->pollEvents();
-            this->update(frameTimeMs / 1000.0);
-            this->render();
-        }
-        
-        return this->getExitCode();
-    }
-    
-    inline void GraphicsApplication::initialize(int argc, char **argv) {}
-    inline void GraphicsApplication::terminate() {}
-    inline void GraphicsApplication::pollEvents() {}
-    inline void GraphicsApplication::update(double frameTime) {}
-    inline void GraphicsApplication::render() {}
-    
-    inline ApplicationStatus::Enum GraphicsApplication::getStatus() const 
-    {
-        return ApplicationStatus::Terminated;
-    }
-    
-    inline int GraphicsApplication::getExitCode() const 
-    {
-        return 0;
-    }
 }}
 
 #endif // __EXENG_FRAMEWORK_GRAPHICSAPPLICATION_HPP__
