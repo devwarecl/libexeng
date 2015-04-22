@@ -80,6 +80,7 @@ set (GraphicsFiles_hpp
 	graphics/ModernModule.hpp
 	graphics/LegacyModule.hpp
 	graphics/TextureLoader.hpp
+	graphics/MaterialLibrary.hpp
 )
 
 set (GraphicsFiles_cpp
@@ -109,6 +110,7 @@ set (GraphicsFiles_cpp
 	graphics/LegacyModule.cpp
 	graphics/ModernModule.cpp
 	graphics/TextureLoader.cpp
+	graphics/MaterialLibrary.cpp
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 
