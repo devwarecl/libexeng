@@ -34,7 +34,7 @@ namespace exeng {
 		std::unique_ptr<PluginManager> pluginManager;
 		std::unique_ptr<TextureManager> textureManager;
         std::unique_ptr<MeshManager> meshManager;
-        std::unique_ptr<SceneManager> sceneManager;
+        // std::unique_ptr<SceneManager> sceneManager;
     };
 
     static const char licenseMsg[] = 

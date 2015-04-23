@@ -28,60 +28,50 @@ namespace exeng { namespace scenegraph {
     using namespace exeng::graphics;
     using namespace exeng::scenegraph;
 
-    struct Scene::Private 
-    {
+    struct Scene::Private {
         Vector4f backColor = {0.0f, 0.0f, 0.0f, 1.0f};
         
         std::list<SceneNode*> cameraNodes;
         std::list<SceneNode*> lightNodes;
-        std::unique_ptr<SceneNode> rootNode = std::unique_ptr<SceneNode>(new SceneNode("rootNode"));
+
+        std::unique_ptr<SceneNode> rootNode = std::make_unique<SceneNode>("rootNode");
         
         std::list<std::unique_ptr<Light>> lights;
         std::list<std::unique_ptr<Camera>> cameras;
 
-        std::map<std::string, std::unique_ptr<Material>> materials;
-        std::list<Material*> materialList;
-        
-        const MaterialFormat *materialFormat = nullptr;
+		MaterialLibraryPtr materialLibrary;
     };
     
-    Scene::Scene(const exeng::graphics::MaterialFormat *materialFormat)
-	{
+    Scene::Scene(const exeng::graphics::MaterialFormat *materialFormat) {
 		this->impl = new Scene::Private();
-		this->impl->materialFormat = materialFormat;
+		this->impl->materialLibrary = std::make_unique<MaterialLibrary>(materialFormat, nullptr);
 	}
 
-    Scene::~Scene() 
-	{
+    Scene::~Scene() {
 		delete this->impl;
 	}
     
-    SceneNode* Scene::getRootNode() 
-    {
+    SceneNode* Scene::getRootNode() {
         assert(this->impl != nullptr);
         return this->impl->rootNode.get();
     }
 
-    const SceneNode* Scene::getRootNode() const 
-    {
+    const SceneNode* Scene::getRootNode() const {
         assert(this->impl != nullptr);
         return this->impl->rootNode.get();
     }
     
-    void Scene::setBackColor(const Vector4f &color)
-    {
+    void Scene::setBackColor(const Vector4f &color) {
         assert(this->impl != nullptr);
         this->impl->backColor = color;
     }
 
-    Vector4f Scene::getBackColor() const
-    {
+    Vector4f Scene::getBackColor() const {
         assert(this->impl != nullptr);
         return this->impl->backColor;
     }
 
-    Camera* Scene::createCamera() 
-    {
+    Camera* Scene::createCamera() {
         assert(this->impl != nullptr);
 
         Camera* camera = new Camera();
@@ -91,8 +81,7 @@ namespace exeng { namespace scenegraph {
         return camera;
     }
 
-    Light* Scene::createLight() 
-    {
+    Light* Scene::createLight() {
         assert(this->impl != nullptr);
 
         Light* light = new Light();
@@ -102,19 +91,6 @@ namespace exeng { namespace scenegraph {
         return light;
     }
 
-    Material* Scene::createMaterial(const std::string &materialName) 
-    {
-        assert(this->impl != nullptr);
-        
-        auto material = std::unique_ptr<Material>(new Material(this->impl->materialFormat));
-        material->setName(materialName);
-        
-		this->impl->materialList.push_back(material.get());	
-        this->impl->materials[materialName] = std::move(material);
-		
-        return this->impl->materials[materialName].get();
-    }
-    
     SceneNode* Scene::createSceneNode(const std::string &nodeName, SceneNodeData* nodeData) 
     {
         assert(this->impl != nullptr);
@@ -139,43 +115,11 @@ namespace exeng { namespace scenegraph {
         return sceneNode;
     }
 
-    const Material* Scene::getMaterial(const int index) const
-    {
-#if defined(EXENG_DEBUG)
-        if (index < 0 || index >= this->getMaterialCount()) {
-            std::stringstream ss;
-            ss << "Scene::getMaterial: The index ";
-            ss << "(" << index << ") ";
-            ss << "is out of the range ";
-			ss << "[" << 0 << ", " << (this->getMaterialCount()-1) << "]";
+	MaterialLibrary* Scene::getMaterialLibrary() {
+		return this->impl->materialLibrary.get();
+	}
 
-            throw std::runtime_error(ss.str());
-        }
-#endif
-        auto materialIterator = this->impl->materialList.begin();
-
-        std::advance(materialIterator, index);
-
-        return *materialIterator;
-    }
-
-    const int Scene::getMaterialCount() const
-    {
-        return this->impl->materials.size();
-    }
-
-    const int Scene::getMaterialIndex(const exeng::graphics::Material *material) const 
-    {
-        int index = 0;
-
-        for (Material *currentMaterial : this->impl->materialList) {
-            if (currentMaterial == material) {
-                break;
-            }
-
-            index++;
-        }
-
-        return index;
-    }
+	const MaterialLibrary* Scene::getMaterialLibrary() const {
+		return this->impl->materialLibrary.get();
+	}
 }}

@@ -215,7 +215,7 @@ public:
 
 private:
     std::unique_ptr<GraphicsDriver> graphicsDriver;
-	std::unique_ptr<SceneManager> sceneManager;
+	// std::unique_ptr<SceneManager> sceneManager;
 	std::unique_ptr<SceneNodeAnimator> animator;
 	ShaderProgramPtr shaderProgram;
 	ScenePtr scene;

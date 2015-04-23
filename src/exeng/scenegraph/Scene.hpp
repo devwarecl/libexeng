@@ -12,6 +12,7 @@
 #include <exeng/Object.hpp>
 #include <exeng/Vector.hpp>
 #include <exeng/graphics/Material.hpp>
+#include <exeng/graphics/MaterialLibrary.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/Light.hpp>
@@ -46,11 +47,6 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief 
          */
-        exeng::graphics::Material* createMaterial(const std::string &materialName);
-
-        /**
-         * @brief 
-         */
         SceneNode* createSceneNode(const std::string &nodeName, SceneNodeData* nodeData);
 
         /**
@@ -63,11 +59,9 @@ namespace exeng { namespace scenegraph {
          */
         Vector4f getBackColor() const;
 
-        const exeng::graphics::Material* getMaterial(const int index) const;
+		exeng::graphics::MaterialLibrary* getMaterialLibrary();
 
-        const int getMaterialCount() const;
-
-        const int getMaterialIndex(const exeng::graphics::Material *material) const;
+		const exeng::graphics::MaterialLibrary* getMaterialLibrary() const;
 
     private:
         struct Private;

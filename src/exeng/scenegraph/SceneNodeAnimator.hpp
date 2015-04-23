@@ -2,6 +2,7 @@
 #ifndef __EXENG_SCENEGRAPH_SCENENODEANIMATOR_HPP__
 #define __EXENG_SCENEGRAPH_SCENENODEANIMATOR_HPP__
 
+#include <memory>
 #include <exeng/scenegraph/SceneNode.hpp>
 
 namespace exeng { namespace scenegraph {
@@ -24,6 +25,8 @@ namespace exeng { namespace scenegraph {
 	private:
 		SceneNode *sceneNode = nullptr;
 	};
+
+	typedef std::unique_ptr<SceneNodeAnimator> SceneNodeAnimatorPtr;
 }}
 
 #endif	// __EXENG_SCENEGRAPH_SCENENODEANIMATOR_HPP__

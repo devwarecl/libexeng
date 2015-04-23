@@ -31,6 +31,8 @@ namespace exeng { namespace graphics {
 		struct Private;
 		Private *impl = nullptr;
 	};
+
+	typedef std::unique_ptr<MaterialLibrary> MaterialLibraryPtr;
 }}
 
 #endif	// __EXENG_GRAPHICS_MATERIALLIBRARY_HPP__
