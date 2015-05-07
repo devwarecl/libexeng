@@ -33,6 +33,7 @@ namespace exeng { namespace graphics {
 
 		this->impl = new MaterialLibrary::Private();
 		this->impl->format = format;
+		this->impl->initialized = true;
 	}
 
 	MaterialLibrary::~MaterialLibrary() {

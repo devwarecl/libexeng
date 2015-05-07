@@ -448,9 +448,36 @@ public:
 		this->geometryLibrary = std::make_unique<GeometryLibrary>();
 		this->shaderLibrary = std::make_unique<ShaderLibrary>(this->graphicsDriver.get());
 
-		AssetsLoader loader(this->graphicsDriver.get(), this->getMaterialLibrary(), this->getGeometryLibrary(), this->getShaderLibrary(), this->scene.get());
+		Shader *vshader;
+		vshader = this->shaderLibrary->createShader("vertexShader", ShaderType::Vertex);
+		vshader->setSourceCode(toString(vertex_glsl_data, vertex_glsl_size));
+		vshader->compile();
 
+		Shader *fshader;
+		fshader = this->shaderLibrary->createShader("fragmentShader", ShaderType::Fragment);
+		fshader->setSourceCode(toString(fragment_glsl_data, fragment_glsl_size));
+		fshader->compile();
+
+		ShaderProgram *program = this->shaderLibrary->createProgram("shaderProgram");
+		program->addShader(vshader);
+		program->addShader(fshader);
+		program->link();
+		this->program = program;
+
+		std::vector<MaterialAttrib> attribs {
+			{"ambient", DataType::Float32, 4}, 
+			{"diffuse", DataType::Float32, 4}, 
+			{"specular", DataType::Float32, 4},
+			{"shininess", DataType::Float32, 1}
+		};
+
+		this->materialLibrary->initialize(MaterialFormat(attribs));
+		Material *material = this->materialLibrary->createMaterial("material", this->program);
+
+		/*
+		AssetsLoader loader(this->graphicsDriver.get(), this->getMaterialLibrary(), this->getGeometryLibrary(), this->getShaderLibrary(), this->scene.get());
 		loader.loadAssets();
+		*/
     }
     
     virtual ApplicationStatus::Enum getApplicationStatus() const override {
@@ -465,6 +492,9 @@ public:
     }
     
     virtual void render() override {
+		this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
+
+		this->graphicsDriver->endFrame();
     }
     
     virtual void handleEvent(const EventData &data) override {
@@ -500,14 +530,16 @@ public:
 	}
 
 private:
-    std::unique_ptr<GraphicsDriver> graphicsDriver;
-	std::unique_ptr<SceneNodeAnimator> animator;
+    GraphicsDriverPtr graphicsDriver;
+	SceneNodeAnimatorPtr animator;
 	ShaderLibraryPtr shaderLibrary;
 	GeometryLibraryPtr geometryLibrary;
 	MaterialLibraryPtr materialLibrary;
 	ScenePtr scene;
 
 	Camera *camera = nullptr;
+	ShaderProgram *program = nullptr;
+	Material *material = nullptr;
     ApplicationStatus::Enum status = ApplicationStatus::Running;
 };
 
