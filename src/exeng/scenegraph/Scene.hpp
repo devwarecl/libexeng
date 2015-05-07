@@ -12,7 +12,6 @@
 #include <exeng/Object.hpp>
 #include <exeng/Vector.hpp>
 #include <exeng/graphics/Material.hpp>
-#include <exeng/graphics/MaterialLibrary.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/Light.hpp>
@@ -58,10 +57,6 @@ namespace exeng { namespace scenegraph {
          * @brief Gets the scene background color.
          */
         Vector4f getBackColor() const;
-
-		exeng::graphics::MaterialLibrary* getMaterialLibrary();
-
-		const exeng::graphics::MaterialLibrary* getMaterialLibrary() const;
 
     private:
         struct Private;

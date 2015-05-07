@@ -47,7 +47,6 @@ std::string getPluginPath() {
 
 namespace raytracer {
     using namespace exeng;
-    using namespace exeng::math;
     using namespace exeng::scenegraph;
     using namespace exeng::graphics;
     using namespace exeng::framework;

@@ -27,20 +27,20 @@ namespace exeng { namespace scenegraph {
      */
     class EXENGAPI Mesh : public Geometry {
     public:
-        explicit Mesh(std::unique_ptr<exeng::graphics::MeshSubset> subset);
-        explicit Mesh(std::vector<std::unique_ptr<exeng::graphics::MeshSubset>> subsets);
+        explicit Mesh(exeng::graphics::MeshSubsetPtr subset);
+        explicit Mesh(std::vector<exeng::graphics::MeshSubsetPtr> subsets);
         
         virtual ~Mesh();
         
         /**
          * @brief Computes and returns the corresponding bounding box of the mesh.
          */
-        virtual Boxf getBox() const;
+        virtual Boxf getBox() const override;
         
         /**
          * @brief Checks if the specified ray intersects with the Mesh.
          */
-        virtual bool hit( const Ray &ray, IntersectInfo *intersectInfo);
+        virtual bool hit(const Ray &ray, IntersectInfo *intersectInfo) override;
         
         /**
          * @brief Get the numbers of MeshParts on the Mesh.
@@ -63,6 +63,8 @@ namespace exeng { namespace scenegraph {
         struct Private;
         Private *impl = nullptr;
     };
+
+	typedef std::unique_ptr<Mesh> MeshPtr;
 }}
 
 #endif  //__EXENG_SCENEGRAPH_MESH_HPP__

@@ -81,6 +81,8 @@ set (GraphicsFiles_hpp
 	graphics/LegacyModule.hpp
 	graphics/TextureLoader.hpp
 	graphics/MaterialLibrary.hpp
+	graphics/VertexWrapper.hpp
+	graphics/ShaderLibrary.hpp
 )
 
 set (GraphicsFiles_cpp
@@ -111,6 +113,7 @@ set (GraphicsFiles_cpp
 	graphics/ModernModule.cpp
 	graphics/TextureLoader.cpp
 	graphics/MaterialLibrary.cpp
+	graphics/ShaderLibrary.cpp
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 

@@ -20,7 +20,6 @@
 #include <exeng/Buffer.hpp>
 
 using namespace exeng;
-using namespace exeng::math;
 using namespace exeng::graphics;
 using namespace exeng::scenegraph;
 
@@ -122,30 +121,30 @@ namespace raytracer { namespace tracers {
     {
         cl::Buffer materialBuffer;
 
-        if (scene->getMaterialCount() > 0) {
-			const int MaterialStride = MaterialSize * 4;
-            const int MaterialBufferSize = scene->getMaterialCount() * MaterialStride;
+   //     if (scene->getMaterialCount() > 0) {
+			//const int MaterialStride = MaterialSize * 4;
+   //         const int MaterialBufferSize = scene->getMaterialCount() * MaterialStride;
 
-			std::vector<Vector4f> materialData(scene->getMaterialCount());
+			//std::vector<Vector4f> materialData(scene->getMaterialCount());
 
-            for (int i=0; i<scene->getMaterialCount(); ++i) {
-                const Material *material = scene->getMaterial(i);
+   //         for (int i=0; i<scene->getMaterialCount(); ++i) {
+   //             const Material *material = scene->getMaterial(i);
 
-                Vector4f color;
-                
-                if (material) {
-                    color = scene->getMaterial(i)->getAttribute<Vector4f>("diffuse");
-                } else {
-                    color = {1.0f, 1.0f, 1.0f, 1.0f};
-                    BOOST_LOG_TRIVIAL(trace) << "Material " << i << " is null.";
-                }
+   //             Vector4f color;
+   //             
+   //             if (material) {
+   //                 color = scene->getMaterial(i)->getAttribute<Vector4f>("diffuse");
+   //             } else {
+   //                 color = {1.0f, 1.0f, 1.0f, 1.0f};
+   //                 BOOST_LOG_TRIVIAL(trace) << "Material " << i << " is null.";
+   //             }
 
-				materialData[i] = color;
-            }
+			//	materialData[i] = color;
+   //         }
 
-            cl_mem_flags bufferFlags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
-            materialBuffer = cl::Buffer(context, bufferFlags, MaterialBufferSize, materialData.data());
-        } 
+   //         cl_mem_flags bufferFlags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
+   //         materialBuffer = cl::Buffer(context, bufferFlags, MaterialBufferSize, materialData.data());
+   //     } 
         
         return materialBuffer;
     }
@@ -600,7 +599,7 @@ namespace raytracer { namespace tracers {
 				kernel.setArg(4, vertexBuffer);
 				kernel.setArg(5, indexBuffer);
 				kernel.setArg(6, indexCount);
-				kernel.setArg(7, this->getScene()->getMaterialIndex(subset->getMaterial())); // material index
+				// kernel.setArg(7, this->getScene()->getMaterialIndex(subset->getMaterial())); // material index
 				kernel.setArg(8, this->localTransformBuffer);
                 
 				std::vector<cl::Memory> buffers = {vertexBuffer, indexBuffer};

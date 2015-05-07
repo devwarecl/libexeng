@@ -16,29 +16,20 @@
 
 #include <functional>
 #include <exeng/Config.hpp>
-#include <exeng/scenegraph/SceneNodeData.hpp>
 
 namespace exeng { namespace scenegraph {
     
     class EXENGAPI Scene;
     class EXENGAPI Camera;
     
-	class EXENGAPI NodeDataRenderer {
-	public:
-		virtual ~NodeDataRenderer() {}
-		virtual void render(const SceneNodeData *data) = 0;
-	};
-
 	class EXENGAPI SceneRenderer {
 	public:
-		SceneRenderer();
-		virtual ~SceneRenderer();
+		virtual ~SceneRenderer() {}
+
+		virtual void setScene(const Scene* scene) = 0;
+		virtual const Scene* getScene() const = 0;
 
 		virtual void render(const Camera* camera) = 0;
-
-	private:
-		struct Private;
-		Private *impl = nullptr;
 	};
 
 	//typedef std::function<void(const SceneNodeData *data)> SceneNodeDataRenderer;

@@ -38,13 +38,10 @@ namespace exeng { namespace scenegraph {
         
         std::list<std::unique_ptr<Light>> lights;
         std::list<std::unique_ptr<Camera>> cameras;
-
-		MaterialLibraryPtr materialLibrary;
     };
     
     Scene::Scene(const exeng::graphics::MaterialFormat *materialFormat) {
 		this->impl = new Scene::Private();
-		this->impl->materialLibrary = std::make_unique<MaterialLibrary>(materialFormat, nullptr);
 	}
 
     Scene::~Scene() {
@@ -114,12 +111,4 @@ namespace exeng { namespace scenegraph {
         
         return sceneNode;
     }
-
-	MaterialLibrary* Scene::getMaterialLibrary() {
-		return this->impl->materialLibrary.get();
-	}
-
-	const MaterialLibrary* Scene::getMaterialLibrary() const {
-		return this->impl->materialLibrary.get();
-	}
 }}

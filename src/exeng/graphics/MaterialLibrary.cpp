@@ -14,23 +14,40 @@ namespace exeng { namespace graphics {
 		MaterialVector materials;
 		MaterialFormat format;
 		const ShaderProgram *program = nullptr;
+		bool initialized = false;
 	};
+	
+	MaterialLibrary::MaterialLibrary() {
+		this->initialize(MaterialFormat());
+	}
 
-	MaterialLibrary::MaterialLibrary(const MaterialFormat &format, const ShaderProgram *program) {
+	MaterialLibrary::MaterialLibrary(const MaterialFormat &format) {
+		this->initialize(format);
+	}
+
+	void MaterialLibrary::initialize(const MaterialFormat &format) {
+		if (this->impl) {
+			delete this->impl;
+			this->impl = nullptr;
+		}
+
 		this->impl = new MaterialLibrary::Private();
 		this->impl->format = format;
-		this->impl->program = program;
 	}
 
 	MaterialLibrary::~MaterialLibrary() {
 		delete this->impl;
 	}
 
-	Material* MaterialLibrary::createMaterial(const std::string &name) {
-		return this->createMaterial(name, this->impl->program);
+	bool MaterialLibrary::isInitialized() const {
+		return this->impl->initialized;
 	}
 
 	Material* MaterialLibrary::createMaterial(const std::string &name, const ShaderProgram *program) {
+		if (!this->isInitialized()) {
+			EXENG_THROW_EXCEPTION("The material library isn't intialized.");
+		}
+
 		Material *material = new Material(&this->impl->format);
 
 		material->setName(name);
@@ -50,30 +67,57 @@ namespace exeng { namespace graphics {
 			return materialIt->get();
 		} 
 
-		EXENG_THROW_EXCEPTION("Specified material wasn't found.");
+		EXENG_THROW_EXCEPTION("The specified material '" + name  + "' wasn't found.");
 	}
 
 	Material* MaterialLibrary::getMaterial(const std::string &name) {
+		if (!this->isInitialized()) {
+			EXENG_THROW_EXCEPTION("The material library isn't intialized.");
+		}
+
 		return findMaterial(this->impl->materials, name);
 	}
 
 	Material* MaterialLibrary::getMaterial(const int index) {
+		if (!this->isInitialized()) {
+			EXENG_THROW_EXCEPTION("The material library isn't intialized.");
+		}
+
+
 		return this->impl->materials[index].get();
 	}
 
 	const Material* MaterialLibrary::getMaterial(const std::string &name) const {
+		if (!this->isInitialized()) {
+			EXENG_THROW_EXCEPTION("The material library isn't intialized.");
+		}
+
+
 		return findMaterial(this->impl->materials, name);
 	}
 
 	const Material* MaterialLibrary::getMaterial(const int index) const {
+		if (!this->isInitialized()) {
+			EXENG_THROW_EXCEPTION("The material library isn't intialized.");
+		}
+
+
 		return this->impl->materials[index].get();
 	}
 
 	const int MaterialLibrary::getMaterialCount() const {
+		if (!this->isInitialized()) {
+			EXENG_THROW_EXCEPTION("The material library isn't intialized.");
+		}
+
 		return this->impl->materials.size();
 	}
 
 	const int MaterialLibrary::getMaterialIndex(const Material *material) const {
+		if (!this->isInitialized()) {
+			EXENG_THROW_EXCEPTION("The material library isn't intialized.");
+		}
+
 		for (int i=0; i<this->getMaterialCount(); ++i) {
 			if (this->getMaterial(i) == material) {
 				return i;

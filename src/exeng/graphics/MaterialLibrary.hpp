@@ -13,10 +13,16 @@ namespace exeng { namespace graphics {
 	 */
 	class EXENGAPI MaterialLibrary : public Object {
 	public:
-		MaterialLibrary(const MaterialFormat &format, const ShaderProgram *program);
+		MaterialLibrary();
+		MaterialLibrary(const MaterialFormat &format);
 		virtual ~MaterialLibrary();
 
-		Material* createMaterial(const std::string &name);
+		void initialize(const MaterialFormat &format);
+
+		bool isInitialized() const;
+
+		MaterialFormat getFormat() const;
+
 		Material* createMaterial(const std::string &name, const ShaderProgram *program);
 
 		Material* getMaterial(const std::string &name);

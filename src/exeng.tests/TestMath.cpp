@@ -7,7 +7,6 @@
 #include <boost/test/unit_test.hpp>
 
 using namespace exeng;
-using namespace exeng::math;
 
 struct HyperBoxFixture {
     float size;

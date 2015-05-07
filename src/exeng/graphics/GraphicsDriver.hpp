@@ -200,24 +200,32 @@ namespace exeng { namespace graphics {
          */
         virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data) = 0;
         
-		template<typename StdVector>
-		BufferPtr createVertexBuffer(const StdVector &vertices) 
+		template<typename Type>
+		BufferPtr createVertexBuffer(const std::vector<Type> &vertices) 
 		{
-			const int bufferSize = sizeof(typename StdVector::value_type) * vertices.size();
+			const int bufferSize = sizeof(Type) * vertices.size();
 			const void *bufferData = vertices.data();
 
 			return this->createVertexBuffer(bufferSize, bufferData);
+		}
+
+		BufferPtr createVertexBuffer(Buffer *buffer) {
+			return this->createVertexBuffer(buffer->getSize(), buffer->getPointer());
 		}
 
         /**
          * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
          */
         virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data) = 0;
+
+		BufferPtr createIndexBuffer(Buffer *buffer) {
+			return this->createIndexBuffer(buffer->getSize(), buffer->getPointer());
+		}
         
-		template<typename StdVector>
-		BufferPtr createIndexBuffer(const StdVector &indices) 
+		template<typename Type>
+		BufferPtr createIndexBuffer(const std::vector<Type> &indices) 
 		{
-			const int bufferSize = sizeof(typename StdVector::value_type) * indices.size();
+			const int bufferSize = sizeof(Type) * indices.size();
 			const void *bufferData = indices.data();
 
 			return this->createIndexBuffer(bufferSize, bufferData);
@@ -284,6 +292,8 @@ namespace exeng { namespace graphics {
 		 */
 		virtual ModernModule* getModernModule() = 0;
     };
+
+	typedef std::unique_ptr<GraphicsDriver> GraphicsDriverPtr;
 }}
 
 #endif

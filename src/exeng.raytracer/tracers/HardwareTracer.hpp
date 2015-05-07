@@ -24,7 +24,6 @@
 #endif
 
 using namespace exeng;
-using namespace exeng::math;
 using namespace exeng::graphics;
 using namespace exeng::scenegraph;
 

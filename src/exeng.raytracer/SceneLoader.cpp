@@ -63,7 +63,7 @@ namespace raytracer {
 		const std::string &boxMeshName, const Vector3f &boxCenter, const Vector3f &boxSize) 
 	{
 		// box material
-        Material *boxMaterial = scene->createMaterial(materialName);
+        Material *boxMaterial = nullptr; /*scene->createMaterial(materialName);*/
 
 		boxMaterial->setAttribute<Vector4f>("diffuse", materialColor);
 

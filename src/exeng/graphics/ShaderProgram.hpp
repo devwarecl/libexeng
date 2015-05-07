@@ -34,7 +34,7 @@ namespace exeng { namespace graphics {
          * @brief addShader
          * @param shader
          */
-        virtual void addShader(std::unique_ptr<Shader> shader) = 0;
+        virtual void addShader(Shader *shader) = 0;
         
         /**
          * @brief link

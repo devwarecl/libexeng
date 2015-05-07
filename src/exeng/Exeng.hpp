@@ -48,6 +48,7 @@
 #include <exeng/graphics/Primitive.hpp>
 #include <exeng/graphics/Image.hpp>
 #include <exeng/graphics/Material.hpp>
+#include <exeng/graphics/MaterialLibrary.hpp>
 
 #include <exeng/scenegraph/MeshManager.hpp>
 #include <exeng/scenegraph/Camera.hpp>
@@ -79,12 +80,7 @@ namespace exeng {
 	 * @brief Classes for rendering raw 2D and 3D graphics.
 	 */
     namespace graphics {}
-    
-    /**
-	 * @brief Common mathematical namespace
-	 */
-    namespace math {}
-    
+
     /**
 	 * @brief Loading for plugins and dynamic linking libraries.
 	 */

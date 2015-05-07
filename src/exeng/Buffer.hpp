@@ -116,7 +116,7 @@ namespace exeng {
 		/**
 		 * @brief Get buffer data
 		 */
-		virtual void getData(void* data, const int size, const int dataOffset, const int bufferOffset) const = 0;
+		virtual void getData(void* data, const int dataSize, const int dataOffset, const int bufferOffset) const = 0;
 
 		inline void getData(void* data) const {
 			this->getData(data, this->getSize(), 0, 0);
@@ -125,7 +125,7 @@ namespace exeng {
 		/**
 		 * @brief Set buffer data
 		 */
-		virtual void setData(const void *data, const int size, const int dataOffset, const int bufferOffset) = 0;
+		virtual void setData(const void *data, const int dataSize, const int dataOffset, const int bufferOffset) = 0;
 
 		inline void setData(const void* data) {
 			this->setData(data, this->getSize(), 0, 0);

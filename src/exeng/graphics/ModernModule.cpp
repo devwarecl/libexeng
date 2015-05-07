@@ -13,7 +13,7 @@ namespace exeng { namespace graphics {
 			ShaderPtr shader = this->createShader(ShaderType::Vertex, source);
 			shader->compile();
 
-			shaderProgram->addShader(std::move(shader));
+			shaderProgram->addShader(shader.get());
 		}
 
 		// create fragment shaders
@@ -21,7 +21,7 @@ namespace exeng { namespace graphics {
 			ShaderPtr shader = this->createShader(ShaderType::Fragment, source);
 			shader->compile();
 
-			shaderProgram->addShader(std::move(shader));
+			shaderProgram->addShader(shader.get());
 		}
 
 		shaderProgram->link();

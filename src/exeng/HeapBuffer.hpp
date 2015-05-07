@@ -46,9 +46,17 @@ namespace exeng {
 			return reinterpret_cast<int>(this);
 		}
 
-		virtual void getData(void* data, const int size, const int dataOffset, const int bufferOffset) const override;
+		virtual void getData(void* data, const int dataSize, const int dataOffset, const int bufferOffset) const override;
 
-		virtual void setData(const void *data, const int size, const int dataOffset, const int bufferOffset) override;
+		virtual void setData(const void* data, const int dataSize, const int dataOffset, const int bufferOffset) override;
+
+		inline void getData(void* data) const {
+			this->getData(data, this->getSize(), 0, 0);
+		}
+
+		inline void setData(const void* data) {
+			this->setData(data, this->getSize(), 0, 0);
+		}
 
 		/* Object class overrided methods*/
 
