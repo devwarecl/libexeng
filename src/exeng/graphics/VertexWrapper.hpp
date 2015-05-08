@@ -16,6 +16,8 @@ namespace exeng { namespace graphics {
 		VertexWrapper(const VertexFormat &format, Buffer *buffer) {
 			this->format = format;
 			this->buffer = buffer;
+
+			this->vertices = (Vertex*)this->buffer->getPointer();
 		}
 
 		void setVertexPosition(const int index, const Vector3f &position) {
@@ -50,15 +52,15 @@ namespace exeng { namespace graphics {
 
 		template<typename Type, int Size>
 		void setVertexAttribute(const int vertexIndex, const VertexAttrib::Enum attrib, const Vector<Type, Size> &value) {
-//#if defined(EXENG_DEBUG)
-//			if (sizeof(value) != format.getAttrib(attrib).getSize()) {
-//				EXENG_THROW_EXCEPTION("Invalid vertex attribute size.");
-//			}
-//
-//			if (DataTypeTraits<Type>::Enum != format.getAttrib(attrib).dataType) {
-//				EXENG_THROW_EXCEPTION("Invalid vertex attribute data type.");
-//			}
-//#endif
+#if defined(EXENG_DEBUG)
+			if (sizeof(value) != format.getAttrib(attrib).getSize()) {
+				EXENG_THROW_EXCEPTION("Invalid vertex attribute size.");
+			}
+
+			if (DataTypeTraits<Type>::Enum != format.getAttrib(attrib).dataType) {
+				EXENG_THROW_EXCEPTION("Invalid vertex attribute data type.");
+			}
+#endif
 			const int offset = this->getOffset(vertexIndex, attrib);
 
 			this->buffer->setData(&value, sizeof(value), 0, offset);
@@ -75,12 +77,16 @@ namespace exeng { namespace graphics {
 
 	private:
 		const int getOffset(const int vertexIndex, const VertexAttrib::Enum attrib) const {
-			return vertexIndex * format.getSize() + format.getAttribOffset(attrib);
+			const int baseOffset = vertexIndex * this->format.getSize();
+			const int attribOffset = this->format.getAttribOffset(attrib);
+
+			return baseOffset + attribOffset;
 		}
 
 	private:
 		VertexFormat format;
 		Buffer *buffer = nullptr;
+		Vertex *vertices = nullptr;
 	};
 
 	class GeometryGenerator {
@@ -94,10 +100,14 @@ namespace exeng { namespace graphics {
 
 	class BoxGeometryGenerator : public GeometryGenerator {
 	public:
-		BoxGeometryGenerator(const Vector3f &center, const Vector3f &size) {}
+		BoxGeometryGenerator(const Vector3f &center, const Vector3f &size) {
+			this->center = center;
+			this->size = size;
+		}
 
 		virtual HeapBufferPtr generateVertexBuffer(const VertexFormat &format) override {
 			const int vertexCount = 24;
+			// const int vertexCount = 1;
 
 			HeapBufferPtr buffer(new HeapBuffer(vertexCount * format.getSize()));
 
@@ -140,7 +150,7 @@ namespace exeng { namespace graphics {
 			// Correct
 			for (int i=0; i<vertexCount; ++i) {
 				Vector3f position = vertices.getVertexPosition(i);
-				position = position * size + center;
+				position = position * this->size + this->center;
 				vertices.setVertexPosition(i, position);
 			}
 
@@ -148,7 +158,7 @@ namespace exeng { namespace graphics {
 		}
 
 		virtual HeapBufferPtr generateIndexBuffer() override {
-			std::vector<int> indices = {
+			int indices[] = {
 				0 + 0,  0 + 1,  0 + 2,      0 + 1,  0 + 3,  0 + 2,
 				4 + 0,  4 + 1,  4 + 2,      4 + 1,  4 + 3,  4 + 2, 
 				8 + 0,  8 + 1,  8 + 2,      8 + 1,  8 + 3,  8 + 2, 
@@ -157,8 +167,8 @@ namespace exeng { namespace graphics {
 				20 + 0, 20 + 1, 20 + 2,     20 + 1, 20 + 3, 20 + 2
 			};
 
-			HeapBufferPtr buffer(new HeapBuffer(sizeof(int) * indices.size()));
-			buffer->setData(indices.data());
+			HeapBufferPtr buffer(new HeapBuffer(sizeof(indices)));
+			buffer->setData(indices);
 
 			return buffer;
 		}

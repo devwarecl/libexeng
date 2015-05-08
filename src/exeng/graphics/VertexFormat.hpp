@@ -176,16 +176,11 @@ namespace exeng { namespace graphics {
         int offset = 0;
         
         for (const VertexField &field : this->fields) {
-            if (field.attribute == VertexAttrib::Unused) {
-                offset = VertexFormat::InvalidOffset;
+            if (field.attribute == attrib || field.attribute == VertexAttrib::Unused) {
                 break;
             }
-            
-            offset += field.getSize();
-            
-            if (field.attribute == attrib) {
-                break;
-            }
+
+			offset += field.getSize();
         }
         
         return offset;
