@@ -73,32 +73,6 @@ namespace exeng {
 		int size = 0;
 	};
 
-    /**
-     * @brief Raw memory allocated in the heap.
-     */
-    class EXENGAPI HeapBuffer2 : public Buffer2 {
-    public:
-        HeapBuffer2();
-        explicit HeapBuffer2(const std::uint32_t size);
-
-        virtual ~HeapBuffer2();
-        virtual Buffer2::Flags getFlags() const;
-        virtual void allocate(const std::uint32_t size) override;
-        virtual void release() override;
-        virtual void* getDataPtr() override;
-        virtual const void* getDataPtr() const override;
-        virtual void write() override;
-        virtual void read() override;
-        virtual std::uint64_t getHandle() const override;
-        virtual std::uint32_t getSize() const override;
-        virtual void setData(const void* dataSrc, const std::uint32_t size) override;
-        virtual void getData(void* dataDst, const std::uint32_t size, const std::uint32_t offset) const override;
-        
-    private:
-        void* data = nullptr;
-        std::uint32_t size = 0;
-    };
-
 	typedef std::unique_ptr<HeapBuffer> HeapBufferPtr;
 }
 

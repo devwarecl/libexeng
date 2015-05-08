@@ -21,6 +21,7 @@
 #include <exeng/Root.hpp>
 #include <exeng/Buffer.hpp>
 #include <exeng/HeapBuffer.hpp>
+#include <exeng/StaticBuffer.hpp>
 #include <exeng/TypeInfo.hpp>
 #include <exeng/Timer.hpp>
 #include <exeng/Exception.hpp>

@@ -43,6 +43,36 @@ private:
 	float angle = 0.0f;
 };
 
+class AssetLibrary {
+public:
+	void addAsset(const std::string &fileId, void* data, const int dataSize) {
+#if defined(EXENG_DEBUG)
+		if (!data) {
+			EXENG_THROW_EXCEPTION("Asset data must be a null pointer.");
+		}
+
+		if (dataSize <= 0) {
+			EXENG_THROW_EXCEPTION("Invalid buffer size");
+		}
+#endif
+		StaticBufferPtr assetData = std::make_unique<StaticBuffer>(data, dataSize);
+
+		this->assets[fileId] = std::move(assetData);
+	}
+
+	void addAsset(const std::string &fileId, BufferPtr assetData) {
+		this->assets[fileId] = std::move(assetData);
+	}
+
+	Buffer* getAsset(const std::string &file) {
+		return this->assets[file].get();
+	}
+
+private:
+	std::map<std::string, BufferPtr> assets;
+};
+typedef std::unique_ptr<AssetLibrary> AssetLibraryPtr;
+
 class GeometryLibrary {
 public:
 	void initialize(const VertexFormat &format) {
@@ -87,7 +117,7 @@ namespace xml {
 		}
 
 		std::string getContent() const {
-			return (const char*)(this->node->content);
+			return (const char*)::xmlNodeGetContent(this->node);
 		}
 
 		NodeList getChilds() const {
@@ -131,7 +161,8 @@ namespace xml {
 
 class AssetsLoader {
 public:
-	AssetsLoader(GraphicsDriver *driver, MaterialLibrary *materialLibrary, GeometryLibrary *geometryLibrary, ShaderLibrary *shaderLibrary, Scene *scene) {
+	AssetsLoader(AssetLibrary *assetLibrary, GraphicsDriver *driver, MaterialLibrary *materialLibrary, GeometryLibrary *geometryLibrary, ShaderLibrary *shaderLibrary, Scene *scene) {
+		this->assetLibrary = assetLibrary;
 		this->driver = driver;
 		this->materialLibrary = materialLibrary;
 		this->geometryLibrary = geometryLibrary; 
@@ -150,11 +181,10 @@ public:
 
 		xml::Node node = ::xmlDocGetRootElement(document);
 
-		for (xml::Node child : node.getChilds()) {
-			if (child.getName() == "assets") {
-				this->parseAssets(child);
-				break;
-			}
+		if (node.getName() == "assets") {
+			this->parseAssets(node);
+		} else {
+			EXENG_THROW_EXCEPTION("'assets' root node doesn't exists.");
 		}
 
 		::xmlFreeDoc(document);
@@ -183,8 +213,8 @@ private:
 
 	template<typename Type>
 	void fillMaterialAttribute(Material *material, const int attribIndex, const std::string &content) {
-		auto values = parseVector<Type, 4>(content);
-		material->setAttribute(attribIndex, &values.x, 4*sizeof(Type));
+		Vector4f values = parseVector<Type, 4>(content);
+		material->setAttribute(attribIndex, values.data, 4*sizeof(Type));
 	}
 
 	template<typename Type, int Size>
@@ -192,8 +222,8 @@ private:
 		std::vector<std::string> splitted;
 		boost::split(splitted, content, boost::is_any_of(" "));
 
-		Vector<Type, Size> values;
-		for (int i=0; i<Size; ++i) {
+		Vector<Type, Size> values(Type(0)) ;
+		for (int i=0; i<static_cast<int>(splitted.size()); ++i) {
 			values[i] = boost::lexical_cast<Type>(splitted[i]);
 		}
 
@@ -216,10 +246,10 @@ private:
 		}
 	}
 
-	void parseMaterial(const xml::Node &node, MaterialLibrary* library) {
+	void parseMaterial(const xml::Node &node) {
 		std::string name = node.getAttribute("name");
 
-		Material *material = library->createMaterial(name, nullptr);
+		Material *material = this->materialLibrary->createMaterial(name, nullptr);
 
 		for (const xml::Node &child : node.getChilds("attribute")) {
 			this->parseMaterialAttribute(child, material);
@@ -228,13 +258,13 @@ private:
 
 	void parseMaterialLibrary(const xml::Node &node) {
 		for (const xml::Node &child : node.getChilds()) {
-			std::string name = node.getName();
+			std::string name = child.getName();
 
 			if (name == "material-format") {
 				MaterialFormat materialFormat = this->parseMaterialFormat(child);
 				this->materialLibrary->initialize(materialFormat);
 			} else if (name == "material") {
-				this->parseMaterial(child, this->materialLibrary);
+				this->parseMaterial(child);
 			}
 		}
 	}
@@ -329,7 +359,19 @@ private:
 	}
 
 	void parseScene(xml::Node &node) {
-		std::cout << "parseScene" << std::endl;
+		for (xml::Node child : node.getChilds()) {
+			std::string name = child.getName();
+
+			if (name == "background") {
+
+			} else if (name == "camera-collection") {
+				
+			} else if (name == "node") {
+
+			} else {
+				EXENG_THROW_EXCEPTION("Invalid '" + name + "' node");
+			}
+		}
 	}
 	
 	void parseAssets(const xml::Node &node) {
@@ -404,6 +446,7 @@ private:
 	}
 
 private:
+	AssetLibrary *assetLibrary = nullptr;
 	GraphicsDriver *driver = nullptr;
 	MaterialLibrary *materialLibrary = nullptr;
 	GeometryLibrary *geometryLibrary = nullptr;
@@ -444,40 +487,16 @@ public:
 
 		this->getMeshManager()->setGraphicsDriver(this->graphicsDriver.get());
 		
+		this->assetLibrary = std::make_unique<AssetLibrary>();
+		this->assetLibrary->addAsset("Vertex.glsl",  std::make_unique<StaticBuffer>((void*)vertex_glsl_data, vertex_glsl_size));
+		this->assetLibrary->addAsset("Fragment.glsl",  std::make_unique<StaticBuffer>((void*)vertex_glsl_data, vertex_glsl_size));
+
 		this->materialLibrary = std::make_unique<MaterialLibrary>();
 		this->geometryLibrary = std::make_unique<GeometryLibrary>();
 		this->shaderLibrary = std::make_unique<ShaderLibrary>(this->graphicsDriver.get());
-
-		Shader *vshader;
-		vshader = this->shaderLibrary->createShader("vertexShader", ShaderType::Vertex);
-		vshader->setSourceCode(toString(vertex_glsl_data, vertex_glsl_size));
-		vshader->compile();
-
-		Shader *fshader;
-		fshader = this->shaderLibrary->createShader("fragmentShader", ShaderType::Fragment);
-		fshader->setSourceCode(toString(fragment_glsl_data, fragment_glsl_size));
-		fshader->compile();
-
-		ShaderProgram *program = this->shaderLibrary->createProgram("shaderProgram");
-		program->addShader(vshader);
-		program->addShader(fshader);
-		program->link();
-		this->program = program;
-
-		std::vector<MaterialAttrib> attribs {
-			{"ambient", DataType::Float32, 4}, 
-			{"diffuse", DataType::Float32, 4}, 
-			{"specular", DataType::Float32, 4},
-			{"shininess", DataType::Float32, 1}
-		};
-
-		this->materialLibrary->initialize(MaterialFormat(attribs));
-		Material *material = this->materialLibrary->createMaterial("material", this->program);
-
-		/*
-		AssetsLoader loader(this->graphicsDriver.get(), this->getMaterialLibrary(), this->getGeometryLibrary(), this->getShaderLibrary(), this->scene.get());
+		
+		AssetsLoader loader(this->assetLibrary.get(), this->graphicsDriver.get(), this->getMaterialLibrary(), this->getGeometryLibrary(), this->getShaderLibrary(), this->scene.get());
 		loader.loadAssets();
-		*/
     }
     
     virtual ApplicationStatus::Enum getApplicationStatus() const override {
@@ -535,6 +554,7 @@ private:
 	ShaderLibraryPtr shaderLibrary;
 	GeometryLibraryPtr geometryLibrary;
 	MaterialLibraryPtr materialLibrary;
+	AssetLibraryPtr assetLibrary;
 	ScenePtr scene;
 
 	Camera *camera = nullptr;
