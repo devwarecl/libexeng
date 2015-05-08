@@ -1,6 +1,7 @@
 
 #include "ShaderLibrary.hpp"
 
+#include <exeng/Exception.hpp>
 #include <map>
 #include <cassert>
 
@@ -26,15 +27,16 @@ namespace exeng { namespace graphics {
 	Shader* ShaderLibrary::getShader(const std::string &name) {
 		assert(impl != nullptr);
 
-		Shader* shader = nullptr;
+		auto &shaders = this->impl->shaders;
+		auto pos = shaders.find(name);
 
-		auto pos = this->impl->shaders.find(name);
-
-		if (pos != this->impl->shaders.end()) {
-			shader = pos->second.get();
+#if defined(EXENG_DEBUG)
+		if (pos == shaders.end()) {
+			EXENG_THROW_EXCEPTION("Shader '" + name + "' not found.");
 		}
+#endif
 
-		return shader;
+		return pos->second.get();
 	}
 
 	Shader* ShaderLibrary::createShader(const std::string &name, ShaderType::Enum type) {

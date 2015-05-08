@@ -59,6 +59,15 @@ namespace exeng {
 		 * @brief Get a pointer to a read-only location
 		 */
 		virtual const void* getPointer() const = 0;
+
+		virtual std::string toString() const override {
+			std::string dataStr;
+
+			dataStr.resize(this->getSize());
+			std::memcpy( const_cast<char*>(dataStr.c_str()), this->getPointer(), this->getSize());
+
+			return dataStr;
+		}
 	};
 
 	typedef std::unique_ptr<Buffer> BufferPtr;

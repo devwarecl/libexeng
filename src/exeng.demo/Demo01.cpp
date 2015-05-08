@@ -193,7 +193,34 @@ public:
 
 private:
 	void parseShaderLibrary(const xml::Node &node) {
-		std::cout << "parseShaderLibrary" << std::endl;
+		for (xml::Node child : node.getChilds()) {
+			std::string name = child.getName();
+
+			if (name == "shader") {
+				std::string shaderName = child.getAttribute("name");
+				std::string shaderType = child.getAttribute("type");
+				std::string shaderFile = child.getAttribute("file");
+
+				Shader *shader = this->shaderLibrary->createShader(shaderName, getShaderType(shaderType));
+				std::string shaderSource = this->assetLibrary->getAsset(shaderFile)->toString();
+				shader->setSourceCode(shaderSource);
+				shader->compile();
+			} else if (name == "program") {
+				std::string programName = child.getAttribute("name");
+
+				ShaderProgram *program = this->shaderLibrary->createProgram(programName);
+
+				for (xml::Node moduleNode : child.getChilds("module")) {
+					std::string shaderName = moduleNode.getAttribute("ref-name");
+
+					Shader *shader = this->shaderLibrary->getShader(shaderName);
+					program->addShader(shader);
+				}
+				program->link();
+			} else {
+				EXENG_THROW_EXCEPTION("Tag '" + name + "' not known.");
+			}
+		}
 	}
 
 	MaterialFormat parseMaterialFormat(const xml::Node &node) {
@@ -411,6 +438,16 @@ private:
 		}
 	}
 
+	static ShaderType::Enum getShaderType(const std::string &shaderType) {
+		if (shaderType == "vertex") {
+			return ShaderType::Vertex;
+		} else if (shaderType == "fragment") {
+			return ShaderType::Fragment;
+		} else {
+			EXENG_THROW_EXCEPTION("Unknown '" + shaderType + "' shader type.");
+		}
+	}
+
 	static DataType::Enum getDataType(const std::string &type) {
 		if (type == "float") {
 			return DataType::Float32;
@@ -429,7 +466,7 @@ private:
 		} else if (type == "Vector4i") {
 			return DataType::Int32;
 		} else {
-			EXENG_THROW_EXCEPTION("Unknown type: " + type);
+			EXENG_THROW_EXCEPTION("Unknown '" + type + "' data type.");
 		}
 	}
 
@@ -441,7 +478,7 @@ private:
 		} else if (attributeUse == "texture-coordinate") {
 			return VertexAttrib::TexCoord;
 		} else {
-			EXENG_THROW_EXCEPTION("Unknown vertex attrib use: '" + attributeUse + "'");
+			EXENG_THROW_EXCEPTION("Unknown '" + attributeUse + "' vertex attribute.");
 		}
 	}
 
@@ -468,15 +505,6 @@ public:
 #endif
 	}
 
-	std::string toString(const char *data, const int data_size) {
-		std::string dataStr;
-
-		dataStr.resize(data_size);
-		std::memcpy( const_cast<char*>(dataStr.c_str()), data, data_size);
-
-		return dataStr;
-	}
-
     virtual void initialize(int argc, char **argv) override {
 		this->getPluginManager()->setPluginPath(this->getPluginPath());
         this->getPluginManager()->loadPlugin("exeng.graphics.gl3");
@@ -489,7 +517,7 @@ public:
 		
 		this->assetLibrary = std::make_unique<AssetLibrary>();
 		this->assetLibrary->addAsset("Vertex.glsl",  std::make_unique<StaticBuffer>((void*)vertex_glsl_data, vertex_glsl_size));
-		this->assetLibrary->addAsset("Fragment.glsl",  std::make_unique<StaticBuffer>((void*)vertex_glsl_data, vertex_glsl_size));
+		this->assetLibrary->addAsset("Fragment.glsl",  std::make_unique<StaticBuffer>((void*)fragment_glsl_data, fragment_glsl_size));
 
 		this->materialLibrary = std::make_unique<MaterialLibrary>();
 		this->geometryLibrary = std::make_unique<GeometryLibrary>();
