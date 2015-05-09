@@ -40,7 +40,7 @@ namespace exeng { namespace scenegraph {
         std::list<std::unique_ptr<Camera>> cameras;
     };
     
-    Scene::Scene(const exeng::graphics::MaterialFormat *materialFormat) {
+    Scene::Scene() {
 		this->impl = new Scene::Private();
 	}
 

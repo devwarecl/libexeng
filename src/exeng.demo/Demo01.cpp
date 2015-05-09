@@ -116,6 +116,11 @@ namespace xml {
 			return (const char*)(::xmlGetProp(this->node, (const xmlChar*) attrName.c_str()));
 		}
 
+		bool hasAttribute(const std::string &attrName) const {
+			const void* raw = (::xmlGetProp(this->node, (const xmlChar*) attrName.c_str()));
+			return raw != nullptr;
+		}
+
 		std::string getContent() const {
 			return (const char*)::xmlNodeGetContent(this->node);
 		}
@@ -151,7 +156,14 @@ namespace xml {
 		}
 
 		Node getChild(const std::string &name) const {
-			return *this->getChilds().begin();
+			auto &childs = this->getChilds(name);
+
+#if defined(EXENG_DEBUG)
+			if (childs.size() == 0) {
+				EXENG_THROW_EXCEPTION("No child with the name '" + name + "'");
+			}
+#endif
+			return *childs.begin();
 		}
 
 	private:
@@ -385,16 +397,89 @@ private:
 		}
 	}
 
+	void parseSceneNode(xml::Node &node, SceneNode *sceneNode) {
+
+		// parse scene node
+		Matrix4f transform;
+
+		for (xml::Node transformNode : node.getChild("transformation").getChilds()) {
+			std::string name = transformNode.getName();
+
+			if (name == "identity") {
+				transform = identity<float, 4>();
+			} else if (name == "translate") {
+				Vector3f position = parseVector<float, 3>(transformNode.getContent());
+				transform *= translate<float>(position);
+			} else if (name == "rotate") {
+				Vector3f axis = parseVector<float, 3>(transformNode.getAttribute("axis"));
+				float angle = boost::lexical_cast<float>(transformNode.getContent());
+				transform *= rotate<float>(angle, axis);
+			} else if (name == "scale") {
+				Vector3f scaling = parseVector<float, 3>(transformNode.getContent());
+				transform *= scale<float, 4>(scaling);
+			} 
+		}
+
+		sceneNode->setTransform(transform);
+
+		// parse scene node childs
+		for (xml::Node child : node.getChilds("node")) {
+			SceneNode *childNode = sceneNode->addChild(child.getAttribute("name"));
+			this->parseSceneNode(child, childNode);
+
+			//
+			//if (child.getName() == "node") {
+			//	SceneNode *childNode = sceneNode->addChild(node.getAttribute("name"));
+			//	this->parseSceneNode(child, childNode);
+			//} else {
+			//	EXENG_THROW_EXCEPTION("Invalid tag '" + child.getName() + "'.");
+			//}
+		}
+	}
+
 	void parseScene(xml::Node &node) {
 		for (xml::Node child : node.getChilds()) {
 			std::string name = child.getName();
 
 			if (name == "background") {
-
+				Vector4f color = parseVector<float, 4>(child.getChild("color").getContent());
+				this->scene->setBackColor(color);
 			} else if (name == "camera-collection") {
-				
-			} else if (name == "node") {
 
+				for (xml::Node cameraNode : child.getChilds("camera")) {
+					// TODO: Use the camera name.
+					std::string cameraName = cameraNode.getAttribute("name");
+
+					// view
+					xml::Node viewNode = cameraNode.getChild("view").getChild("look-at");
+
+					Vector3f position = parseVector<float, 3>(viewNode.getAttribute("position"));
+					Vector3f lookAt = parseVector<float, 3>(viewNode.getAttribute("look-at"));
+					Vector3f up = parseVector<float, 3>(viewNode.getAttribute("up"));
+
+					Camera *camera = this->scene->createCamera();
+					camera->setPosition(position);
+					camera->setLookAt(lookAt);
+					camera->setUp(up);
+
+					// projection
+					// TODO: add projection to the camera node
+					xml::Node perspectiveNode = cameraNode.getChild("projection").getChild("perspective");
+
+					float fov = boost::lexical_cast<float>(perspectiveNode.getAttribute("fov"));
+					float aspect = boost::lexical_cast<float>(perspectiveNode.getAttribute("aspect"));
+					float zNear = boost::lexical_cast<float>(perspectiveNode.getAttribute("z-near"));
+					float zFar = boost::lexical_cast<float>(perspectiveNode.getAttribute("z-far"));
+
+					// viewport
+					xml::Node viewportNode = cameraNode.getChild("viewport");
+					Vector2f viewportPosition = parseVector<float, 2>(viewportNode.getAttribute("position"));
+					Vector2f viewportSize = parseVector<float, 2>(viewportNode.getAttribute("size"));
+					camera->setViewport(Rectf(viewportPosition, viewportPosition + viewportSize));
+				}
+			} else if (name == "node") {
+				SceneNode *sceneNode = this->scene->getRootNode();
+				this->parseSceneNode(child, sceneNode);
 			} else {
 				EXENG_THROW_EXCEPTION("Invalid '" + name + "' node");
 			}
@@ -512,6 +597,8 @@ public:
         this->graphicsDriver = this->getGraphicsManager()->createDriver();
         this->graphicsDriver->addEventHandler(this);
         this->graphicsDriver->initialize();
+
+		this->scene = std::make_unique<Scene>();
 
 		this->getMeshManager()->setGraphicsDriver(this->graphicsDriver.get());
 		

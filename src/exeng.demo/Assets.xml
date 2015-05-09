@@ -53,18 +53,19 @@
         <camera-collection>
             <camera name="camera">
                 <view><look-at position="0.0 2.5 1.25" look-at="0.0 0.0 0.0" up="0.0 1.0 0.0"/></view>
-                <projection><perspective fov="60.0" aspect="auto" z-near="0.1" z-far="1000.0" /></projection>
-                <viewport position="0.0 0.0" size="1.0 1.0" units="proportional"/>
+                <projection><perspective fov="60.0" aspect="1.3333" z-near="0.1" z-far="1000.0" /></projection>
+                <viewport position="0.0 0.0" size="1.0 1.0"/>
             </camera>    
         </camera-collection>
         
-        <node name="root">
+        <node>
             <transformation>
                 <identity />
             </transformation>
             
             <node name="boxNode">
                 <transformation>
+                    <identity />
                     <translate>0.0 0.0 0.0</translate>
                     <rotate axis="0.0 1.0 0.0">0.0</rotate>
                     <scale>1.0 1.0 1.0</scale>
