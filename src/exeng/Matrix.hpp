@@ -815,24 +815,7 @@ namespace exeng {
         
         return result;
     }
-    
-    template<typename Type>
-    Matrix<Type, 4, 4> perspective(Type fov, Type aspect, Type znear, Type zfar)
-    {
-        Type f = Type(1) / std::tan(fov / Type(2));
-        Type zdiff = zfar - znear;
-        
-        auto result = identity<Type, 4>();
-        
-        result.at(0, 0) = f / aspect;
-        result.at(1, 1) = f;
-        result.at(2, 2) = (zfar + znear) / zdiff;
-        result.at(3, 2) = Type(-1);
-        result.at(2, 3) = (Type(2)*znear*zfar) / zdiff;
-        
-        return result;
-    }
-    
+
     template<typename Type>
     Matrix<Type, 4, 4> lookat(const Vector<Type, 3> &Eye, const Vector<Type, 3> &At, const Vector<Type, 3> &Up)
     {
@@ -855,6 +838,23 @@ namespace exeng {
         result.at(2, 2) = -forward.z;
         
         result *= translate<Type>(-Eye);
+        
+        return result;
+    }
+    
+    template<typename Type>
+    Matrix<Type, 4, 4> perspective(Type fov, Type aspect, Type znear, Type zfar)
+    {
+        Type f = Type(1) / std::tan(fov / Type(2));
+        Type zdiff = zfar - znear;
+        
+        auto result = identity<Type, 4>();
+        
+        result.at(0, 0) = f / aspect;
+        result.at(1, 1) = f;
+        result.at(2, 2) = (zfar + znear) / zdiff;
+        result.at(3, 2) = Type(-1);
+        result.at(2, 3) = (Type(2)*znear*zfar) / zdiff;
         
         return result;
     }

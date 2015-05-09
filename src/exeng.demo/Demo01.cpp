@@ -398,10 +398,10 @@ private:
 	}
 
 	void parseSceneNode(xml::Node &node, SceneNode *sceneNode) {
-
 		// parse scene node
-		Matrix4f transform;
+		Matrix4f transform = zero<float, 4, 4>();
 
+		// transformation
 		for (xml::Node transformNode : node.getChild("transformation").getChilds()) {
 			std::string name = transformNode.getName();
 
@@ -417,23 +417,25 @@ private:
 			} else if (name == "scale") {
 				Vector3f scaling = parseVector<float, 3>(transformNode.getContent());
 				transform *= scale<float, 4>(scaling);
-			} 
+			}
 		}
 
 		sceneNode->setTransform(transform);
+
+		// geometries
+		for (xml::Node dataNode : node.getChilds("data")) {
+			if (dataNode.getAttribute("type") ==  "geometry") {
+				std::string geometryName = dataNode.getAttribute("ref-name");
+				Geometry *geometry = this->geometryLibrary->getGeometry(geometryName);
+
+				sceneNode->setData(geometry);
+			}
+		}
 
 		// parse scene node childs
 		for (xml::Node child : node.getChilds("node")) {
 			SceneNode *childNode = sceneNode->addChild(child.getAttribute("name"));
 			this->parseSceneNode(child, childNode);
-
-			//
-			//if (child.getName() == "node") {
-			//	SceneNode *childNode = sceneNode->addChild(node.getAttribute("name"));
-			//	this->parseSceneNode(child, childNode);
-			//} else {
-			//	EXENG_THROW_EXCEPTION("Invalid tag '" + child.getName() + "'.");
-			//}
 		}
 	}
 

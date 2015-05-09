@@ -36,13 +36,20 @@ namespace exeng { namespace scenegraph {
      * @brief CameraProjection
      */
     struct CameraProjection {
-        exeng::Boxf box;
-        CameraProjectionType::Enum type;
-    
-        CameraProjection() {
-            this->box.set(1.0f);
-            this->type = CameraProjectionType::Orthographic;
+        Boxf box = Boxf(1.0);
+        CameraProjectionType::Enum type = CameraProjectionType::Orthographic;
+		
+        CameraProjection() {}
+		CameraProjection(const Boxf &box, CameraProjectionType::Enum type) {
+            this->box = box;
+            this->type = type;
         }
+
+		static CameraProjection buildPerspectiveProj(float fov, float aspect, float znear, float zfar) {
+			Boxf box;
+
+			return {box, CameraProjectionType::Perspective};
+		}
     };
 
     /**
