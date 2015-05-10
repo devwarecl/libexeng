@@ -291,8 +291,16 @@ private:
 
 		Material *material = this->materialLibrary->createMaterial(name, nullptr);
 
-		for (const xml::Node &child : node.getChilds("attribute")) {
-			this->parseMaterialAttribute(child, material);
+		for (const xml::Node &child : node.getChilds()) {
+			std::string attributeName = child.getName();
+
+			if (attributeName == "attribute") {
+				this->parseMaterialAttribute(child, material);
+			} else if (attributeName == "program") {
+				std::string programName = child.getAttribute("ref-name");
+				ShaderProgram *program = this->shaderLibrary->getProgram(programName);
+				material->setShaderProgram(program);
+			}
 		}
 	}
 
@@ -604,7 +612,6 @@ public:
 	}
 
 	void renderNodeData(const SceneNodeData *data) {
-
 		TypeInfo info = data->getTypeInfo();
 
 		if (info == TypeId<Mesh>()) {
@@ -614,6 +621,7 @@ public:
 				const MeshSubset *subset = mesh->getSubset(i);
 
 				this->driver->setMaterial(subset->getMaterial());
+				this->driver->setMeshSubset(subset);
 				this->driver->getModernModule()->setProgramGlobal("WorldTransform", this->transform);
 				this->driver->render(subset->getPrimitive(), subset->getVertexCount());
 			}
@@ -670,6 +678,7 @@ public:
 
 		// create scene renderer
 		auto sceneRenderer = new GenericSceneRenderer<GraphicsNodeRenderer>();
+		sceneRenderer->setScene(this->scene.get());
 		sceneRenderer->setGraphicsDriver(this->graphicsDriver.get());
 
 		this->sceneRenderer.reset(sceneRenderer);
