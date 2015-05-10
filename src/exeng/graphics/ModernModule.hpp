@@ -48,8 +48,6 @@ namespace exeng { namespace graphics {
 		virtual ShaderProgramPtr createShaderProgram(const std::list<std::string> &vertexShaderSrcs, const std::list<std::string> &fragmentShaderSrcs);
 
 		virtual ShaderProgramPtr createShaderProgram(std::string &vertexShaders, std::string &fragmentShaders);
-
-		// virtual ShaderProgramPtr createShaderProgram(const std::list<std::pair<int, char*>> &vertexShaders,  const std::list<std::pair<int, char*>> &fragmentShaders);
 	};
 }}
 

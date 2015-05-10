@@ -217,6 +217,7 @@ private:
 				std::string shaderSource = this->assetLibrary->getAsset(shaderFile)->toString();
 				shader->setSourceCode(shaderSource);
 				shader->compile();
+
 			} else if (name == "program") {
 				std::string programName = child.getAttribute("name");
 
@@ -335,8 +336,11 @@ private:
 
 				BufferPtr vertexBuffer  = this->driver->createVertexBuffer(vbuffer.get());
 				BufferPtr indexBuffer  = this->driver->createIndexBuffer(ibuffer.get());
+				Primitive::Enum primitive = Primitive::TriangleList;
 
 				meshSubset = this->driver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), format);
+				meshSubset->setPrimitive(primitive);
+
 			} else if (name == "material") {
 				std::string materialName = child.getAttribute("ref-name");
 				Material *material = this->materialLibrary->getMaterial(materialName);
@@ -578,6 +582,52 @@ private:
 	Scene *scene = nullptr;
 };
 
+class GraphicsNodeRenderer {
+public:
+	GraphicsNodeRenderer() {}
+	~GraphicsNodeRenderer() {}
+
+	void setGraphicsDriver(GraphicsDriver *driver) {
+		this->driver = driver;
+	}
+
+	GraphicsDriver* getGraphicsDriver() {
+		return this->driver;
+	}
+
+	const GraphicsDriver* getGraphicsDriver() const {
+		return this->driver;
+	}
+
+	void setTransform(const Matrix4f &transform) {
+		this->transform = transform;
+	}
+
+	void renderNodeData(const SceneNodeData *data) {
+
+		TypeInfo info = data->getTypeInfo();
+
+		if (info == TypeId<Mesh>()) {
+			const Mesh *mesh = static_cast<const Mesh*>(data);
+
+			for (int i=0; i<mesh->getSubsetCount(); ++i) {
+				const MeshSubset *subset = mesh->getSubset(i);
+
+				this->driver->setMaterial(subset->getMaterial());
+				this->driver->getModernModule()->setProgramGlobal("WorldTransform", this->transform);
+				this->driver->render(subset->getPrimitive(), subset->getVertexCount());
+			}
+		} else {
+			EXENG_THROW_EXCEPTION("Unsupported Geometry type.");
+		}
+
+	}
+
+private:
+	GraphicsDriver* driver = nullptr;
+	Matrix4f transform;
+};
+
 class Demo01 : public GraphicsApplication, public IEventHandler {
 public:
 	std::string getPluginPath() {
@@ -612,8 +662,11 @@ public:
 		this->geometryLibrary = std::make_unique<GeometryLibrary>();
 		this->shaderLibrary = std::make_unique<ShaderLibrary>(this->graphicsDriver.get());
 		
+		// loads scene, objects and materials
 		AssetsLoader loader(this->assetLibrary.get(), this->graphicsDriver.get(), this->getMaterialLibrary(), this->getGeometryLibrary(), this->getShaderLibrary(), this->scene.get());
 		loader.loadAssets();
+
+		// create scene renderer
     }
     
     virtual ApplicationStatus::Enum getApplicationStatus() const override {
@@ -625,6 +678,7 @@ public:
     }
     
     virtual void update(float seconds) override {
+
     }
     
     virtual void render() override {
@@ -674,6 +728,7 @@ private:
 	AssetLibraryPtr assetLibrary;
 	ScenePtr scene;
 
+	SceneRenderer *sceneRenderer = nullptr;
 	Camera *camera = nullptr;
 	ShaderProgram *program = nullptr;
 	Material *material = nullptr;

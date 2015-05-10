@@ -574,9 +574,9 @@ namespace raytracer { namespace tracers {
 
 			Mesh *mesh = static_cast<Mesh*>(sceneNode->getData());
 
-			for (int i=0; i<mesh->getMeshSubsetCount(); ++i) {
+			for (int i=0; i<mesh->getSubsetCount(); ++i) {
 				// Prepare the kernel for execution
-				MeshSubset *subset = mesh->getMeshSubset(i);
+				MeshSubset *subset = mesh->getSubset(i);
 
 				GLuint vertexBufferId = static_cast<GLuint>(subset->getBuffer(0)->getHandle());
 				GLuint indexBufferId = static_cast<GLuint>(subset->getIndexBuffer()->getHandle());

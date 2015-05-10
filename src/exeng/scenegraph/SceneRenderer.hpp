@@ -14,6 +14,7 @@
 #ifndef __EXENG_SCENEGRAPH_SCENERENDERER_HPP__
 #define __EXENG_SCENEGRAPH_SCENERENDERER_HPP__
 
+#include <memory>
 #include <functional>
 #include <exeng/Config.hpp>
 
@@ -31,6 +32,8 @@ namespace exeng { namespace scenegraph {
 
 		virtual void render(const Camera* camera) = 0;
 	};
+
+	typedef std::unique_ptr<SceneRenderer> SceneRendererPtr;
 
 	//typedef std::function<void(const SceneNodeData *data)> SceneNodeDataRenderer;
 

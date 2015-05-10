@@ -1,6 +1,6 @@
-//
-//#include "GenericSceneRenderer.hpp"
-//
+
+#include "GenericSceneRenderer.hpp"
+
 //#include <cassert>
 //#include <stack>
 //#include <exeng/Matrix.hpp>

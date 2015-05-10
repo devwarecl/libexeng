@@ -302,17 +302,17 @@ namespace exeng { namespace scenegraph {
         return bestInfo.intersect;
     }
     
-    int Mesh::getMeshSubsetCount() const {
+    int Mesh::getSubsetCount() const {
         assert(this->impl != nullptr);
         return static_cast<int>(this->impl->subsets.size());
     }
     
-    MeshSubset* Mesh::getMeshSubset(int index) {
+    MeshSubset* Mesh::getSubset(int index) {
 		assert(this->impl != nullptr);
         return this->impl->subsets[index].get();
     }
     
-    const MeshSubset* Mesh::getMeshSubset(int index) const {
+    const MeshSubset* Mesh::getSubset(int index) const {
 		assert(this->impl != nullptr);
         return this->impl->subsets[index].get();
     }

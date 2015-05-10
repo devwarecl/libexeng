@@ -45,17 +45,17 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Get the numbers of MeshParts on the Mesh.
          */
-        int getMeshSubsetCount() const;
+        int getSubsetCount() const;
         
         /**
          * @brief Get the part at the corresponding index.
          */
-        exeng::graphics::MeshSubset* getMeshSubset(int index);
+        exeng::graphics::MeshSubset* getSubset(int index);
         
         /**
          * @brief Get the part at the corresponding index.
          */
-        const exeng::graphics::MeshSubset* getMeshSubset(int index) const;
+        const exeng::graphics::MeshSubset* getSubset(int index) const;
         
         virtual TypeInfo getTypeInfo() const override;
 

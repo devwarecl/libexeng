@@ -37,21 +37,22 @@ namespace exeng { namespace graphics {
         virtual const Material* getMaterial() const = 0;
         virtual void setMaterial(const Material *material) = 0;
         
-        int getSize() const;
+        int getSize() const {
+			int size = 0;
+        
+			for (int i=0; i<this->getBufferCount(); ++i) {
+				size += this->getBuffer(i)->getSize();
+			}
+        
+			return size;
+		}
+
+		int getVertexCount() const {
+			return this->getSize() / this->getVertexFormat().getSize();
+		}
     };
     
 	typedef std::unique_ptr<MeshSubset> MeshSubsetPtr;
-
-    inline int MeshSubset::getSize() const 
-    {
-        int size = 0;
-        
-        for (int i=0; i<this->getBufferCount(); ++i) {
-            size += this->getBuffer(i)->getSize();
-        }
-        
-        return size;
-    }
 }}
 
 #endif  // __EXENG_GRAPHICS_MESHSUBSET_HPP__

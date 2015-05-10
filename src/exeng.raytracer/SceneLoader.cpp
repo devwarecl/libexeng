@@ -70,7 +70,7 @@ namespace raytracer {
         // box mesh
         // Mesh *boxMesh = this->meshManager->getMesh("/cube", this->graphicsDriver);
 		Mesh *boxMesh = this->meshManager->generateBoxMesh(boxMeshName, boxCenter, boxSize);
-        boxMesh->getMeshSubset(0)->setMaterial(boxMaterial);
+        boxMesh->getSubset(0)->setMaterial(boxMaterial);
 
         // box scenenode
         scene->getRootNode()->addChild(boxNodeName)->setData(boxMesh);
