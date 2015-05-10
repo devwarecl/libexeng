@@ -38,6 +38,10 @@ namespace exeng { namespace scenegraph {
          */
         Camera* createCamera();
 
+		Camera* getCamera(int index) const;
+
+		int getCameraCount() const;
+
         /**
          * @brief 
          */

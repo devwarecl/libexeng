@@ -666,7 +666,13 @@ public:
 		AssetsLoader loader(this->assetLibrary.get(), this->graphicsDriver.get(), this->getMaterialLibrary(), this->getGeometryLibrary(), this->getShaderLibrary(), this->scene.get());
 		loader.loadAssets();
 
+		this->camera = this->scene->getCamera(0);
+
 		// create scene renderer
+		auto sceneRenderer = new GenericSceneRenderer<GraphicsNodeRenderer>();
+		sceneRenderer->setGraphicsDriver(this->graphicsDriver.get());
+
+		this->sceneRenderer.reset(sceneRenderer);
     }
     
     virtual ApplicationStatus::Enum getApplicationStatus() const override {
@@ -683,6 +689,8 @@ public:
     
     virtual void render() override {
 		this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
+
+		this->sceneRenderer->render(this->camera);
 
 		this->graphicsDriver->endFrame();
     }
@@ -727,8 +735,8 @@ private:
 	MaterialLibraryPtr materialLibrary;
 	AssetLibraryPtr assetLibrary;
 	ScenePtr scene;
+	SceneRendererPtr sceneRenderer;
 
-	SceneRenderer *sceneRenderer = nullptr;
 	Camera *camera = nullptr;
 	ShaderProgram *program = nullptr;
 	Material *material = nullptr;

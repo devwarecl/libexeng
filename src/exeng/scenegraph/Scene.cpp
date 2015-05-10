@@ -19,6 +19,7 @@
 #include <memory>
 #include <sstream>
 #include <exeng/Vector.hpp>
+#include <exeng/Exception.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/Camera.hpp>
 #include <exeng/scenegraph/Light.hpp>
@@ -111,4 +112,20 @@ namespace exeng { namespace scenegraph {
         
         return sceneNode;
     }
+
+	Camera* Scene::getCamera(int index) const {
+#if defined(EXENG_DEBUG)
+		if (index < 0 || index >= this->getCameraCount()) {
+			EXENG_THROW_EXCEPTION("Camera index out of bounds.");
+		}
+#endif
+		auto cameraIt = this->impl->cameras.begin();
+		std::advance(cameraIt, index);
+
+		return cameraIt->get();
+	}
+
+	int Scene::getCameraCount() const {
+		return this->impl->cameras.size();
+	}
 }}
