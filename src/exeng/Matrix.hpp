@@ -697,11 +697,11 @@ namespace exeng {
     }
     
     template<typename Type, int Size>
-    Matrix<Type, Size, Size> scale(const Vector<Type, Size> &scale)
+    Matrix<Type, Size, Size> scale(const Vector<Type, 3> &scale)
     {
-        auto result = zero<Type, Size, Size>();
+        auto result = identity<Type, Size>();
         
-        for(int i=0; i<Size; ++i) {
+        for(int i=0; i<3; ++i) {
             result(i, i) = scale[i];
         }
         

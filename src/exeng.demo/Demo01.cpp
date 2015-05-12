@@ -701,18 +701,23 @@ public:
 		Vector3f position = camera->getPosition();
 		Vector3f lookAt = camera->getLookAt();
 		Vector3f up = camera->getUp();
+		DisplayMode mode = this->graphicsDriver->getDisplayMode();
+		float aspect = static_cast<float>(mode.size.width) / static_cast<float>(mode.size.height);
 
-		Matrix4f cameraTransform = identity<float, 4>();
-		cameraTransform *= rotatex<float>(rad(this->angle));
-		cameraTransform *= rotatey<float>(rad(this->angle));
-		cameraTransform *= rotatez<float>(rad(this->angle));
+		Matrix4f projMatrix = perspective<float>( rad(60.0f), aspect, 0.1f, 1000.0f);
+		Matrix4f viewMatrix = lookat<float>(position, lookAt, up);
+		Matrix4f modelMatrix = identity<float, 4>();
+		modelMatrix *= rotatex<float>(rad(this->angle));
+		modelMatrix *= rotatey<float>(rad(this->angle));
+		modelMatrix *= rotatez<float>(rad(this->angle));
+		// modelMatrix *= scale<float, 4>({5.0f, 5.0f, 5.0f});
+
+		Matrix4f mvpMatrix = projMatrix * viewMatrix * modelMatrix;
 
 		// Matrix4f cameraTransform = lookat<float>(position, lookAt, up);
 		// Matrix4f cameraTransform = identity<float, 4>();
 
 		this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
-
-		DisplayMode mode = this->graphicsDriver->getDisplayMode();
 
 		Rectf viewport({0.0f, 0.0f}, Vector2f{(float)mode.size.width, (float)mode.size.height});
 		
@@ -734,7 +739,7 @@ public:
 			//std::cout << std::endl;
 
 			this->graphicsDriver->setMaterial(subset->getMaterial());
-			this->graphicsDriver->getModernModule()->setProgramGlobal("WorldTransform", cameraTransform);
+			this->graphicsDriver->getModernModule()->setProgramGlobal("WorldTransform", mvpMatrix);
 			this->graphicsDriver->setMeshSubset(subset);
 			this->graphicsDriver->render(subset->getPrimitive(), subset->getVertexCount());
 		}
