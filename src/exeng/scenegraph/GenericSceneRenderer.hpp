@@ -102,34 +102,6 @@ namespace exeng { namespace scenegraph {
 		TransformStack<Matrix4f> transformStack;
 		const Scene* scene = nullptr;
 	};
-
-	//typedef std::function<void (const SceneNodeData*)> NodeRendererCallback;
-
- //   /**
- //    * @brief Quick'n dirty Scene Renderer.
- //    */
- //   class EXENGAPI GenericSceneRenderer : public SceneRenderer {
- //   public:
-	//	/* SceneRenderer  */
-
- //       explicit GenericSceneRenderer(exeng::graphics::GraphicsDriver *graphicsDriver);
- //       virtual ~GenericSceneRenderer();
- //       
- //       virtual void render(const Camera *camera) override;
-	//	virtual void setScene(const Scene *scene) override;
-	//	virtual const Scene* getScene() const override;
-
-	//public:
-	//	void registerRenderer(TypeInfo info, NodeRendererCallback renderer);
-	//	void unregisterRendrer(TypeInfo info, NodeRendererCallback renderer);
-
-	//private:
-	//	void renderNode(std::stack<Matrix4f> *matrixStack, const SceneNode *node);
-
-	//private:
-	//	struct Private;
-	//	Private *impl = nullptr;
- //   };
 }}
 
 #endif  // __EXENG_SCENEGRAPH_GENERICSCENERENDERER_HPP__

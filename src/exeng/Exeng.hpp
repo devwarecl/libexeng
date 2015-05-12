@@ -40,9 +40,7 @@
 #include <exeng/graphics/Shader.hpp>
 #include <exeng/graphics/ShaderProgram.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
-#include <exeng/graphics/IndexBuffer.hpp>
 #include <exeng/graphics/VertexArray.hpp>
-#include <exeng/graphics/VertexBuffer.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/graphics/Material.hpp>

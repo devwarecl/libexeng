@@ -60,17 +60,10 @@ set (GraphicsFiles_hpp
     graphics/Material.hpp             
     graphics/PixelFormat.hpp          
     graphics/Vertex.hpp               
-    graphics/VertexFormat.hpp         
-    graphics/VertexBuffer.hpp         
-    graphics/VertexBuffer.hpp         
-    graphics/IBufferFactory.hpp       
-    graphics/HeapVertexBuffer.hpp      
-    graphics/HeapIndexBuffer.hpp      
-    graphics/IndexBuffer.hpp          
+    graphics/VertexFormat.hpp 
     graphics/IndexFormat.hpp          
     graphics/Texture.hpp              
     graphics/ColorFormat.hpp          
-    graphics/IndexArray.hpp           
     graphics/Shader.hpp               
     graphics/ShaderProgram.hpp        
     graphics/MeshSubset.hpp			
@@ -82,7 +75,7 @@ set (GraphicsFiles_hpp
 	graphics/TextureLoader.hpp
 	graphics/MaterialLibrary.hpp
 	graphics/VertexWrapper.hpp
-	graphics/ShaderLibrary.hpp
+	graphics/ShaderLibrary.hpp 
 )
 
 set (GraphicsFiles_cpp
@@ -94,12 +87,6 @@ set (GraphicsFiles_cpp
     graphics/PixelFormat.cpp 
     graphics/Vertex.cpp
     graphics/VertexFormat.cpp
-    graphics/VertexBuffer.cpp 
-    graphics/VertexBuffer.cpp 
-    graphics/IBufferFactory.cpp
-    graphics/HeapVertexBuffer.cpp
-    graphics/HeapIndexBuffer.cpp 
-    graphics/IndexBuffer.cpp
     graphics/IndexFormat.cpp
     graphics/Texture.cpp
     graphics/ColorFormat.cpp
