@@ -1,5 +1,5 @@
 
-#version 330 \n"
+#version 330
 
 // vertex attributes
 layout(location=0) in vec4 position; 

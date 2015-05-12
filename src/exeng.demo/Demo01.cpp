@@ -12,6 +12,7 @@
 #include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/framework/GraphicsApplication.hpp>
+#include <exeng/graphics/TextureManager.hpp>
 
 #include "Fragment.glsl.hpp"
 #include "Vertex.glsl.hpp"
@@ -674,6 +675,8 @@ public:
 		this->geometryLibrary = std::make_unique<GeometryLibrary>();
 		this->shaderLibrary = std::make_unique<ShaderLibrary>(this->graphicsDriver.get());
 		
+		this->checkerTexture = this->createCheckerboardTexture();
+
 		// loads scene, objects and materials
 		AssetsLoader loader(this->assetLibrary.get(), this->graphicsDriver.get(), this->getMaterialLibrary(), this->getGeometryLibrary(), this->getShaderLibrary(), this->scene.get());
 		loader.loadAssets();
@@ -684,6 +687,10 @@ public:
 		auto sceneRenderer = new GenericSceneRenderer<GraphicsNodeRenderer>();
 		sceneRenderer->setScene(this->scene.get());
 		sceneRenderer->setGraphicsDriver(this->graphicsDriver.get());
+
+		// set the subset texture
+		Material* material = this->materialLibrary->getMaterial(0);
+		material->getLayer(0)->setTexture(this->checkerTexture.get());
 
 		this->sceneRenderer.reset(sceneRenderer);
     }
@@ -705,63 +712,6 @@ public:
 		this->sceneRenderer->render(this->camera);
 		this->graphicsDriver->endFrame();
 	}
-
-    virtual void render2() {
-		// Camera Data
-		Vector3f position = camera->getPosition();
-		Vector3f lookAt = camera->getLookAt();
-		Vector3f up = camera->getUp();
-		DisplayMode mode = this->graphicsDriver->getDisplayMode();
-		float aspect = static_cast<float>(mode.size.width) / static_cast<float>(mode.size.height);
-
-		Matrix4f projMatrix = perspective<float>( rad(60.0f), aspect, 0.1f, 1000.0f);
-		Matrix4f viewMatrix = lookat<float>(position, lookAt, up);
-		Matrix4f modelMatrix = identity<float, 4>();
-		modelMatrix *= rotatex<float>(rad(this->angle));
-		modelMatrix *= rotatey<float>(rad(this->angle));
-		modelMatrix *= rotatez<float>(rad(this->angle));
-		// modelMatrix *= scale<float, 4>({5.0f, 5.0f, 5.0f});
-
-		Matrix4f mvpMatrix = projMatrix * viewMatrix * modelMatrix;
-
-		// Matrix4f cameraTransform = lookat<float>(position, lookAt, up);
-		// Matrix4f cameraTransform = identity<float, 4>();
-
-		this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
-
-		Rectf viewport({0.0f, 0.0f}, Vector2f{(float)mode.size.width, (float)mode.size.height});
-		
-		this->graphicsDriver->setViewport(viewport);
-
-		// Mesh Data
-		Mesh *mesh = static_cast<Mesh*>(this->geometryLibrary->getGeometry("box"));
-
-		for (int i=0; i<mesh->getSubsetCount(); i++) {
-			MeshSubset *subset = mesh->getSubset(i);
-
-			//const Vertex *vertices = (const Vertex*)subset->getBuffer(0)->getPointer();
-			//for (int vertexIndex=0; vertexIndex<subset->getVertexCount(); ++vertexIndex) {
-			//	std::cout << vertices[vertexIndex].coord << "; ";
-			//	std::cout << vertices[vertexIndex].normal << "; ";
-			//	std::cout << vertices[vertexIndex].texCoord;
-			//	std::cout << std::endl;
-			//}
-			//std::cout << std::endl;
-
-			this->graphicsDriver->setMaterial(subset->getMaterial());
-			this->graphicsDriver->getModernModule()->setProgramGlobal("WorldTransform", mvpMatrix);
-			this->graphicsDriver->setMeshSubset(subset);
-			this->graphicsDriver->render(subset->getPrimitive(), subset->getVertexCount());
-		}
-
-		this->graphicsDriver->endFrame();
-
-		/*
-		this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
-		this->sceneRenderer->render(this->camera);
-		this->graphicsDriver->endFrame();
-		*/
-    }
     
     virtual void handleEvent(const EventData &data) override {
         const InputEventData &inputData = data.cast<InputEventData>();
@@ -770,6 +720,56 @@ public:
             this->status = ApplicationStatus::Terminated;
         }
     }
+
+	//const Vertex *vertices = (const Vertex*)subset->getBuffer(0)->getPointer();
+	//for (int vertexIndex=0; vertexIndex<subset->getVertexCount(); ++vertexIndex) {
+	//	std::cout << vertices[vertexIndex].coord << "; ";
+	//	std::cout << vertices[vertexIndex].normal << "; ";
+	//	std::cout << vertices[vertexIndex].texCoord;
+	//	std::cout << std::endl;
+	//}
+	//std::cout << std::endl;
+
+	TexturePtr createCheckerboardTexture() {
+		const Size3f size = {64, 64.0f, 0.0f};
+		const Size2i gridSize = {32, 32};
+		const ColorFormat format = ColorFormat::getColorFormatR8G8B8A8();
+		TexturePtr texture = this->graphicsDriver->createTexture(TextureType::Tex2D, size, format);
+
+		typedef Vector<std::uint8_t, 4> Vector4ub;
+
+		Vector4ub *pixels = (Vector4ub *)texture->lock();
+
+		for (int row=0; row<size.height; row++) {
+			for (int col=0; col<size.width; col++) {
+				//Vector4f color;
+				//color.x = size.width / (row + 1.0f);
+				//color.y = size.height / (col + 1.0f);
+				//color.z = color.x * color.y;
+				//color.w = 1.0f;
+
+				//for (int i=0; i<4; i++) {
+				//	pixels->data[i] = static_cast<std::uint8_t>(color.data[i]*255.0f);
+				//}
+				bool rowBool = ((row&0x8) == 0);
+				bool colBool = ((col&0x8) == 0);
+
+				int c = ((int)(rowBool^colBool))*255;
+
+				// int c = (((((row&0x8)==0)^((col&0x8))==0)))*255;
+				pixels->x = (std::uint8_t) c;
+				pixels->y = (std::uint8_t) c;
+				pixels->z = (std::uint8_t) c;
+				pixels->w = (std::uint8_t) 255;
+
+				++pixels;
+			}
+		}
+
+		texture->unlock();
+
+		return texture;
+	}
 
 	MaterialLibrary* getMaterialLibrary() {
 		return this->materialLibrary.get();
@@ -804,6 +804,8 @@ private:
 	AssetLibraryPtr assetLibrary;
 	ScenePtr scene;
 	SceneRendererPtr sceneRenderer;
+
+	TexturePtr checkerTexture;
 
 	Camera *camera = nullptr;
 	ShaderProgram *program = nullptr;
