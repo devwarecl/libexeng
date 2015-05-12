@@ -50,6 +50,13 @@ namespace exeng { namespace graphics {
 		int getVertexCount() const {
 			return this->getSize() / this->getVertexFormat().getSize();
 		}
+
+		int getIndexCount() const {
+			const int indexSize = IndexFormat::getSize(this->getIndexFormat());
+			const int indexCount = this->getIndexBuffer()->getSize() / indexSize;
+
+			return indexCount;
+		}
     };
     
 	typedef std::unique_ptr<MeshSubset> MeshSubsetPtr;

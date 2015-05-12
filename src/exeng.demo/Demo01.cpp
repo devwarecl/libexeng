@@ -693,15 +693,59 @@ public:
     }
     
     virtual void update(float seconds) override {
-
+		this->angle += (60.0f * seconds);
     }
     
     virtual void render() override {
+		// Camera Data
+		Vector3f position = camera->getPosition();
+		Vector3f lookAt = camera->getLookAt();
+		Vector3f up = camera->getUp();
+
+		Matrix4f cameraTransform = identity<float, 4>();
+		cameraTransform *= rotatex<float>(rad(this->angle));
+		cameraTransform *= rotatey<float>(rad(this->angle));
+		cameraTransform *= rotatez<float>(rad(this->angle));
+
+		// Matrix4f cameraTransform = lookat<float>(position, lookAt, up);
+		// Matrix4f cameraTransform = identity<float, 4>();
+
 		this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
 
-		this->sceneRenderer->render(this->camera);
+		DisplayMode mode = this->graphicsDriver->getDisplayMode();
+
+		Rectf viewport({0.0f, 0.0f}, Vector2f{(float)mode.size.width, (float)mode.size.height});
+		
+		this->graphicsDriver->setViewport(viewport);
+
+		// Mesh Data
+		Mesh *mesh = static_cast<Mesh*>(this->geometryLibrary->getGeometry("box"));
+
+		for (int i=0; i<mesh->getSubsetCount(); i++) {
+			MeshSubset *subset = mesh->getSubset(i);
+
+			//const Vertex *vertices = (const Vertex*)subset->getBuffer(0)->getPointer();
+			//for (int vertexIndex=0; vertexIndex<subset->getVertexCount(); ++vertexIndex) {
+			//	std::cout << vertices[vertexIndex].coord << "; ";
+			//	std::cout << vertices[vertexIndex].normal << "; ";
+			//	std::cout << vertices[vertexIndex].texCoord;
+			//	std::cout << std::endl;
+			//}
+			//std::cout << std::endl;
+
+			this->graphicsDriver->setMaterial(subset->getMaterial());
+			this->graphicsDriver->getModernModule()->setProgramGlobal("WorldTransform", cameraTransform);
+			this->graphicsDriver->setMeshSubset(subset);
+			this->graphicsDriver->render(subset->getPrimitive(), subset->getVertexCount());
+		}
 
 		this->graphicsDriver->endFrame();
+
+		/*
+		this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
+		this->sceneRenderer->render(this->camera);
+		this->graphicsDriver->endFrame();
+		*/
     }
     
     virtual void handleEvent(const EventData &data) override {
@@ -750,6 +794,8 @@ private:
 	ShaderProgram *program = nullptr;
 	Material *material = nullptr;
     ApplicationStatus::Enum status = ApplicationStatus::Running;
+
+	float angle = 0.0f;
 };
 
 int main(int argc, char **argv) {

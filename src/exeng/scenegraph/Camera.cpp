@@ -108,7 +108,7 @@ namespace exeng { namespace scenegraph {
     void Camera::setViewport(const Rectf &viewport) {
         assert(this->impl != nullptr);
 #if defined(EXENG_DEBUG)
-        if (viewport.geSize() == Size2f(0.0, 0.0)) {   
+        if (viewport.getSize() == Size2f(0.0, 0.0)) {   
             throw std::invalid_argument("Camera::setViewport: Invalid Viewport size.");
         }
 #endif

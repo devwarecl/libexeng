@@ -11,6 +11,7 @@
 namespace exeng { namespace graphics {
     struct IndexFormat : public Enum {
         enum Enum {
+			Unknown=0,
             Index16=16,
             Index32=32
         };

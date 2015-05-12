@@ -57,7 +57,13 @@ namespace exeng { namespace scenegraph {
 		}
 
 		virtual void render(const Camera *camera) override {
-			this->transformStack.init(identity<float, 4>());
+			Vector3f position = camera->getPosition();
+			Vector3f lookAt = camera->getLookAt();
+			Vector3f up = camera->getUp();
+
+			Matrix4f cameraTransform = lookat<float>(position, lookAt, up);
+
+			this->transformStack.init(cameraTransform);
 			this->renderNode(this->getScene()->getRootNode());
 		}
 
@@ -71,7 +77,7 @@ namespace exeng { namespace scenegraph {
 				EXENG_THROW_EXCEPTION("The node object can't be a null pointer.");
 			}
 #endif
-			this->transformStack.push(node->getTransform());
+			this->transformStack.push(node->getTransform() * this->transformStack.top());
 
 			NodeRenderer::setTransform(this->transformStack.top());
 			if (node->getData()) {

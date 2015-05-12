@@ -43,13 +43,13 @@ struct HyperBoxFixture {
 BOOST_FIXTURE_TEST_CASE(HyperBoxTest, HyperBoxFixture)
 {
     BOOST_CHECK_EQUAL(box1.getCenter(), Vector3f(2.0f));
-    BOOST_CHECK_EQUAL(box1.geSize(), Size3f(size) );
+    BOOST_CHECK_EQUAL(box1.getSize(), Size3f(size) );
     BOOST_CHECK_EQUAL(box2.getCenter(), center2);
-    BOOST_CHECK_EQUAL(box2.geSize(), Size3f(size) );
+    BOOST_CHECK_EQUAL(box2.getSize(), Size3f(size) );
     BOOST_CHECK_EQUAL(box3.getCenter(), Vector3f(0.5f, 1.0f, 1.5f));
-    BOOST_CHECK_EQUAL(box3.geSize(), vsize);
+    BOOST_CHECK_EQUAL(box3.getSize(), vsize);
     BOOST_CHECK_EQUAL(box4.getCenter(), center4);
-    BOOST_CHECK_EQUAL(box4.geSize(), vsize );
+    BOOST_CHECK_EQUAL(box4.getSize(), vsize );
         
     BOOST_CHECK_EQUAL(box1.intersect(box2), box2.intersect(box1) );
     

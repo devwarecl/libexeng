@@ -9,8 +9,7 @@
 namespace exeng { namespace graphics {
     class MeshSubsetBase : public MeshSubset {
     public:
-        MeshSubsetBase(std::vector<std::unique_ptr<Buffer>> vertexBuffers, const VertexFormat &vertexFormat);
-
+		MeshSubsetBase() {}
         virtual VertexFormat getVertexFormat() const override;
         virtual IndexFormat::Enum getIndexFormat() const override;
 
@@ -28,17 +27,13 @@ namespace exeng { namespace graphics {
         virtual void setMaterial(const Material *material) override;
 
     protected:
-        std::vector<std::unique_ptr<Buffer>> buffers;
-        std::unique_ptr<Buffer> indexBuffer;
+        std::vector<BufferPtr> buffers;
+        BufferPtr indexBuffer;
         VertexFormat vertexFormat;
-        IndexFormat::Enum indexFormat = IndexFormat::Index32;
+        IndexFormat::Enum indexFormat = IndexFormat::Unknown;
         Primitive::Enum primitiveType = Primitive::TriangleList;
         const Material *material = nullptr;
     };
-
-    inline MeshSubsetBase::MeshSubsetBase(std::vector<std::unique_ptr<Buffer>> buffers_, const VertexFormat &vertexFormat_) : 
-        buffers(std::move(buffers_)), vertexFormat(vertexFormat_), indexFormat(IndexFormat::Index32)  {
-    }
 
     inline int MeshSubsetBase::getBufferCount() const {
         return this->buffers.size();

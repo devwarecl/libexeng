@@ -111,7 +111,7 @@ namespace exeng {
          * @brief Devuelve el tamanio de la frontera
          * @return El tamanio de la frontera, encapsulado como un Size.
          */
-        SizeType geSize() const;
+        SizeType getSize() const;
         
         /**
          * @brief Devuelve un punto que se encuentra en una de las esquinas de la frontera.
@@ -123,7 +123,7 @@ namespace exeng {
          * @brief Establece el tamanio de la frontera, sin cambiar su posicion espacial.
          * @param newSize El nuevo tamanio de la frontera.
          */
-        void seSize(const VectorType& newSize);
+        void setSize(const VectorType& newSize);
     
         /**
          * @brief Comprueba si la frontera se intersecta con otra.
@@ -240,21 +240,21 @@ namespace exeng {
 
     template<typename Type, int Dimension>
     Vector<Type, Dimension> Boundary<Type, Dimension>::getCenter() const {
-        return this->edges[Min] + Vector<Type, Dimension>(this->geSize()) / static_cast<Type>(2);
+        return this->edges[Min] + Vector<Type, Dimension>(this->getSize()) / static_cast<Type>(2);
     }
 
     template<typename Type, int Dimension>
     void Boundary<Type, Dimension>::setCenter(const Vector<Type, Dimension>& newCenter) {
         Vector<Type, Dimension> halfSize;
-    
-        halfSize = Vector<Type, Dimension>( this->geSize() ) / 2;
-    
+		
+        halfSize = Vector<Type, Dimension>( this->getSize() ) / 2;
+		
         this->set(-halfSize + newCenter, halfSize + newCenter);
     }
 
     //!Compute the hyper box size
     template<typename Type, int Dimension>
-    Size<Type, Dimension> Boundary<Type, Dimension>::geSize() const {
+    Size<Type, Dimension> Boundary<Type, Dimension>::getSize() const {
         auto vsize = this->edges[Max] - this->edges[Min];
 
         return Size<Type, Dimension>(vsize);
@@ -287,7 +287,7 @@ namespace exeng {
     }
 
     template<typename Type, int Dimension>
-    void Boundary<Type, Dimension>::seSize(const Vector<Type, Dimension>& newSize) {
+    void Boundary<Type, Dimension>::setSize(const Vector<Type, Dimension>& newSize) {
         this->set(newSize,  this->getCenter());
     }
 
@@ -339,8 +339,8 @@ namespace exeng {
 
     template<typename Type, int Dimension>
     void Boundary<Type, Dimension>::expand(const Vector<Type, Dimension>& point) {
-        this->edges[Min] = this->edges[Min].minimize(point);
-        this->edges[Max] = this->edges[Max].maximize(point);
+        this->edges[Min] = maximize(this->edges[Min], point);
+        this->edges[Max] = minimize(this->edges[Max], point);
     }
 
     template<typename Type, int Dimension>

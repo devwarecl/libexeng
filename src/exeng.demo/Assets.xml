@@ -66,7 +66,7 @@
             <node name="boxNode">
                 <transformation>
                     <identity />
-                    <translate>0.0 0.0 0.0</translate>
+                    <translate>0.0 -1.0 0.0</translate>
                     <rotate axis="0.0 1.0 0.0">0.0</rotate>
                     <scale>1.0 1.0 1.0</scale>
                 </transformation>
