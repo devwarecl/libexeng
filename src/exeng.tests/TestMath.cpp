@@ -289,7 +289,12 @@ BOOST_FIXTURE_TEST_CASE(TestMatrix, MatrixFixture)
     //Multiplicacion
     BOOST_CHECK_EQUAL(matMulResult, matA * matB);
     BOOST_CHECK_EQUAL(matMulResult, ((aux = this->matA) *= matB));
-        
+    
+	BOOST_CHECK_EQUAL(identity, identity * identity);
+
+	BOOST_CHECK_EQUAL(matA, matA * identity);
+	BOOST_CHECK_EQUAL(matA, identity * matA);
+
     //Matriz inversa
     aux = inverse(this->matA);
 

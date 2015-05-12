@@ -611,6 +611,10 @@ public:
 		this->transform = transform;
 	}
 
+	void prepareCamera(const Camera *camera) {
+		
+	}
+
 	void renderNodeData(const SceneNodeData *data) {
 		TypeInfo info = data->getTypeInfo();
 
@@ -696,7 +700,13 @@ public:
 		this->angle += (60.0f * seconds);
     }
     
-    virtual void render() override {
+	virtual void render() {
+		this->graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
+		this->sceneRenderer->render(this->camera);
+		this->graphicsDriver->endFrame();
+	}
+
+    virtual void render2() {
 		// Camera Data
 		Vector3f position = camera->getPosition();
 		Vector3f lookAt = camera->getLookAt();
