@@ -14,7 +14,6 @@
 #include <exeng/framework/GraphicsApplication.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
-#include <exeng/scenegraph/SceneManager.hpp>
 #include <exeng.raytracer/SceneLoader.hpp>
 #include <exeng.raytracer/samplers/Sampler.hpp>
 #include <exeng.raytracer/tracers/Tracer.hpp>

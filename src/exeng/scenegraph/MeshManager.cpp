@@ -25,7 +25,6 @@
 
 #include <exeng/Vector.hpp>
 #include <exeng/scenegraph/IMeshLoader.hpp>
-#include <exeng/scenegraph/MeshPart.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
 

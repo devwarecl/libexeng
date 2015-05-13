@@ -69,7 +69,9 @@ namespace exeng { namespace scenegraph {
         
         void setParent(SceneNode* parent);
 
-        SceneNode* findNode(const std::string &name) const;
+        const SceneNode* findNode(const std::string &name) const;
+
+		SceneNode* findNode(const std::string &name);
         
         SceneNode* addChild(SceneNode *childPtr);
         

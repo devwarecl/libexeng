@@ -688,6 +688,9 @@ public:
 		sceneRenderer->setScene(this->scene.get());
 		sceneRenderer->setGraphicsDriver(this->graphicsDriver.get());
 
+		// create node animator
+		this->animator.reset(new SpatialAnimator(this->scene->getRootNode()->findNode("boxNode")));
+
 		// set the subset texture
 		Material* material = this->materialLibrary->getMaterial(0);
 		material->getLayer(0)->setTexture(this->checkerTexture.get());
@@ -704,7 +707,7 @@ public:
     }
     
     virtual void update(float seconds) override {
-		this->angle += (60.0f * seconds);
+		this->animator->update((float)seconds);
     }
     
 	virtual void render() {
@@ -742,21 +745,11 @@ public:
 
 		for (int row=0; row<size.height; row++) {
 			for (int col=0; col<size.width; col++) {
-				//Vector4f color;
-				//color.x = size.width / (row + 1.0f);
-				//color.y = size.height / (col + 1.0f);
-				//color.z = color.x * color.y;
-				//color.w = 1.0f;
-
-				//for (int i=0; i<4; i++) {
-				//	pixels->data[i] = static_cast<std::uint8_t>(color.data[i]*255.0f);
-				//}
-				bool rowBool = ((row&0x8) == 0);
-				bool colBool = ((col&0x8) == 0);
+				bool rowBool = ((row&0x4) == 0);
+				bool colBool = ((col&0x4) == 0);
 
 				int c = ((int)(rowBool^colBool))*255;
 
-				// int c = (((((row&0x8)==0)^((col&0x8))==0)))*255;
 				pixels->x = (std::uint8_t) c;
 				pixels->y = (std::uint8_t) c;
 				pixels->z = (std::uint8_t) c;

@@ -158,10 +158,8 @@ set (ScenegraphFiles_cpp
     scenegraph/SceneNodeData.cpp 
     scenegraph/Geometry.cpp
     scenegraph/Mesh.cpp
-    scenegraph/MeshPart.cpp
     scenegraph/MeshManager.cpp
     scenegraph/IMeshLoader.cpp
-    scenegraph/SceneManager.cpp
     scenegraph/SceneRenderer.cpp
     scenegraph/GenericSceneRenderer.cpp
 	scenegraph/SceneNodeAnimator.cpp
@@ -183,10 +181,8 @@ set (ScenegraphFiles_hpp
     scenegraph/IntersectInfo.hpp  
     scenegraph/Sphere.hpp         
     scenegraph/Mesh.hpp           
-    scenegraph/MeshPart.hpp       
     scenegraph/MeshManager.hpp    
     scenegraph/IMeshLoader.hpp    
-    scenegraph/SceneManager.hpp   
     scenegraph/SceneRenderer.hpp
     scenegraph/Triangle.hpp
     scenegraph/GenericSceneRenderer.hpp

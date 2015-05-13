@@ -55,14 +55,12 @@
 #include <exeng/scenegraph/IMeshLoader.hpp>
 #include <exeng/scenegraph/MeshManager.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
-#include <exeng/scenegraph/MeshPart.hpp>
 #include <exeng/scenegraph/IntersectInfo.hpp>
 #include <exeng/scenegraph/Light.hpp>
 #include <exeng/scenegraph/Ray.hpp>
 #include <exeng/scenegraph/Sphere.hpp>
 #include <exeng/scenegraph/Plane.hpp>
 #include <exeng/scenegraph/Scene.hpp>
-#include <exeng/scenegraph/SceneManager.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/SceneNodeData.hpp>
 #include <exeng/scenegraph/SceneNodeAnimator.hpp>

@@ -20,7 +20,6 @@
 #include <exeng/graphics/GraphicsManager.hpp>
 #include <exeng/graphics/TextureManager.hpp>
 #include <exeng/scenegraph/MeshManager.hpp>
-#include <exeng/scenegraph/SceneManager.hpp>
 
 namespace exeng {
 	using namespace exeng::system;

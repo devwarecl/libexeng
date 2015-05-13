@@ -56,22 +56,17 @@ namespace exeng { namespace scenegraph {
         this->impl = new SceneNode::Private();
     }
 
-
     SceneNode::SceneNode(const std::string &name) {
         this->impl = new SceneNode::Private();
 
-        // Pueden existir nodos hermanos que tengan, potencialmente, 
-        // el mismo nombre, asi que es preferible llamar al metodo.
         this->setName(name);
     }
-    
     
     SceneNode::SceneNode(const std::string &name, SceneNode *parent) {
         this->impl = new SceneNode::Private();
         this->setName(name);
         this->setParent(parent);
     }
-    
     
     SceneNode::~SceneNode() {
         if (this->impl == nullptr) {
@@ -90,7 +85,6 @@ namespace exeng { namespace scenegraph {
         boost::checked_delete(this->impl);
     }
     
-    
     std::string SceneNode::toString() const {
         assert(this->impl != nullptr);
 
@@ -101,18 +95,15 @@ namespace exeng { namespace scenegraph {
         }
     }
 
-
     Matrix4f SceneNode::getTransform() const {
         assert(this->impl != nullptr);
         return this->impl->transform;
     }
 
-
     void SceneNode::setTransform(const Matrix4f& transform) {
         assert(this->impl != nullptr);
         this->impl->transform = transform;
     }
-
 
     std::string SceneNode::getName() const {
         assert(this->impl != nullptr);
@@ -120,7 +111,6 @@ namespace exeng { namespace scenegraph {
         // Devuelve el nombre por valor 
         return this->impl->name;
     }
-
 
     void SceneNode::setName(const std::string &name) {
         assert(this->impl != nullptr);
@@ -134,18 +124,15 @@ namespace exeng { namespace scenegraph {
         this->impl->name = name;
     }
 
-
     int SceneNode::getChildCount() const {
         assert(this->impl != nullptr);
         return static_cast<int>(this->impl->childs.size());
     }
 
-
     SceneNode* SceneNode::getChild(int index) const {
         assert(this->impl != nullptr);
         return this->impl->childs[index];
     }
-
 
     SceneNode* SceneNode::getChild(const std::string& name) {
         assert(this->impl != nullptr);
@@ -161,7 +148,6 @@ namespace exeng { namespace scenegraph {
 
         return childPtr;
     }
-
 
     SceneNode* SceneNode::getChild(const std::string& name) const {
         assert(this->impl != nullptr);
@@ -185,7 +171,6 @@ namespace exeng { namespace scenegraph {
         return childPtr;
     }
 
-
     SceneNode* SceneNode::getParent() const {
         assert(this->impl != nullptr);
 
@@ -201,7 +186,6 @@ namespace exeng { namespace scenegraph {
         return this->impl->parentPtr;
     }
 
-
     void SceneNode::setParent(SceneNode* parent) {
         assert(this->impl != nullptr);
 
@@ -215,12 +199,34 @@ namespace exeng { namespace scenegraph {
         parent->addChild(this);
     }
 
-
     bool SceneNode::hasParent() const {
         assert(this->impl != nullptr);
         return this->impl->parentPtr != nullptr;
     }
 
+	const SceneNode* SceneNode::findNode(const std::string &name) const {
+		if (this->getName() == name) {
+			return this;
+		}
+
+		for (const SceneNode *child : this->impl->childs) {
+			const SceneNode *node = child->findNode(name);
+
+			if (node) {
+				return node;
+			}
+		}
+
+		return nullptr;
+	}
+
+	SceneNode* SceneNode::findNode(const std::string &name) {
+		const SceneNode *node = const_cast<const SceneNode*>(this);
+
+		node = node->findNode(name);
+
+		return const_cast<SceneNode*>(node);
+	}
 
     bool SceneNode::existChild(const std::string &name) const {
         assert(this->impl != nullptr);
@@ -228,7 +234,6 @@ namespace exeng { namespace scenegraph {
         // Si el nodo hijo con el nombre indicado existe, entonces devolvemos true
         return *this->impl->getChild(name) != nullptr;
     }
-
 
     SceneNode* SceneNode::addChild(SceneNode *childPtr) {
         assert(this->impl != nullptr);
@@ -247,7 +252,6 @@ namespace exeng { namespace scenegraph {
         return childPtr;
     }
 
-
     SceneNode* SceneNode::removeChild(const std::string& name) {
         assert(this->impl != nullptr);
 
@@ -257,7 +261,6 @@ namespace exeng { namespace scenegraph {
 
         return this->removeChild(child);
     }
-
 
     SceneNode* SceneNode::removeChild(SceneNode* childPtr) {
         assert(this->impl != nullptr);
@@ -294,14 +297,12 @@ namespace exeng { namespace scenegraph {
         }	
     }
 
-
     SceneNode* SceneNode::addChild(const std::string& name) {
         assert(this->impl != nullptr);
 
         SceneNode* childPtr = new SceneNode(name);
         return this->addChild(childPtr);
     }
-
 
     void SceneNode::orphan() {
         assert(this->impl != nullptr);
@@ -311,20 +312,17 @@ namespace exeng { namespace scenegraph {
         }
     }
 
-            
     void SceneNode::setData(SceneNodeData* data) {
         assert(this->impl != nullptr);
         
         this->impl->data = data;
     }
 
-
     SceneNodeData* SceneNode::getData() const {
         assert(this->impl != nullptr);
         
         return this->impl->data;
     }
-    
     
     const SceneNodes& SceneNode::getChilds() const {
         assert(this->impl != nullptr);
