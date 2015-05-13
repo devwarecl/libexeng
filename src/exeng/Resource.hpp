@@ -15,6 +15,7 @@
 #define __EXENG_RESOURCE_HPP__
 
 #include <cstdint>
+#include <memory>
 #include <exeng/Object.hpp>
 #include <exeng/Enum.hpp>
 #include <exeng/TFlags.hpp>
@@ -68,6 +69,8 @@ namespace exeng {
          */
         virtual ResourceStatus::Flags getResourceStatus() const;
     };
+
+	typedef std::unique_ptr<Resource> ResourcePtr;
 }
 
 #endif // __EXENG_RESOURCE_HPP__

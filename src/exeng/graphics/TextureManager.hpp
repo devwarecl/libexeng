@@ -2,6 +2,7 @@
 #ifndef __EXENG_GRAPHICS_TEXTUREMANAGER_HPP__
 #define __EXENG_GRAPHICS_TEXTUREMANAGER_HPP__
 
+#include <exeng/Vector.hpp>
 #include <exeng/ResourceManager.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/graphics/TextureLoader.hpp>
@@ -21,6 +22,8 @@ namespace exeng { namespace graphics {
 
 		virtual void addLoader(TextureLoader *loader);
 		virtual void removeLoader(TextureLoader *loader);
+
+		Texture* generateCheckerboard(const std::string uri, const Vector2i &size, const Vector2i &tileSize);
 
 	private:
 		GraphicsDriver* graphicsDriver = nullptr;

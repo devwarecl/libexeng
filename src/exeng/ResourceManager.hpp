@@ -38,6 +38,8 @@ namespace exeng {
 
 		std::list<ResourceLoader*>& getLoaders();
 
+		void put(const std::string &uri, ResourcePtr resource);
+
 	protected:
 		struct Impl;
 		Impl *impl = nullptr;

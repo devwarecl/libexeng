@@ -163,6 +163,8 @@ set (ScenegraphFiles_cpp
     scenegraph/SceneRenderer.cpp
     scenegraph/GenericSceneRenderer.cpp
 	scenegraph/SceneNodeAnimator.cpp
+	scenegraph/AssetsLibrary.cpp
+	scenegraph/GeometryLibrary.cpp
 )
 
 set (ScenegraphFiles_hpp
@@ -187,9 +189,10 @@ set (ScenegraphFiles_hpp
     scenegraph/Triangle.hpp
     scenegraph/GenericSceneRenderer.hpp
 	scenegraph/SceneNodeAnimator.hpp
+	scenegraph/AssetsLibrary.hpp
+	scenegraph/GeometryLibrary.hpp
 )
 set (ScenegraphFiles ${ScenegraphFiles_hpp} ${ScenegraphFiles_cpp})
-
 
 set (SystemFiles_cpp
     system/Library.cpp 

@@ -11,6 +11,8 @@
 #include <exeng/graphics/ShaderLibrary.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/scenegraph/AssetsLibrary.hpp>
+#include <exeng/scenegraph/GeometryLibrary.hpp>
 #include <exeng/framework/GraphicsApplication.hpp>
 #include <exeng/graphics/TextureManager.hpp>
 
@@ -43,61 +45,6 @@ public:
 private:
 	float angle = 0.0f;
 };
-
-class AssetLibrary {
-public:
-	void addAsset(const std::string &fileId, void* data, const int dataSize) {
-#if defined(EXENG_DEBUG)
-		if (!data) {
-			EXENG_THROW_EXCEPTION("Asset data must be a null pointer.");
-		}
-
-		if (dataSize <= 0) {
-			EXENG_THROW_EXCEPTION("Invalid buffer size");
-		}
-#endif
-		StaticBufferPtr assetData = std::make_unique<StaticBuffer>(data, dataSize);
-
-		this->assets[fileId] = std::move(assetData);
-	}
-
-	void addAsset(const std::string &fileId, BufferPtr assetData) {
-		this->assets[fileId] = std::move(assetData);
-	}
-
-	Buffer* getAsset(const std::string &file) {
-		return this->assets[file].get();
-	}
-
-private:
-	std::map<std::string, BufferPtr> assets;
-};
-typedef std::unique_ptr<AssetLibrary> AssetLibraryPtr;
-
-class GeometryLibrary {
-public:
-	void initialize(const VertexFormat &format) {
-		this->geometries = std::map<std::string, GeometryPtr>();
-		this->format = format;
-	}
-
-	void addGeometry(const std::string &name, GeometryPtr geometry) {
-		this->geometries[name] = std::move(geometry);
-	}
-
-	Geometry* getGeometry(const std::string &name) {
-		return this->geometries[name].get();
-	}
-
-	VertexFormat getFormat() const {
-		return this->format;
-	}
-
-private:
-	std::map<std::string, GeometryPtr> geometries;
-	VertexFormat format;
-};
-typedef std::unique_ptr<GeometryLibrary> GeometryLibraryPtr;
 
 namespace xml {
 	class Node;
@@ -675,7 +622,8 @@ public:
 		this->geometryLibrary = std::make_unique<GeometryLibrary>();
 		this->shaderLibrary = std::make_unique<ShaderLibrary>(this->graphicsDriver.get());
 		
-		this->checkerTexture = this->createCheckerboardTexture();
+		this->getTextureManager()->setGraphicsDriver(this->graphicsDriver.get());
+		Texture *checkerTexture = this->getTextureManager()->generateCheckerboard("checkerTexture", {64, 64}, {8, 8});
 
 		// loads scene, objects and materials
 		AssetsLoader loader(this->assetLibrary.get(), this->graphicsDriver.get(), this->getMaterialLibrary(), this->getGeometryLibrary(), this->getShaderLibrary(), this->scene.get());
@@ -693,7 +641,7 @@ public:
 
 		// set the subset texture
 		Material* material = this->materialLibrary->getMaterial(0);
-		material->getLayer(0)->setTexture(this->checkerTexture.get());
+		material->getLayer(0)->setTexture(checkerTexture);
 
 		this->sceneRenderer.reset(sceneRenderer);
     }
@@ -733,37 +681,6 @@ public:
 	//}
 	//std::cout << std::endl;
 
-	TexturePtr createCheckerboardTexture() {
-		const Size3f size = {64, 64.0f, 0.0f};
-		const Size2i gridSize = {32, 32};
-		const ColorFormat format = ColorFormat::getColorFormatR8G8B8A8();
-		TexturePtr texture = this->graphicsDriver->createTexture(TextureType::Tex2D, size, format);
-
-		typedef Vector<std::uint8_t, 4> Vector4ub;
-
-		Vector4ub *pixels = (Vector4ub *)texture->lock();
-
-		for (int row=0; row<size.height; row++) {
-			for (int col=0; col<size.width; col++) {
-				bool rowBool = ((row&0x4) == 0);
-				bool colBool = ((col&0x4) == 0);
-
-				int c = ((int)(rowBool^colBool))*255;
-
-				pixels->x = (std::uint8_t) c;
-				pixels->y = (std::uint8_t) c;
-				pixels->z = (std::uint8_t) c;
-				pixels->w = (std::uint8_t) 255;
-
-				++pixels;
-			}
-		}
-
-		texture->unlock();
-
-		return texture;
-	}
-
 	MaterialLibrary* getMaterialLibrary() {
 		return this->materialLibrary.get();
 	}
@@ -798,7 +715,7 @@ private:
 	ScenePtr scene;
 	SceneRendererPtr sceneRenderer;
 
-	TexturePtr checkerTexture;
+	Texture *checkerTexture;
 
 	Camera *camera = nullptr;
 	ShaderProgram *program = nullptr;

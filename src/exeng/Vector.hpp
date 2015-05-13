@@ -498,6 +498,10 @@ namespace exeng {
     typedef Vector<int, 2> Vector2i;
     typedef Vector<int, 3> Vector3i;
     typedef Vector<int, 4> Vector4i;
+
+	typedef Vector<unsigned char, 2> Vector2ub;
+    typedef Vector<unsigned char, 3> Vector3ub;
+    typedef Vector<unsigned char, 4> Vector4ub;
 }
 
 #endif	//__EXENG_VECTOR_HPP__

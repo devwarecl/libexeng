@@ -1,20 +1,20 @@
 
 #include "TextureManager.hpp"
 
+#include <exeng/Size.hpp>
+#include <exeng/graphics/GraphicsDriver.hpp>
+
 namespace exeng { namespace graphics {
 
-	GraphicsDriver* TextureManager::getGraphicsDriver()
-	{
+	GraphicsDriver* TextureManager::getGraphicsDriver() {
 		return this->graphicsDriver;
 	}
 
-	const GraphicsDriver* TextureManager::getGraphicsDriver() const
-	{
+	const GraphicsDriver* TextureManager::getGraphicsDriver() const {
 		return this->graphicsDriver;
 	}
 
-	void TextureManager::setGraphicsDriver(GraphicsDriver *graphicsDriver)
-	{
+	void TextureManager::setGraphicsDriver(GraphicsDriver *graphicsDriver) {
 		for (ResourceLoader* resourceLoader : this->getLoaders()) {
 			TextureLoader* textureLoader = static_cast<TextureLoader*>(resourceLoader);
 			textureLoader->setGraphicsDriver(graphicsDriver);
@@ -23,24 +23,53 @@ namespace exeng { namespace graphics {
 		this->graphicsDriver = graphicsDriver;
 	}
 
-	Texture* TextureManager::get(const std::string &uri)
-	{
+	Texture* TextureManager::get(const std::string &uri) {
 		return static_cast<Texture*>(ResourceManager::get(uri));
 	}
 
-	const Texture* TextureManager::get(const std::string &uri) const
-	{
+	const Texture* TextureManager::get(const std::string &uri) const {
 		return static_cast<const Texture*>(ResourceManager::get(uri));
 	}
 
-	void TextureManager::addLoader(TextureLoader *loader)
-	{
+	void TextureManager::addLoader(TextureLoader *loader) {
 		ResourceManager::addLoader(loader);
 		loader->setGraphicsDriver(this->graphicsDriver);
 	}
 
-	void TextureManager::removeLoader(TextureLoader *loader)
-	{
+	void TextureManager::removeLoader(TextureLoader *loader) {
 		ResourceManager::removeLoader(loader);
+	}
+
+	Texture* TextureManager::generateCheckerboard(const std::string uri, const Vector2i &size_, const Vector2i &tileSize) {
+		const Size3f size = {static_cast<float>(size_.x), static_cast<float>(size_.y), 0.0f};
+		const ColorFormat format = ColorFormat::getColorFormatR8G8B8A8();
+
+		TexturePtr texture = this->getGraphicsDriver()->createTexture(TextureType::Tex2D, size, format);
+
+		Vector4ub *pixels = (Vector4ub *)texture->lock();
+
+		for (int row=0; row<size.height; row++) {
+			for (int col=0; col<size.width; col++) {
+				bool rowBool = ((row&tileSize.y) == 0);
+				bool colBool = ((col&tileSize.x) == 0);
+
+				int c = ((int)(rowBool^colBool))*255;
+
+				pixels->x = (std::uint8_t) c;
+				pixels->y = (std::uint8_t) c;
+				pixels->z = (std::uint8_t) c;
+				pixels->w = (std::uint8_t) 255;
+
+				++pixels;
+			}
+		}
+
+		texture->unlock();
+
+		Texture *result = texture.get();
+
+		this->put(uri, std::move(texture));
+
+		return result;
 	}
 }}
