@@ -8,9 +8,11 @@ set (Boost_USE_STATIC_LIBS OFF)
 set (Boost_USE_MULTITHREADED ON)
 set (Boost_USE_STATIC_RUNTIME OFF)
 
+FIND_PACKAGE(libxml2 REQUIRED)
 find_package(Boost COMPONENTS filesystem system  REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
 
 set (BaseFiles_hpp 
     Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
@@ -249,7 +251,7 @@ if(UNIX AND NOT APPLE)
 	SET (UNIX_libs dl rt)
 endif()
 
-target_link_libraries(exeng ${UNIX_libs} lwobject ${Boost_LIBRARIES})
+target_link_libraries(exeng ${UNIX_libs} lwobject ${Boost_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 # install (TARGET exeng DESTINATION lib)
 # install (FILES ${} DESTINATION include)

@@ -7,8 +7,10 @@
 #include <exeng/Exception.hpp>
 #include <exeng/Matrix.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
+#include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/scenegraph/SceneRenderer.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
+#include <exeng/scenegraph/Mesh.hpp>
 
 namespace exeng { namespace scenegraph {
 
@@ -46,9 +48,67 @@ namespace exeng { namespace scenegraph {
 	};
 	*/
 
+	class GraphicsNodeRenderer {
+	public:
+		GraphicsNodeRenderer() {}
+		~GraphicsNodeRenderer() {}
+
+		void setTransformName(const std::string &transformName) {
+			this->transformName = transformName;
+		}
+
+		void setGraphicsDriver(exeng::graphics::GraphicsDriver *driver) {
+			this->driver = driver;
+		}
+
+		exeng::graphics::GraphicsDriver* getGraphicsDriver() {
+			return this->driver;
+		}
+
+		const exeng::graphics::GraphicsDriver* getGraphicsDriver() const {
+			return this->driver;
+		}
+
+		void setTransform(const Matrix4f &transform) {
+			this->transform = transform;
+		}
+
+		void prepareCamera(const exeng::scenegraph::Camera *camera) {
+		
+		}
+
+		void renderNodeData(const exeng::scenegraph::SceneNodeData *data) {
+			TypeInfo info = data->getTypeInfo();
+
+			if (info == TypeId<Mesh>()) {
+				const exeng::scenegraph::Mesh *mesh = static_cast<const exeng::scenegraph::Mesh*>(data);
+
+				for (int i=0; i<mesh->getSubsetCount(); ++i) {
+					const exeng::graphics::MeshSubset *subset = mesh->getSubset(i);
+
+					this->driver->setMaterial(subset->getMaterial());
+					this->driver->setMeshSubset(subset);
+					this->driver->getModernModule()->setProgramGlobal(this->transformName, this->transform);
+					this->driver->render(subset->getPrimitive(), subset->getVertexCount());
+				}
+			} else {
+				EXENG_THROW_EXCEPTION("Unsupported Geometry type.");
+			}
+		}
+
+	private:
+		std::string transformName;
+		exeng::graphics::GraphicsDriver* driver = nullptr;
+		Matrix4f transform;
+	};
+
 	template <typename NodeRenderer>
 	class GenericSceneRenderer : public SceneRenderer, public NodeRenderer {
 	public:
+
+		GenericSceneRenderer() {
+		}
+
 		virtual void setScene(const Scene *scene) {
 			this->scene = scene;
 		}

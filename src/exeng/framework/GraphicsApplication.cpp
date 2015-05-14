@@ -1,26 +1,594 @@
 
 #include "GraphicsApplication.hpp"
 
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+#include <exeng/Exception.hpp>
+#include <exeng/HeapBuffer.hpp>
+#include <exeng/graphics/TextureManager.hpp>
+#include <exeng/graphics/VertexWrapper.hpp>
+#include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/scenegraph/MeshManager.hpp>
+#include <exeng/scenegraph/GenericSceneRenderer.hpp>
+
 namespace exeng { namespace framework {
 
-	struct ApplicationGuard {
-		ApplicationGuard (GraphicsApplication* app_, int argc, char **argv) {
-			this->app = app_;
-			this->app->initialize(argc, argv);
+	using namespace exeng::graphics;
+	using namespace exeng::scenegraph;
+
+	namespace xml {
+		class Node;
+		typedef std::list<Node> NodeList;
+
+		class Node {
+		public:
+			Node(::xmlNode *node) {
+				this->node = node;
+			}
+
+			std::string getName() const {
+				return (const char*)(this->node->name);
+			}
+
+			std::string getAttribute(const std::string &attrName) const {
+				return (const char*)(::xmlGetProp(this->node, (const xmlChar*) attrName.c_str()));
+			}
+
+			bool hasAttribute(const std::string &attrName) const {
+				const void* raw = (::xmlGetProp(this->node, (const xmlChar*) attrName.c_str()));
+				return raw != nullptr;
+			}
+
+			std::string getContent() const {
+				return (const char*)::xmlNodeGetContent(this->node);
+			}
+
+			NodeList getChilds() const {
+				NodeList childs;
+
+				for (::xmlNode *child=this->node->children; child; child=child->next) {
+					if (child->type != XML_ELEMENT_NODE) {
+						continue;
+					}
+
+					childs.push_back(child);
+				}
+
+				return childs;
+			}
+
+			NodeList getChilds(const std::string &name) const {
+				NodeList childs;
+
+				for (::xmlNode *child=this->node->children; child; child=child->next) {
+					if (child->type != XML_ELEMENT_NODE) {
+						continue;
+					}
+
+					if ( ::xmlStrcmp(child->name, (const xmlChar*)name.c_str()) == 0) {
+						childs.push_back(child);
+					}
+				}
+
+				return childs;
+			}
+
+			Node getChild(const std::string &name) const {
+				auto &childs = this->getChilds(name);
+
+#if defined(EXENG_DEBUG)
+				if (childs.size() == 0) {
+					EXENG_THROW_EXCEPTION("No child with the name '" + name + "'");
+				}
+#endif
+				return *childs.begin();
+			}
+
+		private:
+			::xmlNode *node = nullptr;
+		};
+	}
+
+	class AssetsLoader {
+	public:
+		AssetsLoader(AssetLibrary *assetLibrary, GraphicsDriver *driver, MaterialLibrary *materialLibrary, GeometryLibrary *geometryLibrary, ShaderLibrary *shaderLibrary, Scene *scene) {
+			this->assetLibrary = assetLibrary;
+			this->driver = driver;
+			this->materialLibrary = materialLibrary;
+			this->geometryLibrary = geometryLibrary; 
+			this->shaderLibrary = shaderLibrary;
+			this->scene = scene;
 		}
-            
-		~ApplicationGuard () {
-			this->app->terminate(); 
+
+		void loadAssets(Buffer* assetsXmlBuffer) {
+			const char* assetsXmlData = (const char*)assetsXmlBuffer->getPointer();
+			const int assetsXmlSize = assetsXmlBuffer->getSize();
+
+			xmlDoc *document = ::xmlReadMemory(assetsXmlData, assetsXmlSize, "", nullptr, 0);
+			if (!document) {
+				EXENG_THROW_EXCEPTION("Can't read memory for XML parsing.");
+			}
+
+			xml::Node node = ::xmlDocGetRootElement(document);
+
+			if (node.getName() == "assets") {
+				this->parseAssets(node);
+			} else {
+				EXENG_THROW_EXCEPTION("'assets' root node doesn't exists.");
+			}
+
+			::xmlFreeDoc(document);
+			::xmlCleanupParser();
 		}
-            
-		GraphicsApplication *app = nullptr;
+
+	private:
+		void parseShaderLibrary(const xml::Node &node) {
+			for (xml::Node child : node.getChilds()) {
+				std::string name = child.getName();
+
+				if (name == "shader") {
+					std::string shaderName = child.getAttribute("name");
+					std::string shaderType = child.getAttribute("type");
+					std::string shaderFile = child.getAttribute("file");
+
+					Shader *shader = this->shaderLibrary->createShader(shaderName, getShaderType(shaderType));
+					std::string shaderSource = this->assetLibrary->getAsset(shaderFile)->toString();
+					shader->setSourceCode(shaderSource);
+					shader->compile();
+
+				} else if (name == "program") {
+					std::string programName = child.getAttribute("name");
+
+					ShaderProgram *program = this->shaderLibrary->createProgram(programName);
+
+					for (xml::Node moduleNode : child.getChilds("module")) {
+						std::string shaderName = moduleNode.getAttribute("ref-name");
+
+						Shader *shader = this->shaderLibrary->getShader(shaderName);
+						program->addShader(shader);
+					}
+					program->link();
+				} else {
+					EXENG_THROW_EXCEPTION("Tag '" + name + "' not known.");
+				}
+			}
+		}
+
+		MaterialFormat parseMaterialFormat(const xml::Node &node) {
+			std::vector<MaterialAttrib> attribs;
+
+			for (const xml::Node &child : node.getChilds("attribute")) {
+				MaterialAttrib attrib;
+				attrib.name = child.getAttribute("name");
+				attrib.dimension = getDimension(child.getAttribute("type"));
+				attrib.dataType = getDataType(child.getAttribute("type"));
+
+				attribs.push_back(attrib);
+			}
+
+			return MaterialFormat(attribs);
+		}
+
+		template<typename Type>
+		void fillMaterialAttribute(Material *material, const int attribIndex, const std::string &content) {
+			Vector4f values = parseVector<Type, 4>(content);
+			material->setAttribute(attribIndex, values.data, 4*sizeof(Type));
+		}
+
+		template<typename Type, int Size>
+		Vector<Type, Size> parseVector(const std::string &content) {
+			std::vector<std::string> splitted;
+			boost::split(splitted, content, boost::is_any_of(" "));
+
+			Vector<Type, Size> values(Type(0)) ;
+			for (int i=0; i<static_cast<int>(splitted.size()); ++i) {
+				values[i] = boost::lexical_cast<Type>(splitted[i]);
+			}
+
+			return values;
+		}
+
+		void parseMaterialAttribute(const xml::Node &node, Material *material) {
+			const std::string attribName = node.getAttribute("ref-name");
+			const std::string content = node.getContent();
+			const int attribIndex = material->getFormat()->getAttribIndex(attribName);
+
+			DataType::Enum dataType = material->getFormat()->getAttrib(attribIndex)->dataType;
+
+			if (dataType == DataType::Int32) {
+				fillMaterialAttribute<int>(material, attribIndex, content);
+			} else if (dataType == DataType::Float32) {
+				fillMaterialAttribute<float>(material, attribIndex, content);
+			} else {
+				EXENG_THROW_EXCEPTION("parseMaterialAttribute: Unsupported material datatype");
+			}
+		}
+
+		void parseMaterial(const xml::Node &node) {
+			std::string name = node.getAttribute("name");
+
+			Material *material = this->materialLibrary->createMaterial(name, nullptr);
+
+			for (const xml::Node &child : node.getChilds()) {
+				std::string attributeName = child.getName();
+
+				if (attributeName == "attribute") {
+					this->parseMaterialAttribute(child, material);
+				} else if (attributeName == "program") {
+					std::string programName = child.getAttribute("ref-name");
+					ShaderProgram *program = this->shaderLibrary->getProgram(programName);
+					material->setShaderProgram(program);
+				}
+			}
+		}
+
+		void parseMaterialLibrary(const xml::Node &node) {
+			for (const xml::Node &child : node.getChilds()) {
+				std::string name = child.getName();
+
+				if (name == "material-format") {
+					MaterialFormat materialFormat = this->parseMaterialFormat(child);
+					this->materialLibrary->initialize(materialFormat);
+				} else if (name == "material") {
+					this->parseMaterial(child);
+				}
+			}
+		}
+
+		MeshSubsetPtr parseGeometryMeshSubset(const xml::Node &node, const VertexFormat &format) {
+			MeshSubsetPtr meshSubset;
+
+			for (const xml::Node &child : node.getChilds()) {
+				std::string name = child.getName();
+
+				if (name == "mesh-subset-generator") {
+					std::string type = child.getAttribute("type");
+
+					GeometryGeneratorPtr generator;
+
+					if (type == "box") {
+						Vector3f center = parseVector<float, 3>(child.getAttribute("center"));
+						Vector3f size = parseVector<float, 3>(child.getAttribute("size"));
+
+						generator.reset( new BoxGeometryGenerator(center, size));
+					}
+
+					if (!generator) {
+						EXENG_THROW_EXCEPTION("Generator '" + type + "' not known.");
+					}
+
+					HeapBufferPtr vbuffer = generator->generateVertexBuffer(format);
+					HeapBufferPtr ibuffer = generator->generateIndexBuffer();
+
+					BufferPtr vertexBuffer  = this->driver->createVertexBuffer(vbuffer.get());
+					BufferPtr indexBuffer  = this->driver->createIndexBuffer(ibuffer.get());
+					Primitive::Enum primitive = Primitive::TriangleList;
+
+					meshSubset = this->driver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), format);
+					meshSubset->setPrimitive(primitive);
+
+				} else if (name == "material") {
+					std::string materialName = child.getAttribute("ref-name");
+					Material *material = this->materialLibrary->getMaterial(materialName);
+
+					meshSubset->setMaterial(material);
+				}
+			}
+
+			return meshSubset;
+		}
+
+		MeshPtr parseGeometryMesh(const xml::Node &node, const VertexFormat &format) {
+			std::string source = node.getAttribute("source");
+			MeshPtr mesh;
+
+			if (source == "generator") {
+				std::vector<MeshSubsetPtr> subsets;
+
+				for (xml::Node child : node.getChilds("mesh-subset")) {
+					MeshSubsetPtr meshSubset = this->parseGeometryMeshSubset(child, format);
+					subsets.push_back(std::move(meshSubset));
+				}
+
+				mesh = std::make_unique<Mesh>(std::move(subsets));
+			} else {
+				EXENG_THROW_EXCEPTION("parseGeometryMesh: Not supported source '" +  source + "'.");
+			}
+		
+			return mesh;
+		}
+	
+		void parseGeometryLibrary(const xml::Node &node) {
+			VertexFormat format;
+
+			for (xml::Node child : node.getChilds()) {
+				if (child.getName() == "vertex-format") {
+					int fieldIndex = 0;
+
+					for (xml::Node attributeNode : child.getChilds("attribute")) {
+						std::string attributeType = attributeNode.getAttribute("type");
+						std::string use = attributeNode.getAttribute("use");
+						std::string name = attributeNode.getAttribute("name");
+
+						VertexField &field = format.fields[fieldIndex];
+						field.dataType = AssetsLoader::getDataType(attributeType);
+						field.count = AssetsLoader::getDimension(attributeType);
+						field.attribute = AssetsLoader::getVertexAttrib(use);
+
+						fieldIndex++;
+					}
+				} else if (child.getName() == "geometry") {
+
+					if (child.getAttribute("type") == "mesh") {
+						GeometryPtr geometry = this->parseGeometryMesh(child.getChild("mesh"), format);
+						this->geometryLibrary->addGeometry(child.getAttribute("name"), std::move(geometry));
+					}
+				}
+			}
+		}
+
+		void parseSceneNode(xml::Node &node, SceneNode *sceneNode) {
+			// parse scene node
+			Matrix4f transform = zero<float, 4, 4>();
+
+			// transformation
+			for (xml::Node transformNode : node.getChild("transformation").getChilds()) {
+				std::string name = transformNode.getName();
+
+				if (name == "identity") {
+					transform = identity<float, 4>();
+				} else if (name == "translate") {
+					Vector3f position = parseVector<float, 3>(transformNode.getContent());
+					transform *= translate<float>(position);
+				} else if (name == "rotate") {
+					Vector3f axis = parseVector<float, 3>(transformNode.getAttribute("axis"));
+					float angle = boost::lexical_cast<float>(transformNode.getContent());
+					transform *= rotate<float>(angle, axis);
+				} else if (name == "scale") {
+					Vector3f scaling = parseVector<float, 3>(transformNode.getContent());
+					transform *= scale<float, 4>(scaling);
+				}
+			}
+
+			sceneNode->setTransform(transform);
+
+			// geometries
+			for (xml::Node dataNode : node.getChilds("data")) {
+				if (dataNode.getAttribute("type") ==  "geometry") {
+					std::string geometryName = dataNode.getAttribute("ref-name");
+					Geometry *geometry = this->geometryLibrary->getGeometry(geometryName);
+
+					sceneNode->setData(geometry);
+				}
+			}
+
+			// parse scene node childs
+			for (xml::Node child : node.getChilds("node")) {
+				SceneNode *childNode = sceneNode->addChild(child.getAttribute("name"));
+				this->parseSceneNode(child, childNode);
+			}
+		}
+
+		void parseScene(xml::Node &node) {
+			for (xml::Node child : node.getChilds()) {
+				std::string name = child.getName();
+
+				if (name == "background") {
+					Vector4f color = parseVector<float, 4>(child.getChild("color").getContent());
+					this->scene->setBackColor(color);
+				} else if (name == "camera-collection") {
+
+					for (xml::Node cameraNode : child.getChilds("camera")) {
+						// TODO: Use the camera name.
+						std::string cameraName = cameraNode.getAttribute("name");
+
+						// view
+						xml::Node viewNode = cameraNode.getChild("view").getChild("look-at");
+
+						Vector3f position = parseVector<float, 3>(viewNode.getAttribute("position"));
+						Vector3f lookAt = parseVector<float, 3>(viewNode.getAttribute("look-at"));
+						Vector3f up = parseVector<float, 3>(viewNode.getAttribute("up"));
+
+						Camera *camera = this->scene->createCamera();
+						camera->setPosition(position);
+						camera->setLookAt(lookAt);
+						camera->setUp(up);
+
+						// projection
+						// TODO: add projection to the camera node
+						xml::Node perspectiveNode = cameraNode.getChild("projection").getChild("perspective");
+
+						float fov = boost::lexical_cast<float>(perspectiveNode.getAttribute("fov"));
+						float aspect = boost::lexical_cast<float>(perspectiveNode.getAttribute("aspect"));
+						float zNear = boost::lexical_cast<float>(perspectiveNode.getAttribute("z-near"));
+						float zFar = boost::lexical_cast<float>(perspectiveNode.getAttribute("z-far"));
+
+						// viewport
+						xml::Node viewportNode = cameraNode.getChild("viewport");
+						Vector2f viewportPosition = parseVector<float, 2>(viewportNode.getAttribute("position"));
+						Vector2f viewportSize = parseVector<float, 2>(viewportNode.getAttribute("size"));
+						camera->setViewport(Rectf(viewportPosition, viewportPosition + viewportSize));
+					}
+				} else if (name == "node") {
+					SceneNode *sceneNode = this->scene->getRootNode();
+					this->parseSceneNode(child, sceneNode);
+				} else {
+					EXENG_THROW_EXCEPTION("Invalid '" + name + "' node");
+				}
+			}
+		}
+	
+		void parseAssets(const xml::Node &node) {
+			for (xml::Node child : node.getChilds()) {
+				if (child.getName() == "shader-library") {
+					this->parseShaderLibrary(child);
+				} else if (child.getName() == "material-library") {
+					this->parseMaterialLibrary(child);
+				} else if (child.getName() == "geometry-library") {
+					this->parseGeometryLibrary(child);
+				} else if (child.getName() == "scene") {
+					this->parseScene(child);
+				}
+			}
+		}
+
+	private:
+		static int getDimension(const std::string &type) {
+			if (type == "float") {
+				return 1;
+			} else if (type == "Vector2f") {
+				return 2;
+			} else if (type == "Vector3f") {
+				return 3;
+			} else if (type == "Vector4f") {
+				return 4;
+			} else if (type == "int") {
+				return 1;
+			} else if (type == "Vector2i") {
+				return 2;
+			} else if (type == "Vector3i") {
+				return 3;
+			} else if (type == "Vector4i") {
+				return 4;
+			} else {
+				EXENG_THROW_EXCEPTION("Unknown type: " + type);
+			}
+		}
+
+		static ShaderType::Enum getShaderType(const std::string &shaderType) {
+			if (shaderType == "vertex") {
+				return ShaderType::Vertex;
+			} else if (shaderType == "fragment") {
+				return ShaderType::Fragment;
+			} else {
+				EXENG_THROW_EXCEPTION("Unknown '" + shaderType + "' shader type.");
+			}
+		}
+
+		static DataType::Enum getDataType(const std::string &type) {
+			if (type == "float") {
+				return DataType::Float32;
+			} else if (type == "Vector2f") {
+				return DataType::Float32;
+			} else if (type == "Vector3f") {
+				return DataType::Float32;
+			} else if (type == "Vector4f") {
+				return DataType::Float32;
+			} else if (type == "int") {
+				return DataType::Int32;
+			} else if (type == "Vector2i") {
+				return DataType::Int32;
+			} else if (type == "Vector3i") {
+				return DataType::Int32;
+			} else if (type == "Vector4i") {
+				return DataType::Int32;
+			} else {
+				EXENG_THROW_EXCEPTION("Unknown '" + type + "' data type.");
+			}
+		}
+
+		static VertexAttrib::Enum getVertexAttrib(const std::string &attributeUse) {
+			if (attributeUse == "position") {
+				return VertexAttrib::Position;
+			} else if (attributeUse == "normal") {
+				return VertexAttrib::Normal;
+			} else if (attributeUse == "texture-coordinate") {
+				return VertexAttrib::TexCoord;
+			} else {
+				EXENG_THROW_EXCEPTION("Unknown '" + attributeUse + "' vertex attribute.");
+			}
+		}
+
+	private:
+		AssetLibrary *assetLibrary = nullptr;
+		GraphicsDriver *driver = nullptr;
+		MaterialLibrary *materialLibrary = nullptr;
+		GeometryLibrary *geometryLibrary = nullptr;
+		ShaderLibrary *shaderLibrary = nullptr;
+		Scene *scene = nullptr;
 	};
+
+
+
+	struct GraphicsApplication::Private {
+		int exitCode = 0;
+		ApplicationStatus::Enum applicationStatus = ApplicationStatus::Terminated;
+
+		GraphicsDriverPtr graphicsDriver;
+		ShaderLibraryPtr shaderLibrary;
+		GeometryLibraryPtr geometryLibrary;
+		MaterialLibraryPtr materialLibrary;
+		AssetLibraryPtr assetLibrary;
+		ScenePtr scene;
+		SceneRendererPtr sceneRenderer;
+	};
+	
+	GraphicsApplication::GraphicsApplication() {
+		this->impl = new GraphicsApplication::Private();
+	}
+
+	GraphicsApplication::~GraphicsApplication() {
+		this->terminate();
+	}
+
+	void GraphicsApplication::initialize(int argc, char **argv) {
+		// core classes initialization
+		GraphicsDriverPtr graphicsDriver = this->createGraphicsDriver();
+		AssetLibraryPtr assetLibrary = this->createAssetLibrary();
+		ShaderLibraryPtr shaderLibrary = std::make_unique<ShaderLibrary>(graphicsDriver.get());
+		MaterialLibraryPtr materialLibrary = std::make_unique<MaterialLibrary>();
+		GeometryLibraryPtr geometryLibrary = std::make_unique<GeometryLibrary>();
+		ScenePtr scene = std::make_unique<Scene>();
+
+		this->getMeshManager()->setGraphicsDriver(graphicsDriver.get());
+		this->getTextureManager()->setGraphicsDriver(graphicsDriver.get());
+
+		// loads scene, objects and materials
+		BufferPtr assetXmlData = this->getAssetsXmlData();
+		AssetsLoader loader(assetLibrary.get(), graphicsDriver.get(), materialLibrary.get(), geometryLibrary.get(), shaderLibrary.get(), scene.get());
+		loader.loadAssets(assetXmlData.get());
+
+		// create the scene renderer
+		SceneRendererPtr sceneRenderer = this->createSceneRenderer(graphicsDriver.get());
+		sceneRenderer->setScene(scene.get());
+
+		// save the core objects
+		this->impl->graphicsDriver = std::move(graphicsDriver);
+		this->impl->shaderLibrary = std::move(shaderLibrary);
+		this->impl->geometryLibrary = std::move(geometryLibrary);
+		this->impl->materialLibrary = std::move(materialLibrary);
+		this->impl->assetLibrary = std::move(assetLibrary);
+		this->impl->scene = std::move(scene);
+		this->impl->sceneRenderer = std::move(sceneRenderer);
+		
+		// let the application do after-initialization routines
+		this->onInitialize();
+	}
+
+	void GraphicsApplication::terminate() {
+
+	}
+	
+	void GraphicsApplication::pollEvents() {
+        this->getGraphicsDriver()->pollEvents();
+    }
+    
+    void GraphicsApplication::update(float seconds) {
+    }
+    
+	void GraphicsApplication::render() {
+		this->getGraphicsDriver()->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
+		this->getSceneRenderer()->render(this->getScene()->getCamera(0));
+		this->getGraphicsDriver()->endFrame();
+	}
 
     int GraphicsApplication::run(int argc, char **argv) {
         uint32_t lastTime = Timer::getTime();
         uint32_t frameTime = 0;
         
-        ApplicationGuard appGuard(this, argc, argv);
+        this->initialize(argc, argv);
         
         while (this->getApplicationStatus() == ApplicationStatus::Running) {
             frameTime = Timer::getTime() - lastTime;
@@ -33,4 +601,76 @@ namespace exeng { namespace framework {
         
         return this->getExitCode();
     }
+
+	void GraphicsApplication::setExitCode(int code) {
+		this->impl->exitCode = code;
+	}
+
+    int GraphicsApplication::getExitCode() const {
+		return this->impl->exitCode;
+	}
+
+	void GraphicsApplication::setApplicationStatus(ApplicationStatus::Enum status) {
+		this->impl->applicationStatus = status;
+	}
+
+	ApplicationStatus::Enum GraphicsApplication::getApplicationStatus() const {
+		return this->impl->applicationStatus;
+	}
+
+	GraphicsDriver* GraphicsApplication::getGraphicsDriver() {
+		return this->impl->graphicsDriver.get();
+	}
+
+	ShaderLibrary* GraphicsApplication::getShaderLibrary() {
+		return this->impl->shaderLibrary.get();
+	}
+
+	GeometryLibrary* GraphicsApplication::getGeometryLibrary() {
+		return this->impl->geometryLibrary.get();
+	}
+
+	MaterialLibrary* GraphicsApplication::getMaterialLibrary() {
+		return this->impl->materialLibrary.get();
+	}
+
+	AssetLibrary* GraphicsApplication::getAssetLibrary() {
+		return this->impl->assetLibrary.get();
+	}
+
+	Scene* GraphicsApplication::getScene() {
+		return this->impl->scene.get();
+	}
+	
+	SceneRenderer* GraphicsApplication::getSceneRenderer() {
+		return this->impl->sceneRenderer.get();
+	}
+
+	const GraphicsDriver* GraphicsApplication::getGraphicsDriver() const {
+		return this->impl->graphicsDriver.get();
+	}
+
+	const ShaderLibrary* GraphicsApplication::getShaderLibrary() const {
+		return this->impl->shaderLibrary.get();
+	}
+
+	const GeometryLibrary* GraphicsApplication::getGeometryLibrary() const {
+		return this->impl->geometryLibrary.get();
+	}
+
+	const MaterialLibrary* GraphicsApplication::getMaterialLibrary() const {
+		return this->impl->materialLibrary.get();
+	}
+
+	const AssetLibrary* GraphicsApplication::getAssetLibrary() const {
+		return this->impl->assetLibrary.get();
+	}
+
+	const Scene* GraphicsApplication::getScene() const {
+		return this->impl->scene.get();
+	}
+
+	const SceneRenderer* GraphicsApplication::getSceneRenderer() const {
+		return this->impl->sceneRenderer.get();
+	}
 }}
