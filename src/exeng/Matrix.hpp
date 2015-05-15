@@ -846,7 +846,8 @@ namespace exeng {
     Matrix<Type, 4, 4> perspective(Type fov, Type aspect, Type znear, Type zfar)
     {
         Type f = Type(1) / std::tan(fov / Type(2));
-        Type zdiff = zfar - znear;
+        // Type zdiff = zfar - znear;	// Reverse the projection (far objects appear in front of those near)
+		Type zdiff = znear - zfar;
         
         auto result = identity<Type, 4>();
         

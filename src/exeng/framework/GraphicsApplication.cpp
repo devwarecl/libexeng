@@ -93,13 +93,34 @@ namespace exeng { namespace framework {
 
 	class AssetsLoader {
 	public:
-		AssetsLoader(AssetLibrary *assetLibrary, GraphicsDriver *driver, MaterialLibrary *materialLibrary, GeometryLibrary *geometryLibrary, ShaderLibrary *shaderLibrary, Scene *scene) {
+		AssetsLoader() {}
+
+		void setAssetLibrary(AssetLibrary *assetLibrary) {
 			this->assetLibrary = assetLibrary;
+		}
+
+		void setGraphicsDriver(GraphicsDriver *driver) {
 			this->driver = driver;
+		}
+
+		void setMaterialLibrary(MaterialLibrary *materialLibrary) {
 			this->materialLibrary = materialLibrary;
+		}
+
+		void setGeometryLibrary(GeometryLibrary *geometryLibrary) {
 			this->geometryLibrary = geometryLibrary; 
+		}
+
+		void setShaderLibrary(ShaderLibrary *shaderLibrary) {
 			this->shaderLibrary = shaderLibrary;
+		}
+
+		void setScene(Scene *scene) {
 			this->scene = scene;
+		}
+
+		void setTextureManager(TextureManager *textureManager) {
+			this->textureManager = textureManager;
 		}
 
 		void loadAssets(Buffer* assetsXmlBuffer) {
@@ -190,6 +211,8 @@ namespace exeng { namespace framework {
 			return values;
 		}
 
+
+
 		void parseMaterialAttribute(const xml::Node &node, Material *material) {
 			const std::string attribName = node.getAttribute("ref-name");
 			const std::string content = node.getContent();
@@ -206,6 +229,57 @@ namespace exeng { namespace framework {
 			}
 		}
 
+		/*
+		<material>
+			<material-layers>
+                <material-layer>
+                    <texture source="generator">
+                        <texture-generator type="checkerboard" size="256 256" table-size="8 8"/>
+                    </texture>
+                </material-layer>
+            </material-layers>
+		</material>
+		*/
+
+		void parseMaterialLayers(const xml::Node &node, Material *material) {
+			int layerIndex = 0;
+
+			for (const xml::Node &child : node.getChilds("material-layer")) {
+				Texture *texture = nullptr;
+
+				std::string childName = child.getName();
+				xml::NodeList textureNodes = child.getChilds("texture");
+
+				if (textureNodes.size() > 1) {
+					EXENG_THROW_EXCEPTION("Only one 'texture' tag is supported per layer");
+				} else if (textureNodes.size() == 1) {
+					xml::Node textureNode = *textureNodes.begin();
+
+					std::string textureName = textureNode.getAttribute("name");
+					std::string textureSource = textureNode.getAttribute("source");
+					
+					if (textureSource == "generator") {
+						xml::Node generatorNode = textureNode.getChild("texture-generator");
+						std::string generatorType = generatorNode.getAttribute("type");
+						
+						if (generatorType == "checkerboard") {
+							Vector2i size = parseVector<int, 2>(generatorNode.getAttribute("size"));
+							Vector2i grid = parseVector<int, 2>(generatorNode.getAttribute("grid"));
+
+							texture = this->textureManager->generateCheckerboard(textureName, size, grid);
+						} else {
+							EXENG_THROW_EXCEPTION("Unknown texture generator '" + generatorType + "'.");
+						}
+					} else {
+						EXENG_THROW_EXCEPTION("Unknown texture source '" + textureSource + "'.");
+					}
+				}
+
+				material->getLayer(layerIndex)->setTexture(texture);
+				++layerIndex;
+			}
+		}
+
 		void parseMaterial(const xml::Node &node) {
 			std::string name = node.getAttribute("name");
 
@@ -216,10 +290,14 @@ namespace exeng { namespace framework {
 
 				if (attributeName == "attribute") {
 					this->parseMaterialAttribute(child, material);
+
 				} else if (attributeName == "program") {
 					std::string programName = child.getAttribute("ref-name");
 					ShaderProgram *program = this->shaderLibrary->getProgram(programName);
 					material->setShaderProgram(program);
+
+				} else if (attributeName == "material-layers") {
+					parseMaterialLayers(child, material);
 				}
 			}
 		}
@@ -508,9 +586,10 @@ namespace exeng { namespace framework {
 		GeometryLibrary *geometryLibrary = nullptr;
 		ShaderLibrary *shaderLibrary = nullptr;
 		Scene *scene = nullptr;
+		TextureManager *textureManager = nullptr;
 	};
 
-
+	typedef std::unique_ptr<AssetsLoader> AssetsLoaderPtr;
 
 	struct GraphicsApplication::Private {
 		int exitCode = 0;
@@ -547,8 +626,16 @@ namespace exeng { namespace framework {
 
 		// loads scene, objects and materials
 		BufferPtr assetXmlData = this->getAssetsXmlData();
-		AssetsLoader loader(assetLibrary.get(), graphicsDriver.get(), materialLibrary.get(), geometryLibrary.get(), shaderLibrary.get(), scene.get());
-		loader.loadAssets(assetXmlData.get());
+
+		AssetsLoaderPtr loader = std::make_unique<AssetsLoader>();
+		loader->setAssetLibrary(assetLibrary.get());
+		loader->setGraphicsDriver(graphicsDriver.get());
+		loader->setMaterialLibrary(materialLibrary.get());
+		loader->setGeometryLibrary(geometryLibrary.get());
+		loader->setShaderLibrary(shaderLibrary.get());
+		loader->setScene(scene.get());
+		loader->setTextureManager(this->getTextureManager());
+		loader->loadAssets(assetXmlData.get());
 
 		// create the scene renderer
 		SceneRendererPtr sceneRenderer = this->createSceneRenderer(graphicsDriver.get());

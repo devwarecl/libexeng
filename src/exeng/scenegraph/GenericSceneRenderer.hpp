@@ -127,7 +127,7 @@ namespace exeng { namespace scenegraph {
 			// TODO: Retrieve perspective information from camera
 			vpMatrix *= perspective<float>(rad(60.0f), 1.33333f, 0.1f, 1000.0f);
 			vpMatrix *= lookat<float>(position, lookAt, up);
-
+			
 			NodeRenderer::prepareCamera(camera);
 			this->transformStack.init(vpMatrix);
 			this->renderNode(this->getScene()->getRootNode());

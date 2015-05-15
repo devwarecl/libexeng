@@ -35,7 +35,7 @@ public:
 		auto transform = identity<float, 4>();
 		transform *= rotatex<float>(rad(angle));
 		transform *= rotatey<float>(rad(angle));
-		transform *= rotatez<float>(rad(angle));
+		// transform *= rotatez<float>(rad(angle));
 
 		this->getSceneNode()->setTransform(transform);
 	}
@@ -43,8 +43,6 @@ public:
 private:
 	float angle = 0.0f;
 };
-
-
 
 class Demo01 : public GraphicsApplication, public IEventHandler {
 public:
@@ -93,16 +91,8 @@ public:
 	}
 
     virtual bool onInitialize() override {
-		Texture *checkerTexture = this->getTextureManager()->generateCheckerboard("checkerTexture", {64, 64}, {8, 8});
-
 		this->camera = this->getScene()->getCamera(0);
-
-		// create node animator
 		this->animator.reset(new SpatialAnimator(this->getScene()->getRootNode()->findNode("boxNode")));
-
-		// set the subset texture
-		Material* material = this->getMaterialLibrary()->getMaterial(0);
-		material->getLayer(0)->setTexture(checkerTexture);
 
 		return true;
     }
@@ -148,7 +138,7 @@ public:
 	
 private:
 	SceneNodeAnimatorPtr animator;
-	Texture *checkerTexture;
+	// Texture *checkerTexture;
 
 	Camera *camera = nullptr;
 	ShaderProgram *program = nullptr;
