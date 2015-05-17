@@ -40,7 +40,7 @@ namespace exeng { namespace graphics {
 		ResourceManager::removeLoader(loader);
 	}
 
-	Texture* TextureManager::generateCheckerboard(const std::string uri, const Vector2i &size_, const Vector2i &tileSize) {
+	Texture* TextureManager::generateCheckerboard(const std::string &uri, const Vector2i &size_, const Vector2i &tileSize) {
 		const Size3f size = {static_cast<float>(size_.x), static_cast<float>(size_.y), 0.0f};
 		const ColorFormat format = ColorFormat::getColorFormatR8G8B8A8();
 
@@ -72,4 +72,27 @@ namespace exeng { namespace graphics {
 
 		return result;
 	}
+
+    Texture* TextureManager::create(const std::string &uri, const Vector2i &size) {
+        const Size3f textureSize = {static_cast<float>(size.x), static_cast<float>(size.y), 0.0f};
+		const ColorFormat format = ColorFormat::getColorFormatR8G8B8A8();
+
+		TexturePtr texture = this->getGraphicsDriver()->createTexture(TextureType::Tex2D, textureSize, format);
+
+        this->put(uri, std::move(texture));
+
+        return this->get(uri);
+    }
+
+    Texture* TextureManager::create(const std::string &uri, const Vector2i &size, const Vector4f &color) {
+        Texture *texture = this->create(uri, size);
+
+        Vector4ub *textureData = reinterpret_cast<Vector4ub*>(texture->lock());
+        for (int i=0; i<size.x * size.y; ++i) {
+			textureData[i] = static_cast<Vector4ub>(color * Vector4f(255.0f, 255.0f, 255.0f, 255.0f));
+        }
+        texture->unlock();
+
+        return texture;
+    }
 }}

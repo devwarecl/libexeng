@@ -651,7 +651,9 @@ namespace exeng { namespace framework {
 		this->impl->sceneRenderer = std::move(sceneRenderer);
 		
 		// let the application do after-initialization routines
-		this->onInitialize();
+		if (this->onInitialize()) {
+            this->setApplicationStatus(ApplicationStatus::Running);
+        }
 	}
 
 	void GraphicsApplication::terminate() {
@@ -760,4 +762,13 @@ namespace exeng { namespace framework {
 	const SceneRenderer* GraphicsApplication::getSceneRenderer() const {
 		return this->impl->sceneRenderer.get();
 	}
+
+    void GraphicsApplication::renderMesh(const Mesh* mesh) {
+        for (int i=0; i<mesh->getSubsetCount(); ++i) {
+            const MeshSubset* subset = mesh->getSubset(i);
+
+            this->getGraphicsDriver()->setMeshSubset(subset);
+            this->getGraphicsDriver()->render(subset->getPrimitive(), 4);
+        }
+    }
 }}

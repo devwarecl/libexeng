@@ -23,6 +23,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${GLFW3_INCLUDE_DIR})
 include_directories(${OPENCL_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 link_directories(${Boost_LIBRARY_DIRS})
 link_directories(${GLFW3_LIBRARY_DIR})
@@ -31,18 +32,9 @@ link_directories(${OpenGL_LIBRARY_DIR})
 # Grouping
 set (BaseFiles
 	RayTracerApp.hpp                RayTracerApp.cpp 
+	RayTracerApp2.hpp               RayTracerApp2.cpp 
     RayTracerSceneRenderer.hpp      RayTracerSceneRenderer.cpp 
     SceneLoader.hpp                 SceneLoader.cpp 
-)
-
-set (Kernels
-	kernels/TraceRay.cl
-	kernels/MultiHardwareTracer.cl
-)
-
-set (Shaders
-	shaders/VertexShader.glsl
-	shaders/FragmentShader.glsl
 )
 
 set (Tracers
@@ -64,13 +56,36 @@ set (Loaders
 	loaders/LwoMeshLoader.hpp		loaders/LwoMeshLoader.cpp
 )
 
-add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Kernels} ${Loaders} ${Shaders})
+# process resources
+set (raytracer_resources_src
+	resources/TraceRay.cl
+	resources/MultiHardwareTracer.cl
+	resources/ComputeSynthesisDataOld.cl
+	resources/VertexShader.glsl
+	resources/FragmentShader.glsl
+	resources/Assets.xml
+)
+
+SET (raytracer_resources )
+
+# iterate over resource files for compilation
+FOREACH(resource_src ${raytracer_resources_src})
+	ADD_CUSTOM_COMMAND (
+		OUTPUT	${CMAKE_CURRENT_BINARY_DIR}/${resource_src}.hpp 
+				${CMAKE_CURRENT_BINARY_DIR}/${resource_src}.cpp 
+		COMMAND file2cpp ${CMAKE_CURRENT_SOURCE_DIR}/${resource_src} -o ${CMAKE_CURRENT_BINARY_DIR}/resources
+		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${resource_src}
+	)
+	
+	LIST (APPEND raytracer_resources ${resource_src}.hpp ${resource_src}.cpp)
+ENDFOREACH(resource_src)
+
+add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Loaders} ${raytracer_resources} ${raytracer_resources_src})
 
 target_link_libraries(exeng.raytracer exeng exeng.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 source_group(\\			FILES ${BaseFiles})
-source_group(tracers	FILES ${Tracers})
 source_group(samplers	FILES ${Samplers})
-source_group(shaders	FILES ${Shaders})
-source_group(kernels	FILES ${Kernels})
+source_group(resources	FILES ${raytracer_resources_src})
 source_group(loaders	FILES ${Loaders})
+source_group(tracers	FILES ${Tracers})

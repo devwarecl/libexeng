@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<assets>
+    <shader-library language="glsl">
+        <shader name="vertexShader" type="vertex" file="Vertex.glsl"/>
+        <shader name="fragmentShader" type="fragment" file="Fragment.glsl" />
+        
+        <program name="shaderProgram">
+            <module ref-name="vertexShader" />
+            <module ref-name="fragmentShader" />
+        </program>
+    </shader-library>
+    
+    <material-library name="phong">
+        <material-format>
+            <attribute name="ambient" type="Vector4f"/>
+            <attribute name="diffuse" type="Vector4f"/>
+            <attribute name="specular" type="Vector4f"/>
+            <attribute name="shininess" type="float"/>
+        </material-format>
+        
+        <material name="materialBox">
+            <program ref-name="shaderProgram" />
+
+            <material-layers>
+                <material-layer>
+                    <texture name="checkerboard" source="generator">
+                        <texture-generator type="checkerboard" size="64 64" grid="16 16"/>
+                    </texture>
+                </material-layer>
+            </material-layers>
+            
+            <attribute ref-name="ambient">0.2 0.2 0.2 1.0</attribute>
+            <attribute ref-name="diffuse">0.8 0.8 0.8 1.0</attribute>
+            <attribute ref-name="specular">0.0 0.0 1.0 1.0</attribute>
+            <attribute ref-name="shininess">60.0</attribute>
+        </material>
+    </material-library>
+
+    <geometry-library>
+        <vertex-format>
+            <attribute name="coord" type="Vector3f" use="position"/>
+            <attribute name="normal" type="Vector3f" use="normal"/>
+            <attribute name="texCoord" type="Vector2f" use="texture-coordinate"/>
+        </vertex-format>
+        
+        <geometry name="box" type="mesh">
+            <mesh source="generator">                
+                <mesh-subset>
+                    <mesh-subset-generator type="box" size="1.0 1.0 1.0" center="0.0 0.0 0.0" />
+                    <material ref-name="materialBox" />
+                </mesh-subset>
+
+                <mesh-subset>
+                    <mesh-subset-generator type="box" size="1.0 1.0 1.0" center="0.0 1.25 0.0" />
+                    <material ref-name="materialBox" />
+                </mesh-subset>
+                
+                <mesh-subset>
+                    <mesh-subset-generator type="box" size="1.0 1.0 1.0" center="0.0 -1.25 0.0" />
+                    <material ref-name="materialBox" />
+                </mesh-subset>
+                
+            </mesh>
+        </geometry>
+    </geometry-library>
+    
+    <scene>
+        <background>
+            <color>0.2 0.2 0.8 1.0</color> 
+        </background>
+        
+        <camera-collection>
+            <camera name="camera">
+                <view><look-at position="0.0 1.0 2.0" look-at="0.0 0.0 0.0" up="0.0 1.0 0.0"/></view>
+                <projection><perspective fov="60.0" aspect="1.3333" z-near="0.1" z-far="1000.0" /></projection>
+                <viewport position="0.0 0.0" size="1.0 1.0"/>
+            </camera>    
+        </camera-collection>
+        
+        <node>
+            <transformation>
+                <identity />
+            </transformation>
+            
+            <node name="boxNode">
+                <transformation>
+                    <identity />
+                    <translate>0.0 0.0 0.0</translate>
+                    <rotate axis="0.0 1.0 0.0">0.0</rotate>
+                    <scale>1.0 1.0 1.0</scale>
+                </transformation>
+                
+                <data type="geometry" ref-name="box"/>
+            </node>
+        </node>
+    </scene>
+</assets>

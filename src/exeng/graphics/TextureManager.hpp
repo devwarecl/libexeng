@@ -23,7 +23,17 @@ namespace exeng { namespace graphics {
 		virtual void addLoader(TextureLoader *loader);
 		virtual void removeLoader(TextureLoader *loader);
 
-		Texture* generateCheckerboard(const std::string uri, const Vector2i &size, const Vector2i &tileSize);
+		Texture* generateCheckerboard(const std::string &uri, const Vector2i &size, const Vector2i &tileSize);
+
+        /**
+         * @brief Create a managed, empty texture.
+         */
+        Texture* create(const std::string &uri, const Vector2i &size);
+
+        /**
+         * @brief Create a managed, empty texture initialized with a default color.
+         */
+        Texture* create(const std::string &uri, const Vector2i &size, const Vector4f &color);
 
 	private:
 		GraphicsDriver* graphicsDriver = nullptr;

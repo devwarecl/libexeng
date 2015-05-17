@@ -14,10 +14,10 @@
 #include <exeng/graphics/ShaderLibrary.hpp>
 #include <exeng/graphics/MaterialLibrary.hpp>
 #include <exeng/scenegraph/Scene.hpp>
+#include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/scenegraph/AssetsLibrary.hpp>
 #include <exeng/scenegraph/GeometryLibrary.hpp>
 #include <exeng/scenegraph/SceneRenderer.hpp>
-
 
 namespace exeng { namespace framework {
     /**
@@ -62,6 +62,9 @@ namespace exeng { namespace framework {
 		virtual void pollEvents();
         virtual void update(float frameTime);
 		virtual void render();
+
+        // utility render functions
+        void renderMesh(const exeng::scenegraph::Mesh* mesh);
 
 		/**
 		 * Post initialization routine

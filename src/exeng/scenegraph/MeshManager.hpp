@@ -19,8 +19,9 @@
 #include <vector>
 #include <memory>
 
-#include <exeng/Vector.hpp>
 #include <exeng/Config.hpp>
+#include <exeng/Vector.hpp>
+#include <exeng/Size.hpp>
 
 namespace exeng { namespace graphics {
     class EXENGAPI GraphicsDriver; 
@@ -74,6 +75,11 @@ namespace exeng { namespace scenegraph {
 		 * @brief Generate a cube mesh
 		 */
 		Mesh* generateBoxMesh(const std::string &id, const Vector3f &center, const Vector3f &size);
+
+        /**
+		 * @brief Generate a rect mesh (for two-dimensional rendering)
+		 */
+        Mesh* generateScreenMesh(const std::string &id);
 
     private:
         struct Private;

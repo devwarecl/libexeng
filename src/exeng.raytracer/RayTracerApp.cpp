@@ -354,26 +354,26 @@ void showMsgBox(const std::string &msg, const std::string &title) {
 #endif
 }
 
-namespace exeng { namespace main {
-    using namespace exeng;
-    using namespace exeng::framework;
-    using namespace exeng::input;
-    using namespace exeng::graphics;
-
-	int main(int argc, char **argv) 
-	{
-		using namespace raytracer;
-        using namespace exeng;
-        using namespace exeng::framework;
-
-        int exitCode = 1;
-
-        try {
-            exitCode = Application::execute<RayTracerApp>(argc, argv);
-        } catch (std::exception &exp) {
-            showMsgBox(exp.what(), "Runtime error");
-        }
-
-        return exitCode;
-	}
-}}
+//namespace exeng { namespace main {
+//    using namespace exeng;
+//    using namespace exeng::framework;
+//    using namespace exeng::input;
+//    using namespace exeng::graphics;
+//
+//	int main(int argc, char **argv) 
+//	{
+//		using namespace raytracer;
+//        using namespace exeng;
+//        using namespace exeng::framework;
+//
+//        int exitCode = 1;
+//
+//        try {
+//            exitCode = Application::execute<RayTracerApp>(argc, argv);
+//        } catch (std::exception &exp) {
+//            showMsgBox(exp.what(), "Runtime error");
+//        }
+//
+//        return exitCode;
+//	}
+//}}

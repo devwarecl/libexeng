@@ -34,6 +34,26 @@ namespace raytracer {
         RayTracerApp();
         virtual ~RayTracerApp();
         
+        virtual exeng::BufferPtr getAssetsXmlData() override {
+            return exeng::BufferPtr();
+        }
+
+        virtual exeng::graphics::GraphicsDriverPtr createGraphicsDriver() override {
+            return exeng::graphics::GraphicsDriverPtr();
+        }
+
+        virtual exeng::scenegraph::AssetLibraryPtr createAssetLibrary() override {
+            return exeng::scenegraph::AssetLibraryPtr();
+        }
+
+        virtual exeng::scenegraph::SceneRendererPtr createSceneRenderer(exeng::graphics::GraphicsDriver *graphicsDriver) override {
+            return exeng::scenegraph::SceneRendererPtr();
+        }
+
+        virtual bool onInitialize() override {
+            return true;
+        }
+
     public:
         /* exeng::framework::GraphicsApplication */
         virtual void initialize(int argc, char **argv);
