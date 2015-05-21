@@ -10,157 +10,77 @@
 #include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/scenegraph/SceneRenderer.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
+#include <exeng/scenegraph/Camera.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
 
 namespace exeng { namespace scenegraph {
 
-	template<typename MatrixType>
-	class TransformStack {
+    /** 
+     * @brief Renderer technology minimal interface
+     */
+	class EXENGAPI RenderWrapper {
 	public:
-		void init(const MatrixType& m) {
-			this->stack = std::stack<MatrixType>();
-			this->stack.push(m);
-		}
+        virtual ~RenderWrapper() {}
 
-		void push(const MatrixType& m) {
-			MatrixType current = this->top();
-			this->stack.push(current * m);
-		}
+		virtual void setTransform(const Matrix4f &transform) = 0;
+		virtual void renderNodeData(const SceneNodeData *data) = 0;
 
-		void pop() {
-			this->stack.pop();
-		}
+        virtual void beginFrame(const Vector4f &clearColor) = 0;
+        virtual void endFrame() = 0;
 
-		MatrixType top() {
-			return this->stack.top();
-		}
-
-	public:
-		std::stack<MatrixType> stack;
+        virtual Matrix4f getViewMatrix(const Camera *camera);
+        virtual Matrix4f getProjectionMatrix(const Camera *camera);
 	};
+    
+    typedef std::unique_ptr<RenderWrapper> RenderWrapperPtr;
 
-	/*
-	class NodeRenderer {
+    /**
+     * Scene renderer technology based on a rasterizer
+     */
+	class EXENGAPI RasterizerRenderWrapper : public RenderWrapper {
 	public:
-		setTransform(Matrix4f);
-		renderNodeData(SceneNodeData);
-		prepareCamera(Camera);
-	};
-	*/
+		explicit RasterizerRenderWrapper(exeng::graphics::GraphicsDriver *driver);
+		virtual ~RasterizerRenderWrapper();
 
-	class GraphicsNodeRenderer {
-	public:
-		GraphicsNodeRenderer() {}
-		~GraphicsNodeRenderer() {}
+        virtual void beginFrame(const Vector4f &clearColor) override;
+        virtual void endFrame() override;
 
-		void setTransformName(const std::string &transformName) {
-			this->transformName = transformName;
-		}
-
-		void setGraphicsDriver(exeng::graphics::GraphicsDriver *driver) {
-			this->driver = driver;
-		}
-
-		exeng::graphics::GraphicsDriver* getGraphicsDriver() {
-			return this->driver;
-		}
-
-		const exeng::graphics::GraphicsDriver* getGraphicsDriver() const {
-			return this->driver;
-		}
-
-		void setTransform(const Matrix4f &transform) {
-			this->transform = transform;
-		}
-
-		void prepareCamera(const exeng::scenegraph::Camera *camera) {
+        virtual void setTransform(const Matrix4f &transform) override;
 		
-		}
+		virtual void renderNodeData(const exeng::scenegraph::SceneNodeData *data) override;
 
-		void renderNodeData(const exeng::scenegraph::SceneNodeData *data) {
-			TypeInfo info = data->getTypeInfo();
-
-			if (info == TypeId<Mesh>()) {
-				const exeng::scenegraph::Mesh *mesh = static_cast<const exeng::scenegraph::Mesh*>(data);
-
-				for (int i=0; i<mesh->getSubsetCount(); ++i) {
-					const exeng::graphics::MeshSubset *subset = mesh->getSubset(i);
-
-					this->driver->setMaterial(subset->getMaterial());
-					this->driver->setMeshSubset(subset);
-					this->driver->getModernModule()->setProgramGlobal(this->transformName, this->transform);
-					this->driver->render(subset->getPrimitive(), subset->getVertexCount());
-				}
-			} else {
-				EXENG_THROW_EXCEPTION("Unsupported Geometry type.");
-			}
-		}
+        void setTransformName(const std::string &transformName);
+        exeng::graphics::GraphicsDriver* getGraphicsDriver();
+		const exeng::graphics::GraphicsDriver* getGraphicsDriver() const;
 
 	private:
-		std::string transformName;
-		exeng::graphics::GraphicsDriver* driver = nullptr;
-		Matrix4f transform;
+        struct Private;
+        Private *impl = nullptr;
 	};
 
-	template <typename NodeRenderer>
-	class GenericSceneRenderer : public SceneRenderer, public NodeRenderer {
+    typedef std::unique_ptr<RasterizerRenderWrapper> RasterizerRenderWrapperPtr;
+
+    /**
+     *
+     */
+	class EXENGAPI GenericSceneRenderer : public SceneRenderer {
 	public:
+        explicit GenericSceneRenderer(RenderWrapperPtr renderWrapper);
+        ~GenericSceneRenderer();
 
-		GenericSceneRenderer() {
-		}
+        RenderWrapper* getRenderWrapper();
 
-		virtual void setScene(const Scene *scene) {
-			this->scene = scene;
-		}
+        const RenderWrapper* getRenderWrapper() const;
 
-		virtual const Scene* getScene() const override {
-			return this->scene;
-		}
+		virtual void setScene(const Scene *scene) override;
 
-		virtual void render(const Camera *camera) override {
-			Vector3f position = camera->getPosition();
-			Vector3f lookAt = camera->getLookAt();
-			Vector3f up = camera->getUp();
+		virtual const Scene* getScene() const override;
 
-			Matrix4f vpMatrix = identity<float, 4>();
-
-			// TODO: Retrieve perspective information from camera
-			vpMatrix *= perspective<float>(rad(60.0f), 1.33333f, 0.1f, 1000.0f);
-			vpMatrix *= lookat<float>(position, lookAt, up);
-			
-			NodeRenderer::prepareCamera(camera);
-			this->transformStack.init(vpMatrix);
-			this->renderNode(this->getScene()->getRootNode());
-		}
+		virtual void render(const Camera *camera) override;
 
 	private:
-		/**
-		 * @brief Render a complete SceneNode hierarchy
-		 */
-		void renderNode(const SceneNode *node) {
-#if defined(EXENG_DEBUG)
-			if (node == nullptr) {
-				EXENG_THROW_EXCEPTION("The node object can't be a null pointer.");
-			}
-#endif
-			this->transformStack.push(node->getTransform());
-
-			NodeRenderer::setTransform(this->transformStack.top());
-			if (node->getData()) {
-				NodeRenderer::renderNodeData(node->getData());
-			}
-
-			// render hierarchy
-			for (SceneNode *child : node->getChilds()) {
-				this->renderNode(child);
-			}
-
-			this->transformStack.pop();
-		}
-
-	private:
-		TransformStack<Matrix4f> transformStack;
-		const Scene* scene = nullptr;
+        struct Private;
+        Private *impl = nullptr;
 	};
 }}
 

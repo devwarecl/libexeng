@@ -82,12 +82,15 @@ public:
 	}
 
 	virtual SceneRendererPtr createSceneRenderer(GraphicsDriver *graphicsDriver) override {
-		auto sceneRenderer = new GenericSceneRenderer<GraphicsNodeRenderer>();
-		sceneRenderer->setGraphicsDriver(graphicsDriver);
-		sceneRenderer->setScene(this->getScene());
-		sceneRenderer->setTransformName("WorldTransform");
+        RasterizerRenderWrapperPtr 
+        renderWrapper = std::make_unique<RasterizerRenderWrapper>(graphicsDriver);
+        renderWrapper->setTransformName("WorldTransform");
 
-		return SceneRendererPtr(sceneRenderer);
+        SceneRendererPtr 
+        sceneRenderer = std::make_unique<GenericSceneRenderer>(std::move(renderWrapper));
+        sceneRenderer->setScene(this->getScene());
+
+		return sceneRenderer;
 	}
 
     virtual bool onInitialize() override {

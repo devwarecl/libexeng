@@ -52,6 +52,11 @@ set (Samplers
     samplers/JitteredSampler.hpp    samplers/JitteredSampler.cpp 
 )
 
+set (Renderers
+	renderers/HardwareRenderer.hpp	renderers/HardwareRenderer.cpp
+	renderers/SoftwareRenderer.hpp	renderers/SoftwareRenderer.cpp
+)
+
 set (Loaders
 	loaders/LwoMeshLoader.hpp		loaders/LwoMeshLoader.cpp
 )
@@ -80,7 +85,7 @@ FOREACH(resource_src ${raytracer_resources_src})
 	LIST (APPEND raytracer_resources ${resource_src}.hpp ${resource_src}.cpp)
 ENDFOREACH(resource_src)
 
-add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Loaders} ${raytracer_resources} ${raytracer_resources_src})
+add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Loaders} ${Renderers} ${raytracer_resources} ${raytracer_resources_src})
 
 target_link_libraries(exeng.raytracer exeng exeng.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
@@ -89,3 +94,4 @@ source_group(samplers	FILES ${Samplers})
 source_group(resources	FILES ${raytracer_resources_src})
 source_group(loaders	FILES ${Loaders})
 source_group(tracers	FILES ${Tracers})
+source_group(renderers	FILES ${Renderers})

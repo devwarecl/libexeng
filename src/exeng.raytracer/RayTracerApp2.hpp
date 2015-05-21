@@ -30,6 +30,7 @@ namespace exeng { namespace raytracer {
         std::string RayTracerApp2::getPluginPath();
 
     private:
+        exeng::scenegraph::Camera *camera = nullptr;
         exeng::scenegraph::Mesh *screenMesh = nullptr;
         exeng::graphics::Material *screenMaterial = nullptr;
     };

@@ -5,20 +5,24 @@
 #include <exeng/StaticBuffer.hpp>
 #include <exeng/system/PluginManager.hpp>
 #include <exeng/graphics/GraphicsManager.hpp>
+#include <exeng/graphics/TextureManager.hpp>
 #include <exeng/scenegraph/MeshManager.hpp>
 #include <exeng/scenegraph/GenericSceneRenderer.hpp>
-#include <exeng/graphics/TextureManager.hpp>
 
 #include "resources/Assets.xml.hpp"
 #include "resources/VertexShader.glsl.hpp"
 #include "resources/FragmentShader.glsl.hpp"
 #include "resources/MultiHardwareTracer.cl.hpp"
 
+#include "renderers/SoftwareRenderer.hpp"
+#include "renderers/HardwareRenderer.hpp"
+
 namespace exeng { namespace raytracer {
     using namespace exeng::graphics;
     using namespace exeng::scenegraph;
     using namespace exeng::input;
     using namespace exeng::framework;
+    using namespace exeng::raytracer::renderers;
 
     RayTracerApp2::RayTracerApp2() {}
     RayTracerApp2::~RayTracerApp2() {}
@@ -52,35 +56,20 @@ namespace exeng { namespace raytracer {
 
     AssetLibraryPtr RayTracerApp2::createAssetLibrary() {
         AssetLibraryPtr assetLibrary = std::make_unique<AssetLibrary>();
-		assetLibrary->addAsset("Vertex.glsl",  std::make_unique<StaticBuffer>((void*)vertexshader_glsl_data, vertexshader_glsl_size));
-		assetLibrary->addAsset("Fragment.glsl",  std::make_unique<StaticBuffer>((void*)fragmentshader_glsl_data, fragmentshader_glsl_size));
-        assetLibrary->addAsset("MultiHardwareTracer.cl",  std::make_unique<StaticBuffer>((void*)multihardwaretracer_cl_data, multihardwaretracer_cl_size));
+		assetLibrary->addAsset("Vertex.glsl", std::make_unique<StaticBuffer>((void*)vertexshader_glsl_data, vertexshader_glsl_size));
+		assetLibrary->addAsset("Fragment.glsl", std::make_unique<StaticBuffer>((void*)fragmentshader_glsl_data, fragmentshader_glsl_size));
+        assetLibrary->addAsset("MultiHardwareTracer.cl", std::make_unique<StaticBuffer>((void*)multihardwaretracer_cl_data, multihardwaretracer_cl_size));
 
 		return assetLibrary;
     }
 
     SceneRendererPtr RayTracerApp2::createSceneRenderer(GraphicsDriver *graphicsDriver) {
-        class TracerNodeRenderer {
-        public:
-            void prepareCamera(const Camera *) {}
-            void setTransform(const Matrix4f &transform) {}
-            void renderNodeData(const SceneNodeData *data) {}
-        };
-
-        typedef GenericSceneRenderer<TracerNodeRenderer> TracerSceneRenderer;
-
-        SceneRendererPtr sceneRenderer = std::make_unique<TracerSceneRenderer>();
-
-        return sceneRenderer;
-    }
-
-    bool RayTracerApp2::onInitialize() {
-        Size2i screenSize = this->getGraphicsDriver()->getDisplayMode().size;
+        // Create the material for the rendering of the screen
+        Size2i screenSize = graphicsDriver->getDisplayMode().size;
         Texture *renderTarget = this->getTextureManager()->create("renderTarget", screenSize, {0.2f, 0.2f, 0.8f, 1.0f});
 
         ShaderProgram *program = this->getShaderLibrary()->getProgram("shaderProgram");
 
-        // Create the material for the rendering of the screen
         Material *screenMaterial = this->getMaterialLibrary()->createMaterial("screen", program);
         screenMaterial
             ->setAttribute(0, Vector4f(1.0f, 1.0f, 1.0f, 1.0f))
@@ -92,8 +81,23 @@ namespace exeng { namespace raytracer {
         // Create the mesh for rendering
         Mesh *screenMesh = this->getMeshManager()->generateScreenMesh("screen");
         
-        this->screenMaterial = screenMaterial;
-        this->screenMesh = screenMesh;
+        AssetLibrary *assets = this->getAssetLibrary();
+        MaterialLibrary *materials = this->getMaterialLibrary();
+
+        HardwareRendererPtr 
+        renderWrapper = std::make_unique<HardwareRenderer>(renderTarget, assets, materials);
+        
+        SceneRendererPtr 
+        sceneRenderer = std::make_unique<GenericSceneRenderer>(std::move(renderWrapper));
+        sceneRenderer->setScene(this->getScene());
+
+        return sceneRenderer;
+    }
+
+    bool RayTracerApp2::onInitialize() {
+        this->screenMaterial = this->getMaterialLibrary()->getMaterial("screen");
+        this->screenMesh = this->getMeshManager()->getMesh("screen");
+        this->camera = this->getScene()->getCamera(0);;
         
         return true;
     }
@@ -109,7 +113,8 @@ namespace exeng { namespace raytracer {
     void RayTracerApp2::render() {
         this->getGraphicsDriver()->beginFrame({0.0f, 0.0f, 0.0f, 1.0f}, ClearFlags::ColorDepth);
 
-        // TODO: render the scene using ray tracing
+        // render the scene using ray tracing
+        this->getSceneRenderer()->render(this->camera);
 
         // render the render target texture
         this->getGraphicsDriver()->setMaterial(this->screenMaterial);

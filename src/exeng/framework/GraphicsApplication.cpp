@@ -637,19 +637,20 @@ namespace exeng { namespace framework {
 		loader->setTextureManager(this->getTextureManager());
 		loader->loadAssets(assetXmlData.get());
 
-		// create the scene renderer
-		SceneRendererPtr sceneRenderer = this->createSceneRenderer(graphicsDriver.get());
-		sceneRenderer->setScene(scene.get());
-
-		// save the core objects
+        // save the core objects
 		this->impl->graphicsDriver = std::move(graphicsDriver);
 		this->impl->shaderLibrary = std::move(shaderLibrary);
 		this->impl->geometryLibrary = std::move(geometryLibrary);
 		this->impl->materialLibrary = std::move(materialLibrary);
 		this->impl->assetLibrary = std::move(assetLibrary);
 		this->impl->scene = std::move(scene);
-		this->impl->sceneRenderer = std::move(sceneRenderer);
 		
+		// create the scene renderer
+		SceneRendererPtr sceneRenderer = this->createSceneRenderer(this->getGraphicsDriver());
+		sceneRenderer->setScene(this->getScene());
+
+        this->impl->sceneRenderer = std::move(sceneRenderer);
+
 		// let the application do after-initialization routines
 		if (this->onInitialize()) {
             this->setApplicationStatus(ApplicationStatus::Running);
