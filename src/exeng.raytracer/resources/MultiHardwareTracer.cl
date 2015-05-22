@@ -135,8 +135,7 @@ constant int indices_[] = {
 constant int indexCount_ = 36;
 */
 
-/*
-constant Vertex vertices_[] =  {
+constant Vertex_ vertices_[] =  {
     // Cara trasera
     {{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},  // Izquierda,  Arriba,  Atras
     {{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f}},  // Derecha,    Arriba,  Atras
@@ -163,7 +162,7 @@ constant int indices_[] = {
 };
 
 constant int indexCount_ = 18;
-*/
+
 
 /**
  * @brief Ray buffer generator kernel
@@ -344,13 +343,14 @@ void computeElementMeshSubset (
 	
 	bestElement.distance = FLT_MAX;
 	
+	indexCount = indexCount_;
+
 	for (int i=0; i<indexCount; i+=3) {
-		/*
-		float3 p1 = vertices[indices[i + 0]].coord;
-		float3 p2 = vertices[indices[i + 1]].coord;
-		float3 p3 = vertices[indices[i + 2]].coord;
-		float3 normal = vertices[indices[i + 0]].normal;
-		*/
+		float3 coord1 = vertices_[indices_[i + 0]].coord;
+		float3 coord2 = vertices_[indices_[i + 1]].coord;
+		float3 coord3 = vertices_[indices_[i + 2]].coord;
+		float3 normal = vertices_[indices_[i + 0]].normal;
+		
         /*
         float3 p1		= *(global float3*)(vertexData + VertexSize*indices[i + 0] + CoordOffset);
 		float3 p2		= *(global float3*)(vertexData + VertexSize*indices[i + 1] + CoordOffset);
@@ -358,6 +358,8 @@ void computeElementMeshSubset (
 		float3 normal	= *(global float3*)(vertexData + VertexSize*indices[i + 0] + NormalOffset);
         */
 
+		/*
+		// render data from geometry mesh
         global float* vertex1Ptr = vertexData + VertexSize*indices[i + 0];
         global float* vertex2Ptr = vertexData + VertexSize*indices[i + 1];
         global float* vertex3Ptr = vertexData + VertexSize*indices[i + 2];
@@ -367,6 +369,7 @@ void computeElementMeshSubset (
 		float3 coord2 = {vertex2Ptr[0], vertex2Ptr[1], vertex2Ptr[2]};
 		float3 coord3 = {vertex3Ptr[0], vertex3Ptr[1], vertex3Ptr[2]};
 		float3 normal = {normalPtr[0], normalPtr[1], normalPtr[2]};
+		*/
 
 		computeElementTriangle(&currentElement, ray, coord1, coord2, coord3, normal);
 		
@@ -435,17 +438,31 @@ kernel void SynthetizeImage (
 	Ray ray = rays[i];
 	SynthesisElement synthElement = synthesisBuffer[i];
     
-	// const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
-	float4 color = {0.2f, 0.2f, 0.6f, 1.0f};
+	const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
+	float4 color = {0.0f, 0.0f, 0.0f, 0.0f};
 	
+	/*
 	if (synthElement.distance > 0.0f) {
 		const int materialIndex = synthElement.material;
-		// const int materialIndex = 1;
+		
+		// color = *((global float4 *)(materialData + (materialIndex*materialSize)));
+		// color = color * fabs(dot(ray.direction, synthElement.normal));
 
-		color = *((global float4 *)(materialData + (materialIndex*materialSize)));
+		color = white;
 		color = color * fabs(dot(ray.direction, synthElement.normal));
 	}
+	*/
 	
+	if (x == 0) {
+		color.x = 0.0f;
+	} else {
+		color.x = 1.0f;
+	}
+
+	color.y = 1.0f;
+	color.z = 1.0f;
+	color.w = 1.0f;
+
 	write_imagef (image, (int2)(x, y), color);
 }
 

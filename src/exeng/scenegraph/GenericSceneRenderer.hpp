@@ -22,6 +22,8 @@ namespace exeng { namespace scenegraph {
 	public:
         virtual ~RenderWrapper() {}
 
+        virtual void prepareCamera(const exeng::scenegraph::Camera *camera) = 0;
+
 		virtual void setTransform(const Matrix4f &transform) = 0;
 		virtual void renderNodeData(const SceneNodeData *data) = 0;
 
@@ -41,6 +43,8 @@ namespace exeng { namespace scenegraph {
 	public:
 		explicit RasterizerRenderWrapper(exeng::graphics::GraphicsDriver *driver);
 		virtual ~RasterizerRenderWrapper();
+
+        virtual void prepareCamera(const exeng::scenegraph::Camera *camera) {}
 
         virtual void beginFrame(const Vector4f &clearColor) override;
         virtual void endFrame() override;

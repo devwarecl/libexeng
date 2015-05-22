@@ -170,18 +170,24 @@ namespace exeng { namespace scenegraph {
 	}
 
 	void GenericSceneRenderer::render(const Camera *camera) {
-        this->getRenderWrapper()->beginFrame(this->getScene()->getBackColor());
+        RenderWrapper *renderWrapper = this->getRenderWrapper();
 
-		Matrix4f vpMatrix = identity<float, 4>();
+        renderWrapper->beginFrame(this->getScene()->getBackColor());
+
+        renderWrapper->prepareCamera(camera);
+
+        Matrix4f projMatrix = renderWrapper->getProjectionMatrix(camera);
+        Matrix4f viewMatrix = renderWrapper->getViewMatrix(camera);
 
 		// Build the modelview matrix
-		vpMatrix *= this->getRenderWrapper()->getProjectionMatrix(camera);
-		vpMatrix *= this->getRenderWrapper()->getViewMatrix(camera);
+        Matrix4f vpMatrix = identity<float, 4>();
+		vpMatrix *= projMatrix;
+		vpMatrix *= viewMatrix;
 			
         // Render the scene graph, from the root node
 		this->impl->transformStack.init(vpMatrix);
 		this->impl->renderNode(this->getScene()->getRootNode());
 
-        this->getRenderWrapper()->endFrame();
+        renderWrapper->endFrame();
 	}
 }}

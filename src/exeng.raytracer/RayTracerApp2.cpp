@@ -97,7 +97,7 @@ namespace exeng { namespace raytracer {
     bool RayTracerApp2::onInitialize() {
         this->screenMaterial = this->getMaterialLibrary()->getMaterial("screen");
         this->screenMesh = this->getMeshManager()->getMesh("screen");
-        this->camera = this->getScene()->getCamera(0);;
+        this->camera = this->getScene()->getCamera(0);
         
         return true;
     }
@@ -111,7 +111,7 @@ namespace exeng { namespace raytracer {
     }
 
     void RayTracerApp2::render() {
-        this->getGraphicsDriver()->beginFrame({0.0f, 0.0f, 0.0f, 1.0f}, ClearFlags::ColorDepth);
+        this->getGraphicsDriver()->beginFrame({0.2f, 0.2f, 0.8f, 1.0f}, ClearFlags::ColorDepth);
 
         // render the scene using ray tracing
         this->getSceneRenderer()->render(this->camera);

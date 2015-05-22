@@ -10,6 +10,8 @@
 
 namespace exeng { namespace raytracer { namespace renderers {
 
+    class HardwareRendererPrivate;
+
     class HardwareRenderer : public exeng::scenegraph::RenderWrapper {
     public:
         explicit HardwareRenderer(exeng::graphics::Texture *renderTarget, const exeng::scenegraph::AssetLibrary *assets, const exeng::graphics::MaterialLibrary *materialLibrary);
@@ -19,6 +21,8 @@ namespace exeng { namespace raytracer { namespace renderers {
             return identity<float, 4>();
         }
 
+        virtual void prepareCamera(const exeng::scenegraph::Camera *camera) override;
+
         virtual void beginFrame(const Vector4f &color) override;
         virtual void endFrame() override;
 
@@ -27,8 +31,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 		virtual void renderNodeData(const exeng::scenegraph::SceneNodeData *data) override;
 
     private:
-        struct Private;
-        std::unique_ptr<Private> impl;
+        std::unique_ptr<HardwareRendererPrivate> impl;
     };
 
     typedef std::unique_ptr<HardwareRenderer> HardwareRendererPtr;
