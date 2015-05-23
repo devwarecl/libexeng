@@ -16,7 +16,7 @@
 #include <stdexcept>
 #include <boost/checked_delete.hpp>
 #include <boost/range/algorithm/find.hpp>
-
+#include <exeng/Exception.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 
 using namespace exeng;
@@ -217,6 +217,9 @@ namespace exeng { namespace scenegraph {
 			}
 		}
 
+#if defined(EXENG_DEBUG)
+        EXENG_THROW_EXCEPTION("The node '" + name + "' wasn't found in the node branch '" + this->getName() + "'.");
+#endif
 		return nullptr;
 	}
 
@@ -225,7 +228,7 @@ namespace exeng { namespace scenegraph {
 
 		node = node->findNode(name);
 
-		return const_cast<SceneNode*>(node);
+        return const_cast<SceneNode*>(node);
 	}
 
     bool SceneNode::existChild(const std::string &name) const {

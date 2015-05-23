@@ -231,21 +231,15 @@ namespace exeng { namespace scenegraph {
     Mesh* MeshManager::generateScreenMesh(const std::string &id) {
         assert(this->impl != nullptr);
 
-        Vertex vertices[] = {
-            {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
-            {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-            {{0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f}}, 
-            {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}}
-
-            /*{{-1.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-            {{1.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
-            {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-            {{1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f}}*/
-
+        Vertex2 vertices[] = {
+            {{ 1.0f,  1.0f, 0.0f}, {1.0f, 1.0f}},
+            {{-1.0f,  1.0f, 0.0f}, {0.0f, 1.0f}},
+            {{ 1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}}, 
+            {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}}
         };
 
         BufferPtr vertexBuffer = this->getGraphicsDriver()->createVertexBuffer(sizeof(vertices), vertices);
-        MeshSubsetPtr meshSubset = this->getGraphicsDriver()->createMeshSubset(std::move(vertexBuffer), nullptr, Vertex::format());
+        MeshSubsetPtr meshSubset = this->getGraphicsDriver()->createMeshSubset(std::move(vertexBuffer), nullptr, Vertex2::format());
         meshSubset->setPrimitive(Primitive::TriangleStrip);
 
         MeshPtr mesh = std::make_unique<Mesh>(std::move(meshSubset));

@@ -24,6 +24,20 @@ namespace exeng { namespace raytracer {
     using namespace exeng::framework;
     using namespace exeng::raytracer::renderers;
 
+    class RotateAnimator : public SceneNodeAnimator {
+    public:
+        virtual void update(double seconds) override {
+            this->angle += static_cast<float>(60.0 * seconds);
+
+            Matrix4f transformation = rotatey<float>(rad(this->angle));
+
+            this->getSceneNode()->setTransform(transformation);
+        }
+
+    private:
+        float angle = 0.0f;
+    };
+
     RayTracerApp2::RayTracerApp2() {}
     RayTracerApp2::~RayTracerApp2() {}
 
@@ -98,6 +112,9 @@ namespace exeng { namespace raytracer {
         this->screenMaterial = this->getMaterialLibrary()->getMaterial("screen");
         this->screenMesh = this->getMeshManager()->getMesh("screen");
         this->camera = this->getScene()->getCamera(0);
+
+        this->animator = std::make_unique<RotateAnimator>();
+        this->animator->setSceneNode(this->getScene()->getRootNode()->findNode("boxNode"));
         
         return true;
     }
@@ -108,6 +125,10 @@ namespace exeng { namespace raytracer {
         if (inputData.check(ButtonStatus::Press, ButtonCode::KeyEsc)) {
             this->setApplicationStatus(ApplicationStatus::Terminated);
         }
+    }
+
+    void RayTracerApp2::update(float seconds) {
+        this->animator->update(seconds);
     }
 
     void RayTracerApp2::render() {
