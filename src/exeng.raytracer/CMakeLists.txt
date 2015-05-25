@@ -53,8 +53,9 @@ set (Samplers
 )
 
 set (Renderers
-	renderers/HardwareRenderer.hpp	renderers/HardwareRenderer.cpp
-	renderers/SoftwareRenderer.hpp	renderers/SoftwareRenderer.cpp
+	renderers/HardwareRenderer.hpp			renderers/HardwareRenderer.cpp
+	renderers/HardwareRendererPrivate.hpp	renderers/HardwareRendererPrivate.cpp
+	renderers/SoftwareRenderer.hpp			renderers/SoftwareRenderer.cpp
 )
 
 set (Loaders

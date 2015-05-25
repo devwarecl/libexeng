@@ -599,7 +599,7 @@ float perlin_noise2d(float x, float y) {
 }
 */
 
-int main(int argc, char **argv) {
+int main2(int argc, char **argv) {
     // std::cout <<  (perlin_noise2d(0.0f, 0.1f) + 1.0f) * 0.5f << std::endl;
     // return 0;
 

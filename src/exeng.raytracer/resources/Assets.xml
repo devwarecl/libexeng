@@ -31,7 +31,7 @@
             </material-layers>
             
             <attribute ref-name="ambient">0.2 0.2 0.2 1.0</attribute>
-            <attribute ref-name="diffuse">0.8 0.8 0.8 1.0</attribute>
+            <attribute ref-name="diffuse">1.0 1.0 0.8 1.0</attribute>
             <attribute ref-name="specular">0.0 0.0 1.0 1.0</attribute>
             <attribute ref-name="shininess">60.0</attribute>
         </material>

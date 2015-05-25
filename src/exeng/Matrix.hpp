@@ -967,11 +967,13 @@ namespace exeng {
         return exeng::__private::MatrixTranformation<Type, Size>::compute(matrix, vector);
     }
     
+    typedef Matrix<float, 2, 2> Matrix2f;
 	typedef Matrix<float, 3, 3> Matrix3f;
-    typedef Matrix<double, 3, 3> Matrix3d;
     typedef Matrix<float, 4, 4> Matrix4f;
+
+    typedef Matrix<double, 2, 2> Matrix2d;
+    typedef Matrix<double, 3, 3> Matrix3d;
     typedef Matrix<double, 4, 4> Matrix4d;
 }
-
 
 #endif	//__EXENG_MATRIX_HPP__

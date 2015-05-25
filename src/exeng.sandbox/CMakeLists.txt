@@ -27,7 +27,7 @@ link_directories(${GLFW3_LIBRARY_DIR})
 file (GLOB RES_FILES *.cl *.glsl)
 
 set (SandboxFiles
-	Main.cpp gl_core_3_3.h gl_core_3_3.c
+	Main.cpp gl_core_3_3.h gl_core_3_3.c PerformanceTest.cpp
 )
 
 source_group(\\ FILES ${SandboxFiles})
@@ -35,4 +35,4 @@ source_group(\\ FILES ${SandboxFiles})
 add_executable(exeng.sandbox ${SandboxFiles} ${RES_FILES})
 
 # 
-target_link_libraries(exeng.sandbox exeng ${Boost_LIBRARIES} ${GLFW3_LIBRARY} ${OPENCL_LIBRARIES}  ${OPENGL_LIBRARIES})
+target_link_libraries(exeng.sandbox ${Boost_LIBRARIES} ${GLFW3_LIBRARY} ${OPENCL_LIBRARIES}  ${OPENGL_LIBRARIES})
