@@ -114,14 +114,14 @@ public:
 		this->animator->update((float)seconds);
     }
     
-	/*
+    /*
 	virtual void render() override {
-		this->getGraphicsDriver()->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
+		// this->getGraphicsDriver()->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
 		this->getSceneRenderer()->render(this->getScene()->getCamera(0));
-		this->getGraphicsDriver()->endFrame();
+		// this->getGraphicsDriver()->endFrame();
 	}
-	*/
-    
+    */
+	
     virtual void handleEvent(const EventData &data) override {
         const InputEventData &inputData = data.cast<InputEventData>();
         

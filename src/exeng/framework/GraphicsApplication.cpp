@@ -669,9 +669,7 @@ namespace exeng { namespace framework {
     }
     
 	void GraphicsApplication::render() {
-		this->getGraphicsDriver()->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, ClearFlags::ColorDepth);
 		this->getSceneRenderer()->render(this->getScene()->getCamera(0));
-		this->getGraphicsDriver()->endFrame();
 	}
 
     int GraphicsApplication::run(int argc, char **argv) {
