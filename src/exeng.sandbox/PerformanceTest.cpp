@@ -10,7 +10,6 @@
 class Timer {
 public:
     Timer() {
-        // this->start = exeng::Timer::getTime();
         this->start = ::GetTickCount();
     }
 
@@ -25,17 +24,27 @@ private:
 class PerformanceTest {
 public:
     PerformanceTest() {
-        const std::string kernelSource = 
-            "typedef struct { float m11, m12, m21, m22; } Matrix2;\n"
-            "\n"
-            "float determinant(const Matrix2 &matrix) {\n"
-            "    return matrix.m11*matrix.m22 - matrix.m12*matrix.m21;\n"
-            "};\n"
-            "\n"
-            "kernel void computeDeterminant(global float *determinantBuffer, read_only global Matrix2* matrixBuffer) { \n"
-            "    const int index = get_global_id(0); \n"
-            "    determinantBuffer[index] = determinant(matrixBuffer[index]); ";
-            "}\n";
+        std::string src = "";
+
+        src += "typedef struct { float m11, m12, m21, m22; } Matrix2;\n";
+        src += "\n";
+        src += "#define BLOCK_SIZE " + std::to_string(MATRIX_BLOCK_SIZE);
+        src += "\n";
+        src += "float determinant(Matrix2 *matrix) {\n";
+        src += "    return matrix->m11*matrix->m22 - matrix->m12*matrix->m21;\n";
+        src += "}\n";
+        src += "\n";
+        src += "__kernel void computeDeterminant(int matrixCount, __global float *determinantBuffer, __global Matrix2* matrixBuffer, __local Matrix2 matrixCache[BLOCK_SIZE]) { \n";
+        src += "    const int groupIndex = get_group_id(0); \n";
+        src += "    const int localIndex = get_local_id(0); \n";
+        src += "    const int index = groupIndex*BLOCK_SIZE + localIndex; \n";
+        src += "    matrixCache[localIndex] = *(matrixBuffer + index); \n";
+        src += "    barrier(CLK_LOCAL_MEM_FENCE); \n";
+        src += "    Matrix2 matrix = matrixCache[localIndex]; \n";
+        src += "    determinantBuffer[index] = determinant(&matrix); ";
+        src += "}\n";
+
+        this->kernelSource = src;
     }
 
     void initialize() {
@@ -52,25 +61,14 @@ public:
         platform.getDevices(CL_DEVICE_TYPE_GPU, &devices);
         device = devices[0];
 
-        // Crear un contexto en el dispostivo. El contexto es una coleccion de recursos (que veremos posteriormente).
+        // Create Context
         cl_context_properties properties [] = {
-#if defined (WIN32)
-            // We should first check for cl_khr_gl_sharing extension.
-            CL_GL_CONTEXT_KHR , (cl_context_properties) ::wglGetCurrentContext() ,
-            CL_WGL_HDC_KHR , (cl_context_properties) ::wglGetCurrentDC() ,
-#elif defined (__linux__)
-            // We should first check for cl_khr_gl_sharing extension.
-            CL_GL_CONTEXT_KHR , (cl_context_properties) ::glXGetCurrentContext() ,
-            CL_GLX_DISPLAY_KHR , (cl_context_properties) ::glXGetCurrentDisplay() ,
-#elif defined (__APPLE__)
-            CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE , (cl_context_properties) CGLGetShareGroup( CGLGetCurrentContext() ) ,
-#endif
             CL_CONTEXT_PLATFORM,    (cl_context_properties) platform(),
             0, 0
         };
 
         std::vector<cl::Device> selectedDevices = {device};
-            
+        
         cl::Context context = cl::Context(selectedDevices, &properties[0], nullptr, nullptr, nullptr);
 
         // Compilar el programa
@@ -79,6 +77,7 @@ public:
         errorCode = program.build({device}, nullptr, nullptr, nullptr);
         if (errorCode != CL_SUCCESS) {
             std::string msg = std::string("Error al compilar el programa OpenCL.") + program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device) + ".";
+            std::cout << msg << std::endl;
             throw std::runtime_error(msg.c_str());
         }
 
@@ -104,15 +103,25 @@ public:
     }
 
     void testPerformance() {
-        const int MATRIX_COUNT = 100000;
-
         std::vector<float> determinants;
         std::vector<exeng::Matrix2f> matrices;
+
+        cl::Buffer determinantBuffer;
+        cl::Buffer matrixBuffer;
 
         {
             Timer time;
             std::cout << "Generating " << MATRIX_COUNT << " matrices ... ";
             matrices = this->generateMatrices(MATRIX_COUNT);
+
+            determinantBuffer = cl::Buffer(this->context, CL_MEM_WRITE_ONLY, sizeof(float)*matrices.size());
+            matrixBuffer = cl::Buffer(
+                this->context, 
+                CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
+                sizeof(exeng::Matrix2f)*matrices.size(), 
+                const_cast<exeng::Matrix2f*>(matrices.data())
+            );
+
         }
         std::cout << "[ms]" << std::endl;
 
@@ -128,7 +137,7 @@ public:
         {
             Timer time;
             std::cout << "Consolidating those matrices (CL) ...";
-            determinants = this->determinant_cl(matrices);
+            this->determinant_cl(determinantBuffer, matrixBuffer, matrices.size());
         }
         std::cout << "[ms]" << std::endl;
         std::cout << "The final matrix is:" << std::endl;
@@ -163,52 +172,25 @@ private:
     /**
      * @brief Consolidate a matrix sequence in just one.
      */
-    std::vector<float> determinant_cl(const std::vector<exeng::Matrix2f> &matrices) {
+    void determinant_cl(cl::Buffer determinantBuffer, cl::Buffer matrixBuffer, int count) {
 
-        cl::Buffer determinantBuffer = cl::Buffer(this->context, CL_MEM_WRITE_ONLY, sizeof(float)*matrices.size());
-        cl::Buffer matrixBuffer = cl::Buffer(
-            this->context, 
-            CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
-            sizeof(exeng::Matrix2f)*matrices.size(), 
-            const_cast<exeng::Matrix2f*>(matrices.data())
-        );
-
-        this->kernel.setArg(0, determinantBuffer);
-        this->kernel.setArg(1, matrixBuffer);
+        this->kernel.setArg(0, count);
+        this->kernel.setArg(1, determinantBuffer);
+        this->kernel.setArg(2, matrixBuffer);
+        this->kernel.setArg(3, MATRIX_BLOCK_SIZE*sizeof(exeng::Matrix2f), nullptr);
         
         // Run the kernel
         cl::Event event;
         cl_int errorCode = 0;
 
-        errorCode = this->queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(matrices.size()), cl::NullRange, nullptr, &event);
+        const int groupSize = count/MATRIX_BLOCK_SIZE;
+        const int localSize = MATRIX_BLOCK_SIZE;
+        errorCode = this->queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(groupSize), cl::NDRange(localSize), nullptr, &event);
         event.wait();
+
         if (errorCode != CL_SUCCESS) {
             throw std::runtime_error("Error durante la ejecucion del kernel.");
         }
-
-        // Get the result back
-        std::vector<float> determinants;
-        determinants.resize(matrices.size());
-
-        errorCode = this->queue.enqueueReadBuffer(
-            determinantBuffer, 
-            CL_TRUE, 0, 
-            sizeof(float)*determinants.size(), 
-            determinants.data()
-        );
-
-        event.wait();
-        if (errorCode != CL_SUCCESS) {
-            throw std::runtime_error("Error durante la ejecucion del kernel.");
-        }
-        
-        // Wait for queue completion
-        errorCode = this->queue.finish();
-        if (errorCode != CL_SUCCESS) {
-            throw std::runtime_error("Error durante la ejecucion del kernel.");
-        }
-
-        return determinants;
     }
 
     /**
@@ -228,13 +210,15 @@ private:
      * @brief Display a matrix in screen
      */
     void display(const std::vector<float> &determinants) {
+        /*
         std::cout << "[" << std::endl;
 
         for (float determinant : determinants) {
-            std::cout << determinant << " " << std::endl;
+            std::cout << determinant << " ";
         }
 
         std::cout << "]" << std::endl;
+        */
     }
 
 private:
@@ -246,6 +230,9 @@ private:
     cl::CommandQueue queue;
 
     std::string kernelSource;
+
+    const int MATRIX_COUNT      = 4096*4096;
+    const int MATRIX_BLOCK_SIZE = 16*16*2;
 };
 
 int main(int argc, char **arg) {
