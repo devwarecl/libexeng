@@ -1,4 +1,8 @@
 
+/**
+ * nVidia Matrix Multiplication Example
+ */
+
 #include <iostream>
 #include <vector>
 #include <random>
@@ -21,7 +25,61 @@ private:
     std::uint32_t start = 0;
 };
 
+const char MatrixTestCL1KernelSource[] = 
+    "typedef struct { \n"
+    "   int width; \n"
+    "   int height; \n"
+    "   __global float *elements; \n"
+    "} Matrix; \n"
+    "\n"
+    "#define BLOCK_SIZE 16 \n"
+    "\n"
+    "void MatrixMultiply(Matrix matA, Matrix matB, Matrix matC) { \n"
+    "   float valueC = 0.0f; \n"
+    "   int row = get_global_id(1); \n"
+    "   int col = get_global_id(0); \n"
+    "\n"
+    "   for (int e=0; e<matA.width; ++e) { \n"
+    "       valueC += matA.elements[row*matA.width + e] * matB.elements[e*matB.width + col]; \n"
+    "   } \n"
+    "\n"
+    "   matC.elements[row*matC.width + col] = valueC; \n"
+    "} \n"
+    "\n"
+    "__kernel void MatrixMultiplyKernel( \n"
+    "   int widthA, int heightA, __global float* elementsA, \n"
+    "   int widthB, int heightB, __global float* elementsB, \n"
+    "   int widthC, int heightC, __global float* elementsC) { \n"
+    "\n"
+    "   Matrix matrixA{widthA, heightA, elementsA}; \n"
+    "   Matrix matrixB{widthB, heightB, elementsB}; \n"
+    "   Matrix matrixC{widthC, heightC, elementsC}; \n"
+    "\n"
+    "   MatrixMultiply(matrixA, matrixB, matrixC); \n"
+    "} \n"
+;
+
+class MatrixTestCL1 {
+public:
+    struct Matrix {
+        int width;
+        int height;
+        cl::Memory elements;
+    };
+
+    void compute(cl::Context &context) {
+        cl::Buffer buffer;
+    }
+
+private:
+    const int BLOCK_SIZE = 16;
+};
+
+
 class PerformanceTest {
+public:
+
+
 public:
     PerformanceTest() {
         std::string src = "";
@@ -236,10 +294,14 @@ private:
 };
 
 int main(int argc, char **arg) {
+    /*
     ::PerformanceTest test;
 
     test.initialize();
     test.testPerformance();
+    */
+
+    std::cout << MatrixTestCL1KernelSource << std::endl;
 
     return 0;
 }

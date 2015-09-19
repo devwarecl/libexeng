@@ -99,8 +99,9 @@ namespace exeng { namespace system {
         PluginMap &plugins = this->impl->plugins;
         
         if (plugins.find(name) == plugins.end()) {
-            auto library = std::unique_ptr<Library>(new Library(pluginFilename.string()));
-            auto pluginLibrary = std::unique_ptr<Plugin>(new PluginLibrary(std::move(library)));
+
+            LibraryPtr library = std::make_unique<Library>(pluginFilename.string());
+            PluginPtr pluginLibrary = std::make_unique<PluginLibrary>(std::move(library));
 
             plugins[name] = std::move(pluginLibrary);
             plugins[name]->initialize(this->getRoot());

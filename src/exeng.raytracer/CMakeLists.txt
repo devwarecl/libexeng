@@ -11,7 +11,7 @@ set (Boost_USE_MULTITHREADED ON)
 set (Boost_USE_STATIC_RUNTIME OFF)
 
 find_package(OpenGL REQUIRED)
-find_package(OpenCL REQUIRED)
+find_package(OpenCL)
 find_package(Boost COMPONENTS system timer log thread REQUIRED)
 find_package(glfw3 REQUIRED)
 

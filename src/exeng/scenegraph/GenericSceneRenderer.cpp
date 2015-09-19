@@ -91,14 +91,24 @@ namespace exeng { namespace scenegraph {
     }
 
 	void RasterizerRenderWrapper::renderNodeData(const exeng::scenegraph::SceneNodeData *data) {
+		assert(this);
+		assert(this->impl);
+
 		TypeInfo info = data->getTypeInfo();
         GraphicsDriver *driver = this->impl->driver;
 
+		assert(driver);
+		assert(driver->getModernModule());
+
 		if (info == TypeId<Mesh>()) {
-			const exeng::scenegraph::Mesh *mesh = static_cast<const exeng::scenegraph::Mesh*>(data);
+			const auto mesh = static_cast<const exeng::scenegraph::Mesh*>(data);
+
+			assert(mesh);
 
 			for (int i=0; i<mesh->getSubsetCount(); ++i) {
 				const exeng::graphics::MeshSubset *subset = mesh->getSubset(i);
+
+				assert(mesh);
 
 				driver->setMaterial(subset->getMaterial());
 				driver->setMeshSubset(subset);

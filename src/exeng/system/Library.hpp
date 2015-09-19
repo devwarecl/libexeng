@@ -15,6 +15,7 @@
 #define __EXENG_SYSTEM_LIBRARY_HPP__
 
 #include <string>
+#include <memory>
 #include <exeng/Object.hpp>
 
 namespace exeng { namespace system  {
@@ -70,6 +71,8 @@ namespace exeng { namespace system  {
 		Library(const Library& lib) = delete;
         Library& operator=(const Library& lib) = delete;
     };
+
+	typedef std::unique_ptr<Library> LibraryPtr;
 }}
 
 #endif	//__EXENG_SYSTEM_LIBRARY_HPP__

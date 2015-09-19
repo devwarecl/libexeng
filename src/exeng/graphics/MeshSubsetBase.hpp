@@ -7,6 +7,8 @@
 #include <vector>
 
 namespace exeng { namespace graphics {
+
+	template<typename BufferImpl>
     class MeshSubsetBase : public MeshSubset {
     public:
 		MeshSubsetBase() {}
@@ -14,11 +16,11 @@ namespace exeng { namespace graphics {
         virtual IndexFormat::Enum getIndexFormat() const override;
 
         virtual int getBufferCount() const override;
-        virtual Buffer* getBuffer(const int index) override;
-        virtual const Buffer* getBuffer(const int index) const override;
+        virtual BufferImpl* getBuffer(const int index) override;
+        virtual const BufferImpl* getBuffer(const int index) const override;
 
-        virtual Buffer* getIndexBuffer() override;
-        virtual const Buffer* getIndexBuffer() const override;
+        virtual BufferImpl* getIndexBuffer() override;
+        virtual const BufferImpl* getIndexBuffer() const override;
 
         virtual Primitive::Enum getPrimitive() const override;
         virtual void setPrimitive(Primitive::Enum primitiveType) override;
@@ -27,55 +29,90 @@ namespace exeng { namespace graphics {
         virtual void setMaterial(const Material *material) override;
 
     protected:
-        std::vector<BufferPtr> buffers;
-        BufferPtr indexBuffer;
+		typedef std::unique_ptr<BufferImpl> BufferImplPtr;
+
+        std::vector<BufferImplPtr> buffers;
+        BufferImplPtr indexBuffer;
         VertexFormat vertexFormat;
         IndexFormat::Enum indexFormat = IndexFormat::Unknown;
         Primitive::Enum primitiveType = Primitive::TriangleList;
         const Material *material = nullptr;
     };
 
-    inline int MeshSubsetBase::getBufferCount() const {
+	template<typename BufferImpl>
+    inline int MeshSubsetBase<BufferImpl>::getBufferCount() const {
+		assert(this);
+
         return this->buffers.size();
     }
 
-    inline Buffer* MeshSubsetBase::getBuffer(const int index) {
+	template<typename BufferImpl>
+    inline BufferImpl* MeshSubsetBase<BufferImpl>::getBuffer(const int index) {
+		assert(this);
+
         return this->buffers[index].get();
     }
 
-    inline const Buffer* MeshSubsetBase::getBuffer(const int index) const {
+	template<typename BufferImpl>
+    inline const BufferImpl* MeshSubsetBase<BufferImpl>::getBuffer(const int index) const {
+		assert(this);
+
         return this->buffers[index].get();
     }
 
-    inline Buffer* MeshSubsetBase::getIndexBuffer() {
+	template<typename BufferImpl>
+    inline BufferImpl* MeshSubsetBase<BufferImpl>::getIndexBuffer() {
+		assert(this);
+
         return this->indexBuffer.get();
     }
 
-    inline const Buffer* MeshSubsetBase::getIndexBuffer() const {
+	template<typename BufferImpl>
+    inline const BufferImpl* MeshSubsetBase<BufferImpl>::getIndexBuffer() const {
+		assert(this);
+
         return this->indexBuffer.get();
     }
 
-    inline VertexFormat MeshSubsetBase::getVertexFormat() const {
+	template<typename BufferImpl>
+    inline VertexFormat MeshSubsetBase<BufferImpl>::getVertexFormat() const {
+		assert(this);
+
         return this->vertexFormat;
     }
 
-    inline IndexFormat::Enum MeshSubsetBase::getIndexFormat() const {
+	template<typename BufferImpl>
+    inline IndexFormat::Enum MeshSubsetBase<BufferImpl>::getIndexFormat() const {
+		assert(this);
+
         return this->indexFormat;
     }
 
-    inline Primitive::Enum MeshSubsetBase::getPrimitive() const {
+	template<typename BufferImpl>
+    inline Primitive::Enum MeshSubsetBase<BufferImpl>::getPrimitive() const {
+		assert(this);
+
         return this->primitiveType;
     }
 
-    inline void MeshSubsetBase::setPrimitive(Primitive::Enum primitiveType) {
+	template<typename BufferImpl>
+    inline void MeshSubsetBase<BufferImpl>::setPrimitive(Primitive::Enum primitiveType) {
+		assert(this);
+
         this->primitiveType = primitiveType;
     }
 
-    inline const Material* MeshSubsetBase::getMaterial() const {
+	template<typename BufferImpl>
+    inline const Material* MeshSubsetBase<BufferImpl>::getMaterial() const {
+		assert(this);
+
         return this->material;
     }
 
-    inline void MeshSubsetBase::setMaterial(const Material *material) {
+	template<typename BufferImpl>
+    inline void MeshSubsetBase<BufferImpl>::setMaterial(const Material *material) {
+		assert(this);
+
         this->material = material;
     }
 }}

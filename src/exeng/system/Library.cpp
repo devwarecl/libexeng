@@ -40,7 +40,8 @@ namespace exeng { namespace system {
 
 	void Library::load(const std::string &filename) 
 	{
-		assert(this->impl != nullptr);
+		assert(this);
+		assert(this->impl);
 		this->impl->load(filename);
 	}
 		

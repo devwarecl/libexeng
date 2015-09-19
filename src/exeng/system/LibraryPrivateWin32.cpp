@@ -45,13 +45,12 @@ namespace exeng { namespace system {
 
 		HANDLE handle = ::LoadLibraryA(name.c_str()); 
 
-		if (handle == NULL) {
+		if (!handle) {
 			std::string msg;
 
 			msg += "Library::Private::load: Error during the load of the library ";
-			msg += "'" + name + "' (Windows specific error: ";
-			msg += getLastErrorStrWin32() + ").";
-
+			msg += "'" + name + "': " + getLastErrorStrWin32();
+			
 			EXENG_THROW_EXCEPTION(msg);
 		}
 

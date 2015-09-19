@@ -63,8 +63,10 @@ public:
 	}
 
 	virtual GraphicsDriverPtr createGraphicsDriver() override {
-		this->getPluginManager()->setPluginPath(this->getPluginPath());
-        this->getPluginManager()->loadPlugin("exeng.graphics.gl3");
+		auto pluginManager = this->getPluginManager();
+
+		pluginManager->setPluginPath(this->getPluginPath());
+        pluginManager->loadPlugin("exeng.graphics.gl3");
 		
         GraphicsDriverPtr graphicsDriver = this->getGraphicsManager()->createDriver();
         graphicsDriver->addEventHandler(this);

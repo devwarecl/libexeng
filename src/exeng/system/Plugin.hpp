@@ -63,6 +63,8 @@ namespace exeng { namespace system {
         virtual std::string toString() const;
     };
     
+	typedef std::unique_ptr<Plugin> PluginPtr;
+
     /**
      * @brief Module level function signature. 
      *
