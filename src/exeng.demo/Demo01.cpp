@@ -24,6 +24,7 @@ using namespace exeng::graphics;
 using namespace exeng::scenegraph;
 using namespace exeng::input;
 
+/*
 class SpatialAnimator : public SceneNodeAnimator {
 public:
 	SpatialAnimator() {}
@@ -43,9 +44,77 @@ public:
 private:
 	float angle = 0.0f;
 };
+*/
+
+class ButtonPressHandler : public IEventHandler {
+public:
+	ButtonPressHandler () {
+		for (int i=0; i<ButtonCode::Count; i++) {
+			this->buttonStatus[i] = ButtonStatus::Release;
+		}
+	}
+
+	const bool isPressed(ButtonCode::Enum code) const {
+		return this->buttonStatus[code] == ButtonStatus::Press;
+	}
+
+private:
+	virtual void handleEvent(const EventData &data) override {
+        const InputEventData &inputData = data.cast<InputEventData>();
+		this->handleInputEvent(inputData);
+    }
+
+	void handleInputEvent(const InputEventData &inputData) {
+		this->buttonStatus[inputData.buttonCode] = inputData.buttonStatus;
+	}
+
+private:
+	ButtonStatus::Enum buttonStatus[ButtonCode::Count];
+};
+
+class MoveAction {
+public:
+	explicit MoveAction(const ButtonPressHandler *buttonPressHandler) {
+		this->buttonPressHandler = buttonPressHandler;
+	}
+
+	const bool isMovingForward() const {
+		assert(this);
+		assert(this->buttonPressHandler);
+
+		return this->buttonPressHandler->isPressed(ButtonCode::KeyUp);
+	}
+
+	const bool isMovingBackward() const {
+		assert(this);
+		assert(this->buttonPressHandler);
+
+		return this->buttonPressHandler->isPressed(ButtonCode::KeyDown);
+	}
+
+	const bool isMovingLeft() const {
+		assert(this);
+		assert(this->buttonPressHandler);
+
+		return this->buttonPressHandler->isPressed(ButtonCode::KeyLeft);
+	}
+
+	const bool isMovingRight() const {
+		assert(this);
+		assert(this->buttonPressHandler);
+
+		return this->buttonPressHandler->isPressed(ButtonCode::KeyRight);
+	}
+
+private:
+	const ButtonPressHandler *buttonPressHandler = nullptr;
+};
 
 class Demo01 : public GraphicsApplication, public IEventHandler {
 public:
+	Demo01() : moveAction(&buttonPressHandler) {
+	}
+
 	std::string getPluginPath() {
 #if defined(EXENG_UNIX)
         return "../../plugins/libexeng.graphics.gl3/";
@@ -70,6 +139,7 @@ public:
 		
         GraphicsDriverPtr graphicsDriver = this->getGraphicsManager()->createDriver();
         graphicsDriver->addEventHandler(this);
+		graphicsDriver->addEventHandler(&this->buttonPressHandler);
         graphicsDriver->initialize();
 	
 		return graphicsDriver;
@@ -97,7 +167,7 @@ public:
 
     virtual bool onInitialize() override {
 		this->camera = this->getScene()->getCamera(0);
-		this->animator.reset(new SpatialAnimator(this->getScene()->getRootNode()->findNode("boxNode")));
+		// this->animator.reset(new SpatialAnimator(this->getScene()->getRootNode()->findNode("boxNode")));
 
 		return true;
     }
@@ -112,8 +182,52 @@ public:
     }
 	*/
     
+	void updateCamera(float seconds) {
+		const float speed		= 2.0f;
+		const float distance	= speed * seconds;
+		const float angle		= 60.0f * seconds;
+
+		Camera *camera = this->getScene()->getCamera(0);
+
+		Vector3f cameraPosition = camera->getPosition();
+		Vector3f cameraLookAt = camera->getLookAt();
+
+		Vector3f cameraDirection = normalize(cameraLookAt - cameraPosition);
+		Vector3f cameraDisplace;
+
+		float rotation = 0.0f;
+		float movement = 0.0f;
+
+		// Update direction
+		if (this->moveAction.isMovingRight()) {
+			rotation = -angle;
+		} 
+
+		if (this->moveAction.isMovingLeft()) {
+			rotation = angle;
+		} 
+
+		// Update position
+		if (this->moveAction.isMovingForward()) {
+			movement = distance;
+		} 
+
+		if (this->moveAction.isMovingBackward()) {
+			movement = -distance;
+		} 
+
+		// Compute final camera orientation
+		cameraDirection = transform(rotatey(rad(rotation)), cameraDirection);
+		cameraDisplace = cameraDirection * movement;
+
+		cameraPosition += cameraDisplace;
+		cameraLookAt = cameraPosition + cameraDirection;
+
+		camera->setOrientation(cameraPosition, cameraLookAt);
+	}
+
     virtual void update(float seconds) override {
-		this->animator->update((float)seconds);
+		this->updateCamera(seconds);
     }
     
     /*
@@ -132,23 +246,14 @@ public:
         }
     }
 
-	//const Vertex *vertices = (const Vertex*)subset->getBuffer(0)->getPointer();
-	//for (int vertexIndex=0; vertexIndex<subset->getVertexCount(); ++vertexIndex) {
-	//	std::cout << vertices[vertexIndex].coord << "; ";
-	//	std::cout << vertices[vertexIndex].normal << "; ";
-	//	std::cout << vertices[vertexIndex].texCoord;
-	//	std::cout << std::endl;
-	//}
-	//std::cout << std::endl;
-	
 private:
-	SceneNodeAnimatorPtr animator;
-	// Texture *checkerTexture;
-
 	Camera *camera = nullptr;
 	ShaderProgram *program = nullptr;
 	Material *material = nullptr;
     ApplicationStatus::Enum status = ApplicationStatus::Running;
+
+	ButtonPressHandler buttonPressHandler;
+	MoveAction moveAction;
 
 	float angle = 0.0f;
 };

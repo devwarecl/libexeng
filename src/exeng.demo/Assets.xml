@@ -47,17 +47,17 @@
         <geometry name="box" type="mesh">
             <mesh source="generator">                
                 <mesh-subset>
-                    <mesh-subset-generator type="box" size="1.0 1.0 1.0" center="0.0 0.0 0.0" />
+                    <mesh-subset-generator type="box" size="0.5 1.0 0.5" center="0.0 0.0 0.0" />
                     <material ref-name="materialBox" />
                 </mesh-subset>
 
                 <mesh-subset>
-                    <mesh-subset-generator type="box" size="1.0 1.0 1.0" center="0.0 1.25 0.0" />
+                    <mesh-subset-generator type="box" size="1.0 0.5 0.5" center="0.0 1.25 0.0" />
                     <material ref-name="materialBox" />
                 </mesh-subset>
                 
                 <mesh-subset>
-                    <mesh-subset-generator type="box" size="1.0 1.0 1.0" center="0.0 -1.25 0.0" />
+                    <mesh-subset-generator type="box" size="0.5 0.5 1.0" center="0.0 -1.25 0.0" />
                     <material ref-name="materialBox" />
                 </mesh-subset>
                 
@@ -67,12 +67,12 @@
     
     <scene>
         <background>
-            <color>0.2 0.2 0.8 1.0</color> 
+            <color>0.2 0.2 0.6 1.0</color> 
         </background>
         
         <camera-collection>
             <camera name="camera">
-                <view><look-at position="0.0 1.0 2.0" look-at="0.0 0.0 0.0" up="0.0 1.0 0.0"/></view>
+                <view><look-at position="0.0 0.0 -1.0" look-at="0.0 0.0 0.0" up="0.0 1.0 0.0"/></view>
                 <projection><perspective fov="60.0" aspect="1.3333" z-near="0.1" z-far="1000.0" /></projection>
                 <viewport position="0.0 0.0" size="1.0 1.0"/>
             </camera>    
