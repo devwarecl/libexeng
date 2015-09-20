@@ -28,14 +28,18 @@ namespace exeng { namespace raytracer {
         virtual void update(float seconds) override;
         virtual void render() override;
 
+	private:
+		void updateNodeRotation(float seconds, exeng::scenegraph::SceneNode *node);
+
     private:
         std::string RayTracerApp2::getPluginPath();
 
     private:
-        exeng::scenegraph::SceneNodeAnimatorPtr animator;
         exeng::scenegraph::Camera *camera = nullptr;
         exeng::scenegraph::Mesh *screenMesh = nullptr;
         exeng::graphics::Material *screenMaterial = nullptr;
+
+		float rotationAngle = 0.0f;
     };
 }}
 

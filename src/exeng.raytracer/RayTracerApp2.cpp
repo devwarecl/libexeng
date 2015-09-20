@@ -2,6 +2,12 @@
 #include "RayTracerApp2.hpp"
 
 #include <memory>
+#include <fstream>
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
+
+#include <png.h>
+
 #include <exeng/StaticBuffer.hpp>
 #include <exeng/system/PluginManager.hpp>
 #include <exeng/graphics/GraphicsManager.hpp>
@@ -17,26 +23,84 @@
 #include "renderers/SoftwareRenderer.hpp"
 #include "renderers/HardwareRenderer.hpp"
 
+namespace exeng { namespace graphics {
+
+	class TextureLoaderPng : public TextureLoader {
+	public:
+		TextureLoaderPng() {}
+		TextureLoaderPng(GraphicsDriver *graphicsDriver) : TextureLoader(graphicsDriver) {}
+
+		virtual bool tryLoad(const std::string &uri) override {
+			assert(this);
+
+			namespace fs = boost::filesystem;
+			namespace ba = boost::algorithm;
+			
+			fs::path path(uri);
+
+			if (!fs::is_regular_file(path)) {
+				return false;
+			}
+
+			std::string ext = path.stem().string();
+
+			return ext == "png";
+		}
+
+		virtual ResourcePtr load(const std::string &uri) override {
+			assert(this);
+
+			GraphicsDriver *driver = this->getGraphicsDriver();
+			assert(driver);
+
+			::png_byte header[8];
+
+			std::fstream fileStream;
+
+			fileStream.open(uri.c_str(), std::ios_base::binary|std::ios_base::in);
+			if (!fileStream.is_open()) {
+				throw std::runtime_error("PNG file can't be opened.");
+			}
+
+			fileStream.read(reinterpret_cast<char*>(header), 8);
+			if (::png_sig_cmp(header, 0, 8)) {
+				throw std::runtime_error("Not a PNG file.");
+			}
+
+			::png_structp pngStruct = ::png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+			if (!pngStruct) {
+				throw std::runtime_error("");
+			}
+
+			::png_infop pngInfo = ::png_create_info_struct(pngStruct);
+			if (!pngInfo) {
+				::png_destroy_read_struct(&pngStruct, nullptr, nullptr);
+				throw std::runtime_error("");
+			}
+
+			::png_infop pngEndInfo = ::png_create_info_struct(pngStruct);
+			if (!pngEndInfo) {
+				::png_destroy_read_struct(&pngStruct, &pngInfo, nullptr);
+				throw std::runtime_error("");
+			}
+
+			if (setjmp(png_jmpbuf(pngStruct))) {
+				::png_destroy_read_struct(&pngStruct, &pngInfo, nullptr);
+				throw std::runtime_error("");
+			}
+
+			
+
+		}
+	};
+}}
+
 namespace exeng { namespace raytracer {
     using namespace exeng::graphics;
     using namespace exeng::scenegraph;
     using namespace exeng::input;
     using namespace exeng::framework;
     using namespace exeng::raytracer::renderers;
-
-    class RotateAnimator : public SceneNodeAnimator {
-    public:
-        virtual void update(double seconds) override {
-            this->angle += static_cast<float>(60.0 * seconds);
-
-            Matrix4f transformation = rotatey<float>(rad(this->angle));
-
-            this->getSceneNode()->setTransform(transformation);
-        }
-
-    private:
-        float angle = 0.0f;
-    };
 
     RayTracerApp2::RayTracerApp2() {}
     RayTracerApp2::~RayTracerApp2() {}
@@ -98,11 +162,9 @@ namespace exeng { namespace raytracer {
         AssetLibrary *assets = this->getAssetLibrary();
         MaterialLibrary *materials = this->getMaterialLibrary();
 
-        HardwareRendererPtr 
-        renderWrapper = std::make_unique<HardwareRenderer>(renderTarget, assets, materials);
+        auto renderWrapper = std::make_unique<HardwareRenderer>(renderTarget, assets, materials);
         
-        SceneRendererPtr 
-        sceneRenderer = std::make_unique<GenericSceneRenderer>(std::move(renderWrapper));
+        SceneRendererPtr sceneRenderer = std::make_unique<GenericSceneRenderer>(std::move(renderWrapper));
         sceneRenderer->setScene(this->getScene());
 
         return sceneRenderer;
@@ -113,9 +175,6 @@ namespace exeng { namespace raytracer {
         this->screenMesh = this->getMeshManager()->getMesh("screen");
         this->camera = this->getScene()->getCamera(0);
 
-        this->animator = std::make_unique<RotateAnimator>();
-        this->animator->setSceneNode(this->getScene()->getRootNode()->findNode("boxNode"));
-        
         return true;
     }
 
@@ -127,8 +186,21 @@ namespace exeng { namespace raytracer {
         }
     }
 
+	void RayTracerApp2::updateNodeRotation(float seconds, SceneNode *node) {
+		assert(this);
+		assert(node);
+
+		const float rotationSpeed = 60.0f;
+		const float rotationAngle = rotationSpeed * seconds;
+
+		this->rotationAngle += rotationAngle;
+
+        node->setTransform(rotatey<float>(rad(this->rotationAngle)));
+	}
+
     void RayTracerApp2::update(float seconds) {
-        this->animator->update(seconds);
+        SceneNode *boxNode = this->getScene()->getRootNode()->findNode("boxNode");
+		this->updateNodeRotation(seconds, boxNode);
     }
 
     void RayTracerApp2::render() {

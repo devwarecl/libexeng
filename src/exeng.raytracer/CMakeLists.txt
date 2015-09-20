@@ -14,6 +14,7 @@ find_package(OpenGL REQUIRED)
 find_package(OpenCL)
 find_package(Boost COMPONENTS system timer log thread REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(PNG REQUIRED)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   find_package(Threads REQUIRED)
@@ -23,11 +24,16 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${GLFW3_INCLUDE_DIR})
 include_directories(${OPENCL_INCLUDE_DIRS})
+include_directories(${PNG_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+add_definitions(${PNG_DEFINITIONS})
 
 link_directories(${Boost_LIBRARY_DIRS})
 link_directories(${GLFW3_LIBRARY_DIR})
 link_directories(${OpenGL_LIBRARY_DIR})
+link_directories(${PNG_LIBRARY})
+
 
 # Grouping
 set (BaseFiles
@@ -88,7 +94,7 @@ ENDFOREACH(resource_src)
 
 add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Loaders} ${Renderers} ${raytracer_resources} ${raytracer_resources_src})
 
-target_link_libraries(exeng.raytracer exeng exeng.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(exeng.raytracer exeng exeng.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${PNG_LIBRARIES})
 
 source_group(\\			FILES ${BaseFiles})
 source_group(samplers	FILES ${Samplers})
