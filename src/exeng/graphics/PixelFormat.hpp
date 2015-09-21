@@ -20,32 +20,30 @@
 #include <exeng/TFlags.hpp>
 #include <exeng/DataType.hpp>
 
-namespace exeng {
-    namespace graphics {
+namespace exeng { namespace graphics {
         
-        //!
-        enum class DepthFormat {
-            Unknown,
-            D8,
-            D16,
-            D24,
-            D32
-        };
+    //!
+    enum class DepthFormat {
+        Unknown,
+        D8,
+        D16,
+        D24,
+        D32
+    };
         
-        //!
-        enum class StencilFormat {
-            Unknown,
-            S8,
-            S16,
-            S24,
-            S32
-        };
+    //!
+    enum class StencilFormat {
+        Unknown,
+        S8,
+        S16,
+        S24,
+        S32
+    };
         
         
-        struct PixelFormat {
+    struct PixelFormat {
             
-        };
-    }
-}
+    };
+}}
 
 #endif  //__EXENG_GRAPHICS_PIXELFORMAT_HPP__

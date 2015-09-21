@@ -2,12 +2,12 @@
 #ifndef __exeng_raytracer_raytracerapp_hpp__
 #define __exeng_raytracer_raytracerapp_hpp__
 
-#include <exeng/scenegraph/SceneNodeAnimator.hpp>
 #include <exeng/input/EventData.hpp>
 #include <exeng/input/IEventHandler.hpp>
 #include <exeng/framework/GraphicsApplication.hpp>
 #include <exeng/graphics/Material.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/scenegraph/SceneNodeAnimator.hpp>
 
 namespace exeng { namespace raytracer {
 

@@ -262,7 +262,9 @@ namespace exeng { namespace graphics {
         /**
          * @brief Create a new texture object.
          */
-        virtual TexturePtr createTexture(TextureType::Enum textureType, const Vector3f& textureSize, const ColorFormat &format) = 0;
+		virtual TexturePtr createTexture(const Vector2i& size, const ColorFormat &format, const void *data = nullptr) = 0;
+		virtual TexturePtr createTexture(const Vector3i& size, const ColorFormat &format, const void *data = nullptr) = 0;
+		virtual TexturePtr createTextureCube(const Vector2i& size, const ColorFormat &format, const void *data = nullptr) = 0;
         
         /**
          * @brief Set the area of the screen that can be rendered
