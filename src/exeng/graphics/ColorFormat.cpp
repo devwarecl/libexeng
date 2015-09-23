@@ -103,7 +103,7 @@ namespace exeng { namespace graphics {
         return true;
     }
 
-    const ColorFormat ColorFormat::getColorFormatR8G8B8A8() {
+    const ColorFormat ColorFormat::getR8G8B8A8() {
         return ColorFormat(
             32, 
             ColorChannel(ColorComponent::Red,   8), 
@@ -113,7 +113,7 @@ namespace exeng { namespace graphics {
         );
     }
 
-    const ColorFormat ColorFormat::getColorFormatR5G6B5() {
+    const ColorFormat ColorFormat::getR5G6B5() {
         return ColorFormat(
             16, 
             ColorChannel(ColorComponent::Red,   5), 
@@ -122,7 +122,7 @@ namespace exeng { namespace graphics {
         );
     }
 
-    const ColorFormat ColorFormat::getColorFormatR5G5B5X1() {
+    const ColorFormat ColorFormat::getR5G5B5X1() {
         return ColorFormat(
             16, 
             ColorChannel(ColorComponent::Red,   5), 

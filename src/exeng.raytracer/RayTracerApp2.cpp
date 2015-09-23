@@ -183,7 +183,7 @@ namespace exeng { namespace graphics {
 			::png_read_image(png_ptr, row_pointers);
 
 			// Generate the OpenGL texture object
-			auto texture = driver->createTexture(TextureType::Tex2D, Vector3f(width, height, 1), format);
+			auto texture = driver->createTexture(Vector2i(width, height), format);
 
 			texture->lock();
 			// std::memcpy(texture->lock(), image_data, texture->getSize().)

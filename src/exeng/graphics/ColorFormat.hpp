@@ -124,9 +124,9 @@ namespace exeng { namespace graphics {
         bool operator< (const ColorFormat &other) const;
         
         // Predefined color formats
-        static const ColorFormat getColorFormatR8G8B8A8();
-        static const ColorFormat getColorFormatR5G6B5();
-        static const ColorFormat getColorFormatR5G5B5X1();
+        static const ColorFormat getR8G8B8A8();
+        static const ColorFormat getR5G6B5();
+        static const ColorFormat getR5G5B5X1();
     };
 }}
 

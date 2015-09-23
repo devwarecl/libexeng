@@ -40,16 +40,13 @@ namespace exeng { namespace graphics {
 		ResourceManager::removeLoader(loader);
 	}
 
-	Texture* TextureManager::generateCheckerboard(const std::string &uri, const Vector2i &size_, const Vector2i &tileSize) {
-		const Size3f size = {static_cast<float>(size_.x), static_cast<float>(size_.y), 0.0f};
-		const ColorFormat format = ColorFormat::getColorFormatR8G8B8A8();
-
-		TexturePtr texture = this->getGraphicsDriver()->createTexture(TextureType::Tex2D, size, format);
-
+	Texture* TextureManager::generateCheckerboard(const std::string &uri, const Vector2i &size, const Vector2i &tileSize) {
+		const ColorFormat format = ColorFormat::getR8G8B8A8();
+		TexturePtr texture = this->getGraphicsDriver()->createTexture(size, format);
 		Vector4ub *pixels = (Vector4ub *)texture->lock();
 
-		for (int row=0; row<size.height; row++) {
-			for (int col=0; col<size.width; col++) {
+		for (int row=0; row<size.y; row++) {
+			for (int col=0; col<size.x; col++) {
 				bool rowBool = ((row&tileSize.y) == 0);
 				bool colBool = ((col&tileSize.x) == 0);
 
@@ -74,10 +71,9 @@ namespace exeng { namespace graphics {
 	}
 
     Texture* TextureManager::create(const std::string &uri, const Vector2i &size) {
-        const Size3f textureSize = {static_cast<float>(size.x), static_cast<float>(size.y), 0.0f};
-		const ColorFormat format = ColorFormat::getColorFormatR8G8B8A8();
+		const ColorFormat format = ColorFormat::getR8G8B8A8();
 
-		TexturePtr texture = this->getGraphicsDriver()->createTexture(TextureType::Tex2D, textureSize, format);
+		TexturePtr texture = this->getGraphicsDriver()->createTexture(size, format);
 
         this->put(uri, std::move(texture));
 

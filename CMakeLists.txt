@@ -8,6 +8,7 @@ set (EXENG_VERSION_MAJOR 0)
 set (EXENG_VERSION_MINOR 2)
 
 add_definitions(-DEXENG_DYNAMIC)
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)	# for Visual C++
 
 ## Compiler flags
 if(CMAKE_COMPILER_IS_GNUCXX)
