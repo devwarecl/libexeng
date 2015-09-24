@@ -83,91 +83,6 @@ float3 transv(Matrix matrix, float3 vector)
     return result.xyz;
 }
 
-/*sample cube data*/
-/*
-constant Vertex vertices_[] =  {
-    // Cara trasera
-    {{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},  // Izquierda,  Arriba,  Atras
-    {{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f}},  // Derecha,    Arriba,  Atras
-    {{-0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 0.0f}},  // Izquierda,  Abajo,   Atras
-    {{ 0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 0.0f}},  // Derecha,    Abajo,   Atras
-
-    // Cara derecha
-    {{0.5f,   0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}}, // Derecha,     Arriba, Atras
-    {{0.5f,   0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}}, // Derecha,     Arriba, Adelante
-    {{0.5f,  -0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}}, // Derecha,     Abajo,  Atras
-    {{0.5f,  -0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}}, // Derecha,     Abajo,  Adelante 
-
-    // Cara delantera
-    {{ 0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 1.0f}},  // Derecha,     Arriba, Adelante
-    {{-0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 1.0f}},  // Izquierda,   Arriba, Adelante
-    {{ 0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 0.0f}},  // Derecha,     Abajo,  Adelante
-    {{-0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 0.0f}},  // Izquierda,   Abajo,  Adelante
-    
-    // Cara Izquierda
-    {{-0.5f,   0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}}, // Izquierda,   Arriba, Adelante
-    {{-0.5f,   0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}}, // Izquierda,   Arriba, Atras
-    {{-0.5f,  -0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}}, // Izquierda,   Abajo,  Adelante 
-    {{-0.5f,  -0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}}, // Izquierda,   Abajo,  Atras
-    
-    // Cara de Arriba
-    {{-0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 1.0f}}, // Izquierda,   Arriba, Adelante
-    {{ 0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 1.0f}}, // Derecha,     Arriba, Adelante
-    {{-0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 0.0f}}, // Izquierda,   Arriba, Atras
-    {{ 0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 0.0f}},  // Derecha,     Arriba, Atras
-    
-    // Cara Inferior
-    {{ 0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {1.0f, 1.0f}}, // Derecha,     Abajo, Adelante
-    {{-0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 1.0f}}, // Izquierda,   Abajo, Adelante
-    {{ 0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {1.0f, 0.0f}}, // Derecha,     Abajo, Atras
-    {{-0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 0.0f}}  // Izquierda,   Abajo, Atras
-};
-
-constant int indices_[] = {
-    0 + 0,  0 + 1,  0 + 2,  0 + 1,  0 + 3,  0 + 2,
-    4 + 0,  4 + 1,  4 + 2,  4 + 1,  4 + 3,  4 + 2, 
-    8 + 0,  8 + 1,  8 + 2,  8 + 1,  8 + 3,  8 + 2, 
-    12 + 0, 12 + 1, 12 + 2, 12 + 1, 12 + 3, 12 + 2, 
-    16 + 0, 16 + 1, 16 + 2, 16 + 1, 16 + 3, 16 + 2, 
-    20 + 0, 20 + 1, 20 + 2, 20 + 1, 20 + 3, 20 + 2
-};
-
-constant int indexCount_ = 36;
-*/
-
-constant Vertex_ vertices_[] =  {
-    // Cara trasera
-    {{-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f}},  // Izquierda,  Arriba,  Atras
-    {{ 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f}},  // Derecha,    Arriba,  Atras
-    {{-0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 0.0f}},  // Izquierda,  Abajo,   Atras
-    {{ 0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 0.0f}},  // Derecha,    Abajo,   Atras
-
-	// Cara derecha
-    {{0.5f,   0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}}, // Derecha,     Arriba, Atras
-    {{0.5f,   0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}}, // Derecha,     Arriba, Adelante
-    {{0.5f,  -0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}}, // Derecha,     Abajo,  Atras
-    {{0.5f,  -0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}}, // Derecha,     Abajo,  Adelante 
-
-	// Cara delantera
-    {{ 0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 1.0f}},  // Derecha,     Arriba, Adelante
-    {{-0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 1.0f}},  // Izquierda,   Arriba, Adelante
-    {{ 0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 0.0f}},  // Derecha,     Abajo,  Adelante
-    {{-0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 0.0f}},  // Izquierda,   Abajo,  Adelante
-};
-
-constant int indices_[] = {
-    0 + 0,  0 + 1,  0 + 2,  0 + 1,  0 + 3,  0 + 2,
-	4 + 0,  4 + 1,  4 + 2,  4 + 1,  4 + 3,  4 + 2, 
-	8 + 0,  8 + 1,  8 + 2,  8 + 1,  8 + 3,  8 + 2, 
-};
-
-constant int indexCount_ = 18;
-
-
-/**
- * @brief Ray buffer generator kernel
- */
-
 int coordToIndex(int x, int y, int width, int height) 
 {
 	return y*width + x;
@@ -336,7 +251,6 @@ void computeElementMeshSubset (
 	const int NormalOffset = 12/4;
 	const int TexCoordOffset = 24/4;
 
-	// global uchar *vertexData = (global uchar*)vertices;
     global float *vertexData = vertices;
 
 	SynthesisElement bestElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
@@ -344,22 +258,7 @@ void computeElementMeshSubset (
 	
 	bestElement.distance = FLT_MAX;
 	
-	// indexCount = indexCount_;
-
 	for (int i=0; i<indexCount; i+=3) {
-		/*
-		float3 coord1 = vertices_[indices_[i + 0]].coord;
-		float3 coord2 = vertices_[indices_[i + 1]].coord;
-		float3 coord3 = vertices_[indices_[i + 2]].coord;
-		float3 normal = vertices_[indices_[i + 0]].normal;
-		*/
-		
-        /*
-        float3 p1		= *(global float3*)(vertexData + VertexSize*indices[i + 0] + CoordOffset);
-		float3 p2		= *(global float3*)(vertexData + VertexSize*indices[i + 1] + CoordOffset);
-		float3 p3		= *(global float3*)(vertexData + VertexSize*indices[i + 2] + CoordOffset);
-		float3 normal	= *(global float3*)(vertexData + VertexSize*indices[i + 0] + NormalOffset);
-        */
 
 		// render data from geometry mesh
         global float* vertex1Ptr = vertexData + VertexSize*indices[i + 0];
@@ -392,7 +291,6 @@ kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int scr
     const int x = get_global_id(0);
     const int y = get_global_id(1);
     const int i = coordToIndex(x, y, screenWidth, screenHeight);
-    
 	const SynthesisElement element = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
 
 	synthesisBuffer[i] = element;
@@ -427,32 +325,21 @@ kernel void ComputeSynthesisData (
  */
 kernel void SynthetizeImage (
     write_only image2d_t image, 
-    global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight, 
+    global SynthesisElement *synthesisBuffer, 
+	global Ray *rays, int screenWidth, int screenHeight, 
     int materialSize, global float *materialData)
 {
 	const int x = get_global_id(0);
 	const int y = get_global_id(1);
 	const int i = coordToIndex(x, y, screenWidth, screenHeight);
     
-	Ray ray = rays[i];
-	SynthesisElement synthElement = synthesisBuffer[i];
+	const Ray ray = rays[i];
+	const SynthesisElement synthElement = synthesisBuffer[i];
     
-	// const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
+	const float4 color = *((global float4 *)(materialData + synthElement.material*materialSize));
+	const float4 finalColor = color * fabs(dot(ray.direction, synthElement.normal));
 
-	materialData += synthElement.material * materialSize;
-
-	const float4 materialColor = *((global float4 *)materialData);
-
-	// float4 color = {0.0f, 0.0f, 0.0f, 0.0f};
-	const float4 color = materialColor * fabs(dot(ray.direction, synthElement.normal));
-
-	/*
-	if (synthElement.distance > 0.0f) {
-		color = materialColor * fabs(dot(ray.direction, synthElement.normal));
-	}
-	*/
-	
-	write_imagef (image, (int2)(x, y), color);
+	write_imagef (image, (int2)(x, y), finalColor);
 }
 
 kernel void GetStructuresSize(global int* out) 
