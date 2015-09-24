@@ -302,21 +302,22 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
 	SynthesisElement tempElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
 
 	computeElementPlane(&tempElement, ray, plane);
+
     if (tempElement.distance <= 0.0f) {
         return;
     }
 
-	float3 p = ray.point;
-	float3 q = tempElement.point;
+	const float3 p = ray.point;
+	const float3 q = tempElement.point;
 
-	float3 pq = q - p;
-	float3 pa = p1 - p;
-	float3 pb = p2 - p;
-	float3 pc = p3 - p;
+	const float3 pq = q - p;
+	const float3 pa = p1 - p;
+	const float3 pb = p2 - p;
+	const float3 pc = p3 - p;
 
-	float u = triple(pq, pc, pb);
-	float v = triple(pq, pa, pc);
-	float w = triple(pq, pb, pa);
+	const float u = triple(pq, pc, pb);
+	const float v = triple(pq, pa, pc);
+	const float w = triple(pq, pb, pa);
 	
 	if (u > 0.0f && v > 0.0f && w > 0.0f) {
 		*element = tempElement;
@@ -388,10 +389,9 @@ void computeElementMeshSubset (
 
 kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) 
 {
-    int x = get_global_id(0);
-    int y = get_global_id(1);
-
-    int i = coordToIndex(x, y, screenWidth, screenHeight);
+    const int x = get_global_id(0);
+    const int y = get_global_id(1);
+    const int i = coordToIndex(x, y, screenWidth, screenHeight);
     
 	const SynthesisElement element = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
 
@@ -400,17 +400,16 @@ kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int scr
 
 /**
  * @brief Generate all the synthesis data to render a single object
- * This kernel compute the synthesis data (data needed for synthesize the final image) for the ray tracer for a 
- * single mesh subset data. It must be called multiple times, one for each meshSubset, to render a complete scene.
+ * This kernel compute the data needed for synthesize the final image for the ray tracer of a 
+ * single mesh subset data. It must be called multiple times, one for each meshSubset of each mesh, to render a complete scene.
  */
 kernel void ComputeSynthesisData (
 	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
 	global float *vertices, global int *indices, int indexCount, int materialIndex, global float *localTransform)
 {
-	int x = get_global_id(0);
-	int y = get_global_id(1);
-
-	int i = coordToIndex(x, y, screenWidth, screenHeight);
+	const int x = get_global_id(0);
+	const int y = get_global_id(1);
+	const int i = coordToIndex(x, y, screenWidth, screenHeight);
     
 	global Matrix *transforms = (global Matrix*)localTransform;
 
@@ -431,34 +430,28 @@ kernel void SynthetizeImage (
     global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight, 
     int materialSize, global float *materialData)
 {
-	int x = get_global_id(0);
-	int y = get_global_id(1);
-	int i = coordToIndex(x, y, screenWidth, screenHeight);
+	const int x = get_global_id(0);
+	const int y = get_global_id(1);
+	const int i = coordToIndex(x, y, screenWidth, screenHeight);
     
 	Ray ray = rays[i];
 	SynthesisElement synthElement = synthesisBuffer[i];
     
-	const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
-	float4 color = {0.0f, 0.0f, 0.0f, 1.0f};
-	
-	if (synthElement.distance > 0.0f) {
-		const int materialIndex = synthElement.material;
-		
-		color = *((global float4 *)(materialData + (materialIndex*materialSize)));
-		color = color * fabs(dot(ray.direction, synthElement.normal));
+	// const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
 
-		// color = white;
-		// color = color * fabs(dot(ray.direction, synthElement.normal));
-	}
-	
-	
+	materialData += synthElement.material * materialSize;
+
+	const float4 materialColor = *((global float4 *)materialData);
+
+	// float4 color = {0.0f, 0.0f, 0.0f, 0.0f};
+	const float4 color = materialColor * fabs(dot(ray.direction, synthElement.normal));
+
 	/*
-	color.x = (float)x / (float)(screenWidth - 1);
-	color.y = (float)y / (float)(screenHeight - 1);
-	color.z = (float)(x + y) / ((float)(screenWidth - 1) + (float)(screenHeight - 1));
-	color.w = 1.0f;
+	if (synthElement.distance > 0.0f) {
+		color = materialColor * fabs(dot(ray.direction, synthElement.normal));
+	}
 	*/
-
+	
 	write_imagef (image, (int2)(x, y), color);
 }
 
