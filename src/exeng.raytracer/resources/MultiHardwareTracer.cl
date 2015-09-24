@@ -112,7 +112,7 @@ Ray castRay(const Camera *camera, const float2 screenCoord, const float2 screenS
     return ray;
 }
 
-kernel void GenerateRays (
+__kernel void GenerateRays (
 	global Ray *rays, 
 	float camPosX, float camPosY, float camPosZ,
 	float camLookAtX, float camLookAtY, float camLookAtZ, 
@@ -136,7 +136,6 @@ kernel void GenerateRays (
     *(rays + i) = castRay(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
 }
 
-/*
 Ray castRayFromMatrix(const float2 screenCoord, const float2 screenSize, const float2 sample, const Matrix viewMatrix, const Matrix invViewMatrix) 
 {
 	const float2 coordsf = screenCoord + sample;
@@ -157,9 +156,9 @@ Ray castRayFromMatrix(const float2 screenCoord, const float2 screenSize, const f
     return ray;
 }
 
-kernel void GenerateRaysFromWorldMatrix (
+__kernel void GenerateRaysFromWorldMatrix (
     global Ray *rays, 
-    global float *viewBuffer,
+    global float *modelViewBuffer,
     int screenWidth, int screenHeight)
 {
     int x = get_global_id(0);
@@ -170,14 +169,13 @@ kernel void GenerateRaysFromWorldMatrix (
     float2 screenCoord = {(float) x, (float)y};
     float2 screenSize = {(float)screenWidth, (float)screenHeight};
     
-	Matrix viewMatrix		= *((global Matrix*)viewBuffer + 0 );
-	Matrix viewInvMatrix	= *((global Matrix*)viewBuffer + 16);
+	Matrix modelView		= *((global Matrix*)modelViewBuffer + 0 );
+	Matrix invModelView		= *((global Matrix*)modelViewBuffer + 16);
 
-	Ray ray = castRayFromMatrix(screenCoord, screenSize, (float2)(0.0f, 0.0f), viewMatrix, viewInvMatrix);
+	Ray ray = castRayFromMatrix(screenCoord, screenSize, (float2)(0.0f, 0.0f), modelView, invModelView);
 
     *(rays + i) = ray;
 }
-*/
 
 /**
  * @brief Compute a synthesis element
@@ -286,7 +284,7 @@ void computeElementMeshSubset (
     }
 }
 
-kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) 
+__kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) 
 {
     const int x = get_global_id(0);
     const int y = get_global_id(1);
@@ -298,10 +296,10 @@ kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int scr
 
 /**
  * @brief Generate all the synthesis data to render a single object
- * This kernel compute the data needed for synthesize the final image for the ray tracer of a 
+ * This __kernel compute the data needed for synthesize the final image for the ray tracer of a 
  * single mesh subset data. It must be called multiple times, one for each meshSubset of each mesh, to render a complete scene.
  */
-kernel void ComputeSynthesisData (
+__kernel void ComputeSynthesisData (
 	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
 	global float *vertices, global int *indices, int indexCount, int materialIndex, global float *localTransform)
 {
@@ -323,7 +321,7 @@ kernel void ComputeSynthesisData (
  * 
  * The image is synthetized by using the different materials 
  */
-kernel void SynthetizeImage (
+__kernel void SynthetizeImage (
     write_only image2d_t image, 
     global SynthesisElement *synthesisBuffer, 
 	global Ray *rays, int screenWidth, int screenHeight, 
@@ -342,7 +340,7 @@ kernel void SynthetizeImage (
 	write_imagef (image, (int2)(x, y), finalColor);
 }
 
-kernel void GetStructuresSize(global int* out) 
+__kernel void GetStructuresSize(global int* out) 
 {
 	out[0] = sizeof(Ray);
 	out[1] = sizeof(SynthesisElement);
