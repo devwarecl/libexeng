@@ -59,8 +59,8 @@ typedef struct {
 
 float3 transp(Matrix matrix, float3 vector) 
 {
-	float4 v = (float4)(vector, 1.0f);
-    float4 result = {
+	const float4 v = (float4)(vector, 1.0f);
+    const float4 result = {
         dot(matrix.rows[0], v),
         dot(matrix.rows[1], v),
         dot(matrix.rows[2], v),
@@ -72,8 +72,8 @@ float3 transp(Matrix matrix, float3 vector)
 
 float3 transv(Matrix matrix, float3 vector) 
 {
-	float4 v = (float4)(vector, 0.0f);
-    float4 result = {
+	const float4 v = (float4)(vector, 0.0f);
+    const float4 result = {
         dot(matrix.rows[0], v),
         dot(matrix.rows[1], v),
         dot(matrix.rows[2], v),
@@ -86,26 +86,6 @@ float3 transv(Matrix matrix, float3 vector)
 int coordToIndex(int x, int y, int width, int height) 
 {
 	return y*width + x;
-}
-
-Ray castRayFromMatrix(const float2 screenCoord, const float2 screenSize, const float2 sample, const Matrix viewMatrix, const Matrix invViewMatrix) 
-{
-	float2 coordsf = screenCoord + sample;
-
-	float3 cam_pos = {0.0f, 0.0f, 0.0f};
-	float3 cam_up = {0.0f, 1.0f, 0.0f};
-	float3 cam_dir = {0.0f, 0.0f, 1.0f};
-    float3 cam_right = cross(cam_up, cam_dir);
-    
-    float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
-    float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
-    
-    Ray ray = {
-        cam_pos, 
-        normalize(image_point - cam_pos) + (float3)(sample, 0.0f)
-    };
-    
-    return ray;
 }
 
 /**
@@ -156,9 +136,27 @@ kernel void GenerateRays (
     *(rays + i) = castRay(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
 }
 
-/**
- * @brief Explain itself.
- */
+/*
+Ray castRayFromMatrix(const float2 screenCoord, const float2 screenSize, const float2 sample, const Matrix viewMatrix, const Matrix invViewMatrix) 
+{
+	const float2 coordsf = screenCoord + sample;
+
+	const float3 cam_pos = {0.0f, 0.0f, 0.0f};
+	const float3 cam_up = {0.0f, 1.0f, 0.0f};
+	const float3 cam_dir = {0.0f, 0.0f, 1.0f};
+    const float3 cam_right = cross(cam_up, cam_dir);
+    
+    const float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
+    const float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
+    
+    const Ray ray = {
+        cam_pos, 
+        normalize(image_point - cam_pos) + (float3)(sample, 0.0f)
+    };
+    
+    return ray;
+}
+
 kernel void GenerateRaysFromWorldMatrix (
     global Ray *rays, 
     global float *viewBuffer,
@@ -179,14 +177,16 @@ kernel void GenerateRaysFromWorldMatrix (
 
     *(rays + i) = ray;
 }
+*/
 
 /**
  * @brief Compute a synthesis element
  */
 void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane) 
 {
-	float a = dot(plane.normal, plane.point - ray.point);
-	float b = dot(plane.normal, ray.direction);
+	const float a = dot(plane.normal, plane.point - ray.point);
+	const float b = dot(plane.normal, ray.direction);
+
 	float distance = a / b;
 	
 	if (distance > 0.0f) {

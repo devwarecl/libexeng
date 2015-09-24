@@ -309,7 +309,13 @@ namespace exeng { namespace raytracer {
 
 		this->rotationAngle += rotationAngle;
 
-        node->setTransform(rotatey<float>(rad(this->rotationAngle)));
+		auto rotation = identity<float, 4>();
+
+		rotation *= rotatey<float>(rad(this->rotationAngle));
+		rotation *= rotatez<float>(rad(this->rotationAngle));
+		rotation *= rotatex<float>(rad(this->rotationAngle));
+
+        node->setTransform(rotation);
 	}
 
     void RayTracerApp2::update(float seconds) {

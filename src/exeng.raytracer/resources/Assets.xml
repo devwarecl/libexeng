@@ -32,9 +32,27 @@
             
             <attribute ref-name="ambient">0.2 0.2 0.2 1.0</attribute>
             <attribute ref-name="diffuse">1.0 1.0 0.8 1.0</attribute>
-            <attribute ref-name="specular">0.0 0.0 1.0 1.0</attribute>
-            <attribute ref-name="shininess">60.0</attribute>
+            <attribute ref-name="specular">0.0 0.0 0.0 1.0</attribute>
+            <attribute ref-name="shininess">0.0</attribute>
         </material>
+        
+        <material name="materialBox2">
+            <program ref-name="shaderProgram" />
+
+            <material-layers>
+                <material-layer>
+                    <texture name="checkerboard" source="generator">
+                        <texture-generator type="checkerboard" size="64 64" grid="16 16"/>
+                    </texture>
+                </material-layer>
+            </material-layers>
+            
+            <attribute ref-name="ambient">0.2 0.2 0.2 1.0</attribute>
+            <attribute ref-name="diffuse">0.0 0.0 1.0 1.0</attribute>
+            <attribute ref-name="specular">0.0 0.0 0.0 1.0</attribute>
+            <attribute ref-name="shininess">0.0</attribute>
+        </material>
+  
     </material-library>
 
     <geometry-library>
@@ -50,13 +68,13 @@
                     <mesh-subset-generator type="box" size="3.0 1.0 1.0" center="0.0 0.0 0.0" />
                     <material ref-name="materialBox" />
                 </mesh-subset>
-
-                <!--
+                                
                 <mesh-subset>
-                    <mesh-subset-generator type="box" size="1.0 1.0 1.0" center="0.0 1.25 0.0" />
-                    <material ref-name="materialBox" />
+                    <mesh-subset-generator type="box" size="0.5 2.0 0.5" center="0.0 0.0 0.0" />
+                    <material ref-name="materialBox2" />
                 </mesh-subset>
                 
+                <!--
                 <mesh-subset>
                     <mesh-subset-generator type="box" size="1.0 1.0 1.0" center="0.0 -1.25 0.0" />
                     <material ref-name="materialBox" />
@@ -73,7 +91,7 @@
         
         <camera-collection>
             <camera name="camera">
-                <view><look-at position="0.0 1.0 2.0" look-at="0.0 0.0 0.0" up="0.0 1.0 0.0"/></view>
+                <view><look-at position="0.0 0.0 5.0" look-at="0.0 0.0 0.0" up="0.0 1.0 0.0"/></view>
                 <projection><perspective fov="60.0" aspect="1.3333" z-near="0.1" z-far="1000.0" /></projection>
                 <viewport position="0.0 0.0" size="1.0 1.0"/>
             </camera>    
