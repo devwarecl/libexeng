@@ -1,33 +1,69 @@
-project (libexeng)
 
-cmake_minimum_required(VERSION 2.6)
+PROJECT (libexeng)
 
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-set (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
-set (EXENG_VERSION_MAJOR 0)
-set (EXENG_VERSION_MINOR 2)
+CMAKE_MINIMUM_REQUIRED (VERSION 3.0)
 
-add_definitions(-DEXENG_DYNAMIC)
-add_definitions(-D_CRT_SECURE_NO_WARNINGS)	# for Visual C++
+SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+SET (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 
-## Compiler flags
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++1y -Wall")
-endif()
+SET (EXENG_VERSION_MAJOR 0)
+SET (EXENG_VERSION_MINOR 2)
+SET (EXENG_DEST_BIN_DIR ${PROJECT_BINARY_DIR}/bin)
 
-add_subdirectory(src)
-add_subdirectory(plugins)
+# Compiler preprocessor defines
+ADD_DEFINITIONS (-DEXENG_DYNAMIC)
+ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)	# for Visual C++
 
-if (WIN32)
-	set (DEST_BIN_DIR ${PROJECT_BINARY_DIR}/bin)
+# Boost.
+SET (Boost_USE_STATIC_LIBS OFF)
+SET (Boost_USE_MULTITHREADED ON)
+SET (Boost_USE_STATIC_RUNTIME OFF)
 
-    set_property(TARGET exeng.raytracer		PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
-    set_property(TARGET exeng.tests			PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
-    set_property(TARGET exeng				PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
-    set_property(TARGET exeng.graphics.gl3	PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
-	set_property(TARGET exeng.ui.demo		PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
-	set_property(TARGET exeng.demo			PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
-endif (WIN32)
+ADD_DEFINITIONS (-DBOOST_ALL_DYN_LINK)
+ADD_DEFINITIONS (-DBOOST_ALL_NO_LIB)
+ADD_DEFINITIONS (-DBOOST_TEST_DYN_LINK)
+
+FIND_PACKAGE (Boost 
+	COMPONENTS 
+		filesystem 
+		system 
+		unit_test_framework 
+		timer 
+		log 
+		thread 
+	REQUIRED
+)
+
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+
+# libxml2
+FIND_PACKAGE(libxml2 REQUIRED)
+INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
+
+# Additional import libraries for unix
+IF(UNIX AND NOT APPLE)
+	SET (UNIX_LIBRARIES dl rt)
+ELSE()
+	SET (UNIX_LIBRARIES "")
+ENDIF()
+
+# 
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+
+# 
+ADD_SUBDIRECTORY (src/exeng.sandbox)
+ADD_SUBDIRECTORY (src/exeng.tests)
+ADD_SUBDIRECTORY (src/exeng.raytracer)
+ADD_SUBDIRECTORY (src/exeng.main)
+ADD_SUBDIRECTORY (src/exeng.demo)
+ADD_SUBDIRECTORY (src/exeng)
+ADD_SUBDIRECTORY (src/lwobject)
+
+# Engine plugins
+ADD_SUBDIRECTORY (plugins)
+
+# TODO: Move to the corresponding CMakeLists.txt
 
 # enable_testing()
 # add_test(exeng-test test)

@@ -1,38 +1,24 @@
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "-std=c++0x")
-endif()
+ADD_DEFINITIONS (-DSANDBOX_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.sandbox/")
 
-add_definitions(-DBOOST_ALL_DYN_LINK -DSANDBOX_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.sandbox/")
+FIND_PACKAGE (OpenGL REQUIRED)
 
-# Boost Configuration
-set (Boost_USE_STATIC_LIBS OFF)
-set (Boost_USE_MULTITHREADED ON)
-set (Boost_USE_STATIC_RUNTIME OFF)
+FIND_PACKAGE (OpenCL REQUIRED)
+INCLUDE_DIRECTORIES (${OPENCL_INCLUDE_DIRS})
 
-find_package(OpenCL REQUIRED)
-find_package(Boost COMPONENTS system timer REQUIRED)
-find_package(glfw3 REQUIRED)
-find_package(OpenGL REQUIRED)
-
-include_directories(${Boost_INCLUDE_DIRS})
-include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${GLFW3_INCLUDE_DIR})
-include_directories(${OPENCL_INCLUDE_DIRS})
-
-link_directories(${Boost_LIBRARY_DIRS})
-link_directories(${GLFW3_LIBRARY_DIR})
+FIND_PACKAGE (glfw3 REQUIRED)
+INCLUDE_DIRECTORIES (${GLFW3_INCLUDE_DIR})
 
 # Grouping
-file (GLOB RES_FILES *.cl *.glsl)
+FILE (GLOB RES_FILES *.cl *.glsl)
 
-set (SandboxFiles
+SET (SandboxFiles
 	Main.cpp gl_core_3_3.h gl_core_3_3.c PerformanceTest.cpp
 )
 
-source_group(\\ FILES ${SandboxFiles})
+SOURCE_GROUP (\\ FILES ${SandboxFiles})
 
-add_executable(exeng.sandbox ${SandboxFiles} ${RES_FILES})
+ADD_EXECUTABLE (exeng.sandbox ${SandboxFiles} ${RES_FILES})
 
 # 
-target_link_libraries(exeng.sandbox ${Boost_LIBRARIES} ${GLFW3_LIBRARY} ${OPENCL_LIBRARIES}  ${OPENGL_LIBRARIES})
+TARGET_LINK_LIBRARIES (exeng.sandbox ${Boost_LIBRARIES} ${GLFW3_LIBRARY} ${OPENCL_LIBRARIES} ${OPENGL_LIBRARIES})
