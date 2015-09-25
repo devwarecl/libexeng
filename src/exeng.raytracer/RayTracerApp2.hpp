@@ -11,6 +11,9 @@
 
 namespace exeng { namespace raytracer {
 
+	class ButtonPressHandler;
+	class MoveAction;
+
     class RayTracerApp2 : public exeng::framework::GraphicsApplication, public exeng::input::IEventHandler {
     public:
         RayTracerApp2();
@@ -31,6 +34,8 @@ namespace exeng { namespace raytracer {
 	private:
 		void updateNodeRotation(float seconds, exeng::scenegraph::SceneNode *node);
 
+		void updateCamera(float seconds);
+
     private:
         std::string RayTracerApp2::getPluginPath();
 
@@ -38,6 +43,9 @@ namespace exeng { namespace raytracer {
         exeng::scenegraph::Camera *camera = nullptr;
         exeng::scenegraph::Mesh *screenMesh = nullptr;
         exeng::graphics::Material *screenMaterial = nullptr;
+
+		std::unique_ptr<ButtonPressHandler> buttonPressHandler;
+		std::unique_ptr<MoveAction> moveAction;
 
 		float rotationAngle = 0.0f;
     };
