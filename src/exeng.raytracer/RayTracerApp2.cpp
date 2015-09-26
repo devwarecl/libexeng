@@ -378,19 +378,13 @@ namespace exeng { namespace raytracer {
 
 		this->rotationAngle += rotationAngle;
 
-		auto rotation = identity<float, 4>();
-
-		rotation *= rotatey<float>(rad(this->rotationAngle));
-		rotation *= rotatez<float>(rad(this->rotationAngle));
-		rotation *= rotatex<float>(rad(this->rotationAngle));
-
-        node->setTransform(rotation);
+        node->setTransform(rotatey<float>(rad(this->rotationAngle)));
 	}
 
 	void RayTracerApp2::updateCamera(float seconds) {
 		const float speed		= 2.0f;
 		const float distance	= speed * seconds;
-		const float angle		= 60.0f * seconds;
+		const float angle		= 30.0f * seconds;
 
 		Camera *camera = this->getScene()->getCamera(0);
 
