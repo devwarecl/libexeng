@@ -83,7 +83,7 @@ float3 transv(Matrix matrix, float3 vector)
     return result.xyz;
 }
 
-int coordToIndex(int x, int y, int width, int height) 
+inline int coordToIndex(int x, int y, int width, int height) 
 {
 	return y*width + x;
 }
@@ -93,19 +93,18 @@ int coordToIndex(int x, int y, int width, int height)
  */
 Ray castRay(const Camera *camera, const float2 screenCoord, const float2 screenSize, const float2 sample)
 {
-    float2 coordsf = screenCoord + sample;
-
-	float3 cam_pos = camera->position;
+    const float2 coordsf = screenCoord + sample;
+	const float3 cam_pos = camera->position;
 	
-	float3 cam_up = camera->up;	// assume a normalized vector
-	float3 cam_dir = normalize(camera->lookAt - cam_pos);
-    // float3 cam_right = normalize(cross(cam_up, cam_dir));
-	float3 cam_right = normalize(cross(cam_dir, cam_up));
+	const float3 cam_up = camera->up;	// assume a normalized vector
+	const float3 cam_dir = normalize(camera->lookAt - cam_pos);
+    // const float3 cam_right = normalize(cross(cam_up, cam_dir));
+	const float3 cam_right = normalize(cross(cam_dir, cam_up));
     
-    float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
-    float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
+    const float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
+    const float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
     
-    Ray ray = {
+    const Ray ray = {
         cam_pos, 
         normalize(image_point - cam_pos) + (float3)(sample, 0.0f)
     };
@@ -120,13 +119,12 @@ __kernel void GenerateRays (
 	float camUpX, float camUpY, float camUpZ,
 	int screenWidth, int screenHeight) 
 {
-	int x = get_global_id(0);
-	int y = get_global_id(1);
+	const int x = get_global_id(0);
+	const int y = get_global_id(1);
+	const int i = coordToIndex(x, y, screenWidth, screenHeight);
 	
-	int i = coordToIndex(x, y, screenWidth, screenHeight);
-	
-	float2 screenCoord = {(float)x, (float)y};
-	float2 screenSize = {(float)screenWidth, (float)screenHeight};
+	const float2 screenCoord = {(float)x, (float)y};
+	const float2 screenSize = {(float)screenWidth, (float)screenHeight};
 
 	const Camera camera = {
 		{camPosX, camPosY, camPosZ},
@@ -137,46 +135,47 @@ __kernel void GenerateRays (
     *(rays + i) = castRay(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
 }
 
-Ray castRayFromMatrix(const float2 screenCoord, const float2 screenSize, const float2 sample, const Matrix viewMatrix, const Matrix invViewMatrix) 
-{
-	const float2 coordsf = screenCoord + sample;
 
-	const float3 cam_pos = {0.0f, 0.0f, 0.0f};
-	const float3 cam_up = {0.0f, 1.0f, 0.0f};
-	const float3 cam_dir = {0.0f, 0.0f, 1.0f};
-    const float3 cam_right = cross(cam_up, cam_dir);
-    
-    const float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
-    const float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
-    
-    const Ray ray = {
-        cam_pos, 
-        normalize(image_point - cam_pos) + (float3)(sample, 0.0f)
-    };
-    
-    return ray;
-}
-
-__kernel void GenerateRaysFromWorldMatrix (
-    global Ray *rays, 
-    global float *modelViewBuffer,
-    int screenWidth, int screenHeight)
-{
-    int x = get_global_id(0);
-    int y = get_global_id(1);
-    
-    int i = coordToIndex(x, y, screenWidth, screenHeight);
-    
-    float2 screenCoord = {(float) x, (float)y};
-    float2 screenSize = {(float)screenWidth, (float)screenHeight};
-    
-	Matrix modelView		= *((global Matrix*)modelViewBuffer + 0 );
-	Matrix invModelView		= *((global Matrix*)modelViewBuffer + 16);
-
-	Ray ray = castRayFromMatrix(screenCoord, screenSize, (float2)(0.0f, 0.0f), modelView, invModelView);
-
-    *(rays + i) = ray;
-}
+// Ray castRayFromMatrix(const float2 screenCoord, const float2 screenSize, const float2 sample, const Matrix viewMatrix, const Matrix invViewMatrix) 
+// {
+// 	const float2 coordsf = screenCoord + sample;
+// 
+// 	const float3 cam_pos = {0.0f, 0.0f, 0.0f};
+// 	const float3 cam_up = {0.0f, 1.0f, 0.0f};
+// 	const float3 cam_dir = {0.0f, 0.0f, 1.0f};
+//  const float3 cam_right = cross(cam_up, cam_dir);
+//     
+//  const float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
+//  const float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
+//    
+//  const Ray ray = {
+//        cam_pos, 
+//        normalize(image_point - cam_pos) + (float3)(sample, 0.0f)
+//    };
+//    
+//    return ray;
+//}
+//
+//__kernel void GenerateRaysFromWorldMatrix (
+//    global Ray *rays, 
+//    global float *modelViewBuffer,
+//    int screenWidth, int screenHeight)
+//{
+//    int x = get_global_id(0);
+//    int y = get_global_id(1);
+//    
+//    int i = coordToIndex(x, y, screenWidth, screenHeight);
+//    
+//    float2 screenCoord = {(float) x, (float)y};
+//    float2 screenSize = {(float)screenWidth, (float)screenHeight};
+//    
+//	Matrix modelView		= *((global Matrix*)modelViewBuffer + 0 );
+//	Matrix invModelView		= *((global Matrix*)modelViewBuffer + 16);
+//
+//	Ray ray = castRayFromMatrix(screenCoord, screenSize, (float2)(0.0f, 0.0f), modelView, invModelView);
+//
+//    *(rays + i) = ray;
+//}
 
 /**
  * @brief Compute a synthesis element
