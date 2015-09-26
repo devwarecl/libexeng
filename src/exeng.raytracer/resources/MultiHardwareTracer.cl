@@ -8,8 +8,8 @@
  * @brief Ray data structure.
  */
 typedef struct {
-	float3 point;		// Base point
-	float3 direction;	// Normalized direction vector
+	float4 point;		// Base point
+	float4 direction;	// Normalized direction vector
 } Ray;
 
 /** 
@@ -26,8 +26,8 @@ typedef struct {
  * @brief Synthesis Element.
  */
 typedef struct {
-	float3 	point;		// Point of intersection
-	float3	normal;		// Normal vector of the surface that collided with the ray.
+	float4 	point;		// Point of intersection
+	float4	normal;		// Normal vector of the surface that collided with the ray.
 	float	distance;	// Distance from the origin of the ray.
 	int		material;	// Material index/id (will be defined later).
 } SynthesisElement;
@@ -36,17 +36,17 @@ typedef struct {
  * @brief Plane
  */
 typedef struct {
-	float3 point;
-	float3 normal;
+	float4 point;
+	float4 normal;
 } Plane;
 
 /** 
  * @brief Camera definition
  */
 typedef struct {
-    float3 position;
-    float3 lookAt;
-    float3 up;
+    float4 position;
+    float4 lookAt;
+    float4 up;
 } Camera;
 
 /**
@@ -56,31 +56,16 @@ typedef struct {
     float4 rows[4];
 } Matrix;
 
-
-float3 transp(Matrix matrix, float3 vector) 
+float4 trans(Matrix matrix, float4 vector) 
 {
-	const float4 v = (float4)(vector, 1.0f);
     const float4 result = {
-        dot(matrix.rows[0], v),
-        dot(matrix.rows[1], v),
-        dot(matrix.rows[2], v),
-        dot(matrix.rows[3], v)
+        dot(matrix.rows[0], vector),
+        dot(matrix.rows[1], vector),
+        dot(matrix.rows[2], vector),
+        dot(matrix.rows[3], vector)
     };
     
-    return result.xyz;
-}
-
-float3 transv(Matrix matrix, float3 vector) 
-{
-	const float4 v = (float4)(vector, 0.0f);
-    const float4 result = {
-        dot(matrix.rows[0], v),
-        dot(matrix.rows[1], v),
-        dot(matrix.rows[2], v),
-        dot(matrix.rows[3], v)
-    };
-    
-    return result.xyz;
+    return result;
 }
 
 inline int coordToIndex(int x, int y, int width, int height) 
@@ -91,22 +76,22 @@ inline int coordToIndex(int x, int y, int width, int height)
 /**
  * @brief Cast a perspective ray from the camera
  */
-Ray castRay(const Camera *camera, const float2 screenCoord, const float2 screenSize, const float2 sample)
+Ray cast(const Camera *camera, const float2 screenCoord, const float2 screenSize, const float2 sample)
 {
     const float2 coordsf = screenCoord + sample;
-	const float3 cam_pos = camera->position;
+	const float4 cam_pos = camera->position;
 	
-	const float3 cam_up = camera->up;	// assume a normalized vector
-	const float3 cam_dir = normalize(camera->lookAt - cam_pos);
+	const float4 cam_up = camera->up;	// assume a normalized vector
+	const float4 cam_dir = normalize(camera->lookAt - cam_pos);
     // const float3 cam_right = normalize(cross(cam_up, cam_dir));
-	const float3 cam_right = normalize(cross(cam_dir, cam_up));
+	const float4 cam_right = (float4)(normalize(cross(cam_dir.xyz, cam_up.xyz)), 0.0f);
     
     const float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
-    const float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
+    const float4 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
     
     const Ray ray = {
         cam_pos, 
-        normalize(image_point - cam_pos) + (float3)(sample, 0.0f)
+        normalize(image_point - cam_pos) + (float4)(sample, 0.0f, 0.0f)
     };
     
     return ray;
@@ -127,55 +112,13 @@ __kernel void GenerateRays (
 	const float2 screenSize = {(float)screenWidth, (float)screenHeight};
 
 	const Camera camera = {
-		{camPosX, camPosY, camPosZ},
-		{camLookAtX, camLookAtY, camLookAtZ},
-		{camUpX, camUpY, camUpZ},
+		{camPosX, camPosY, camPosZ, 1.0f},
+		{camLookAtX, camLookAtY, camLookAtZ, 1.0f},
+		{camUpX, camUpY, camUpZ, 0.0f},
 	};
 	
-    *(rays + i) = castRay(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
+    *(rays + i) = cast(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
 }
-
-
-// Ray castRayFromMatrix(const float2 screenCoord, const float2 screenSize, const float2 sample, const Matrix viewMatrix, const Matrix invViewMatrix) 
-// {
-// 	const float2 coordsf = screenCoord + sample;
-// 
-// 	const float3 cam_pos = {0.0f, 0.0f, 0.0f};
-// 	const float3 cam_up = {0.0f, 1.0f, 0.0f};
-// 	const float3 cam_dir = {0.0f, 0.0f, 1.0f};
-//  const float3 cam_right = cross(cam_up, cam_dir);
-//     
-//  const float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
-//  const float3 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
-//    
-//  const Ray ray = {
-//        cam_pos, 
-//        normalize(image_point - cam_pos) + (float3)(sample, 0.0f)
-//    };
-//    
-//    return ray;
-//}
-//
-//__kernel void GenerateRaysFromWorldMatrix (
-//    global Ray *rays, 
-//    global float *modelViewBuffer,
-//    int screenWidth, int screenHeight)
-//{
-//    int x = get_global_id(0);
-//    int y = get_global_id(1);
-//    
-//    int i = coordToIndex(x, y, screenWidth, screenHeight);
-//    
-//    float2 screenCoord = {(float) x, (float)y};
-//    float2 screenSize = {(float)screenWidth, (float)screenHeight};
-//    
-//	Matrix modelView		= *((global Matrix*)modelViewBuffer + 0 );
-//	Matrix invModelView		= *((global Matrix*)modelViewBuffer + 16);
-//
-//	Ray ray = castRayFromMatrix(screenCoord, screenSize, (float2)(0.0f, 0.0f), modelView, invModelView);
-//
-//    *(rays + i) = ray;
-//}
 
 /**
  * @brief Compute a synthesis element
@@ -185,7 +128,7 @@ void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane)
 	const float a = dot(plane.normal, plane.point - ray.point);
 	const float b = dot(plane.normal, ray.direction);
 
-	float distance = a / b;
+	const float distance = a / b;
 	
 	if (distance > 0.0f) {
 		out->distance = distance;
@@ -205,14 +148,19 @@ float triple(float3 a, float3 b, float3 c)
 /**
  * @brief Compute a synthesis element for the specified triangle
  */
-void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float3 p2, float3 p3, float3 normal) 
+void computeElementTriangle(SynthesisElement *element, Ray ray, float4 p1, float4 p2, float4 p3, float4 normal) 
 {
 	const Plane plane = {
 		(p1 + p2 + p3) * (1.0f/3.0f), 
 		normal
 	};
 	
-	SynthesisElement tempElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
+	SynthesisElement tempElement = {
+		{0.0f, 0.0f, 0.0f, 0.0f}, 
+		{0.0f, 0.0f, 0.0f, 0.0f}, 
+		0.0f, 
+		0
+	};
 
 	computeElementPlane(&tempElement, ray, plane);
 
@@ -220,13 +168,13 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float3 p1, float
         return;
     }
 
-	const float3 p = ray.point;
-	const float3 q = tempElement.point;
+	const float3 p = ray.point.xyz;
+	const float3 q = tempElement.point.xyz;
 
 	const float3 pq = q - p;
-	const float3 pa = p1 - p;
-	const float3 pb = p2 - p;
-	const float3 pc = p3 - p;
+	const float3 pa = p1.xyz - p;
+	const float3 pb = p2.xyz - p;
+	const float3 pc = p3.xyz - p;
 
 	const float u = triple(pq, pc, pb);
 	const float v = triple(pq, pa, pc);
@@ -251,8 +199,8 @@ void computeElementMeshSubset (
 
     global float *vertexData = vertices;
 
-	SynthesisElement bestElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
-	SynthesisElement currentElement = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
+	SynthesisElement bestElement = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
+	SynthesisElement currentElement = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
 	
 	bestElement.distance = FLT_MAX;
 	
@@ -264,10 +212,10 @@ void computeElementMeshSubset (
         global float* vertex3Ptr = vertexData + VertexSize*indices[i + 2];
         global float* normalPtr = vertexData + VertexSize*indices[i + 0] + NormalOffset;
         
-		float3 coord1 = {vertex1Ptr[0], vertex1Ptr[1], vertex1Ptr[2]};
-		float3 coord2 = {vertex2Ptr[0], vertex2Ptr[1], vertex2Ptr[2]};
-		float3 coord3 = {vertex3Ptr[0], vertex3Ptr[1], vertex3Ptr[2]};
-		float3 normal = {normalPtr[0], normalPtr[1], normalPtr[2]};
+		float4 coord1 = {vertex1Ptr[0], vertex1Ptr[1], vertex1Ptr[2], 0.0f};
+		float4 coord2 = {vertex2Ptr[0], vertex2Ptr[1], vertex2Ptr[2], 0.0f};
+		float4 coord3 = {vertex3Ptr[0], vertex3Ptr[1], vertex3Ptr[2], 0.0f};
+		float4 normal = {normalPtr[0], normalPtr[1], normalPtr[2], 1.0f};
 		
 		computeElementTriangle(&currentElement, ray, coord1, coord2, coord3, normal);
 		
@@ -289,7 +237,12 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
     const int x = get_global_id(0);
     const int y = get_global_id(1);
     const int i = coordToIndex(x, y, screenWidth, screenHeight);
-	const SynthesisElement element = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0};
+	const SynthesisElement element = {
+		{0.0f, 0.0f, 0.0f, 0.0f},	// Point
+		{0.0f, 0.0f, 0.0f, 0.0f},	// Normal
+		0.0f,						// Distance
+		0							// MaterialIndex
+	};
 
 	synthesisBuffer[i] = element;
 }
@@ -310,8 +263,8 @@ __kernel void ComputeSynthesisData (
 	global Matrix *transforms = (global Matrix*)localTransform;
 
 	Ray ray = rays[i];
-	ray.point		= transp(transforms[1], ray.point);
-	ray.direction	= transv(transforms[1], ray.direction);
+	ray.point		= trans(transforms[1], ray.point);
+	ray.direction	= trans(transforms[1], ray.direction);
 
 	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices, indices, indexCount, materialIndex);
 }
