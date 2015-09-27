@@ -93,9 +93,9 @@
 
     <geometry-library>
         <vertex-format>
-            <attribute name="coord" type="Vector3f" use="position"/>
-            <attribute name="normal" type="Vector3f" use="normal"/>
-            <attribute name="texCoord" type="Vector2f" use="texture-coordinate"/>
+            <attribute name="coord" type="Vector4f" use="position"/>
+            <attribute name="normal" type="Vector4f" use="normal"/>
+            <attribute name="texCoord" type="Vector4f" use="texture-coordinate"/>
         </vertex-format>
         
         <geometry name="box" type="mesh">

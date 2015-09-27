@@ -367,7 +367,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 	}
 
     void HardwareRendererPrivate::updateStructSizes() {
-		const int StructuresCount = 2;
+		const int StructuresCount = 3;
 		cl_int out[StructuresCount] = {0};
 
 		cl::Event event;
@@ -398,7 +398,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 		event.wait();
 
 		queue.finish();
-
+		
 		this->raySize = out[0];
 		this->synthesisElementSize = out[1];
 	}

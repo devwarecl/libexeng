@@ -28,8 +28,7 @@ namespace exeng { namespace graphics {
     /**
      * @brief VertexField enumeration
      */
-    struct VertexAttrib : public Enum 
-	{
+    struct VertexAttrib : public Enum {
         enum Enum {
             Unused,
             Position,
@@ -57,16 +56,14 @@ namespace exeng { namespace graphics {
     /**
      * @brief Describe a determined field
      */
-    struct VertexField 
-	{
+    struct VertexField {
         VertexAttrib::Enum attribute = VertexAttrib::Unused;    //! The attribute
         int count = 0;                                          //! The dimension
         DataType::Enum dataType = DataType::Float32;            //! The data type for the vertex field.
         
         VertexField() {}
 
-        VertexField(VertexAttrib::Enum attrib_, int count_, DataType::Enum dataType_) 
-		{
+        VertexField(VertexAttrib::Enum attrib_, int count_, DataType::Enum dataType_) {
 			this->attribute = attrib_;
 			this->count = count_;
 			this->dataType = dataType_;
@@ -75,10 +72,29 @@ namespace exeng { namespace graphics {
         /**
          * @brief Get the size, in bytes, of the field.
          */
-        int getSize() const 
-		{
+        int getSize() const {
             return this->count * DataType::getSize(dataType);
         }
+
+		bool operator== (const VertexField &other) const {
+			if (this->attribute != other.attribute) {
+				return false;
+			}
+
+			if (this->count != other.count) {
+				return false;
+			}
+
+			if (this->dataType != other.dataType) {
+				return false;
+			}
+
+			return true;
+		}
+
+		bool operator!= (const VertexField &other) const {
+			return !(*this == other);
+		}
     };
     
     /**
@@ -124,31 +140,32 @@ namespace exeng { namespace graphics {
          * @brief Get the VertexField object containing the specified Vertex Attribute.
          */
         VertexField getAttrib(VertexAttrib::Enum attrib) const;
+
+		bool operator== (const VertexFormat &other) const;
+
+		bool operator!= (const VertexFormat &other) const;
     };
     
 	/**
      * @brief Vertex with a 3D coordinate, normal vector and a single-unit 2D texture coordinate. All
      * values as floats.
      */
-    struct Vertex 
-	{
-        Vector3f coord;
-        Vector3f normal;
-        Vector2f texCoord;
+    struct Vertex {
+        Vector4f coord;
+        Vector4f normal;
+        Vector4f texCoord;
 
 		static VertexFormat format();
     };
     
-    struct Vertex2
-	{
-        Vector3f coord;
+    struct Vertex2 {
+        Vector4f coord;
         Vector2f texCoord;
 
 		static VertexFormat format();
     };
 
-    inline VertexFormat::VertexFormat() 
-	{
+    inline VertexFormat::VertexFormat() {
         this->packaging = VertexPackaging::SingleBuffer;
         
         for (int i=0; i<VertexFormat::FieldCount; ++i) {
@@ -156,8 +173,7 @@ namespace exeng { namespace graphics {
         }
     }
     
-    inline int VertexFormat::getSize() const 
-	{
+    inline int VertexFormat::getSize() const {
         int size = 0;
                 
         for (auto &field : this->fields) {
@@ -167,8 +183,7 @@ namespace exeng { namespace graphics {
         return size;
     }
     
-    inline int VertexFormat::getAttribOffset(VertexAttrib::Enum attrib) const 
-	{
+    inline int VertexFormat::getAttribOffset(VertexAttrib::Enum attrib) const {
         if (this->packaging == VertexPackaging::MultiBuffer) {
             return VertexFormat::InvalidOffset;
         }
@@ -186,8 +201,7 @@ namespace exeng { namespace graphics {
         return offset;
     }
     
-    inline VertexField VertexFormat::getAttrib(VertexAttrib::Enum attrib) const 
-	{
+    inline VertexField VertexFormat::getAttrib(VertexAttrib::Enum attrib) const {
         VertexField resultField = VertexField(VertexAttrib::Unused, 0, DataType::Float32);
         
         for (const VertexField &field : this->fields) {
@@ -203,22 +217,38 @@ namespace exeng { namespace graphics {
         return resultField;
     }
     
-    inline VertexFormat Vertex::format() 
-	{
+	inline bool VertexFormat::operator== (const VertexFormat &other) const {
+		if (this->packaging != other.packaging) {
+			return false;
+		}
+
+		for (int i=0; i<FieldCount; i++) {
+			if (this->fields[i] != other.fields[i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	inline bool VertexFormat::operator!= (const VertexFormat &other) const {
+		return !(*this == other);
+	}
+
+    inline VertexFormat Vertex::format() {
         VertexFormat format;
         
-		format.fields[0] = {VertexAttrib::Position, 3, DataType::Float32};
-		format.fields[1] = {VertexAttrib::Normal, 3, DataType::Float32};
-		format.fields[2] = {VertexAttrib::TexCoord, 2, DataType::Float32};
-        
+		format.fields[0] = {VertexAttrib::Position, 4, DataType::Float32};
+		format.fields[1] = {VertexAttrib::Normal, 4, DataType::Float32};
+		format.fields[2] = {VertexAttrib::TexCoord, 4, DataType::Float32};
+		
         return format;
     }
     
-    inline VertexFormat Vertex2::format() 
-	{
+    inline VertexFormat Vertex2::format() {
         VertexFormat format;
     
-		format.fields[0] = {VertexAttrib::Position, 3, DataType::Float32};
+		format.fields[0] = {VertexAttrib::Position, 4, DataType::Float32};
 		format.fields[1] = {VertexAttrib::TexCoord, 2, DataType::Float32};
         
         return format;

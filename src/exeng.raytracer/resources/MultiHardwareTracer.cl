@@ -17,10 +17,10 @@ typedef struct {
  * This structure doesn't map portably to the Host.
  */
 typedef struct {
-	float3 coord;		// Vertex position
-	float3 normal;		// Vertex normalized normal vector
+	float4 coord;		// Vertex position
+	float4 normal;		// Vertex normalized normal vector
 	float2 tex;			// Vertex texture coordinate
-} Vertex_;
+} Vertex;
 
 /**
  * @brief Synthesis Element.
@@ -192,6 +192,56 @@ void computeElementMeshSubset (
     global SynthesisElement *element, Ray ray, 
     global float *vertices, global int *indices, int indexCount, int materialIndex)
 {
+	// const int VertexSize = 32/4;	// = sizeof(exeng::Vertex)
+	// const int CoordOffset = 0;
+	// const int NormalOffset = 12/4;
+	// const int TexCoordOffset = 24/4;
+    global Vertex *vertexData = (global Vertex *)vertices;
+
+	SynthesisElement bestElement = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
+	SynthesisElement currentElement = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
+	
+	bestElement.distance = FLT_MAX;
+	
+	for (int i=0; i<indexCount; i+=3) {
+
+		// render data from geometry mesh
+        // global float* vertex1Ptr = vertexData + VertexSize*indices[i + 0];
+        // global float* vertex2Ptr = vertexData + VertexSize*indices[i + 1];
+        // global float* vertex3Ptr = vertexData + VertexSize*indices[i + 2];
+        // global float* normalPtr = vertexData + VertexSize*indices[i + 0] + NormalOffset;
+		// 
+		// float4 coord1 = {vertex1Ptr[0], vertex1Ptr[1], vertex1Ptr[2], 0.0f};
+		// float4 coord2 = {vertex2Ptr[0], vertex2Ptr[1], vertex2Ptr[2], 0.0f};
+		// float4 coord3 = {vertex3Ptr[0], vertex3Ptr[1], vertex3Ptr[2], 0.0f};
+		// float4 normal = {normalPtr[0], normalPtr[1], normalPtr[2], 1.0f};
+
+		float4 coord1 = vertexData[indices[i + 0]].coord;
+		float4 coord2 = vertexData[indices[i + 1]].coord;
+		float4 coord3 = vertexData[indices[i + 2]].coord;
+		float4 normal = vertexData[indices[i + 0]].normal;
+		
+		computeElementTriangle(&currentElement, ray, coord1, coord2, coord3, normal);
+		
+		if (currentElement.distance>0.0f && currentElement.distance<bestElement.distance) {
+		 	bestElement = currentElement;
+		}
+	}
+	
+	if (bestElement.distance > 0.0f && bestElement.distance != FLT_MAX) {
+		if (element->distance==0.0f || bestElement.distance<element->distance) {
+			*element = bestElement;
+			element->material = materialIndex;
+		}
+    }
+}
+
+
+/*
+void computeElementMeshSubset (
+    global SynthesisElement *element, Ray ray, 
+    global float *vertices, global int *indices, int indexCount, int materialIndex)
+{
 	const int VertexSize = 32/4;	// = sizeof(exeng::Vertex)
 	const int CoordOffset = 0;
 	const int NormalOffset = 12/4;
@@ -231,6 +281,7 @@ void computeElementMeshSubset (
 		}
     }
 }
+*/
 
 __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) 
 {
@@ -297,4 +348,5 @@ __kernel void GetStructuresSize(global int* out)
 {
 	out[0] = sizeof(Ray);
 	out[1] = sizeof(SynthesisElement);
+	out[2] = sizeof(Vertex);
 }
