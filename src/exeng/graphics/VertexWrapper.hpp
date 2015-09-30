@@ -118,7 +118,7 @@ namespace exeng { namespace graphics {
 	class BoxGeometryGenerator : public GeometryGenerator {
 	public:
 		BoxGeometryGenerator(const Vector4f &displace, const Vector3f &size) {
-			this->center = center;
+			this->center = displace;
 			this->size = size;
 		}
 
@@ -127,9 +127,9 @@ namespace exeng { namespace graphics {
 
 			const int VERTEX_COUNT = 24;
 
-			auto buffer = std::make_unique<HeapBuffer>(VERTEX_COUNT * Vertex::format().getSize());
+			Vertex vertices[VERTEX_COUNT];
 
-			TVertexWrapper<Vertex> vertices(Vertex::format(), buffer->getPointer(), buffer->getSize());
+			// TVertexWrapper<Vertex> vertices(Vertex::format(), buffer->getPointer(), buffer->getSize());
 
 			vertices[0] = {{-0.5f,   0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f},  {0.0f, 1.0f}};
 			vertices[1] = {{ 0.5f,   0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f},  {1.0f, 1.0f}};
@@ -166,14 +166,14 @@ namespace exeng { namespace graphics {
 			vertices[22] = {{ 0.5f,  -0.5f,  -0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}};
 			vertices[23] = {{-0.5f,  -0.5f,  -0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}};
 
-			const float *values1 = (const float *) buffer->getPointer();
-
-			;
-
 			// Correct
-			for (int i=0; i<vertices.getVertexCount(); ++i) {
+			for (int i=0; i<VERTEX_COUNT; ++i) {
 				vertices[i].coord = vertices[i].coord * this->size + this->center;
 			}
+
+			auto buffer = std::make_unique<HeapBuffer>(VERTEX_COUNT * Vertex::format().getSize());
+
+			buffer->setData(vertices);
 
 			return buffer;
 		}
