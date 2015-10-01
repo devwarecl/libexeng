@@ -19,8 +19,13 @@ typedef struct {
 typedef struct {
 	float4 coord;		// Vertex position
 	float4 normal;		// Vertex normalized normal vector
-	float2 tex;			// Vertex texture coordinate
+	float4 tex;			// Vertex texture coordinate
 } Vertex;
+
+typedef struct {
+	float4 p[3];
+	float4 n;
+} Triangle;
 
 /**
  * @brief Synthesis Element.
