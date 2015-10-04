@@ -9,6 +9,8 @@
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/scenegraph/SceneNodeAnimator.hpp>
 
+#include "samplers/Sampler.hpp"
+
 namespace exeng { namespace raytracer {
 
 	class ButtonPressHandler;
@@ -46,6 +48,8 @@ namespace exeng { namespace raytracer {
 
 		std::unique_ptr<ButtonPressHandler> buttonPressHandler;
 		std::unique_ptr<MoveAction> moveAction;
+
+		std::unique_ptr<::raytracer::samplers::Sampler> sampler;
 
 		float rotationAngle = 0.0f;
     };

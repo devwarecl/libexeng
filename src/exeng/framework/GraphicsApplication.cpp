@@ -610,6 +610,7 @@ namespace exeng { namespace framework {
 
 	GraphicsApplication::~GraphicsApplication() {
 		this->terminate();
+		delete this->impl;
 	}
 
 	void GraphicsApplication::initialize(int argc, char **argv) {

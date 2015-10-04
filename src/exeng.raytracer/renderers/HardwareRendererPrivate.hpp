@@ -67,7 +67,14 @@ namespace exeng { namespace raytracer { namespace renderers {
         
         cl::Buffer localTransformBuffer;
 
+		float clearSynthesisBufferTime = 0.0f;
+		float generateRaysTime = 0.0f;
+		float computeSynthesisBufferTime = 0.0f;
+		float computeImageTime = 0.0f;
+
     public:
+		~HardwareRendererPrivate();
+
         static std::string clErrorToString(cl_int errCode);
         static Vector2i indexToCoord(int index, int width, int height);
         static cl::Buffer createBuffer(cl::Context &context, const exeng::graphics::MaterialLibrary *library);

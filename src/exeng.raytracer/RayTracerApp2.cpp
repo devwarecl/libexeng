@@ -23,6 +23,8 @@
 #include "renderers/SoftwareRenderer.hpp"
 #include "renderers/HardwareRenderer.hpp"
 
+#include "samplers/JitteredSampler.hpp"
+
 namespace exeng { namespace graphics {
 
 	class TextureLoaderPng : public TextureLoader {
@@ -344,8 +346,10 @@ namespace exeng { namespace raytracer {
         
         AssetLibrary *assets = this->getAssetLibrary();
         MaterialLibrary *materials = this->getMaterialLibrary();
-
-        auto renderWrapper = std::make_unique<HardwareRenderer>(renderTarget, assets, materials);
+		
+		this->sampler = std::make_unique<::raytracer::samplers::JitteredSampler>(25);
+		
+        auto renderWrapper = std::make_unique<HardwareRenderer>(renderTarget, assets, materials, this->sampler.get());
         
         SceneRendererPtr sceneRenderer = std::make_unique<GenericSceneRenderer>(std::move(renderWrapper));
         sceneRenderer->setScene(this->getScene());

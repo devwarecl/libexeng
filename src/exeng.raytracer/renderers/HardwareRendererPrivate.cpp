@@ -1,6 +1,7 @@
 
 #include "HardwareRendererPrivate.hpp"
 
+#include <iostream>
 #include <ostream>
 #include <fstream>
 #include <iomanip>
@@ -8,6 +9,7 @@
 #include <boost/log/trivial.hpp>
 #include <exeng/Exception.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/Timer.hpp>
 
 namespace exeng { namespace raytracer { namespace renderers {
 
@@ -21,7 +23,23 @@ namespace exeng { namespace raytracer { namespace renderers {
         cl_int		material;	// Material index/id (will be defined later).
     };
 	
+	struct Timer {
+		Timer() {
+			start = static_cast<float>(exeng::Timer::getTime());
+		}
+
+		float getTime() const {
+			return exeng::Timer::getTime() - start;
+		}
+
+		float start;
+	};
+
 	const int MaterialSize = 4;	// Size of the material (number of float's)
+
+	HardwareRendererPrivate::~HardwareRendererPrivate() {
+
+	}
 
     std::string HardwareRendererPrivate::clErrorToString(cl_int errCode) {
         switch (errCode) {
@@ -163,6 +181,8 @@ namespace exeng { namespace raytracer { namespace renderers {
 	}
 
     void HardwareRendererPrivate::generateRays(const exeng::scenegraph::Camera *camera) {
+		Timer timer;
+
 		/*
 		BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRays kernel with params: "
 			<< "Pos={" << camera->getPosition() << "}, "
@@ -213,9 +233,13 @@ namespace exeng { namespace raytracer { namespace renderers {
         event.wait();
 		
         this->queue.finish();
+
+		this->generateRaysTime += timer.getTime();
 	}
 
     void HardwareRendererPrivate::clearSynthesisBuffer() {
+		Timer timer;
+
 		/*
 		BOOST_LOG_TRIVIAL(trace) << "[1] Invoking clearSynthBuffer kernel with params: ScreenSize={" << this->renderTarget->getSize() << "}";
 		*/
@@ -240,9 +264,13 @@ namespace exeng { namespace raytracer { namespace renderers {
         }
         
         event.wait();
+
+		this->clearSynthesisBufferTime += timer.getTime();
     }
     
 	void HardwareRendererPrivate::computeSynthesisBuffer(const SceneNodeData *nodeData) {
+		Timer timer;
+
 		// std::ofstream fs;
 		// fs.open("C:/synth.txt", std::ios_base::out);
 		// std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
@@ -318,9 +346,13 @@ namespace exeng { namespace raytracer { namespace renderers {
 
 			queue.finish();
 		}
+
+		this->computeSynthesisBufferTime += timer.getTime();
 	}
 
 	void HardwareRendererPrivate::computeImage() {
+		Timer timer;
+
         Vector3i size = this->renderTarget->getSize();
         cl::Event event;
         cl::Kernel &kernel = this->imageSynthetizerKernel;
@@ -371,6 +403,8 @@ namespace exeng { namespace raytracer { namespace renderers {
         event.wait();
 
         queue.finish();
+
+		this->computeImageTime += timer.getTime();
 	}
 
     void HardwareRendererPrivate::updateStructSizes() {

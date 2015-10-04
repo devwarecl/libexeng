@@ -13,7 +13,7 @@ namespace exeng { namespace raytracer { namespace renderers {
     using namespace exeng::graphics;
     using namespace exeng::scenegraph;
 
-    HardwareRenderer::HardwareRenderer(Texture *renderTarget, const AssetLibrary *assets, const MaterialLibrary *materialLibrary) {
+    HardwareRenderer::HardwareRenderer(Texture *renderTarget, const AssetLibrary *assets, const MaterialLibrary *materialLibrary, ::raytracer::samplers::Sampler *sampler) {
         this->impl = std::make_unique<HardwareRendererPrivate>();
 
         BOOST_LOG_TRIVIAL(trace) << "Initializing Multi-Object ray tracer ...";
@@ -82,14 +82,14 @@ namespace exeng { namespace raytracer { namespace renderers {
 		// pass the samples to OpenCL
 		cl::Buffer samplesBuffer;
 
-		//if (sampler) {
-		//	BOOST_LOG_TRIVIAL(trace) << "Creating sampling buffer from " << sampler->getSampleCount() << " sample(s)...";
-		//	size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
-		//	cl_mem_flags bufferFlags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-		//	void* bufferData = (void*)(sampler->getSampleData());
+		if (sampler) {
+			BOOST_LOG_TRIVIAL(trace) << "Creating sampling buffer from " << sampler->getSampleCount() << " sample(s)...";
+			size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
+			cl_mem_flags bufferFlags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
+			void* bufferData = (void*)(sampler->getSampleData());
 
-		//	samplesBuffer = cl::Buffer(context, bufferFlags, bufferSize, bufferData);
-		//}
+			samplesBuffer = cl::Buffer(context, bufferFlags, bufferSize, bufferData);
+		}
 
 		// Create a Program object from all the kernels
         const Buffer *hardwareTracerBuffer  = assets->getAsset("MultiHardwareTracer.cl");
@@ -141,10 +141,6 @@ namespace exeng { namespace raytracer { namespace renderers {
 		this->impl->samplesBuffer = samplesBuffer;
         this->impl->materialLibrary = materialLibrary;
 
-		//if (sampler) {
-		//	this->samplesCount = sampler->getSampleCount();
-		//}
-
         this->impl->materialBuffer = materialBuffer;
 
 		this->impl->updateStructSizes();
@@ -159,7 +155,20 @@ namespace exeng { namespace raytracer { namespace renderers {
 		BOOST_LOG_TRIVIAL(trace) << "Multi-Object ray tracer initialization done.";
     }
 
-    HardwareRenderer::~HardwareRenderer() {}
+    HardwareRenderer::~HardwareRenderer() {
+		const float total = 
+			this->impl->clearSynthesisBufferTime + 
+			this->impl->generateRaysTime + 
+			this->impl->computeSynthesisBufferTime + 
+			this->impl->computeImageTime;
+
+		std::cout << "Total execution time: " << total << " [s]." << std::endl;
+
+		std::cout << "	clearSynthesisBuffer: "			<< this->impl->clearSynthesisBufferTime << " [s]." << std::endl;
+		std::cout << "	generateRaysTime: "				<< this->impl->generateRaysTime << " [s]." << std::endl;
+		std::cout << "	computeSynthesisBufferTime: "	<< this->impl->computeSynthesisBufferTime << " [s]." << std::endl;
+		std::cout << "	computeImageTime: "				<< this->impl->computeImageTime << " [s]." << std::endl;
+	}
 
     void HardwareRenderer::setTransform(const Matrix4f &transform) {
         this->impl->setTransform(transform);
