@@ -163,11 +163,13 @@ namespace exeng { namespace raytracer { namespace renderers {
 	}
 
     void HardwareRendererPrivate::generateRays(const exeng::scenegraph::Camera *camera) {
+		/*
 		BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRays kernel with params: "
 			<< "Pos={" << camera->getPosition() << "}, "
 			<< "LookAt={" << camera->getLookAt() << "}, "
 			<< "Up={" << camera->getUp() << "}, "
 			<< "Screen= {" << this->renderTarget->getSize() << "}";
+		*/
 		
         // std::ofstream fs;
         // fs.open("C:/rays.txt", std::ios_base::out);
@@ -214,7 +216,9 @@ namespace exeng { namespace raytracer { namespace renderers {
 	}
 
     void HardwareRendererPrivate::clearSynthesisBuffer() {
-		BOOST_LOG_TRIVIAL(trace) << "[1] Invoking clearSyntBuffer kernel with params: ScreenSize={" << this->renderTarget->getSize() << "}";
+		/*
+		BOOST_LOG_TRIVIAL(trace) << "[1] Invoking clearSynthBuffer kernel with params: ScreenSize={" << this->renderTarget->getSize() << "}";
+		*/
 
         cl_int errCode = 0;
         cl::Event event;
@@ -266,10 +270,12 @@ namespace exeng { namespace raytracer { namespace renderers {
 			const int indexCount = subset->getIndexCount();
             const int materialIndex = this->materialLibrary->getMaterialIndex(subset->getMaterial());
 
+			/*
 			BOOST_LOG_TRIVIAL(trace) 
 				<< "[3] Invoking computeSynthesisData kernel with params: "
 				<< "ScreenSize={" << screenSize << "}, "
 				<< "TriangleCount=" << indexCount;
+			*/
 
 			kernel.setArg(0, this->synthesisBuffer);
 			kernel.setArg(1, this->raysBuffer);
@@ -332,14 +338,15 @@ namespace exeng { namespace raytracer { namespace renderers {
 
         std::vector<cl::Memory> buffers = {this->image};
 
+		/*
 		BOOST_LOG_TRIVIAL(trace) 
 			<< "[4] Invoking synthetizeImage kernel with params: "
 			<< "ScreenSize={" << size << "}";
+		*/
 		
         errCode = queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
         if (errCode != CL_SUCCESS) {
 			std::string msg = "MultiHardwareTracer::synthetizeImage: Error at trying to acquire the GL texture object: " + clErrorToString(errCode);
-
 			BOOST_LOG_TRIVIAL(trace) << msg;
             throw std::runtime_error(msg);
         }
