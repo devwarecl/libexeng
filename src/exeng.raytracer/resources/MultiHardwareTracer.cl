@@ -326,6 +326,33 @@ __kernel void ComputeSynthesisData (
 }
 
 /**
+ * @brief Generate all the synthesis data to render a single object
+ * This kernel compute the data needed for synthesize the final image for the ray tracer of a 
+ * single mesh subset data. It must be called multiple times, one for each meshSubset of each mesh, to render a complete scene.
+ */
+__kernel void ComputeSynthesisData2 (
+	__global SynthesisElement *synthesisBuffer,
+	__global const float *vertices, __global const int *indices, const int indexCount, const int materialIndex, 
+	__global const Vector2f *samples, const int sampleCount
+	__global float *transforms)
+{
+	const int x = get_global_id(0);
+	const int y = get_global_id(1);
+	const int w = get_global_size(0);
+	const int h = get_global_size(1);
+
+	const int synthesisIndex = coordToIndex(x, y, w, h);
+
+	// generate the ray based on the sample
+	Ray ray = rays[i];
+
+	ray.point		= trans(transforms[1], ray.point);
+	ray.direction	= trans(transforms[1], ray.direction);
+
+	computeElementMeshSubset(synthesisBuffer + synthesisIndex, ray, vertices, indices, indexCount, materialIndex);
+}
+
+/**
  * @brief Synthetize the final image.
  * 
  * The image is synthetized by using the different materials 

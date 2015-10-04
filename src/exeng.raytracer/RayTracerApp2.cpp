@@ -349,7 +349,7 @@ namespace exeng { namespace raytracer {
 		
 		this->sampler = std::make_unique<::raytracer::samplers::JitteredSampler>(25);
 		
-        auto renderWrapper = std::make_unique<HardwareRenderer>(renderTarget, assets, materials, this->sampler.get());
+        auto renderWrapper = std::make_unique<SoftwareRenderer>(renderTarget, assets, materials, this->sampler.get());
         
         SceneRendererPtr sceneRenderer = std::make_unique<GenericSceneRenderer>(std::move(renderWrapper));
         sceneRenderer->setScene(this->getScene());
