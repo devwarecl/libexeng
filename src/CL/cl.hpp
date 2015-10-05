@@ -5955,6 +5955,9 @@ public:
         const VECTOR_CLASS<Event>* events = NULL,
         Event* event = NULL) const
     {
+		return 0;
+
+		/*
         cl_mem * mems = (mem_objects != NULL && mem_objects->size() > 0) 
             ? (cl_mem*) alloca(mem_objects->size() * sizeof(cl_mem))
             : NULL;
@@ -5981,6 +5984,7 @@ public:
             *event = tmp;
 
         return err;
+		*/
     }
 
 /**

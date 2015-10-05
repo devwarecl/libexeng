@@ -24,11 +24,25 @@
 #include <exeng/scenegraph/Ray.hpp>
 #include <exeng/scenegraph/Camera.hpp>
 #include <exeng/scenegraph/SceneNodeData.hpp>
+#include <exeng/scenegraph/AssetsLibrary.hpp>
+
+#include "exeng.raytracer/samplers/Sampler.hpp"
 
 namespace exeng { namespace raytracer { namespace renderers {
 
+	using namespace exeng::graphics;
+	using namespace exeng::scenegraph;
+	using namespace ::raytracer::samplers;
+
     class HardwareRendererPrivate {
-    public:
+	public:
+		HardwareRendererPrivate (
+			Texture *renderTarget, 
+			const AssetLibrary *assets, 
+			const MaterialLibrary *materialLibrary, 
+			Sampler *sampler
+		);
+
         exeng::graphics::Texture *renderTarget = nullptr;
         const exeng::graphics::MaterialLibrary *materialLibrary = nullptr;
 

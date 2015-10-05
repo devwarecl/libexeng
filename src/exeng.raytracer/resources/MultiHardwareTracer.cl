@@ -309,18 +309,22 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
  * single mesh subset data. It must be called multiple times, one for each meshSubset of each mesh, to render a complete scene.
  */
 __kernel void ComputeSynthesisData (
-	global SynthesisElement *synthesisBuffer, global Ray *rays, int screenWidth, int screenHeight,
-	global float *vertices, global int *indices, int indexCount, int materialIndex, global float *localTransform)
+	__global SynthesisElement *synthesisBuffer, 
+	__global Ray *rays, 
+	__global float *vertices, 
+	__global int *indices, int indexCount, int materialIndex, __global Matrix *transforms,
+	__global float2 *samples, const int sample_count)
 {
 	const int x = get_global_id(0);
 	const int y = get_global_id(1);
-	const int i = coordToIndex(x, y, screenWidth, screenHeight);
-    
-	global Matrix *transforms = (global Matrix*)localTransform;
+	const int w = get_global_size(0);
+	const int h = get_global_size(0);
 
+	const int i = coordToIndex(x, y, w, h);
+    
 	Ray ray = rays[i];
-	ray.point		= trans(transforms[1], ray.point);
-	ray.direction	= trans(transforms[1], ray.direction);
+	// ray.point		= trans(transforms[0], ray.point);
+	// ray.direction	= trans(transforms[1], ray.direction);
 
 	computeElementMeshSubset(&synthesisBuffer[i], ray, vertices, indices, indexCount, materialIndex);
 }
@@ -333,7 +337,7 @@ __kernel void ComputeSynthesisData (
 __kernel void ComputeSynthesisData2 (
 	__global SynthesisElement *synthesisBuffer,
 	__global const float *vertices, __global const int *indices, const int indexCount, const int materialIndex, 
-	__global const Vector2f *samples, const int sampleCount
+	__global const float2 *samples, const int sampleCount, 
 	__global float *transforms)
 {
 	const int x = get_global_id(0);
@@ -343,13 +347,6 @@ __kernel void ComputeSynthesisData2 (
 
 	const int synthesisIndex = coordToIndex(x, y, w, h);
 
-	// generate the ray based on the sample
-	Ray ray = rays[i];
-
-	ray.point		= trans(transforms[1], ray.point);
-	ray.direction	= trans(transforms[1], ray.direction);
-
-	computeElementMeshSubset(synthesisBuffer + synthesisIndex, ray, vertices, indices, indexCount, materialIndex);
 }
 
 /**

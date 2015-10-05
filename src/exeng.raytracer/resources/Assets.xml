@@ -149,7 +149,7 @@
         
         <camera-collection>
             <camera name="camera">
-                <view><look-at position="0.0 0.8 5.0" look-at="0.0 0.8 0.0" up="0.0 1.0 0.0"/></view>
+                <view><look-at position="0.0 0.8 -3.0" look-at="0.0 0.8 0.0" up="0.0 1.0 0.0"/></view>
                 <projection><perspective fov="60.0" aspect="1.3333" z-near="0.1" z-far="1000.0" /></projection>
                 <viewport position="0.0 0.0" size="1.0 1.0"/>
             </camera>    
@@ -168,9 +168,9 @@
                     <scale>1.0 1.0 1.0</scale>
                 </transformation>
                 
-                <data type="geometry" ref-name="box"/>
+                <!--<data type="geometry" ref-name="box"/>-->
             </node>
-
+            
             <node name="staticBoxNode">
                 <transformation>
                     <identity />
