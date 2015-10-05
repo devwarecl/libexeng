@@ -182,11 +182,11 @@ namespace exeng { namespace raytracer { namespace renderers {
 			this->computeSynthesisBufferTime + 
 			this->computeImageTime;
 
-		BOOST_LOG_TRIVIAL(trace) << "Total execution time: " << total << " [s].";
-		BOOST_LOG_TRIVIAL(trace) << "	clearSynthesisBuffer: "			<< this->clearSynthesisBufferTime << " [s].";
-		BOOST_LOG_TRIVIAL(trace) << "	generateRaysTime: "				<< this->generateRaysTime << " [s].";
-		BOOST_LOG_TRIVIAL(trace) << "	computeSynthesisBufferTime: "	<< this->computeSynthesisBufferTime << " [s].";
-		BOOST_LOG_TRIVIAL(trace) << "	computeImageTime: "				<< this->computeImageTime << " [s].";
+		BOOST_LOG_TRIVIAL(trace) << "Total execution time: 100.0 [%].";
+		BOOST_LOG_TRIVIAL(trace) << "	clearSynthesisBuffer: "			<< (this->clearSynthesisBufferTime / total * 100.0f) << " [%].";
+		BOOST_LOG_TRIVIAL(trace) << "	generateRaysTime: "				<< (this->generateRaysTime / total * 100.0f) << " [%].";
+		BOOST_LOG_TRIVIAL(trace) << "	computeSynthesisBufferTime: "	<< (this->computeSynthesisBufferTime / total * 100.0f) << " [%].";
+		BOOST_LOG_TRIVIAL(trace) << "	computeImageTime: "				<< (this->computeImageTime / total * 100.0f) << " [%].";
 	}
 
     std::string HardwareRendererPrivate::clErrorToString(cl_int errCode) {
