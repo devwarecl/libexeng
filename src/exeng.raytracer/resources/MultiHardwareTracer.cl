@@ -129,25 +129,39 @@ __kernel void GenerateRays (
 /**
  * @brief Compute a synthesis element
  */
-void computeElementPlane(SynthesisElement *out, ray_t ray, plane_t plane) 
-{
-	const float a = dot(plane.normal, plane.point - ray.point);
-	const float b = dot(plane.normal, ray.direction);
+// SynthesisElement compute_se_plane(const ray_t *ray, const plane_t *plane)
+SynthesisElement compute_se_plane (
+	float4 pp,	// Plane position
+	float4 pn,	// Plane normal
+	float4 rp,	// Ray position
+	float4 rd	// Ray direction
+) {
+	const float a = dot(pn, pp - rp);
+	const float b = dot(pn, rd);
+	const float d = a / b;
 
-	const float distance = a / b;
-	
-	if (distance > 0.0f) {
-		out->distance = distance;
-		out->normal = plane.normal;
-		out->point = ray.point + ray.direction * distance;
-	}
-	
+	const float cond = (float)(d > 0.0f);
+	SynthesisElement st = {
+		cond * (rp + rd * d),
+		cond * pp, 
+		cond * d,
+		0
+	};
+
 	/*
-	const float factor = distance>0.0f?1.0f:0.0f;
-	out->distance = factor * distance;
-	out->normal = factor * plane.normal;
-	out->point = factor * (ray.point + ray.direction * distance);
+	const int cond = (int)(d > 0.0f);
+	const int4 conds = {cond, cond, cond, cond};
+	const float4 zero = {0.0f, 0.0f, 0.0f, 0.0f};
+
+	SynthesisElement st = {
+		select(zero, (rp + rd * d), conds),
+		select(zero, pp, conds), 
+		select(0.0f, d, cond),
+		0
+	};
 	*/
+	
+	return st;
 }
 
 /**
@@ -168,15 +182,13 @@ void computeElementTriangle(SynthesisElement *element, ray_t ray, float4 p1, flo
 		normal
 	};
 	
-	SynthesisElement tempElement = {
-		{0.0f, 0.0f, 0.0f, 0.0f}, 
-		{0.0f, 0.0f, 0.0f, 0.0f}, 
-		0.0f, 
-		0
-	};
+	const float4 pp = plane.point;
+	const float4 pn = plane.normal;
+	const float4 rp = ray.point;
+	const float4 rd = ray.direction;
 
-	computeElementPlane(&tempElement, ray, plane);
-
+	SynthesisElement tempElement = compute_se_plane(pp, pn, rp, rd);
+	
     if (tempElement.distance <= 0.0f) {
         return;
     }
