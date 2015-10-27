@@ -224,10 +224,10 @@ void computeElementMeshSubset (
 	// const int TexCoordOffset = 24/4;
     global vertex_t *vertexData = (global vertex_t *)vertices;
 
-	SynthesisElement bestElement = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
-	SynthesisElement currentElement = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
+	SynthesisElement best_se = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
+	SynthesisElement se = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
 	
-	bestElement.distance = FLT_MAX;
+	best_se.distance = FLT_MAX;
 	
 	for (int i=0; i<indexCount; i+=3) {
 
@@ -247,16 +247,24 @@ void computeElementMeshSubset (
 		float4 coord3 = vertexData[indices[i + 2]].coord;
 		float4 normal = vertexData[indices[i + 0]].normal;
 		
-		currentElement = compute_se_triangle(ray, coord1, coord2, coord3, normal);
+		se = compute_se_triangle(ray, coord1, coord2, coord3, normal);
 		
-		if (currentElement.distance>0.0f && currentElement.distance<bestElement.distance) {
-		 	bestElement = currentElement;
+		/*
+		const int	test_result = (se.distance>0.0f && se.distance<best_se.distance);
+		const int4	test_results = {test_result, test_result, test_result, test_result};
+		best_se.point		= select(best_se.point,		se.point,		test_results);
+		best_se.normal		= select(best_se.normal,	se.normal,		test_results);
+		best_se.distance	= select(best_se.distance,	se.distance,	test_result);
+		*/
+
+		if (se.distance>0.0f && se.distance<best_se.distance) {
+		 	best_se = se;
 		}
 	}
 	
-	if (bestElement.distance > 0.0f && bestElement.distance != FLT_MAX) {
-		if (element->distance==0.0f || bestElement.distance<element->distance) {
-			*element = bestElement;
+	if (best_se.distance > 0.0f && best_se.distance != FLT_MAX) {
+		if (element->distance==0.0f || best_se.distance<element->distance) {
+			*element = best_se;
 			element->material = materialIndex;
 		}
     }
