@@ -175,21 +175,21 @@ float triple(float4 a, float4 b, float4 c)
 /**
  * @brief Compute a synthesis element for the specified triangle
  */
-void computeElementTriangle(SynthesisElement *element, ray_t ray, float4 p1, float4 p2, float4 p3, float4 normal) 
+void compute_se_triangle(SynthesisElement *element, ray_t ray, float4 p1, float4 p2, float4 p3, float4 normal) 
 {
 	const plane_t plane = {
 		(p1 + p2 + p3) * (1.0f/3.0f), 
 		normal
 	};
 	
-	SynthesisElement tempElement = compute_se_plane(&ray, &plane);
+	SynthesisElement se = compute_se_plane(&ray, &plane);
 	
-    if (tempElement.distance <= 0.0f) {
+    if (se.distance <= 0.0f) {
         return;
     }
 
 	const float4 p = ray.point;
-	const float4 q = tempElement.point;
+	const float4 q = se.point;
 
 	const float4 pq = q - p;
 	const float4 pa = p1 - p;
@@ -201,7 +201,7 @@ void computeElementTriangle(SynthesisElement *element, ray_t ray, float4 p1, flo
 	const float w = triple(pq, pb, pa);
 	
 	if (u > 0.0f && v > 0.0f && w > 0.0f) {
-		*element = tempElement;
+		*element = se;
 	}
 }
 
@@ -241,7 +241,7 @@ void computeElementMeshSubset (
 		float4 coord3 = vertexData[indices[i + 2]].coord;
 		float4 normal = vertexData[indices[i + 0]].normal;
 		
-		computeElementTriangle(&currentElement, ray, coord1, coord2, coord3, normal);
+		compute_se_triangle(&currentElement, ray, coord1, coord2, coord3, normal);
 		
 		if (currentElement.distance>0.0f && currentElement.distance<bestElement.distance) {
 		 	bestElement = currentElement;
