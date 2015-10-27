@@ -126,6 +126,12 @@ __kernel void GenerateRays (
     rays[i] = cast(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
 }
 
+void se_validate(SynthesisElement *element, float factor) {
+	element->point *= factor;
+	element->normal *= factor;
+	element->distance *= factor;
+}
+
 /**
  * @brief Compute a synthesis element
  */
@@ -175,7 +181,7 @@ float triple(float4 a, float4 b, float4 c)
 /**
  * @brief Compute a synthesis element for the specified triangle
  */
-void compute_se_triangle(SynthesisElement *element, ray_t ray, float4 p1, float4 p2, float4 p3, float4 normal) 
+SynthesisElement compute_se_triangle(ray_t ray, float4 p1, float4 p2, float4 p3, float4 normal) 
 {
 	const plane_t plane = {
 		(p1 + p2 + p3) * (1.0f/3.0f), 
@@ -184,14 +190,12 @@ void compute_se_triangle(SynthesisElement *element, ray_t ray, float4 p1, float4
 	
 	SynthesisElement se = compute_se_plane(&ray, &plane);
 	
-    if (se.distance <= 0.0f) {
-        return;
-    }
+	const float factor_plane = (se.distance > 0.0f);
 
 	const float4 p = ray.point;
 	const float4 q = se.point;
 
-	const float4 pq = q - p;
+	const float4 pq = factor_plane*(q - p);
 	const float4 pa = p1 - p;
 	const float4 pb = p2 - p;
 	const float4 pc = p3 - p;
@@ -200,9 +204,11 @@ void compute_se_triangle(SynthesisElement *element, ray_t ray, float4 p1, float4
 	const float v = triple(pq, pa, pc);
 	const float w = triple(pq, pb, pa);
 	
-	if (u > 0.0f && v > 0.0f && w > 0.0f) {
-		*element = se;
-	}
+	const float factor_triangle = (u > 0.0f && v > 0.0f && w > 0.0f);
+
+	se_validate(&se, factor_triangle);
+
+	return se;
 }
 
 /**
@@ -241,7 +247,7 @@ void computeElementMeshSubset (
 		float4 coord3 = vertexData[indices[i + 2]].coord;
 		float4 normal = vertexData[indices[i + 0]].normal;
 		
-		compute_se_triangle(&currentElement, ray, coord1, coord2, coord3, normal);
+		currentElement = compute_se_triangle(ray, coord1, coord2, coord3, normal);
 		
 		if (currentElement.distance>0.0f && currentElement.distance<bestElement.distance) {
 		 	bestElement = currentElement;
