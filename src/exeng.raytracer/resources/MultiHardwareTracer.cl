@@ -129,13 +129,13 @@ __kernel void GenerateRays (
 /**
  * @brief Compute a synthesis element
  */
-// SynthesisElement compute_se_plane(const ray_t *ray, const plane_t *plane)
-SynthesisElement compute_se_plane (
-	float4 pp,	// Plane position
-	float4 pn,	// Plane normal
-	float4 rp,	// Ray position
-	float4 rd	// Ray direction
-) {
+SynthesisElement compute_se_plane(const ray_t *ray, const plane_t *plane) {
+
+	const float4 pp = plane->point;
+	const float4 pn = plane->normal;
+	const float4 rp = ray->point;
+	const float4 rd = ray->direction;
+
 	const float a = dot(pn, pp - rp);
 	const float b = dot(pn, rd);
 	const float d = a / b;
@@ -182,12 +182,7 @@ void computeElementTriangle(SynthesisElement *element, ray_t ray, float4 p1, flo
 		normal
 	};
 	
-	const float4 pp = plane.point;
-	const float4 pn = plane.normal;
-	const float4 rp = ray.point;
-	const float4 rd = ray.direction;
-
-	SynthesisElement tempElement = compute_se_plane(pp, pn, rp, rd);
+	SynthesisElement tempElement = compute_se_plane(&ray, &plane);
 	
     if (tempElement.distance <= 0.0f) {
         return;
