@@ -141,6 +141,13 @@ void computeElementPlane(SynthesisElement *out, ray_t ray, plane_t plane)
 		out->normal = plane.normal;
 		out->point = ray.point + ray.direction * distance;
 	}
+	
+	/*
+	const float factor = distance>0.0f?1.0f:0.0f;
+	out->distance = factor * distance;
+	out->normal = factor * plane.normal;
+	out->point = factor * (ray.point + ray.direction * distance);
+	*/
 }
 
 /**
