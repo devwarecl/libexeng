@@ -167,7 +167,7 @@ SynthesisElement compute_se_plane(const ray_t *ray, const plane_t *plane) {
 /**
  * @brief Compute the triple dot product between three vectors.
  */
-float triple(float3 a, float3 b, float3 c) 
+float triple(float4 a, float4 b, float4 c) 
 {
 	return dot(a, cross(b, c));
 }
@@ -188,13 +188,13 @@ void computeElementTriangle(SynthesisElement *element, ray_t ray, float4 p1, flo
         return;
     }
 
-	const float3 p = ray.point.xyz;
-	const float3 q = tempElement.point.xyz;
+	const float4 p = ray.point;
+	const float4 q = tempElement.point;
 
-	const float3 pq = q - p;
-	const float3 pa = p1.xyz - p;
-	const float3 pb = p2.xyz - p;
-	const float3 pc = p3.xyz - p;
+	const float4 pq = q - p;
+	const float4 pa = p1 - p;
+	const float4 pb = p2 - p;
+	const float4 pc = p3 - p;
 
 	const float u = triple(pq, pc, pb);
 	const float v = triple(pq, pa, pc);
