@@ -5,27 +5,30 @@
  */
 
 /** 
- * @brief Ray data structure.
+ * @brief ray_t data structure.
  */
 typedef struct {
 	float4 point;		// Base point
 	float4 direction;	// Normalized direction vector
-} Ray;
+} ray_t;
 
 /** 
- * @brief Vertex data.
+ * @brief vertex_t data.
  * This structure doesn't map portably to the Host.
  */
 typedef struct {
-	float4 coord;		// Vertex position
-	float4 normal;		// Vertex normalized normal vector
-	float4 tex;			// Vertex texture coordinate
-} Vertex;
+	float4 coord;		// vertex coordinate
+	float4 normal;		// vertex normal
+	float4 tex;			// vertex texture coordinate
+} vertex_t;
 
+/**
+ * @brief triangle_t structure
+ */
 typedef struct {
-	float4 p[3];
+	float4 p[3];		// 
 	float4 n;
-} Triangle;
+} triangle_t;
 
 /**
  * @brief Synthesis Element.
@@ -38,72 +41,67 @@ typedef struct {
 } SynthesisElement;
 
 /** 
- * @brief Plane
+ * @brief plane_t
  */
 typedef struct {
 	float4 point;
 	float4 normal;
-} Plane;
+} plane_t;
 
 /** 
- * @brief Camera definition
+ * @brief camera_t definition
  */
 typedef struct {
     float4 position;
-    float4 lookAt;
+    float4 look_at;
     float4 up;
-} Camera;
+} camera_t;
 
 /**
- * @brief 4x4 Matrix structure
+ * @brief 4x4 matrix_t structure
  */
-typedef struct {
-    float4 rows[4];
-} Matrix;
+typedef float4 matrix_t[4];
 
-float4 trans(Matrix matrix, float4 vector) 
-{
+float4 trans(matrix_t matrix, float4 vector) {
     const float4 result = {
-        dot(matrix.rows[0], vector),
-        dot(matrix.rows[1], vector),
-        dot(matrix.rows[2], vector),
-        dot(matrix.rows[3], vector)
+        dot(matrix[0], vector),
+        dot(matrix[1], vector),
+        dot(matrix[2], vector),
+        dot(matrix[3], vector)
     };
     
     return result;
 }
 
-inline int coordToIndex(int x, int y, int width, int height) 
-{
+inline int offset2(int x, int y, int width, int height) {
 	return y*width + x;
 }
 
 /**
  * @brief Cast a perspective ray from the camera
  */
-Ray cast(const Camera *camera, const float2 screenCoord, const float2 screenSize, const float2 sample)
-{
-    const float2 coordsf = screenCoord + sample;
+ray_t cast(const camera_t *camera, const float2 screenCoord, const float2 screenSize, const float2 sample) {
+    
 	const float4 cam_pos = camera->position;
-	
 	const float4 cam_up = camera->up;	// assume a normalized vector
-	const float4 cam_dir = normalize(camera->lookAt - cam_pos);
-    // const float3 cam_right = normalize(cross(cam_up, cam_dir));
-	const float4 cam_right = (float4)(normalize(cross(cam_dir.xyz, cam_up.xyz)), 0.0f);
+	const float4 cam_dir = normalize(camera->look_at - cam_pos);
+	const float4 cam_right = normalize(cross(cam_dir, cam_up));
     
-    const float2 normalized_coords = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
-    const float4 image_point = normalized_coords.x * cam_right + normalized_coords.y * cam_up + cam_pos + cam_dir;
+	const float2 coordsf = screenCoord + sample;
+    const float2 nc = (coordsf / (screenSize - (float2)(1.0f, 1.0f)) ) - (float2)(0.5f, 0.5f);
+
+    const float4 image_point = nc.x*cam_right + nc.y*cam_up + cam_pos + cam_dir;
     
-    const Ray ray = {
+    const ray_t ray = {
         cam_pos, 
-        normalize(image_point - cam_pos) + (float4)(sample, 0.0f, 0.0f)
+        normalize(image_point - cam_pos)
     };
     
     return ray;
 }
 
 __kernel void GenerateRays (
-	global Ray *rays, 
+	global ray_t *rays, 
 	float camPosX, float camPosY, float camPosZ,
 	float camLookAtX, float camLookAtY, float camLookAtZ, 
 	float camUpX, float camUpY, float camUpZ,
@@ -111,24 +109,27 @@ __kernel void GenerateRays (
 {
 	const int x = get_global_id(0);
 	const int y = get_global_id(1);
-	const int i = coordToIndex(x, y, screenWidth, screenHeight);
+	const int w = get_global_size(0);
+	const int h = get_global_size(1);
+
+	const int i = offset2(x, y, w, h);
 	
 	const float2 screenCoord = {(float)x, (float)y};
-	const float2 screenSize = {(float)screenWidth, (float)screenHeight};
+	const float2 screenSize = {(float)w, (float)h};
 
-	const Camera camera = {
+	const camera_t camera = {
 		{camPosX, camPosY, camPosZ, 1.0f},
 		{camLookAtX, camLookAtY, camLookAtZ, 1.0f},
 		{camUpX, camUpY, camUpZ, 0.0f},
 	};
 	
-    *(rays + i) = cast(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
+    rays[i] = cast(&camera, screenCoord, screenSize, (float2)(0.0f, 0.0f));
 }
 
 /**
  * @brief Compute a synthesis element
  */
-void computeElementPlane(SynthesisElement *out, Ray ray, Plane plane) 
+void computeElementPlane(SynthesisElement *out, ray_t ray, plane_t plane) 
 {
 	const float a = dot(plane.normal, plane.point - ray.point);
 	const float b = dot(plane.normal, ray.direction);
@@ -153,9 +154,9 @@ float triple(float3 a, float3 b, float3 c)
 /**
  * @brief Compute a synthesis element for the specified triangle
  */
-void computeElementTriangle(SynthesisElement *element, Ray ray, float4 p1, float4 p2, float4 p3, float4 normal) 
+void computeElementTriangle(SynthesisElement *element, ray_t ray, float4 p1, float4 p2, float4 p3, float4 normal) 
 {
-	const Plane plane = {
+	const plane_t plane = {
 		(p1 + p2 + p3) * (1.0f/3.0f), 
 		normal
 	};
@@ -194,14 +195,14 @@ void computeElementTriangle(SynthesisElement *element, Ray ray, float4 p1, float
  * @brief Compute a synthesis element from a mesh subset
  */
 void computeElementMeshSubset (
-    global SynthesisElement *element, Ray ray, 
+    global SynthesisElement *element, ray_t ray, 
     global float *vertices, global int *indices, int indexCount, int materialIndex)
 {
-	// const int VertexSize = 32/4;	// = sizeof(exeng::Vertex)
+	// const int VertexSize = 32/4;	// = sizeof(exeng::vertex_t)
 	// const int CoordOffset = 0;
 	// const int NormalOffset = 12/4;
 	// const int TexCoordOffset = 24/4;
-    global Vertex *vertexData = (global Vertex *)vertices;
+    global vertex_t *vertexData = (global vertex_t *)vertices;
 
 	SynthesisElement bestElement = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
 	SynthesisElement currentElement = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, 0.0f, 0};
@@ -244,10 +245,10 @@ void computeElementMeshSubset (
 
 /*
 void computeElementMeshSubset (
-    global SynthesisElement *element, Ray ray, 
+    global SynthesisElement *element, ray_t ray, 
     global float *vertices, global int *indices, int indexCount, int materialIndex)
 {
-	const int VertexSize = 32/4;	// = sizeof(exeng::Vertex)
+	const int VertexSize = 32/4;	// = sizeof(exeng::vertex_t)
 	const int CoordOffset = 0;
 	const int NormalOffset = 12/4;
 	const int TexCoordOffset = 24/4;
@@ -292,7 +293,7 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
 {
     const int x = get_global_id(0);
     const int y = get_global_id(1);
-    const int i = coordToIndex(x, y, screenWidth, screenHeight);
+    const int i = offset2(x, y, screenWidth, screenHeight);
 	const SynthesisElement element = {
 		{0.0f, 0.0f, 0.0f, 0.0f},	// Point
 		{0.0f, 0.0f, 0.0f, 0.0f},	// Normal
@@ -310,9 +311,9 @@ __kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int s
  */
 __kernel void ComputeSynthesisData (
 	__global SynthesisElement *synthesisBuffer, 
-	__global Ray *rays, 
+	__global ray_t *rays, 
 	__global float *vertices, 
-	__global int *indices, int indexCount, int materialIndex, __global Matrix *transforms,
+	__global int *indices, int indexCount, int materialIndex, __global matrix_t *transforms,
 	__global float2 *samples, const int sample_count)
 {
 	const int x = get_global_id(0);
@@ -320,9 +321,9 @@ __kernel void ComputeSynthesisData (
 	const int w = get_global_size(0);
 	const int h = get_global_size(0);
 
-	const int i = coordToIndex(x, y, w, h);
+	const int i = offset2(x, y, w, h);
     
-	Ray ray = rays[i];
+	ray_t ray = rays[i];
 	// ray.point		= trans(transforms[0], ray.point);
 	// ray.direction	= trans(transforms[1], ray.direction);
 
@@ -345,7 +346,7 @@ __kernel void ComputeSynthesisData2 (
 	const int w = get_global_size(0);
 	const int h = get_global_size(1);
 
-	const int synthesisIndex = coordToIndex(x, y, w, h);
+	const int synthesisIndex = offset2(x, y, w, h);
 
 }
 
@@ -357,14 +358,14 @@ __kernel void ComputeSynthesisData2 (
 __kernel void SynthetizeImage (
     write_only image2d_t image, 
     global SynthesisElement *synthesisBuffer, 
-	global Ray *rays, int screenWidth, int screenHeight, 
+	global ray_t *rays, int screenWidth, int screenHeight, 
     int materialSize, global float *materialData)
 {
 	const int x = get_global_id(0);
 	const int y = get_global_id(1);
-	const int i = coordToIndex(x, y, screenWidth, screenHeight);
+	const int i = offset2(x, y, screenWidth, screenHeight);
     
-	const Ray ray = rays[i];
+	const ray_t ray = rays[i];
 	const SynthesisElement synthElement = synthesisBuffer[i];
     
 	const float4 color = *((global float4 *)(materialData + synthElement.material*materialSize));
@@ -375,7 +376,7 @@ __kernel void SynthetizeImage (
 
 __kernel void GetStructuresSize(global int* out) 
 {
-	out[0] = sizeof(Ray);
+	out[0] = sizeof(ray_t);
 	out[1] = sizeof(SynthesisElement);
-	out[2] = sizeof(Vertex);
+	out[2] = sizeof(vertex_t);
 }
