@@ -146,26 +146,15 @@ SynthesisElement compute_se_plane(const ray_t *ray, const plane_t *plane) {
 	const float b = dot(pn, rd);
 	const float d = a / b;
 
-	const float cond = (float)(d > 0.0f);
+	const int test = -(isgreater(d, 0.0f) && isfinite(d));
+	const int4 test4 = (int4)test;
+	
 	SynthesisElement st = {
-		cond * (rp + rd * d),
-		cond * pp, 
-		cond * d,
+		select(0.0f, (rp + rd * d), test4),
+		select(0.0f, pn, test4), 
+		select(0.0f, d, test),
 		0
 	};
-
-	/*
-	const int cond = (int)(d > 0.0f);
-	const int4 conds = {cond, cond, cond, cond};
-	const float4 zero = {0.0f, 0.0f, 0.0f, 0.0f};
-
-	SynthesisElement st = {
-		select(zero, (rp + rd * d), conds),
-		select(zero, pp, conds), 
-		select(0.0f, d, cond),
-		0
-	};
-	*/
 	
 	return st;
 }
