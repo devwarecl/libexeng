@@ -238,25 +238,38 @@ void computeElementMeshSubset (
 		
 		se = compute_se_triangle(ray, coord1, coord2, coord3, normal);
 		
+		const int	test = -(se.distance>0.0f && se.distance<best_se.distance);
+		const int4	test4 = test;
+		best_se.point		= select(best_se.point,		se.point,		test4);
+		best_se.normal		= select(best_se.normal,	se.normal,		test4);
+		best_se.distance	= select(best_se.distance,	se.distance,	test);
+		
 		/*
-		const int	test_result = (se.distance>0.0f && se.distance<best_se.distance);
-		const int4	test_results = {test_result, test_result, test_result, test_result};
-		best_se.point		= select(best_se.point,		se.point,		test_results);
-		best_se.normal		= select(best_se.normal,	se.normal,		test_results);
-		best_se.distance	= select(best_se.distance,	se.distance,	test_result);
-		*/
-
 		if (se.distance>0.0f && se.distance<best_se.distance) {
 		 	best_se = se;
 		}
+		*/
 	}
 	
+	const int test 
+		= -((best_se.distance>0.0f && best_se.distance!=FLT_MAX) 
+		&& (element->distance==0.0f || best_se.distance<element->distance));
+	
+	const int4 test4 = (int4)test;
+
+	element->point		= select(element->point,	best_se.point,		test4);
+	element->normal		= select(element->normal,	best_se.normal,		test4);
+	element->distance	= select(element->distance, best_se.distance,	test);
+	element->material	= select(element->material, materialIndex,		test);
+
+	/*
 	if (best_se.distance > 0.0f && best_se.distance != FLT_MAX) {
 		if (element->distance==0.0f || best_se.distance<element->distance) {
 			*element = best_se;
 			element->material = materialIndex;
 		}
     }
+	*/
 }
 
 
