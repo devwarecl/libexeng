@@ -15,12 +15,9 @@
 #  include <GL/glx.h>
 #endif
 
-// prevents warning
 #if defined (EXENG_WINDOWS)
 #  include <Windows.h>
 #endif
-
-
 
 namespace exeng { namespace raytracer { namespace renderers {
 
@@ -32,15 +29,13 @@ namespace exeng { namespace raytracer { namespace renderers {
     };
 	
 	struct Timer {
-		Timer() {
-			start = static_cast<float>(exeng::Timer::getTime());
-		}
+		Timer() {}
 
 		float getTime() const {
 			return exeng::Timer::getTime() - start;
 		}
 
-		float start;
+		float start = static_cast<float>(exeng::Timer::getTime());
 	};
 
 	const int MaterialSize = 4;	// Size of the material (number of float's)
