@@ -6,12 +6,12 @@
 
 namespace raytracer { namespace samplers {
 
-class JitteredSampler : public Sampler {
-public:
-    JitteredSampler(int sampleCount);
+	class JitteredSampler : public Sampler {
+	public:
+		JitteredSampler(int sampleCount);
     
-    virtual void generateSamples();
-};
+		virtual void generateSamples();
+	};
 
 }}
 

@@ -1,18 +1,5 @@
 
-add_definitions(-DEXENG_BUILD -DBOOST_ALL_NO_LIB)
-
-include_directories( ${PROJECT_SOURCE_DIR}/src )
-
-# Boost Configuration
-set (Boost_USE_STATIC_LIBS OFF)
-set (Boost_USE_MULTITHREADED ON)
-set (Boost_USE_STATIC_RUNTIME OFF)
-
-FIND_PACKAGE(libxml2 REQUIRED)
-find_package(Boost COMPONENTS filesystem system  REQUIRED)
-
-include_directories(${Boost_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
+ADD_DEFINITIONS(-DEXENG_BUILD)
 
 set (BaseFiles_hpp 
     Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
@@ -235,23 +222,25 @@ add_library (exeng SHARED
     ${UtilFiles}
 )
 
-source_group(\\			FILES ${BaseFiles})
-source_group(io         FILES ${IoFiles})
-source_group(audio      FILES ${AudioFiles})
-source_group(framework  FILES ${FrameworkFiles})
-source_group(compute    FILES ${ComputeFiles})
-source_group(graphics   FILES ${GraphicsFiles})
-source_group(ui         FILES ${UiFiles})
-source_group(input      FILES ${InputFiles})
-source_group(scenegraph FILES ${ScenegraphFiles})
-source_group(system	    FILES ${SystemFiles})
-source_group(util		FILES ${UtilFiles})
+SET_PROPERTY (TARGET exeng PROPERTY CXX_STANDARD 14)
 
-if(UNIX AND NOT APPLE)
-	SET (UNIX_libs dl rt)
-endif()
+IF (WIN32)
+	SET_PROPERTY (TARGET exeng PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
+ENDIF ()
 
-target_link_libraries(exeng ${UNIX_libs} lwobject ${Boost_LIBRARIES} ${LIBXML2_LIBRARIES})
+SOURCE_GROUP(\\			FILES ${BaseFiles})
+SOURCE_GROUP(io         FILES ${IoFiles})
+SOURCE_GROUP(audio      FILES ${AudioFiles})
+SOURCE_GROUP(framework  FILES ${FrameworkFiles})
+SOURCE_GROUP(compute    FILES ${ComputeFiles})
+SOURCE_GROUP(graphics   FILES ${GraphicsFiles})
+SOURCE_GROUP(ui         FILES ${UiFiles})
+SOURCE_GROUP(input      FILES ${InputFiles})
+SOURCE_GROUP(scenegraph FILES ${ScenegraphFiles})
+SOURCE_GROUP(system	    FILES ${SystemFiles})
+SOURCE_GROUP(util		FILES ${UtilFiles})
+
+TARGET_LINK_LIBRARIES(exeng ${UNIX_LIBRARIES} lwobject ${Boost_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 # install (TARGET exeng DESTINATION lib)
 # install (FILES ${} DESTINATION include)

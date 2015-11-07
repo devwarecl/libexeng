@@ -2,6 +2,7 @@
 #ifndef __EXENG_GRAPHICS_VERTEXWRAPPER_HPP__
 #define __EXENG_GRAPHICS_VERTEXWRAPPER_HPP__
 
+#include <cassert>
 #include <cstdint>
 #include <vector>
 #include <memory>
@@ -11,82 +12,98 @@
 #include <exeng/graphics/VertexFormat.hpp>
 
 namespace exeng { namespace graphics {
+
+	/*
 	class VertexWrapper {
 	public:
-		VertexWrapper(const VertexFormat &format, Buffer *buffer) {
-			this->format = format;
-			this->buffer = buffer;
+		VertexWrapper(const VertexFormat &vertexFormat, void* buffer, const int bufferSize)
+			: vertexCount(bufferSize / vertexFormat.getSize())
+		{
+			assert(bufferSize % format.getSize() == 0);
+			assert(buffer);
 
-			this->vertices = (Vertex*)this->buffer->getPointer();
+			// TODO: Validate supplied VertexType using template metaprogramming
+			this->vertices = reinterpret_cast<std::uint8_t*>(buffer);
 		}
 
-		void setVertexPosition(const int index, const Vector3f &position) {
-			this->setVertexAttribute<float, 3>(index, VertexAttrib::Position, position);
-		}
-
-		void setVertexNormal(const int index, const Vector3f &normal) {
-			this->setVertexAttribute<float, 3>(index, VertexAttrib::Normal, normal);
-		}
-
-		void setVertexTexCoord(const int index, const Vector2f &texCoord) {
-			this->setVertexAttribute<float, 2>(index, VertexAttrib::TexCoord, texCoord);
-		}
-
-		Vector3f getVertexPosition(const int index) const {
-			return this->getVertexAttribute<float, 3>(index, VertexAttrib::Position);
-		}
-
-		Vector3f getVertexNormal(const int index) const {
-			return this->getVertexAttribute<float, 3>(index, VertexAttrib::Normal);
-		}
-
-		Vector2f getVertexTexCoord(const int index) const {
-			return this->getVertexAttribute<float, 2>(index, VertexAttrib::TexCoord);
-		}
-
-		void setVertex(const int index, const Vector3f &position, const Vector3f &normal, const Vector2f &texCoord) {
-			this->setVertexPosition(index, position);
-			this->setVertexNormal(index, normal);
-			this->setVertexTexCoord(index, texCoord);
+		const int getVertexCount() const {
+			return this->vertexCount;
 		}
 
 		template<typename Type, int Size>
-		void setVertexAttribute(const int vertexIndex, const VertexAttrib::Enum attrib, const Vector<Type, Size> &value) {
-#if defined(EXENG_DEBUG)
-			if (sizeof(value) != format.getAttrib(attrib).getSize()) {
-				EXENG_THROW_EXCEPTION("Invalid vertex attribute size.");
-			}
+		void setAttributeValue(const int index, VertexAttrib::Enum attrib, const Vector<Type, Size> &value) {
+			assert(this->format.getAttrib(attrib).count == Size);
+			assert(this->format.getAttrib(attrib).dataType == DataTypeTraits<Type>::Enum);
 
-			if (DataTypeTraits<Type>::Enum != format.getAttrib(attrib).dataType) {
-				EXENG_THROW_EXCEPTION("Invalid vertex attribute data type.");
-			}
-#endif
-			const int offset = this->getOffset(vertexIndex, attrib);
+			const int offset = this->getOffset(index, attrib);
+			const int size = this->format.getAttrib(attrib).getSize();
 
-			this->buffer->setData(&value, sizeof(value), 0, offset);
+			std::memcpy(this->vertices + offset, attribValue, size);
+		}
+		
+
+		void setAttributeValue(const int index, VertexAttrib::Enum attrib, const int fieldIndex, double value) {
+			const int offset = this->getOffset(index, attrib);
+
+			const int size = this->format.getAttrib(attrib).getSize();
+
+			std::memcpy(this->vertices + offset, attribValue, size);
 		}
 
 		template<typename Type, int Size>
-		Vector<Type, Size> getVertexAttribute(const int vertexIndex, const VertexAttrib::Enum attrib) const {
-			const int offset = this->getOffset(vertexIndex, attrib);
+		Vector<Type, Size> getAttributeValue(const int index, VertexAttrib::Enum attrib) const {
 
-			Vector<Type, Size> value;
-			this->buffer->getData(&value, sizeof(value), 0, offset);
-			return value;
 		}
 
 	private:
-		const int getOffset(const int vertexIndex, const VertexAttrib::Enum attrib) const {
-			const int baseOffset = vertexIndex * this->format.getSize();
-			const int attribOffset = this->format.getAttribOffset(attrib);
-
-			return baseOffset + attribOffset;
+		const int getOffset(const int index, VertexAttrib::Enum attrib, const int fieldIndex) {
+			return index * this->format.getSize() + this->format.getAttribOffset(attrib) + ;
 		}
 
 	private:
 		VertexFormat format;
-		Buffer *buffer = nullptr;
-		Vertex *vertices = nullptr;
+		const int vertexCount;
+		std::uint8_t *vertices = nullptr;
+	};
+	*/
+
+	template<typename VertexType>
+	class TVertexWrapper {
+	public:
+		TVertexWrapper(const VertexFormat &vertexFormat, void* buffer, const int bufferSize)
+			: vertexCount(bufferSize / vertexFormat.getSize())
+		{
+			assert(sizeof(VertexType) == vertexFormat.getSize());
+			assert(bufferSize % vertexFormat.getSize() == 0);
+			assert(buffer);
+
+			// TODO: Validate supplied VertexType using template metaprogramming
+			this->vertices = reinterpret_cast<VertexType*>(buffer);
+			this->format = vertexFormat;
+		}
+
+		const int getVertexCount() const {
+			return this->vertexCount;
+		}
+
+		VertexType& operator[] (const int index) {
+			assert(index >= 0);
+			assert(index < this->getVertexCount());
+
+			return this->vertices[index];
+		}
+
+		const VertexType& operator[] (const int index) const {
+			assert(index >= 0);
+			assert(index < this->getVertexCount());
+
+			return this->vertices[index];
+		}
+
+	private:
+		VertexFormat format;
+		const int vertexCount;
+		VertexType *vertices = nullptr;
 	};
 
 	class GeometryGenerator {
@@ -100,59 +117,63 @@ namespace exeng { namespace graphics {
 
 	class BoxGeometryGenerator : public GeometryGenerator {
 	public:
-		BoxGeometryGenerator(const Vector3f &center, const Vector3f &size) {
-			this->center = center;
+		BoxGeometryGenerator(const Vector4f &displace, const Vector3f &size) {
+			this->center = displace;
 			this->size = size;
 		}
 
 		virtual HeapBufferPtr generateVertexBuffer(const VertexFormat &format) override {
-			const int vertexCount = 24;
-			// const int vertexCount = 1;
+			assert(format == Vertex::format());
 
-			HeapBufferPtr buffer(new HeapBuffer(vertexCount * format.getSize()));
+			const int VERTEX_COUNT = 24;
 
-			VertexWrapper vertices(format, buffer.get());
-			vertices.setVertex(0, {-0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 1.0f});
-			vertices.setVertex(1, { 0.5f,   0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 1.0f});
-			vertices.setVertex(2, {-0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {0.0f, 0.0f});
-			vertices.setVertex(3, { 0.5f,  -0.5f, -0.5f},   {0.0f, 0.0f, -1.0f},  {1.0f, 0.0f});
+			Vertex vertices[VERTEX_COUNT];
+
+			// TVertexWrapper<Vertex> vertices(Vertex::format(), buffer->getPointer(), buffer->getSize());
+
+			vertices[0] = {{-0.5f,   0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f},  {0.0f, 1.0f}};
+			vertices[1] = {{ 0.5f,   0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f},  {1.0f, 1.0f}};
+			vertices[2] = {{-0.5f,  -0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f},  {0.0f, 0.0f}};
+			vertices[3] = {{ 0.5f,  -0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f},  {1.0f, 0.0f}};
             
 			// Right face
-			vertices.setVertex(4, {0.5f,   0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 1.0f});
-			vertices.setVertex(5, {0.5f,   0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 1.0f});
-			vertices.setVertex(6, {0.5f,  -0.5f, -0.5f},   {1.0f, 0.0f, 0.0f},   {0.0f, 0.0f});
-			vertices.setVertex(7, {0.5f,  -0.5f,  0.5f},   {1.0f, 0.0f, 0.0f},   {1.0f, 0.0f});
-                
+			vertices[4] = {{0.5f,   0.5f, -0.5f, 1.0f},   {1.0f, 0.0f, 0.0f, 0.0f},   {0.0f, 1.0f}};
+			vertices[5] = {{0.5f,   0.5f,  0.5f, 1.0f},   {1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 1.0f}};
+			vertices[6] = {{0.5f,  -0.5f, -0.5f, 1.0f},   {1.0f, 0.0f, 0.0f, 0.0f},   {0.0f, 0.0f}};
+			vertices[7] = {{0.5f,  -0.5f,  0.5f, 1.0f},   {1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 0.0f}};
+            
 			// Front Face
-			vertices.setVertex(8, { 0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 1.0f});
-			vertices.setVertex(9, {-0.5f,   0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 1.0f});
-			vertices.setVertex(10, { 0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {1.0f, 0.0f});
-			vertices.setVertex(11, {-0.5f,  -0.5f,  0.5f},   {0.0f, 0.0f, 1.0f},   {0.0f, 0.0f});
-                
+			vertices[8] = {{ 0.5f,   0.5f,  0.5f, 1.0f},   {0.0f, 0.0f, 1.0f, 0.0f},   {1.0f, 1.0f}};
+			vertices[9] = {{-0.5f,   0.5f,  0.5f, 1.0f},   {0.0f, 0.0f, 1.0f, 0.0f},   {0.0f, 1.0f}};
+			vertices[10] = {{ 0.5f,  -0.5f,  0.5f, 1.0f},   {0.0f, 0.0f, 1.0f, 0.0f},   {1.0f, 0.0f}};
+			vertices[11] = {{-0.5f,  -0.5f,  0.5f, 1.0f},   {0.0f, 0.0f, 1.0f, 0.0f},   {0.0f, 0.0f}};
+            
 			// Left face
-			vertices.setVertex(12, {-0.5f,   0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 1.0f});
-			vertices.setVertex(13, {-0.5f,   0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 1.0f});
-			vertices.setVertex(14, {-0.5f,  -0.5f,  0.5f},  {-1.0f, 0.0f, 0.0f},   {1.0f, 0.0f});
-			vertices.setVertex(15, {-0.5f,  -0.5f, -0.5f},  {-1.0f, 0.0f, 0.0f},   {0.0f, 0.0f});
-                
+			vertices[12] = {{-0.5f,   0.5f,  0.5f, 1.0f},  {-1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 1.0f}};
+			vertices[13] = {{-0.5f,   0.5f, -0.5f, 1.0f},  {-1.0f, 0.0f, 0.0f, 0.0f},   {0.0f, 1.0f}};
+			vertices[14] = {{-0.5f,  -0.5f,  0.5f, 1.0f},  {-1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 0.0f}};
+			vertices[15] = {{-0.5f,  -0.5f, -0.5f, 1.0f},  {-1.0f, 0.0f, 0.0f, 0.0f},   {0.0f, 0.0f}};
+            
 			// Top face
-			vertices.setVertex(16, {-0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 1.0f});
-			vertices.setVertex(17, { 0.5f,   0.5f,   0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 1.0f});
-			vertices.setVertex(18, {-0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {0.0f, 0.0f});
-			vertices.setVertex(19, { 0.5f,   0.5f,  -0.5f},  {0.0f, 1.0f, 0.0f},   {1.0f, 0.0f});
-                
+			vertices[16] = {{-0.5f,   0.5f,   0.5f, 1.0f},  {0.0f, 1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}};
+			vertices[17] = {{ 0.5f,   0.5f,   0.5f, 1.0f},  {0.0f, 1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}};
+			vertices[18] = {{-0.5f,   0.5f,  -0.5f, 1.0f},  {0.0f, 1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}};
+			vertices[19] = {{ 0.5f,   0.5f,  -0.5f, 1.0f},  {0.0f, 1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}};
+            
 			// Bottom face
-			vertices.setVertex(20, { 0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {1.0f, 1.0f});
-			vertices.setVertex(21, {-0.5f,  -0.5f,   0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 1.0f});
-			vertices.setVertex(22, { 0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {1.0f, 0.0f});
-			vertices.setVertex(23, {-0.5f,  -0.5f,  -0.5f},  {0.0f, -1.0f, 0.0f},   {0.0f, 0.0f});
+			vertices[20] = {{ 0.5f,  -0.5f,   0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {1.0f, 1.0f}};
+			vertices[21] = {{-0.5f,  -0.5f,   0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {0.0f, 1.0f}};
+			vertices[22] = {{ 0.5f,  -0.5f,  -0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {1.0f, 0.0f}};
+			vertices[23] = {{-0.5f,  -0.5f,  -0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {0.0f, 0.0f}};
 
 			// Correct
-			for (int i=0; i<vertexCount; ++i) {
-				Vector3f position = vertices.getVertexPosition(i);
-				position = position * this->size + this->center;
-				vertices.setVertexPosition(i, position);
+			for (int i=0; i<VERTEX_COUNT; ++i) {
+				vertices[i].coord = vertices[i].coord * this->size + this->center;
 			}
+
+			auto buffer = std::make_unique<HeapBuffer>(VERTEX_COUNT * Vertex::format().getSize());
+
+			buffer->setData(vertices);
 
 			return buffer;
 		}
@@ -174,8 +195,8 @@ namespace exeng { namespace graphics {
 		}
 
 	private:
-		Vector3f center;
-		Vector3f size;
+		Vector4f center;
+		Vector4f size;
 	};
 }}
 

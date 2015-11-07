@@ -1,6 +1,7 @@
 
 #include "HardwareRendererPrivate.hpp"
 
+#include <iostream>
 #include <ostream>
 #include <fstream>
 #include <iomanip>
@@ -8,11 +9,9 @@
 #include <boost/log/trivial.hpp>
 #include <exeng/Exception.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/Timer.hpp>
 
 namespace exeng { namespace raytracer { namespace renderers {
-
-    using namespace exeng::graphics;
-    using namespace exeng::scenegraph;
 
     struct SynthesisElement {
 		cl_float3	point;		// Point of intersection
@@ -21,7 +20,174 @@ namespace exeng { namespace raytracer { namespace renderers {
         cl_int		material;	// Material index/id (will be defined later).
     };
 	
+	struct Timer {
+		Timer() {
+			start = static_cast<float>(exeng::Timer::getTime());
+		}
+
+		float getTime() const {
+			return exeng::Timer::getTime() - start;
+		}
+
+		float start;
+	};
+
 	const int MaterialSize = 4;	// Size of the material (number of float's)
+
+	HardwareRendererPrivate::HardwareRendererPrivate(Texture *renderTarget, const AssetLibrary *assets, const MaterialLibrary *materialLibrary, Sampler *sampler) {
+
+        BOOST_LOG_TRIVIAL(trace) << "Initializing Multi-Object ray tracer ...";
+		
+        cl::Platform platform;  // selected platform
+        cl::Device device;      // selected device
+        bool deviceFound = false;
+        
+		std::vector<cl::Platform> platforms;
+		cl::Platform::get(&platforms);
+        
+        BOOST_LOG_TRIVIAL(trace) << "Found " << platforms.size() << " platform(s).";
+        
+        if (platforms.size() == 0) {
+            throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL platforms available");
+        }
+        
+        for (cl::Platform &platform_ : platforms) {
+            std::vector<cl::Device> devices;
+            platform_.getDevices(CL_DEVICE_TYPE_GPU, &devices);
+
+            // Select the first platform
+            BOOST_LOG_TRIVIAL(trace) 
+                << "Found " << devices.size() << " device(s) for platform "
+                << "with platform: " << platform.getInfo<CL_PLATFORM_NAME>(nullptr);
+            
+            if (devices.size() > 0) {
+                platform = platform_;
+                device = devices[0];
+                deviceFound = true;
+                
+                BOOST_LOG_TRIVIAL(trace) << "Using OpenCL device: " << device.getInfo<CL_DEVICE_NAME>(nullptr);
+                
+                break;
+            }
+        }
+        
+        if (!deviceFound) {
+            throw std::runtime_error("HardwareTracer::HardwareTracer: No OpenCL GPU devices available");
+        }
+        
+		BOOST_LOG_TRIVIAL(trace) << "Creating OpenCL context with GL/CL interop support....";
+        
+		// Set context properties for GL/CL interop.
+		cl_context_properties properties[] = {
+			// We need to add information about the OpenGL context with
+			// which we want to exchange information with the OpenCL context.
+#if defined (WIN32)
+			// We should first check for cl_khr_gl_sharing extension.
+			CL_GL_CONTEXT_KHR, (cl_context_properties)wglGetCurrentContext(),
+			CL_WGL_HDC_KHR, (cl_context_properties)wglGetCurrentDC(),
+#elif defined (__linux__)
+			// We should first check for cl_khr_gl_sharing extension.
+			CL_GL_CONTEXT_KHR, (cl_context_properties)glXGetCurrentContext(),
+			CL_GLX_DISPLAY_KHR, (cl_context_properties)glXGetCurrentDisplay(),
+#elif defined (__APPLE__)
+			CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE, (cl_context_properties)CGLGetShareGroup(CGLGetCurrentContext()),
+#endif
+			CL_CONTEXT_PLATFORM, (cl_context_properties)platform(),
+			0, 0,
+		};
+        
+		// initialize the OpenCL context
+		cl::Context context = cl::Context(device, properties);
+        
+		// pass the samples to OpenCL
+		cl::Buffer samplesBuffer;
+
+		if (sampler) {
+			BOOST_LOG_TRIVIAL(trace) << "Creating sampling buffer from " << sampler->getSampleCount() << " sample(s)...";
+			size_t bufferSize = sizeof(Vector2f) * sampler->getSampleCount();
+			cl_mem_flags bufferFlags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
+			void* bufferData = (void*)(sampler->getSampleData());
+
+			samplesBuffer = cl::Buffer(context, bufferFlags, bufferSize, bufferData);
+		}
+
+		// Create a Program object from all the kernels
+        const Buffer *hardwareTracerBuffer  = assets->getAsset("MultiHardwareTracer.cl");
+        cl::Program::Sources programSources = { {(const char*)hardwareTracerBuffer->getPointer(), hardwareTracerBuffer->getSize()} };
+
+		// Compile the OpenCL programs
+		std::string programOptions = "-Werror";
+		// programOptions += "-Werror";
+		// programOptions += "\"" + getRootPath() + "kernels/MultiHardwareTracer.cl\"";
+		
+		cl::Program program = cl::Program(context, programSources);
+		if (program.build({device}, programOptions.c_str()) != CL_SUCCESS) {
+			std::string msg;
+			msg += "OpenCL program compile error: ";
+			msg += program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
+			msg += "\n";
+
+			throw std::runtime_error(msg);
+		}
+
+		BOOST_LOG_TRIVIAL(trace) << "Completing Multi-Object ray tracer initialization ...";
+
+		cl::Kernel clearSynthBufferKernel       = cl::Kernel(program, "ClearSynthesisData");
+		cl::Kernel rayGeneratorKernel			= cl::Kernel(program, "GenerateRays");
+		cl::Kernel rayGeneratorFromMatrixKernel	= cl::Kernel(program, "GenerateRaysFromWorldMatrix");
+		cl::Kernel synthesisDataComputerKernel	= cl::Kernel(program, "ComputeSynthesisData");
+		cl::Kernel imageSynthetizerKernel		= cl::Kernel(program, "SynthetizeImage");
+        
+		// Command queue
+		cl::CommandQueue queue = cl::CommandQueue(context, device);
+
+        // Pass the materials of the scene to CL
+        cl::Buffer materialBuffer = this->createBuffer(context, materialLibrary);
+
+		// Finish off the impl
+		this->platform = platform;
+		this->device = device;
+		this->context = context;
+		this->program = program;
+        
+		this->localTransformBuffer = cl::Buffer(context, CL_MEM_READ_WRITE, 2*sizeof(Matrix4f), nullptr);
+
+        this->clearSynthBufferKernel = clearSynthBufferKernel;
+        this->rayGeneratorKernel = rayGeneratorKernel;
+		this->rayGeneratorFromMatrixKernel = rayGeneratorFromMatrixKernel;
+        this->synthesisDataComputerKernel = synthesisDataComputerKernel;
+        this->imageSynthetizerKernel = imageSynthetizerKernel;
+		this->queue = queue;
+		this->samplesBuffer = samplesBuffer;
+        this->materialLibrary = materialLibrary;
+
+        this->materialBuffer = materialBuffer;
+
+		this->updateStructSizes();
+
+        BOOST_LOG_TRIVIAL(trace) << "Binding GL texture to the hardware-accelerated ray tracer ...";
+        this->setRenderTarget(renderTarget);
+
+        BOOST_LOG_TRIVIAL(trace) << "[Host] Vertex structure size: " << sizeof(Vertex);
+		BOOST_LOG_TRIVIAL(trace) << "Ray structure size: " << this->raySize;
+		BOOST_LOG_TRIVIAL(trace) << "SynthesisBuffer structure size: " << this->synthesisElementSize;
+		
+		BOOST_LOG_TRIVIAL(trace) << "Multi-Object ray tracer initialization done.";
+	}
+
+	HardwareRendererPrivate::~HardwareRendererPrivate() {
+		const float total = 
+			this->clearSynthesisBufferTime + 
+			this->generateRaysTime + 
+			this->computeSynthesisBufferTime + 
+			this->computeImageTime;
+
+		BOOST_LOG_TRIVIAL(trace) << "Total execution time: 100.0 [%].";
+		BOOST_LOG_TRIVIAL(trace) << "	clearSynthesisBuffer: "			<< (this->clearSynthesisBufferTime / total * 100.0f) << " [%].";
+		BOOST_LOG_TRIVIAL(trace) << "	generateRaysTime: "				<< (this->generateRaysTime / total * 100.0f) << " [%].";
+		BOOST_LOG_TRIVIAL(trace) << "	computeSynthesisBufferTime: "	<< (this->computeSynthesisBufferTime / total * 100.0f) << " [%].";
+		BOOST_LOG_TRIVIAL(trace) << "	computeImageTime: "				<< (this->computeImageTime / total * 100.0f) << " [%].";
+	}
 
     std::string HardwareRendererPrivate::clErrorToString(cl_int errCode) {
         switch (errCode) {
@@ -163,11 +329,15 @@ namespace exeng { namespace raytracer { namespace renderers {
 	}
 
     void HardwareRendererPrivate::generateRays(const exeng::scenegraph::Camera *camera) {
+		Timer timer;
+
+		/*
 		BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRays kernel with params: "
 			<< "Pos={" << camera->getPosition() << "}, "
 			<< "LookAt={" << camera->getLookAt() << "}, "
 			<< "Up={" << camera->getUp() << "}, "
 			<< "Screen= {" << this->renderTarget->getSize() << "}";
+		*/
 		
         // std::ofstream fs;
         // fs.open("C:/rays.txt", std::ios_base::out);
@@ -211,10 +381,16 @@ namespace exeng { namespace raytracer { namespace renderers {
         event.wait();
 		
         this->queue.finish();
+
+		this->generateRaysTime += timer.getTime();
 	}
 
     void HardwareRendererPrivate::clearSynthesisBuffer() {
-		BOOST_LOG_TRIVIAL(trace) << "[1] Invoking clearSyntBuffer kernel with params: ScreenSize={" << this->renderTarget->getSize() << "}";
+		Timer timer;
+
+		/*
+		BOOST_LOG_TRIVIAL(trace) << "[1] Invoking clearSynthBuffer kernel with params: ScreenSize={" << this->renderTarget->getSize() << "}";
+		*/
 
         cl_int errCode = 0;
         cl::Event event;
@@ -236,9 +412,13 @@ namespace exeng { namespace raytracer { namespace renderers {
         }
         
         event.wait();
+
+		this->clearSynthesisBufferTime += timer.getTime();
     }
     
 	void HardwareRendererPrivate::computeSynthesisBuffer(const SceneNodeData *nodeData) {
+		Timer timer;
+
 		// std::ofstream fs;
 		// fs.open("C:/synth.txt", std::ios_base::out);
 		// std::list<const SceneNode*> nodes = getSceneNodes(this->getScene());
@@ -266,20 +446,22 @@ namespace exeng { namespace raytracer { namespace renderers {
 			const int indexCount = subset->getIndexCount();
             const int materialIndex = this->materialLibrary->getMaterialIndex(subset->getMaterial());
 
+			/*
 			BOOST_LOG_TRIVIAL(trace) 
 				<< "[3] Invoking computeSynthesisData kernel with params: "
 				<< "ScreenSize={" << screenSize << "}, "
 				<< "TriangleCount=" << indexCount;
+			*/
 
 			kernel.setArg(0, this->synthesisBuffer);
 			kernel.setArg(1, this->raysBuffer);
-			kernel.setArg(2, screenSize.x);
-			kernel.setArg(3, screenSize.y);
-			kernel.setArg(4, vertexBuffer);
-			kernel.setArg(5, indexBuffer);
-			kernel.setArg(6, indexCount);
-			kernel.setArg(7, materialIndex);
-			kernel.setArg(8, this->localTransformBuffer);
+			kernel.setArg(2, vertexBuffer);
+			kernel.setArg(3, indexBuffer);
+			kernel.setArg(4, indexCount);
+			kernel.setArg(5, materialIndex);
+			kernel.setArg(6, this->localTransformBuffer);
+			kernel.setArg(7, this->samplesBuffer);
+			kernel.setArg(8, this->samplesCount);
                 
 			std::vector<cl::Memory> buffers = {vertexBuffer, indexBuffer};
                 
@@ -312,9 +494,13 @@ namespace exeng { namespace raytracer { namespace renderers {
 
 			queue.finish();
 		}
+
+		this->computeSynthesisBufferTime += timer.getTime();
 	}
 
 	void HardwareRendererPrivate::computeImage() {
+		Timer timer;
+
         Vector3i size = this->renderTarget->getSize();
         cl::Event event;
         cl::Kernel &kernel = this->imageSynthetizerKernel;
@@ -332,14 +518,15 @@ namespace exeng { namespace raytracer { namespace renderers {
 
         std::vector<cl::Memory> buffers = {this->image};
 
+		/*
 		BOOST_LOG_TRIVIAL(trace) 
 			<< "[4] Invoking synthetizeImage kernel with params: "
 			<< "ScreenSize={" << size << "}";
+		*/
 		
         errCode = queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
         if (errCode != CL_SUCCESS) {
 			std::string msg = "MultiHardwareTracer::synthetizeImage: Error at trying to acquire the GL texture object: " + clErrorToString(errCode);
-
 			BOOST_LOG_TRIVIAL(trace) << msg;
             throw std::runtime_error(msg);
         }
@@ -364,10 +551,12 @@ namespace exeng { namespace raytracer { namespace renderers {
         event.wait();
 
         queue.finish();
+
+		this->computeImageTime += timer.getTime();
 	}
 
     void HardwareRendererPrivate::updateStructSizes() {
-		const int StructuresCount = 2;
+		const int StructuresCount = 3;
 		cl_int out[StructuresCount] = {0};
 
 		cl::Event event;
@@ -398,7 +587,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 		event.wait();
 
 		queue.finish();
-
+		
 		this->raySize = out[0];
 		this->synthesisElementSize = out[1];
 	}

@@ -8,13 +8,15 @@
 #include <exeng/scenegraph/SceneNodeData.hpp>
 #include <exeng/scenegraph/GenericSceneRenderer.hpp>
 
+#include "exeng.raytracer/samplers/Sampler.hpp"
+
 namespace exeng { namespace raytracer { namespace renderers {
 
     class HardwareRendererPrivate;
 
     class HardwareRenderer : public exeng::scenegraph::RenderWrapper {
     public:
-        explicit HardwareRenderer(exeng::graphics::Texture *renderTarget, const exeng::scenegraph::AssetLibrary *assets, const exeng::graphics::MaterialLibrary *materialLibrary);
+        explicit HardwareRenderer(exeng::graphics::Texture *renderTarget, const exeng::scenegraph::AssetLibrary *assets, const exeng::graphics::MaterialLibrary *materialLibrary, ::raytracer::samplers::Sampler *sampler);
         virtual ~HardwareRenderer();
 
         virtual Matrix4f getProjectionMatrix(const exeng::scenegraph::Camera *camera) override {

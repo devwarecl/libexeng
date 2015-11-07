@@ -1,18 +1,8 @@
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "-std=c++11")
-endif()
-
-add_definitions(-DBOOST_ALL_DYN_LINK -DRAYTRACER_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.raytracer/")
-
-# Boost Configuration
-set (Boost_USE_STATIC_LIBS OFF)
-set (Boost_USE_MULTITHREADED ON)
-set (Boost_USE_STATIC_RUNTIME OFF)
+add_definitions(-DRAYTRACER_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.raytracer/")
 
 find_package(OpenGL REQUIRED)
 find_package(OpenCL)
-find_package(Boost COMPONENTS system timer log thread REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(PNG REQUIRED)
 
@@ -20,8 +10,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   find_package(Threads REQUIRED)
 endif()
 
-include_directories(${Boost_INCLUDE_DIRS})
-include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${GLFW3_INCLUDE_DIR})
 include_directories(${OPENCL_INCLUDE_DIRS})
 include_directories(${PNG_INCLUDE_DIRS})
@@ -29,11 +17,9 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_definitions(${PNG_DEFINITIONS})
 
-link_directories(${Boost_LIBRARY_DIRS})
 link_directories(${GLFW3_LIBRARY_DIR})
 link_directories(${OpenGL_LIBRARY_DIR})
 link_directories(${PNG_LIBRARY})
-
 
 # Grouping
 set (BaseFiles
@@ -92,13 +78,26 @@ FOREACH(resource_src ${raytracer_resources_src})
 	LIST (APPEND raytracer_resources ${resource_src}.hpp ${resource_src}.cpp)
 ENDFOREACH(resource_src)
 
-add_executable(exeng.raytracer ${BaseFiles} ${Tracers} ${Samplers} ${Loaders} ${Renderers} ${raytracer_resources} ${raytracer_resources_src})
+ADD_EXECUTABLE (exeng.raytracer 
+	${BaseFiles} 
+	${Tracers} 
+	${Samplers} 
+	${Loaders} 
+	${Renderers} 
+	${raytracer_resources} 
+	${raytracer_resources_src}
+)
 
-target_link_libraries(exeng.raytracer exeng exeng.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${PNG_LIBRARIES})
+SET_PROPERTY (TARGET exeng.raytracer PROPERTY CXX_STANDARD 14)
+IF (WIN32)
+    SET_PROPERTY(TARGET exeng.raytracer	PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
+ENDIF ()
 
-source_group(\\			FILES ${BaseFiles})
-source_group(samplers	FILES ${Samplers})
-source_group(resources	FILES ${raytracer_resources_src})
-source_group(loaders	FILES ${Loaders})
-source_group(tracers	FILES ${Tracers})
-source_group(renderers	FILES ${Renderers})
+TARGET_LINK_LIBRARIES(exeng.raytracer exeng exeng.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${PNG_LIBRARIES})
+
+SOURCE_GROUP (\\		FILES ${BaseFiles})
+SOURCE_GROUP (samplers	FILES ${Samplers})
+SOURCE_GROUP (resources	FILES ${raytracer_resources_src})
+SOURCE_GROUP (loaders	FILES ${Loaders})
+SOURCE_GROUP (tracers	FILES ${Tracers})
+SOURCE_GROUP (renderers	FILES ${Renderers})

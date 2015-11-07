@@ -23,6 +23,8 @@
 #include "renderers/SoftwareRenderer.hpp"
 #include "renderers/HardwareRenderer.hpp"
 
+#include "samplers/JitteredSampler.hpp"
+
 namespace exeng { namespace graphics {
 
 	class TextureLoaderPng : public TextureLoader {
@@ -216,7 +218,75 @@ namespace exeng { namespace raytracer {
     using namespace exeng::framework;
     using namespace exeng::raytracer::renderers;
 
-    RayTracerApp2::RayTracerApp2() {}
+	class ButtonPressHandler : public IEventHandler {
+	public:
+		ButtonPressHandler () {
+			for (int i=0; i<ButtonCode::Count; i++) {
+				this->buttonStatus[i] = ButtonStatus::Release;
+			}
+		}
+
+		const bool isPressed(ButtonCode::Enum code) const {
+			return this->buttonStatus[code] == ButtonStatus::Press;
+		}
+
+	private:
+		virtual void handleEvent(const EventData &data) override {
+			const InputEventData &inputData = data.cast<InputEventData>();
+			this->handleInputEvent(inputData);
+		}
+
+		void handleInputEvent(const InputEventData &inputData) {
+			this->buttonStatus[inputData.buttonCode] = inputData.buttonStatus;
+		}
+
+	private:
+		ButtonStatus::Enum buttonStatus[ButtonCode::Count];
+	};
+
+	class MoveAction {
+	public:
+		explicit MoveAction(const ButtonPressHandler *buttonPressHandler) {
+			this->buttonPressHandler = buttonPressHandler;
+		}
+
+		const bool isMovingForward() const {
+			assert(this);
+			assert(this->buttonPressHandler);
+
+			return this->buttonPressHandler->isPressed(ButtonCode::KeyUp);
+		}
+
+		const bool isMovingBackward() const {
+			assert(this);
+			assert(this->buttonPressHandler);
+
+			return this->buttonPressHandler->isPressed(ButtonCode::KeyDown);
+		}
+
+		const bool isMovingLeft() const {
+			assert(this);
+			assert(this->buttonPressHandler);
+
+			return this->buttonPressHandler->isPressed(ButtonCode::KeyLeft);
+		}
+
+		const bool isMovingRight() const {
+			assert(this);
+			assert(this->buttonPressHandler);
+
+			return this->buttonPressHandler->isPressed(ButtonCode::KeyRight);
+		}
+
+	private:
+		const ButtonPressHandler *buttonPressHandler = nullptr;
+	};
+
+    RayTracerApp2::RayTracerApp2() {
+		this->buttonPressHandler = std::make_unique<ButtonPressHandler>();
+		this->moveAction = std::make_unique<MoveAction>(this->buttonPressHandler.get());
+	}
+
     RayTracerApp2::~RayTracerApp2() {}
 
     BufferPtr RayTracerApp2::getAssetsXmlData() {
@@ -241,6 +311,7 @@ namespace exeng { namespace raytracer {
 		
         GraphicsDriverPtr graphicsDriver = this->getGraphicsManager()->createDriver();
         graphicsDriver->addEventHandler(this);
+		graphicsDriver->addEventHandler(this->buttonPressHandler.get());
         graphicsDriver->initialize();
 	    
 		return graphicsDriver;
@@ -275,8 +346,10 @@ namespace exeng { namespace raytracer {
         
         AssetLibrary *assets = this->getAssetLibrary();
         MaterialLibrary *materials = this->getMaterialLibrary();
-
-        auto renderWrapper = std::make_unique<HardwareRenderer>(renderTarget, assets, materials);
+		
+		this->sampler = std::make_unique<::raytracer::samplers::JitteredSampler>(25);
+		
+        auto renderWrapper = std::make_unique<HardwareRenderer>(renderTarget, assets, materials, this->sampler.get());
         
         SceneRendererPtr sceneRenderer = std::make_unique<GenericSceneRenderer>(std::move(renderWrapper));
         sceneRenderer->setScene(this->getScene());
@@ -312,9 +385,54 @@ namespace exeng { namespace raytracer {
         node->setTransform(rotatey<float>(rad(this->rotationAngle)));
 	}
 
+	void RayTracerApp2::updateCamera(float seconds) {
+		const float speed		= 4.0f;
+		const float distance	= speed * seconds;
+		const float angle		= 30.0f * seconds;
+
+		Camera *camera = this->getScene()->getCamera(0);
+
+		Vector3f cameraPosition = camera->getPosition();
+		Vector3f cameraLookAt = camera->getLookAt();
+
+		Vector3f cameraDirection = normalize(cameraLookAt - cameraPosition);
+		Vector3f cameraDisplace;
+
+		float rotation = 0.0f;
+		float movement = 0.0f;
+
+		// Update direction
+		if (this->moveAction->isMovingRight()) {
+			rotation = -angle;
+		} 
+
+		if (this->moveAction->isMovingLeft()) {
+			rotation = angle;
+		} 
+
+		// Update position
+		if (this->moveAction->isMovingForward()) {
+			movement = distance;
+		} 
+
+		if (this->moveAction->isMovingBackward()) {
+			movement = -distance;
+		} 
+
+		// Compute final camera orientation
+		cameraDirection = transform(rotatey(rad(rotation)), cameraDirection);
+		cameraDisplace = cameraDirection * movement;
+
+		cameraPosition += cameraDisplace;
+		cameraLookAt = cameraPosition + cameraDirection;
+
+		camera->setOrientation(cameraPosition, cameraLookAt);
+	}
+
     void RayTracerApp2::update(float seconds) {
         SceneNode *boxNode = this->getScene()->getRootNode()->findNode("boxNode");
 		this->updateNodeRotation(seconds, boxNode);
+		this->updateCamera(seconds);
     }
 
     void RayTracerApp2::render() {

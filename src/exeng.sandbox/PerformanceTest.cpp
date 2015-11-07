@@ -7,6 +7,7 @@
 #include <vector>
 #include <random>
 #include <cstdint>
+#include <memory>
 #include <exeng/Matrix.hpp>
 #include <CL/cl.hpp>
 #include <Windows.h>
@@ -18,97 +19,36 @@ public:
     }
 
     ~Timer() {
-        std::cout << ::GetTickCount() - this->start;
+        std::cout << ::GetTickCount() - this->start << std::endl;
     }
 
 private:
     std::uint32_t start = 0;
 };
 
-const char MatrixTestCL1KernelSource[] = 
-    "typedef struct { \n"
-    "   int width; \n"
-    "   int height; \n"
-    "   __global float *elements; \n"
-    "} Matrix; \n"
-    "\n"
-    "#define BLOCK_SIZE 16 \n"
-    "\n"
-    "void MatrixMultiply(Matrix matA, Matrix matB, Matrix matC) { \n"
-    "   float valueC = 0.0f; \n"
-    "   int row = get_global_id(1); \n"
-    "   int col = get_global_id(0); \n"
-    "\n"
-    "   for (int e=0; e<matA.width; ++e) { \n"
-    "       valueC += matA.elements[row*matA.width + e] * matB.elements[e*matB.width + col]; \n"
-    "   } \n"
-    "\n"
-    "   matC.elements[row*matC.width + col] = valueC; \n"
-    "} \n"
-    "\n"
-    "__kernel void MatrixMultiplyKernel( \n"
-    "   int widthA, int heightA, __global float* elementsA, \n"
-    "   int widthB, int heightB, __global float* elementsB, \n"
-    "   int widthC, int heightC, __global float* elementsC) { \n"
-    "\n"
-    "   Matrix matrixA{widthA, heightA, elementsA}; \n"
-    "   Matrix matrixB{widthB, heightB, elementsB}; \n"
-    "   Matrix matrixC{widthC, heightC, elementsC}; \n"
-    "\n"
-    "   MatrixMultiply(matrixA, matrixB, matrixC); \n"
-    "} \n"
-;
-
-class MatrixTestCL1 {
+class Task {
 public:
-    struct Matrix {
-        int width;
-        int height;
-        cl::Memory elements;
-    };
+	virtual ~Task() {}
 
-    void compute(cl::Context &context) {
-        cl::Buffer buffer;
-    }
+	virtual void initialize(cl::Device &device, cl::Context &context) = 0;
+	virtual void execute(cl::CommandQueue &queue) = 0;
 
-private:
-    const int BLOCK_SIZE = 16;
+	virtual std::string getName() const = 0;
+};
+typedef std::unique_ptr<Task> TaskPtr;
+
+class TaskException : public std::runtime_error {
+public:
+	TaskException(const char *msg) : std::runtime_error(msg) {}
+	TaskException(const std::string &msg) : std::runtime_error(msg) {}
 };
 
-
-class PerformanceTest {
+class TaskExecuter {
 public:
+	TaskExecuter() {
+		cl_int errorCode = 0;
 
-
-public:
-    PerformanceTest() {
-        std::string src = "";
-
-        src += "typedef struct { float m11, m12, m21, m22; } Matrix2;\n";
-        src += "\n";
-        src += "#define BLOCK_SIZE " + std::to_string(MATRIX_BLOCK_SIZE);
-        src += "\n";
-        src += "float determinant(Matrix2 *matrix) {\n";
-        src += "    return matrix->m11*matrix->m22 - matrix->m12*matrix->m21;\n";
-        src += "}\n";
-        src += "\n";
-        src += "__kernel void computeDeterminant(int matrixCount, __global float *determinantBuffer, __global Matrix2* matrixBuffer, __local Matrix2 matrixCache[BLOCK_SIZE]) { \n";
-        src += "    const int groupIndex = get_group_id(0); \n";
-        src += "    const int localIndex = get_local_id(0); \n";
-        src += "    const int index = groupIndex*BLOCK_SIZE + localIndex; \n";
-        src += "    matrixCache[localIndex] = *(matrixBuffer + index); \n";
-        src += "    barrier(CLK_LOCAL_MEM_FENCE); \n";
-        src += "    Matrix2 matrix = matrixCache[localIndex]; \n";
-        src += "    determinantBuffer[index] = determinant(&matrix); ";
-        src += "}\n";
-
-        this->kernelSource = src;
-    }
-
-    void initialize() {
-        cl_int errorCode = 0;
-
-        // Obtener la primera plataforma OpenCL (implementacion de OpenCL)
+		// Obtener la primera plataforma OpenCL (implementacion de OpenCL)
         std::vector<cl::Platform> platforms;
         cl::Platform::get(&platforms);
         cl::Platform platform = platforms[0];
@@ -121,7 +61,7 @@ public:
 
         // Create Context
         cl_context_properties properties [] = {
-            CL_CONTEXT_PLATFORM,    (cl_context_properties) platform(),
+            CL_CONTEXT_PLATFORM, (cl_context_properties) platform(),
             0, 0
         };
 
@@ -129,179 +69,220 @@ public:
         
         cl::Context context = cl::Context(selectedDevices, &properties[0], nullptr, nullptr, nullptr);
 
-        // Compilar el programa
-        cl::Program::Sources sources = {{kernelSource.c_str(), kernelSource.size() + 1}};
-        cl::Program program(context, sources, &errorCode);
-        errorCode = program.build({device}, nullptr, nullptr, nullptr);
-        if (errorCode != CL_SUCCESS) {
-            std::string msg = std::string("Error al compilar el programa OpenCL.") + program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device) + ".";
-            std::cout << msg << std::endl;
-            throw std::runtime_error(msg.c_str());
-        }
-
-        // Crear el kernel a partir del programa (el kernel es una instancia del programa para un cierto device).
-        cl::Kernel kernel(program, "computeDeterminant", &errorCode);
-        if (errorCode != CL_SUCCESS) {
-            throw std::runtime_error("Error al crear un kernel para OpenCL.");
-        }
-
         // Crear la cola de comandos, que permitira 
         cl::CommandQueue queue(context, device, 0, &errorCode);
         if (errorCode != CL_SUCCESS) {
-            throw std::runtime_error("Error al crear el command queue de OpenCL.");
+            throw TaskException(std::to_string(errorCode));
         }
 
         this->platform = platform;
         this->device = device;
         this->context = context;
-            
-        this->program = program;
-        this->kernel = kernel;
         this->queue = queue;
-    }
 
-    void testPerformance() {
-        std::vector<float> determinants;
-        std::vector<exeng::Matrix2f> matrices;
+		this->localMemSize = device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>();
+		this->maxWorkgroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
+		this->maxWorkItemSizes = device.getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
+		this->minDataTypeAlignSize = device.getInfo<CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE>();
+	}
 
-        cl::Buffer determinantBuffer;
-        cl::Buffer matrixBuffer;
+	virtual ~TaskExecuter() {}
 
-        {
-            Timer time;
-            std::cout << "Generating " << MATRIX_COUNT << " matrices ... ";
-            matrices = this->generateMatrices(MATRIX_COUNT);
+	void initializeTask(Task *task) {
+		task->initialize(this->device, this->context);
+	}
 
-            determinantBuffer = cl::Buffer(this->context, CL_MEM_WRITE_ONLY, sizeof(float)*matrices.size());
-            matrixBuffer = cl::Buffer(
-                this->context, 
-                CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
-                sizeof(exeng::Matrix2f)*matrices.size(), 
-                const_cast<exeng::Matrix2f*>(matrices.data())
-            );
+	void executeTask(Task *task) {
+		std::cout << task->getName() << " ";
 
-        }
-        std::cout << "[ms]" << std::endl;
-
-        {
-            Timer time;
-            std::cout << "Consolidating those matrices (C++) ...";
-            determinants = this->determinant_cpp(matrices);
-        }
-        std::cout << "[ms]" << std::endl;
-        std::cout << "The final matrix is:" << std::endl;
-        this->display(determinants);
-
-        {
-            Timer time;
-            std::cout << "Consolidating those matrices (CL) ...";
-            this->determinant_cl(determinantBuffer, matrixBuffer, matrices.size());
-        }
-        std::cout << "[ms]" << std::endl;
-        std::cout << "The final matrix is:" << std::endl;
-        this->display(determinants);
-    }
-
-private:            
-    /**
-     * @brief Generates a sequence of matrices
-     */
-    std::vector<exeng::Matrix2f> generateMatrices(const int matrixCount) {
-        std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
-        
-        std::mt19937 generator;
-        generator.seed(10);
-
-        std::vector<exeng::Matrix2f> result;
-
-        for (int i=0; i<matrixCount; ++i) {
-            exeng::Matrix2f matrix;
-
-            for (int i=0; i<4; ++i) {
-                matrix[i] = dist(generator);
-            }
-            
-            result.push_back(matrix);
-        }
-
-        return result;
-    }
-
-    /**
-     * @brief Consolidate a matrix sequence in just one.
-     */
-    void determinant_cl(cl::Buffer determinantBuffer, cl::Buffer matrixBuffer, int count) {
-
-        this->kernel.setArg(0, count);
-        this->kernel.setArg(1, determinantBuffer);
-        this->kernel.setArg(2, matrixBuffer);
-        this->kernel.setArg(3, MATRIX_BLOCK_SIZE*sizeof(exeng::Matrix2f), nullptr);
-        
-        // Run the kernel
-        cl::Event event;
-        cl_int errorCode = 0;
-
-        const int groupSize = count/MATRIX_BLOCK_SIZE;
-        const int localSize = MATRIX_BLOCK_SIZE;
-        errorCode = this->queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(groupSize), cl::NDRange(localSize), nullptr, &event);
-        event.wait();
-
-        if (errorCode != CL_SUCCESS) {
-            throw std::runtime_error("Error durante la ejecucion del kernel.");
-        }
-    }
-
-    /**
-     * @brief Consolidate a matrix sequence in just one.
-     */
-    std::vector<float> determinant_cpp(const std::vector<exeng::Matrix2f> &matrices) {
-        std::vector<float> result;
-
-        for (const exeng::Matrix2f &matrix : matrices) {
-            result.push_back(exeng::abs(matrix));
-        }
-
-        return result;
-    }
-    
-    /**
-     * @brief Display a matrix in screen
-     */
-    void display(const std::vector<float> &determinants) {
-        /*
-        std::cout << "[" << std::endl;
-
-        for (float determinant : determinants) {
-            std::cout << determinant << " ";
-        }
-
-        std::cout << "]" << std::endl;
-        */
-    }
+		Timer __time1;
+		task->execute(this->queue);
+	}
 
 private:
-    cl::Platform platform;
+	cl::Platform platform;
     cl::Device device;
     cl::Context context;
-    cl::Program program;
-    cl::Kernel kernel;
     cl::CommandQueue queue;
 
-    std::string kernelSource;
+	cl_ulong localMemSize = 0;
+	size_t maxWorkgroupSize = 0;
+	std::vector<size_t> maxWorkItemSizes;
+	size_t minDataTypeAlignSize = 0;
+};
+typedef std::unique_ptr<TaskExecuter> TaskExecuterPtr;
 
-    const int MATRIX_COUNT      = 4096*4096;
-    const int MATRIX_BLOCK_SIZE = 16*16*2;
+const int TOTAL_VALUES = 1024*1024*10*2;
+
+class ArrayAddTask : public Task {
+public:
+	ArrayAddTask() {
+		this->kernelSource = R"(
+			__kernel
+			void Add (
+					__global float *out, 
+					__global const float *in1, 
+					__global const float *in2,
+					__local float *cache1,
+					__local float *cache2) {
+				
+				// fill the local memory cache for the current workgroup
+				const int globalId = get_global_id(0);
+				const int localId = get_local_id(0);
+
+				cache1[localId] = in1[globalId];
+				cache2[localId] = in2[globalId];
+				
+				barrier(CLK_LOCAL_MEM_FENCE);
+
+				const int i = globalId;	
+
+				const float n1 = cache1[localId];
+				const float n2 = cache2[localId];
+				const float base = (n1 + n2);
+				
+				out[i] = base*base;
+			}
+		)";
+	}
+
+	virtual ~ArrayAddTask() {}
+
+	virtual std::string getName() const {
+		return "Add";
+	}
+
+	virtual void initialize(cl::Device &device, cl::Context &context) override {
+		cl_int errorCode = 0;
+
+		// Create program sources
+		cl::Program::Sources sources = {{kernelSource.c_str(), kernelSource.size() + 1}};
+        cl::Program program(context, sources, &errorCode);
+        errorCode = program.build({device}, nullptr, nullptr, nullptr);
+        if (errorCode != CL_SUCCESS) {
+            std::string msg = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device) + ".";
+            throw TaskException(msg.c_str());
+        }
+
+        // Create kernel 
+        cl::Kernel kernel(program, "Add", &errorCode);
+		if (errorCode != CL_SUCCESS) {
+            throw TaskException(std::to_string(errorCode));
+        }
+
+		// Prepare buffer data
+		std::vector<float> values1(TOTAL_VALUES);
+		std::vector<float> values2(TOTAL_VALUES);
+
+		std::generate(std::begin(values1), std::end(values1), std::rand);
+		std::generate(std::begin(values2), std::end(values2), std::rand);
+		
+		cl::Buffer bufferIn1 = cl::Buffer(context, std::begin(values1), std::end(values1), true, true, &errorCode);
+		if (errorCode != CL_SUCCESS) {
+            throw TaskException(std::to_string(errorCode));
+        }
+
+		cl::Buffer bufferIn2 = cl::Buffer(context, std::begin(values2), std::end(values2), true, true, &errorCode);
+		if (errorCode != CL_SUCCESS) {
+            throw TaskException(std::to_string(errorCode));
+        }
+
+		cl::Buffer bufferOut = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(float)*values1.size(), nullptr, &errorCode);
+		if (errorCode != CL_SUCCESS) {
+            throw TaskException(std::to_string(errorCode));
+        }
+
+		this->kernel = kernel;
+		this->program = program;
+		this->bufferIn1 = bufferIn1;
+		this->bufferIn2 = bufferIn2;
+		this->bufferOut = bufferOut;
+	}
+
+	virtual void execute(cl::CommandQueue &queue) override {
+		cl::Event event;
+
+		cl_int errorCode = 0;
+
+		const int LOCAL_SIZE = 512;
+
+		this->kernel.setArg(0, this->bufferOut);
+		this->kernel.setArg(1, this->bufferIn1);
+		this->kernel.setArg(2, this->bufferIn2);
+		this->kernel.setArg(3, sizeof(float)*LOCAL_SIZE, nullptr);
+		this->kernel.setArg(4, sizeof(float)*LOCAL_SIZE, nullptr);
+
+		// errorCode = queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(TOTAL_VALUES), cl::NullRange, nullptr, &event);
+		errorCode = queue.enqueueNDRangeKernel(this->kernel, cl::NullRange, cl::NDRange(TOTAL_VALUES), cl::NDRange(LOCAL_SIZE), nullptr, &event);
+		if (errorCode != CL_SUCCESS) {
+            throw TaskException(std::to_string(errorCode));
+        }
+
+		errorCode = event.wait();
+	}
+
+private:
+	cl::Program program;
+    cl::Kernel kernel;
+
+	cl::Buffer bufferOut;
+	cl::Buffer bufferIn1;
+	cl::Buffer bufferIn2;
+
+	std::string kernelSource = "";
+
+	const int LOCA_SIZE = 0;
+};
+
+class ArrayAddNativeTask : public Task {
+public:
+	virtual std::string getName() const {
+		return "AddNativeTask";
+	}
+
+	virtual void initialize(cl::Device &device, cl::Context &context) override {
+		this->values1.resize(TOTAL_VALUES);
+		this->values2.resize(TOTAL_VALUES);
+		this->valuesOut.resize(TOTAL_VALUES);
+
+		std::generate(values1.begin(), values1.end(), std::rand);
+		std::generate(values2.begin(), values2.end(), std::rand);
+	}
+
+	virtual void execute(cl::CommandQueue &queue) override {
+		auto &v = this->valuesOut;
+		auto &v1 = this->values1;
+		auto &v2 = this->values2;
+
+		for (int i=0; i<TOTAL_VALUES; i++) {
+			this->valuesOut[i] = v1[i]*v1[i] + 2.0f*v1[i]*v2[i] + v2[i]*v2[i];
+		}
+	}
+
+private:
+	std::vector<float> valuesOut;
+	std::vector<float> values1;
+	std::vector<float> values2;
 };
 
 int main(int argc, char **arg) {
-    /*
-    ::PerformanceTest test;
 
-    test.initialize();
-    test.testPerformance();
-    */
+	try {
+		auto executer = std::make_unique<TaskExecuter>();
+		auto task1 = std::make_unique<ArrayAddTask>();
+		auto task2 = std::make_unique<ArrayAddNativeTask>();
 
-    std::cout << MatrixTestCL1KernelSource << std::endl;
+		executer->initializeTask(task1.get());
+		executer->executeTask(task1.get());
 
+		executer->initializeTask(task2.get());
+		executer->executeTask(task2.get());
+	} catch (TaskException &exp) {
+		std::cout << "TaskException: " <<  exp.what() << std::endl;
+	} catch (std::exception &exp) {
+		std::cout << "exception: " <<  exp.what() << std::endl;
+	}
+
+	
     return 0;
 }
