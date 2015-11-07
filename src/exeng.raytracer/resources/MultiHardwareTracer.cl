@@ -243,12 +243,6 @@ void computeElementMeshSubset (
 		best_se.point		= select(best_se.point,		se.point,		test4);
 		best_se.normal		= select(best_se.normal,	se.normal,		test4);
 		best_se.distance	= select(best_se.distance,	se.distance,	test);
-		
-		/*
-		if (se.distance>0.0f && se.distance<best_se.distance) {
-		 	best_se = se;
-		}
-		*/
 	}
 	
 	const int test 
@@ -261,15 +255,6 @@ void computeElementMeshSubset (
 	element->normal		= select(element->normal,	best_se.normal,		test4);
 	element->distance	= select(element->distance, best_se.distance,	test);
 	element->material	= select(element->material, materialIndex,		test);
-
-	/*
-	if (best_se.distance > 0.0f && best_se.distance != FLT_MAX) {
-		if (element->distance==0.0f || best_se.distance<element->distance) {
-			*element = best_se;
-			element->material = materialIndex;
-		}
-    }
-	*/
 }
 
 
@@ -349,7 +334,7 @@ __kernel void ComputeSynthesisData (
 	const int x = get_global_id(0);
 	const int y = get_global_id(1);
 	const int w = get_global_size(0);
-	const int h = get_global_size(0);
+	const int h = get_global_size(1);
 
 	const int i = offset2(x, y, w, h);
     
