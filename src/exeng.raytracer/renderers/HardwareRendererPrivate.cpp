@@ -11,6 +11,17 @@
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/Timer.hpp>
 
+#if defined (EXENG_UNIX)
+#  include <GL/glx.h>
+#endif
+
+// prevents warning
+#if defined (EXENG_WINDOWS)
+#  include <Windows.h>
+#endif
+
+
+
 namespace exeng { namespace raytracer { namespace renderers {
 
     struct SynthesisElement {

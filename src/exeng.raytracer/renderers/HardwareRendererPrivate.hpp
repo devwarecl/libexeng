@@ -7,13 +7,8 @@
 #include <CL/cl.h>
 #include <CL/cl_gl.h>
 
-#undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 #include <GLFW/glfw3.h>
-
-#if defined (EXENG_UNIX)
-#  include <GL/glx.h>
-#endif
 
 #include <list>
 #include <stack>
