@@ -29,6 +29,53 @@ namespace exeng { namespace raytracer { namespace renderers {
 	using namespace exeng::scenegraph;
 	using namespace ::raytracer::samplers;
 
+	// ClearSynthesisData
+	typedef cl::make_kernel<cl::Buffer> ClearSynthesisDataFunctor;
+
+	// GenerateRays
+	typedef cl::make_kernel <
+		cl::Buffer,				// [out]
+		float, float, float,	// camera_position
+		float, float, float,	// camera_lookat
+		float, float, float		// camera_up
+	> GenerateRaysFunctor;
+		
+	// ComputeSynthesisData
+	typedef cl::make_kernel <
+		cl::Buffer,	// [out] synthesis_buffer
+		cl::Buffer,	// rays
+		cl::Buffer,	// vertices
+		cl::Buffer,	// indices
+		int,		// index_count
+		int,		// material_index
+		cl::Buffer,	// transform
+		cl::Buffer,	// samples
+		int			// sample_count
+	> ComputeSynthesisDataFunctor;
+
+	// SynthetizeImage
+	typedef cl::make_kernel <
+		cl::Image2DGL,	// [out] image
+		cl::Buffer,		// synthesisBuffer
+		cl::Buffer,		// rays
+		int,			// materialSize
+		cl::Buffer		// materialData
+	> SynthetizeImageFunctor;
+
+	struct FunctorPack {
+		FunctorPack(cl::Kernel clear, cl::Kernel generate, cl::Kernel compute, cl::Kernel synthetize) : 
+			clearSynthesisDataFunctor(clear),
+			generateRaysFunctor			(generate),
+			computeSynthesisDataFunctor	(compute),
+			synthetizeImageFunctor		(synthetize) 
+		{}
+
+		ClearSynthesisDataFunctor	clearSynthesisDataFunctor;
+		GenerateRaysFunctor			generateRaysFunctor;
+		ComputeSynthesisDataFunctor	computeSynthesisDataFunctor;
+		SynthetizeImageFunctor		synthetizeImageFunctor;
+	};
+
     class HardwareRendererPrivate {
 	public:
 		HardwareRendererPrivate (
@@ -50,11 +97,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 		cl::Program program;
 		cl::Image2DGL image;
 
-        cl::Kernel clearSynthBufferKernel;
-		cl::Kernel rayGeneratorKernel;
-		cl::Kernel rayGeneratorFromMatrixKernel;
-		cl::Kernel synthesisDataComputerKernel;
-		cl::Kernel imageSynthetizerKernel;
+		std::unique_ptr<FunctorPack> functors;
 
         std::vector<exeng::scenegraph::Ray> raysData;
         

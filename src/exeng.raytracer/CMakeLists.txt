@@ -16,6 +16,7 @@ include_directories(${PNG_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_definitions(${PNG_DEFINITIONS})
+add_definitions(-D__CL_ENABLE_EXCEPTIONS)
 
 link_directories(${GLFW3_LIBRARY_DIR})
 link_directories(${OpenGL_LIBRARY_DIR})

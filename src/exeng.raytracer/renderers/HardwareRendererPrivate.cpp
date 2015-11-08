@@ -138,12 +138,6 @@ namespace exeng { namespace raytracer { namespace renderers {
 
 		BOOST_LOG_TRIVIAL(trace) << "Completing Multi-Object ray tracer initialization ...";
 
-		cl::Kernel clearSynthBufferKernel       = cl::Kernel(program, "ClearSynthesisData");
-		cl::Kernel rayGeneratorKernel			= cl::Kernel(program, "GenerateRays");
-		cl::Kernel rayGeneratorFromMatrixKernel	= cl::Kernel(program, "GenerateRaysFromWorldMatrix");
-		cl::Kernel synthesisDataComputerKernel	= cl::Kernel(program, "ComputeSynthesisData");
-		cl::Kernel imageSynthetizerKernel		= cl::Kernel(program, "SynthetizeImage");
-        
 		// Command queue
 		cl::CommandQueue queue = cl::CommandQueue(context, device);
 
@@ -158,11 +152,13 @@ namespace exeng { namespace raytracer { namespace renderers {
         
 		this->localTransformBuffer = cl::Buffer(context, CL_MEM_READ_WRITE, 2*sizeof(Matrix4f), nullptr);
 
-        this->clearSynthBufferKernel = clearSynthBufferKernel;
-        this->rayGeneratorKernel = rayGeneratorKernel;
-		this->rayGeneratorFromMatrixKernel = rayGeneratorFromMatrixKernel;
-        this->synthesisDataComputerKernel = synthesisDataComputerKernel;
-        this->imageSynthetizerKernel = imageSynthetizerKernel;
+		this->functors = std::make_unique<FunctorPack>(
+			cl::Kernel(program, "ClearSynthesisData"),
+			cl::Kernel(program, "GenerateRays"),
+			cl::Kernel(program, "ComputeSynthesisData"),
+			cl::Kernel(program, "SynthetizeImage")
+		);
+
 		this->queue = queue;
 		this->samplesBuffer = samplesBuffer;
         this->materialLibrary = materialLibrary;
@@ -352,32 +348,23 @@ namespace exeng { namespace raytracer { namespace renderers {
         cl::Event event;
 
         // Prepare the 'GenerateRays' kernel
-        cl::Kernel &kernel = this->rayGeneratorKernel;
-
         Vector3f pos = camera->getPosition(); 
         Vector3f lookAt = camera->getLookAt(); 
         Vector3f up = camera->getUp();
         Vector3i size = this->renderTarget->getSize();
 		
-        kernel.setArg(0, this->raysBuffer);
-        
-        kernel.setArg(1, pos.x);
-        kernel.setArg(2, pos.y);
-        kernel.setArg(3, pos.z);
-
-        kernel.setArg(4, lookAt.x);
-        kernel.setArg(5, lookAt.y);
-        kernel.setArg(6, lookAt.z);
-
-        kernel.setArg(7, up.x);
-        kernel.setArg(8, up.y);
-        kernel.setArg(9, up.z);
-
-        kernel.setArg(10, size.x);
-        kernel.setArg(11, size.y);
+		cl::EnqueueArgs eargs(queue, cl::NullRange, cl::NDRange(size.x, size.y), this->localSize);
+		
+		errCode = this->functors->generateRaysFunctor (
+			eargs, 
+			this->raysBuffer, 
+			pos.x, pos.y, pos.z, 
+			lookAt.x, lookAt.y, lookAt.z, 
+			up.x, up.y, up.z
+		).wait();
 
         // Execute the kernel
-        errCode = this->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), this->localSize, nullptr, &event);
+        // errCode = this->queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), this->localSize, nullptr, &event);
         if (errCode != CL_SUCCESS) {
 			std::string msg = "MultiHardwareTracer::generateRays: Error at trying to enqueue the GenerateRays Kernel:" + clErrorToString(errCode);
 			BOOST_LOG_TRIVIAL(error) << msg;
@@ -394,22 +381,15 @@ namespace exeng { namespace raytracer { namespace renderers {
     void HardwareRendererPrivate::clearSynthesisBuffer() {
 		Timer timer;
 
-		/*
-		BOOST_LOG_TRIVIAL(trace) << "[1] Invoking clearSynthBuffer kernel with params: ScreenSize={" << this->renderTarget->getSize() << "}";
-		*/
-
+		// BOOST_LOG_TRIVIAL(trace) << "[1] Invoking clearSynthBuffer kernel with params: ScreenSize={" << this->renderTarget->getSize() << "}";
+		
+		Vector3i size = this->renderTarget->getSize();
         cl_int errCode = 0;
+		
         cl::Event event;
-        cl::CommandQueue &queue = this->queue;
-        cl::Kernel &kernel = this->clearSynthBufferKernel;
-        
-        Vector3i size = this->renderTarget->getSize();
-        
-        kernel.setArg(0, this->synthesisBuffer);
-        kernel.setArg(1, size.x);
-        kernel.setArg(2, size.y);
+		cl::EnqueueArgs eargs(this->queue, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange);
 
-        errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange, nullptr, &event);
+		errCode = this->functors->clearSynthesisDataFunctor(eargs, this->synthesisBuffer).wait();
         if (errCode != CL_SUCCESS) {
 			std::string msg = "MultiHardwareTracer::clearSynthBuffer: Error at trying to execute the ClearSynthBuffer kernel:" + clErrorToString(errCode);
 			BOOST_LOG_TRIVIAL(error) << msg;
@@ -435,8 +415,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 		cl_int errCode = 0;
 
 		cl::Event event;
-		cl::Kernel &kernel = this->synthesisDataComputerKernel;
-
+		
 		const Mesh *mesh = static_cast<const Mesh*>(nodeData);
 
 		for (int i=0; i<mesh->getSubsetCount(); ++i) {
@@ -458,21 +437,9 @@ namespace exeng { namespace raytracer { namespace renderers {
 				<< "ScreenSize={" << screenSize << "}, "
 				<< "TriangleCount=" << indexCount;
 			*/
-
-			kernel.setArg(0, this->synthesisBuffer);
-			kernel.setArg(1, this->raysBuffer);
-			kernel.setArg(2, vertexBuffer);
-			kernel.setArg(3, indexBuffer);
-			kernel.setArg(4, indexCount);
-			kernel.setArg(5, materialIndex);
-			kernel.setArg(6, this->localTransformBuffer);
-			kernel.setArg(7, this->samplesBuffer);
-			kernel.setArg(8, this->samplesCount);
                 
 			std::vector<cl::Memory> buffers = {vertexBuffer, indexBuffer};
-                
-			cl::CommandQueue &queue = this->queue;
-
+            
 			errCode = queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
 			if (errCode != CL_SUCCESS) {
 				std::string msg = "MultiHardwareTracer::computeSynthesisData: Error at trying to acquire the GL buffer object:" + clErrorToString(errCode);
@@ -481,8 +448,23 @@ namespace exeng { namespace raytracer { namespace renderers {
 				throw std::runtime_error(msg);
 			}
 			event.wait();
-                
-			errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(screenSize.x, screenSize.y), this->localSize, nullptr, &event);
+            
+
+			cl::EnqueueArgs eargs(this->queue, cl::NullRange, cl::NDRange(screenSize.x, screenSize.y), this->localSize);
+
+			errCode = this->functors->computeSynthesisDataFunctor (
+				eargs,
+				this->synthesisBuffer, 
+				this->raysBuffer, 
+				vertexBuffer, 
+				indexBuffer, 
+				indexCount, 
+				materialIndex, 
+				this->localTransformBuffer, 
+				this->samplesBuffer, 
+				this->samplesCount
+			).wait();
+			
 			if (errCode != CL_SUCCESS) {
 				std::string msg = "MultiHardwareTracer::computeSynthesisData: Error at trying to execute the ComputeSynthesisBuffer kernel:" + clErrorToString(errCode);
 				BOOST_LOG_TRIVIAL(error) << msg;
@@ -509,18 +491,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 
         Vector3i size = this->renderTarget->getSize();
         cl::Event event;
-        cl::Kernel &kernel = this->imageSynthetizerKernel;
         cl_int errCode = 0;
-
-        kernel.setArg(0, this->image);
-        kernel.setArg(1, this->synthesisBuffer);
-        kernel.setArg(2, this->raysBuffer);
-        kernel.setArg(3, size.x);
-        kernel.setArg(4, size.y);
-		kernel.setArg(5, MaterialSize);
-		kernel.setArg(6, this->materialBuffer);
-
-        cl::CommandQueue &queue = this->queue;
 
         std::vector<cl::Memory> buffers = {this->image};
 
@@ -538,7 +509,17 @@ namespace exeng { namespace raytracer { namespace renderers {
         }
         event.wait();
 
-        errCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size.x, size.y), this->localSize, nullptr, &event);
+		cl::EnqueueArgs eargs(this->queue, cl::NullRange, cl::NDRange(size.x, size.y), this->localSize);
+
+		errCode = this->functors->synthetizeImageFunctor(
+			eargs,
+			this->image, 
+			this->synthesisBuffer, 
+			this->raysBuffer, 
+			MaterialSize, 
+			this->materialBuffer
+		).wait();
+		
         if (errCode != CL_SUCCESS) {
 			std::string msg = "MultiHardwareTracer::synthetizeImage: Error at trying to enqueue the SynthetizeImage kernel: " + clErrorToString(errCode);
 

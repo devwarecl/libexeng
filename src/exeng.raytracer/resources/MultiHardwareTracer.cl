@@ -304,11 +304,14 @@ void computeElementMeshSubset (
 }
 */
 
-__kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer, int screenWidth, int screenHeight) 
+__kernel void ClearSynthesisData(global SynthesisElement *synthesisBuffer) 
 {
+	const int w = get_global_size(0);
+    const int h = get_global_size(1);
     const int x = get_global_id(0);
     const int y = get_global_id(1);
-    const int i = offset2(x, y, screenWidth, screenHeight);
+    const int i = offset2(x, y, w, h);
+
 	const SynthesisElement element = {
 		{0.0f, 0.0f, 0.0f, 0.0f},	// Point
 		{0.0f, 0.0f, 0.0f, 0.0f},	// Normal
@@ -328,8 +331,12 @@ __kernel void ComputeSynthesisData (
 	__global SynthesisElement *synthesisBuffer, 
 	__global ray_t *rays, 
 	__global float *vertices, 
-	__global int *indices, int indexCount, int materialIndex, __global matrix_t *transforms,
-	__global float2 *samples, const int sample_count)
+	__global int *indices, 
+	int indexCount, 
+	int materialIndex, 
+	__global matrix_t *transforms,
+	__global float2 *samples, 
+	const int sample_count)
 {
 	const int x = get_global_id(0);
 	const int y = get_global_id(1);
@@ -371,14 +378,16 @@ __kernel void ComputeSynthesisData2 (
  * The image is synthetized by using the different materials 
  */
 __kernel void SynthetizeImage (
-    write_only image2d_t image, 
-    global SynthesisElement *synthesisBuffer, 
-	global ray_t *rays, int screenWidth, int screenHeight, 
+    __write_only image2d_t image, 
+    __global SynthesisElement *synthesisBuffer, 
+	__global ray_t *rays, 
     int materialSize, global float *materialData)
 {
+	const int w = get_global_size(0);
+	const int h = get_global_size(1);
 	const int x = get_global_id(0);
 	const int y = get_global_id(1);
-	const int i = offset2(x, y, screenWidth, screenHeight);
+	const int i = offset2(x, y, w, h);
     
 	const ray_t ray = rays[i];
 	const SynthesisElement synthElement = synthesisBuffer[i];
