@@ -31,7 +31,6 @@
 #include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/Texture.hpp>
-#include <exeng/graphics/Screen.hpp>
 #include <exeng/graphics/Primitive.hpp>
 #include <exeng/graphics/Shader.hpp>
 #include <exeng/graphics/ShaderProgram.hpp>

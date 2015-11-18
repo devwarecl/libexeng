@@ -117,7 +117,7 @@ namespace exeng { namespace graphics {
 		/**
 		 * @brief Get available device descriptions.
 		 */
-		std::list<GraphicsDriverInfo> getAvailableDrivers() const;
+		std::vector<GraphicsDriverInfo> getAvailableDrivers() const;
 		
     private:
         struct Private;

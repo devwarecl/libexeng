@@ -124,6 +124,10 @@ namespace exeng { namespace framework {
 		}
 
 		void loadAssets(Buffer* assetsXmlBuffer) {
+			if (!assetsXmlBuffer) {
+				return;
+			}
+
 			const char* assetsXmlData = (const char*)assetsXmlBuffer->getPointer();
 			const int assetsXmlSize = assetsXmlBuffer->getSize();
 

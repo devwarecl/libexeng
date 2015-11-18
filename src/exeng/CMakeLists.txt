@@ -24,11 +24,15 @@ set (AudioFiles_cpp audio/AudioBuffer.cpp audio/Listener.cpp audio/Source.cpp)
 set (AudioFiles_hpp audio/AudioBuffer.hpp audio/Listener.hpp audio/Source.hpp)
 set (AudioFiles ${AudioFiles_hpp} ${AudioFiles_cpp})
 
-set (FrameworkFiles
-    framework/Main.hpp                framework/Main.inl
-    framework/Application.hpp         framework/Application.cpp 
-    framework/GraphicsApplication.hpp framework/GraphicsApplication.cpp
+
+set (FrameworkFiles_cpp
+	framework/Application.cpp framework/GraphicsApplication.cpp
 )
+set (FrameworkFiles_hpp 
+	framework/Main.hpp                framework/Main.inl
+	framework/Application.hpp         framework/GraphicsApplication.hpp 
+)
+set (FrameworkFiles ${FrameworkFiles_hpp} ${FrameworkFiles_cpp})
 
 set (ComputeFiles_hpp
     compute/ComputeBuffer.hpp compute/ComputeDevice.hpp compute/ComputeManager.hpp compute/Kernel.hpp 
@@ -242,5 +246,22 @@ SOURCE_GROUP(util		FILES ${UtilFiles})
 
 TARGET_LINK_LIBRARIES(exeng ${UNIX_LIBRARIES} lwobject ${Boost_LIBRARIES} ${LIBXML2_LIBRARIES})
 
-# install (TARGET exeng DESTINATION lib)
-# install (FILES ${} DESTINATION include)
+INSTALL (
+	TARGETS exeng 
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib
+)
+
+INSTALL (FILES ExengConfig.cmake		DESTINATION lib/cmake/exeng/)
+INSTALL (FILES ${BaseFiles_hpp}			DESTINATION include/exeng)
+INSTALL (FILES ${IoFiles_hpp}			DESTINATION include/exeng/io)
+INSTALL (FILES ${AudioFiles_hpp}		DESTINATION include/exeng/audio)
+INSTALL (FILES ${FrameworkFiles_hpp}	DESTINATION include/exeng/framework)
+INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/exeng/compute)
+INSTALL (FILES ${GraphicsFiles_hpp}		DESTINATION include/exeng/graphics)
+INSTALL (FILES ${UiFiles_hpp}			DESTINATION include/exeng/ui)
+INSTALL (FILES ${InputFiles_hpp}		DESTINATION include/exeng/input)
+INSTALL (FILES ${ScenegraphFiles_hpp}	DESTINATION include/exeng/scenegraph)
+INSTALL (FILES ${SystemFiles_hpp}		DESTINATION include/exeng/system)
+INSTALL (FILES ${UtilFiles_hpp}			DESTINATION include/exeng/util)

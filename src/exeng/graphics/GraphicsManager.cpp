@@ -93,11 +93,11 @@ namespace exeng { namespace graphics {
         return pos->second->create();
     }
 
-	std::list<GraphicsDriverInfo> GraphicsManager::getAvailableDrivers() const 
+	std::vector<GraphicsDriverInfo> GraphicsManager::getAvailableDrivers() const 
 	{
 		assert( this->impl != nullptr );
 
-		std::list<GraphicsDriverInfo> driverInfos;
+		std::vector<GraphicsDriverInfo> driverInfos;
 
 		for (auto driverIterator : this->impl->factories) {
 			driverInfos.push_back(driverIterator.first);
