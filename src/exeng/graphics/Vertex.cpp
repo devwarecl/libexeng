@@ -4,5 +4,4 @@
  * @brief Vertex format implementation
  */
 
-#include <exeng/graphics/Vertex.hpp>
-
+#include "Vertex.hpp"

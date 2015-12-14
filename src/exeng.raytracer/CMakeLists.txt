@@ -4,7 +4,7 @@ add_definitions(-DRAYTRACER_ROOT_FOLDER="${PROJECT_SOURCE_DIR}/src/exeng.raytrac
 find_package(OpenGL REQUIRED)
 find_package(OpenCL)
 find_package(glfw3 REQUIRED)
-find_package(PNG REQUIRED)
+# find_package(PNG REQUIRED)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   find_package(Threads REQUIRED)
@@ -12,15 +12,15 @@ endif()
 
 include_directories(${GLFW3_INCLUDE_DIR})
 include_directories(${OPENCL_INCLUDE_DIRS})
-include_directories(${PNG_INCLUDE_DIRS})
+# include_directories(${PNG_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_definitions(${PNG_DEFINITIONS})
+# add_definitions(${PNG_DEFINITIONS})
 add_definitions(-D__CL_ENABLE_EXCEPTIONS)
 
 link_directories(${GLFW3_LIBRARY_DIR})
 link_directories(${OpenGL_LIBRARY_DIR})
-link_directories(${PNG_LIBRARY})
+# link_directories(${PNG_LIBRARY})
 
 # Grouping
 set (BaseFiles

@@ -328,20 +328,20 @@ namespace exeng { namespace framework {
 				if (name == "mesh-subset-generator") {
 					std::string type = child.getAttribute("type");
 
-					GeometryGeneratorPtr generator;
+					std::unique_ptr<GeometryGenerator<StandardVertex>> generator;
 
 					if (type == "box") {
 						Vector3f center = parseVector<float, 3>(child.getAttribute("center"));
 						Vector3f size = parseVector<float, 3>(child.getAttribute("size"));
 
-						generator.reset( new BoxGeometryGenerator(center, size));
+						generator = std::make_unique<BoxGenerator<StandardVertex>>(center, size);
 					}
 
 					if (!generator) {
 						EXENG_THROW_EXCEPTION("Generator '" + type + "' not known.");
 					}
 
-					HeapBufferPtr vbuffer = generator->generateVertexBuffer(format);
+					HeapBufferPtr vbuffer = generator->generateVertexBuffer();
 					HeapBufferPtr ibuffer = generator->generateIndexBuffer();
 
 					BufferPtr vertexBuffer  = this->driver->createVertexBuffer(vbuffer.get());

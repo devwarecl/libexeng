@@ -22,6 +22,8 @@
 #include <exeng/Config.hpp>
 #include <exeng/Vector.hpp>
 #include <exeng/Size.hpp>
+#include <exeng/graphics/VertexFormat.hpp>
+#include <exeng/graphics/IndexFormat.hpp>
 
 namespace exeng { namespace graphics {
     class EXENGAPI GraphicsDriver; 
@@ -72,14 +74,14 @@ namespace exeng { namespace scenegraph {
         Mesh* getMesh(const std::string &id);
 
 		/**
-		 * @brief Generate a cube mesh
+		 * @brief Generate a box shaped mesh
 		 */
-		Mesh* generateBoxMesh(const std::string &id, const Vector3f &center, const Vector3f &size);
+		Mesh* generateBoxMesh(const std::string &id, const exeng::graphics::VertexFormat *vertexFormat, exeng::graphics::IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size);
 
         /**
-		 * @brief Generate a rect mesh (for two-dimensional rendering)
+		 * @brief Generate a rectangle mesh (for two-dimensional rendering)
 		 */
-        Mesh* generateScreenMesh(const std::string &id);
+        Mesh* generateScreenMesh(const std::string &id, const exeng::graphics::VertexFormat *vertexFormat, exeng::graphics::IndexFormat::Enum indexFormat);
 
     private:
         struct Private;

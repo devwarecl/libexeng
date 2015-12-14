@@ -1,6 +1,8 @@
 
 #include "LwoMeshLoader.hpp"
 
+#include <exeng/graphics/Vertex.hpp>
+
 #include <boost/filesystem/path.hpp>
 #include <lwobject/lwo2.h>
 
@@ -174,7 +176,7 @@ namespace raytracer { namespace loaders {
 		return nullptr;
 	}
 		
-	static void generateVertices_ProjUV (std::vector<Vertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
+	static void generateVertices_ProjUV (std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
 	{
 		lwVMap *vmap = getVMap(layer, imageMap->vmap_name, true);
 
@@ -208,17 +210,16 @@ namespace raytracer { namespace loaders {
 				}
 			}
 
-			Vertex vertex = {
-				Vector3f(pointList->pt[pointIndex].pos),
-				Vector3f(polygon->norm),
-				Vector2f(texCoordData[0], 1.0f - texCoordData[1])
-			};
+			StandardVertex vertex;
+			vertex.coord = Vector3f(pointList->pt[pointIndex].pos);
+			vertex.normal = Vector3f(polygon->norm);
+			vertex.texCoord = Vector2f(texCoordData[0], 1.0f - texCoordData[1]);
 
 			vertices.push_back(vertex);
 		}
 	}
 
-	static void generateVertices_ProjCubic(std::vector<Vertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
+	static void generateVertices_ProjCubic(std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
 	{
 		Vector3f normal = computePolygonNormal(polygon, pointList, false);
 
@@ -246,14 +247,17 @@ namespace raytracer { namespace loaders {
 			texCoord += Vector2f(0.5f, 0.5f);
 			texCoord.y = 1.0f - texCoord.y;
 
-			Vertex vertex = {coord, normal, texCoord};
+			StandardVertex vertex;
+			vertex.coord = coord;
+			vertex.normal = normal;
+			vertex.texCoord = texCoord;
 
 			vertices.push_back(vertex);
 		}
 	}
 
 	template<typename TexCoordGeneratorFunctor>
-	static void generateVertices_Proj(std::vector<Vertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
+	static void generateVertices_Proj(std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
 	{
 		TexCoordGeneratorFunctor texCoordGenerator;
 
@@ -275,7 +279,11 @@ namespace raytracer { namespace loaders {
 			texCoord *= Vector2f(imageMap->wrapw.val, imageMap->wraph.val);
 			texCoord.y = 1.0f - texCoord.y;
 
-			Vertex vertex = {coord, normal, texCoord};
+			StandardVertex vertex;
+			vertex.coord = coord;
+			vertex.normal = coord;
+			vertex.texCoord = coord;
+
 			vertices.push_back(vertex);
 		}
 	}
@@ -332,36 +340,40 @@ namespace raytracer { namespace loaders {
 		}
 	};
 
-	static void generateVertices_ProjDefault(std::vector<Vertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
+	static void generateVertices_ProjDefault(std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
 	{
 		for(int j=0; j<polygon->nverts; j++)
 		{
 			Vector3f pivot = Vector3f(layer->pivot);
-
 			const int pointIndex = polygon->v[j].index;
-			Vector3f coord = Vector3f(pointList->pt[pointIndex].pos);
-			Vector3f normal = Vector3f(polygon->norm);
-			Vector2f texCoord = {0.0f, 0.0f};
 
-			vertices.push_back(Vertex{coord + pivot, normal, texCoord});
+			StandardVertex vertex;
+			vertex.coord = Vector3f(pointList->pt[pointIndex].pos);
+			vertex.normal = Vector3f(polygon->norm);
+			vertex.texCoord = {0.0f, 0.0f};
+
+			vertices.push_back(vertex);
 		}
 	}
 
-	static void generateVertices_Default(std::vector<Vertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
+	static void generateVertices_Default(std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
 	{
 		for(int j=0; j<polygon->nverts; j++)
 		{
 			const int pointIndex = polygon->v[j].index;
-			Vector3f coord = Vector3f(pointList->pt[pointIndex].pos);
-			Vector3f normal = Vector3f(polygon->norm);
-			Vector2f texCoord = {0.0f, 0.0f};
 
-			vertices.push_back(Vertex{coord, normal, texCoord});
+			StandardVertex vertex;
+
+			vertex.coord = Vector3f(pointList->pt[pointIndex].pos);
+			vertex.normal = Vector3f(polygon->norm);
+			vertex.texCoord = {0.0f, 0.0f};
+
+			vertices.push_back(vertex);
 		}
 	}
 
 	typedef std::function<
-		void (std::vector<Vertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
+		void (std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
 	> ProjVertexGeneratorFunction;
 
 	struct LwoMeshLoader::Impl
@@ -370,7 +382,7 @@ namespace raytracer { namespace loaders {
 
 		std::unique_ptr<MeshSubset> createMeshSubsetFromLWOData(GraphicsDriver *graphicsDriver, lwLayer *layer, lwSurface *surf)
 		{
-			std::vector<Vertex> vertices;
+			std::vector<StandardVertex> vertices;
 			std::vector<int> indices;
 
 			lwPolygonList *polygonList = &layer->polygon;
@@ -417,11 +429,11 @@ namespace raytracer { namespace loaders {
 					const int end = baseIndex;
 
 					for (int vertexIndex=begin; vertexIndex<end; vertexIndex++) {
-						Vertex vertex = { 
-							vertices[vertexIndex].coord,
-							-vertices[vertexIndex].normal,
-							vertices[vertexIndex].texCoord,
-						};
+
+						StandardVertex vertex;
+						vertex.coord = vertices[vertexIndex].coord;
+						vertex.normal = -vertices[vertexIndex].normal;
+						vertex.texCoord = vertices[vertexIndex].texCoord;
 
 						vertices.push_back(vertex);
 					}
@@ -432,7 +444,7 @@ namespace raytracer { namespace loaders {
 
 			auto vertexBuffer = graphicsDriver->createVertexBuffer(vertices);
 			auto indexBuffer = graphicsDriver->createIndexBuffer(indices);
-			auto meshSubset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), Vertex::format());
+			auto meshSubset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), StandardVertex::getFormat());
 
 			return meshSubset;
 		}

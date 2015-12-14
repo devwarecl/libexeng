@@ -258,6 +258,30 @@ private:
 	float angle = 0.0f;
 };
 
+/*
 int main(int argc, char **argv) {
     return Application::execute<Demo01>(argc, argv);
+}
+*/
+
+namespace xg {
+	/*
+	#define MAKE_VERTEX_FORMAT_ATTRIB(index, attrib, dataType, size) (((dataType) | (attrib << 2) | (size << 6)) << (index*8))
+
+	struct VertexFormatAttrib {
+		std::uint8_t dataType:2;
+		std::uint8_t attrib:4;
+		std::uint8_t size:2;
+	};
+	
+	typedef std::uint64_t VertexFormat;
+	*/
+
+
+}
+
+int main(int argc, char **argv) {
+
+
+	return 0;
 }

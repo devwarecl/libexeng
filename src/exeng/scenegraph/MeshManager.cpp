@@ -27,82 +27,16 @@
 #include <exeng/scenegraph/IMeshLoader.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
+#include <exeng/graphics/MeshSubsetGenerator.hpp>
+#include <exeng/graphics/MeshSubsetTransformer.hpp>
 
 #include <lwobject/lwo2.h>
 
 namespace fs = boost::filesystem;
 
 namespace exeng { namespace scenegraph {
-	const float pi = exeng::Pi<float>::Value;
-	const float pi_2 = pi * 0.5f;
 
-    using namespace exeng::graphics;
-    
-	std::vector<Vertex> generateBoxVertices(const Vector3f &center, const Vector3f &size)
-	{
-		std::vector<Vertex> vertices = {
-            // Cara izquierda
-            {{-0.5f,   0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}},
-            {{ 0.5f,   0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f, 0.0f}},
-            {{-0.5f,  -0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}},
-            {{ 0.5f,  -0.5f, -0.5f, 1.0f},   {0.0f, 0.0f, -1.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 0.0f}},
-                
-            // Cara derecha
-            {{0.5f,   0.5f, -0.5f, 1.0f},   {1.0f, 0.0f, 0.0f, 0.0f},   {0.0f, 1.0f, 0.0f, 0.0f}},
-            {{0.5f,   0.5f,  0.5f, 1.0f},   {1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f}}, 
-            {{0.5f,  -0.5f, -0.5f, 1.0f},   {1.0f, 0.0f, 0.0f, 0.0f},   {0.0f, 0.0f, 0.0f, 0.0f}}, 
-            {{0.5f,  -0.5f,  0.5f, 1.0f},   {1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 0.0f, 0.0f, 0.0f}}, 
-            
-            // Cara delantera
-            {{ 0.5f,   0.5f,  0.5f, 1.0f},   {0.0f, 0.0f, 1.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f}},
-            {{-0.5f,   0.5f,  0.5f, 1.0f},   {0.0f, 0.0f, 1.0f, 0.0f},   {0.0f, 1.0f, 0.0f, 0.0f}},
-            {{ 0.5f,  -0.5f,  0.5f, 1.0f},   {0.0f, 0.0f, 1.0f, 0.0f},   {1.0f, 0.0f, 0.0f, 0.0f}},
-            {{-0.5f,  -0.5f,  0.5f, 1.0f},   {0.0f, 0.0f, 1.0f, 0.0f},   {0.0f, 0.0f, 0.0f, 0.0f}},
-                
-            // Cara Izquierda
-            {{-0.5f,   0.5f,  0.5f, 1.0f},  {-1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f}},
-            {{-0.5f,   0.5f, -0.5f, 1.0f},  {-1.0f, 0.0f, 0.0f, 0.0f},   {0.0f, 1.0f, 0.0f, 0.0f}},
-            {{-0.5f,  -0.5f,  0.5f, 1.0f},  {-1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 0.0f, 0.0f, 0.0f}},
-            {{-0.5f,  -0.5f, -0.5f, 1.0f},  {-1.0f, 0.0f, 0.0f, 0.0f},   {0.0f, 0.0f, 0.0f, 0.0f}},
-                
-            // Cara de Arriba
-            {{-0.5f,   0.5f,   0.5f, 1.0f},  {0.0f, 1.0f, 0.0f, 0.0f},   {0.0f, 1.0f, 0.0f, 0.0f}},
-            {{ 0.5f,   0.5f,   0.5f, 1.0f},  {0.0f, 1.0f, 0.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f}},
-            {{-0.5f,   0.5f,  -0.5f, 1.0f},  {0.0f, 1.0f, 0.0f, 0.0f},   {0.0f, 0.0f, 0.0f, 0.0f}},
-            {{ 0.5f,   0.5f,  -0.5f, 1.0f},  {0.0f, 1.0f, 0.0f, 0.0f},   {1.0f, 0.0f, 0.0f, 0.0f}},
-                
-            // Cara Inferior
-            {{ 0.5f,  -0.5f,   0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f}},
-            {{-0.5f,  -0.5f,   0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {0.0f, 1.0f, 0.0f, 0.0f}},
-            {{ 0.5f,  -0.5f,  -0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {1.0f, 0.0f, 0.0f, 0.0f}}, 
-            {{-0.5f,  -0.5f,  -0.5f, 1.0f},  {0.0f, -1.0f, 0.0f, 0.0f},   {0.0f, 0.0f, 0.0f, 0.0f}}
-        };
-
-		for (Vertex &vertex : vertices) {
-			vertex.coord = (vertex.coord*size) + center;
-		}
-
-		const float *__verts = reinterpret_cast<const float *>(vertices.data());
-
-		return vertices;
-	}
-
-	std::vector<int> generateBoxIndices() 
-	{
-        std::vector<int> indices = {
-            0 + 0,  0 + 1,  0 + 2,      0 + 1,  0 + 3,  0 + 2,
-            4 + 0,  4 + 1,  4 + 2,      4 + 1,  4 + 3,  4 + 2, 
-            8 + 0,  8 + 1,  8 + 2,      8 + 1,  8 + 3,  8 + 2, 
-            12 + 0, 12 + 1, 12 + 2,     12 + 1, 12 + 3, 12 + 2, 
-            16 + 0, 16 + 1, 16 + 2,     16 + 1, 16 + 3, 16 + 2, 
-            20 + 0, 20 + 1, 20 + 2,     20 + 1, 20 + 3, 20 + 2
-        };
-
-		return indices;
-	}
-}}
-
-namespace exeng { namespace scenegraph {
+	using namespace exeng::graphics;
 
     struct MeshManager::Private {
 		GraphicsDriver *graphicsDriver = nullptr;
@@ -111,6 +45,39 @@ namespace exeng { namespace scenegraph {
         std::map<std::string, std::unique_ptr<Mesh>> meshes;
 
 		std::string path;
+
+		void checkMeshId(const std::string &id) {
+			if (meshes.find(id) != meshes.end()) {
+				throw std::runtime_error("MeshManager::generateBoxMesh: The mesh id '" + id + "' already exists.");
+			}
+		}
+
+		Mesh* storeMesh(const std::string &id, MeshPtr mesh) {
+			Mesh* meshPtr = mesh.get();
+
+			this->meshes[id] =  std::move(mesh);
+
+			return meshPtr;
+		}
+
+		template<typename Generator>
+		MeshPtr generateMesh(const VertexFormat* vformat, const IndexFormat::Enum iformat, const Matrix4f &transformation) {
+			Generator generator;
+			MeshSubsetTransformer transformer;
+
+			const int vsize = generator.getVertexBufferSize(vformat);
+			const int isize = generator.getIndexBufferSize(iformat);
+
+			auto vbuffer = this->graphicsDriver->createVertexBuffer(vsize, nullptr);
+			auto ibuffer = this->graphicsDriver->createIndexBuffer(isize, nullptr);
+			auto subset = this->graphicsDriver->createMeshSubset(std::move(vbuffer), std::move(ibuffer), *vformat);
+
+			generator.generate(subset.get());
+			transformer.transform(subset.get(), transformation);
+
+			return std::make_unique<Mesh>(std::move(subset));
+		}
+		
     };
     
     MeshManager::MeshManager() {
@@ -171,30 +138,18 @@ namespace exeng { namespace scenegraph {
         return mesh;
     }
 
-	Mesh* MeshManager::generateBoxMesh(const std::string &id, const Vector3f &center, const Vector3f &size) {
+	Mesh* MeshManager::generateBoxMesh(const std::string &id, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size) {
 		assert(this->impl != nullptr);
 
-		GraphicsDriver *graphicsDriver = this->getGraphicsDriver();
-		auto &meshes = this->impl->meshes;
-
 #if defined(EXENG_DEBUG)
-		if (meshes.find(id) != meshes.end()) {
-			throw std::runtime_error("MeshManager::generateBoxMesh: The mesh id '" + id + "' already exists.");
-		}
+		this->impl->checkMeshId(id);
 #endif	
 
-		std::vector<Vertex> vertices = generateBoxVertices(center, size);
-		std::vector<int> indices = generateBoxIndices();
+		Matrix4f transformation = identity<float, 4>() * scale<float, 4>(size) * translate<float>(center);
 
-		auto vertexBuffer = graphicsDriver->createVertexBuffer(vertices);
-		auto indexBuffer = graphicsDriver->createIndexBuffer(indices);
+		MeshPtr mesh = this->impl->generateMesh<BoxGenerator>(vertexFormat, indexFormat, transformation);
 
-		auto subset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), Vertex::format());
-		auto mesh = std::unique_ptr<Mesh>(new Mesh(std::move(subset)));
-
-		meshes[id] = std::move(mesh);
-
-		return meshes[id].get();
+		return this->impl->storeMesh(id, std::move(mesh));
 	}
 
 	void MeshManager::setPath(const std::string &path) {
@@ -230,25 +185,17 @@ namespace exeng { namespace scenegraph {
 		return this->impl->graphicsDriver;
 	}
 
-    Mesh* MeshManager::generateScreenMesh(const std::string &id) {
+    Mesh* MeshManager::generateScreenMesh(const std::string &id, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat) {
         assert(this->impl != nullptr);
 
-        Vertex2 vertices[] = {
-            {{ 1.0f,  1.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-            {{-1.0f,  1.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-            {{ 1.0f, -1.0f, 0.0f, 1.0f}, {1.0f, 0.0f}}, 
-            {{-1.0f, -1.0f, 0.0f, 1.0f}, {0.0f, 0.0f}}
-        };
+#if defined(EXENG_DEBUG)
+		this->impl->checkMeshId(id);
+#endif	
 
-        BufferPtr vertexBuffer = this->getGraphicsDriver()->createVertexBuffer(sizeof(vertices), vertices);
-        MeshSubsetPtr meshSubset = this->getGraphicsDriver()->createMeshSubset(std::move(vertexBuffer), nullptr, Vertex2::format());
-        meshSubset->setPrimitive(Primitive::TriangleStrip);
+		Matrix4f transformation = translate<float>({0.5f, 0.5f, 0.0f});
 
-        MeshPtr mesh = std::make_unique<Mesh>(std::move(meshSubset));
+		MeshPtr mesh = this->impl->generateMesh<RectGenerator>(vertexFormat, indexFormat, transformation);
 
-        auto &meshes = this->impl->meshes;
-        meshes[id] = std::move(mesh);
-
-        return meshes[id].get();
+		return this->impl->storeMesh(id, std::move(mesh));
     }
 }}

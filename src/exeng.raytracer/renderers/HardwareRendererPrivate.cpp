@@ -9,6 +9,7 @@
 #include <boost/log/trivial.hpp>
 #include <exeng/Exception.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/graphics/Vertex.hpp>
 #include <exeng/Timer.hpp>
 
 #if defined (EXENG_UNIX)
@@ -170,7 +171,9 @@ namespace exeng { namespace raytracer { namespace renderers {
         BOOST_LOG_TRIVIAL(trace) << "Binding GL texture to the hardware-accelerated ray tracer ...";
         this->setRenderTarget(renderTarget);
 
-        BOOST_LOG_TRIVIAL(trace) << "[Host] Vertex structure size: " << sizeof(Vertex);
+		VertexFormat format = RayTracingVertex::getFormat();
+
+        BOOST_LOG_TRIVIAL(trace) << "[Host] Vertex structure size: " << format.getSize();
 		BOOST_LOG_TRIVIAL(trace) << "Ray structure size: " << this->raySize;
 		BOOST_LOG_TRIVIAL(trace) << "SynthesisBuffer structure size: " << this->synthesisElementSize;
 		

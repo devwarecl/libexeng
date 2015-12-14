@@ -112,7 +112,7 @@ namespace exeng { namespace graphics {
      */
     struct VertexFormat {
     public:
-        static const int FieldCount = 16;
+        static const int FieldCount = 8;
         static const int InvalidOffset = -1;
         
         VertexField fields[FieldCount];
@@ -136,6 +136,11 @@ namespace exeng { namespace graphics {
          */
         int getAttribOffset(VertexAttrib::Enum attrib) const;
         
+		/**
+		 * @brief Check if the specified attribute exists.
+		 */
+		bool hasAttrib(VertexAttrib::Enum attrib) const;
+
         /**
          * @brief Get the VertexField object containing the specified Vertex Attribute.
          */
@@ -146,25 +151,6 @@ namespace exeng { namespace graphics {
 		bool operator!= (const VertexFormat &other) const;
     };
     
-	/**
-     * @brief Vertex with a 3D coordinate, normal vector and a single-unit 2D texture coordinate. All
-     * values as floats.
-     */
-    struct Vertex {
-        Vector4f coord;
-        Vector4f normal;
-        Vector4f texCoord;
-
-		static VertexFormat format();
-    };
-    
-    struct Vertex2 {
-        Vector4f coord;
-        Vector2f texCoord;
-
-		static VertexFormat format();
-    };
-
     inline VertexFormat::VertexFormat() {
         this->packaging = VertexPackaging::SingleBuffer;
         
@@ -217,6 +203,10 @@ namespace exeng { namespace graphics {
         return resultField;
     }
     
+	inline bool VertexFormat::hasAttrib(VertexAttrib::Enum attrib) const {
+		return this->getAttrib(attrib).attribute != VertexAttrib::Unused;
+	}
+
 	inline bool VertexFormat::operator== (const VertexFormat &other) const {
 		if (this->packaging != other.packaging) {
 			return false;
@@ -234,25 +224,6 @@ namespace exeng { namespace graphics {
 	inline bool VertexFormat::operator!= (const VertexFormat &other) const {
 		return !(*this == other);
 	}
-
-    inline VertexFormat Vertex::format() {
-        VertexFormat format;
-        
-		format.fields[0] = {VertexAttrib::Position, 4, DataType::Float32};
-		format.fields[1] = {VertexAttrib::Normal, 4, DataType::Float32};
-		format.fields[2] = {VertexAttrib::TexCoord, 4, DataType::Float32};
-		
-        return format;
-    }
-    
-    inline VertexFormat Vertex2::format() {
-        VertexFormat format;
-    
-		format.fields[0] = {VertexAttrib::Position, 4, DataType::Float32};
-		format.fields[1] = {VertexAttrib::TexCoord, 2, DataType::Float32};
-        
-        return format;
-    }
 }}
 
 #endif  //__EXENG_GRAPHICS_VERTEXFORMAT_HPP__

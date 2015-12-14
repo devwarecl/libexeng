@@ -52,22 +52,27 @@ set (GraphicsFiles_hpp
     graphics/Image.hpp                
     graphics/Material.hpp             
     graphics/PixelFormat.hpp          
-    graphics/Vertex.hpp               
-    graphics/VertexFormat.hpp 
+	graphics/VertexFormat.hpp 
+	graphics/VertexArray.hpp 
+    graphics/Vertex.hpp
+	graphics/VertexWrapper.hpp
     graphics/IndexFormat.hpp          
     graphics/Texture.hpp              
     graphics/ColorFormat.hpp          
     graphics/Shader.hpp               
     graphics/ShaderProgram.hpp        
+
     graphics/MeshSubset.hpp			
-    graphics/MeshSubsetBase.hpp		
+    graphics/MeshSubsetBase.hpp	
+	graphics/MeshSubsetTransformer.hpp	
+	graphics/MeshSubsetGenerator.hpp	
+
 	graphics/TextureManager.hpp
 	graphics/TextureLoader.hpp
 	graphics/ModernModule.hpp
 	graphics/LegacyModule.hpp
 	graphics/TextureLoader.hpp
 	graphics/MaterialLibrary.hpp
-	graphics/VertexWrapper.hpp
 	graphics/ShaderLibrary.hpp 
 )
 
@@ -80,18 +85,19 @@ set (GraphicsFiles_cpp
     graphics/PixelFormat.cpp 
     graphics/Vertex.cpp
     graphics/VertexFormat.cpp
+	graphics/VertexArray.cpp
     graphics/IndexFormat.cpp
     graphics/Texture.cpp
     graphics/ColorFormat.cpp
-    graphics/VertexArray.hpp
     graphics/Shader.cpp
     graphics/ShaderProgram.cpp
     graphics/MeshSubset.cpp
+	graphics/MeshSubsetTransformer.cpp
+	graphics/MeshSubsetGenerator.cpp
 	graphics/TextureManager.cpp
 	graphics/TextureLoader.cpp
 	graphics/LegacyModule.cpp
 	graphics/ModernModule.cpp
-	graphics/TextureLoader.cpp
 	graphics/MaterialLibrary.cpp
 	graphics/ShaderLibrary.cpp
 )

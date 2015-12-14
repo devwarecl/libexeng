@@ -21,6 +21,7 @@
 #include <cstring>
 
 #include "Common.hpp"
+#include "DataType.hpp"
 
 #if defined(EXENG_DEBUG)
 #include <stdexcept>
@@ -43,6 +44,14 @@ namespace exeng {
             this->x = x;
             this->y = y;
         }
+
+		void set(Type x, Type y, Type z) {
+             this->set(x, y);
+        }
+
+		 void set(Type x, Type y, Type z, Type w) {
+            this->set(x, y);
+        }
     };
 
     template<typename Type> 
@@ -56,6 +65,10 @@ namespace exeng {
             this->x = x;
             this->y = y;
             this->z = z;
+        }
+
+		 void set(Type x, Type y, Type z, Type w) {
+            this->set(x, y, z);
         }
     };
 
@@ -79,6 +92,11 @@ namespace exeng {
      */
     template<typename Type, int Size>
     class Vector : public VectorBase<Type, Size> {
+	public:
+		typedef Type type;
+		static const int size = Size;
+		static const DataType::Enum dataType = DataTypeTraits<Type>::Enum;
+
     private:
         typedef Vector<Type, Size> VectorType;
 
