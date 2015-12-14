@@ -134,14 +134,14 @@ namespace exeng { namespace graphics {
 	struct VertexFormatConstructor {
 		static void construct(std::vector<VertexField> &fields) {
 			VertexFormatConstructor<index - 1, Attribs...>::construct(fields);
-			fields[index] = VertexField(Attrib::attrib, Attrib::size, Attrib::dataType);
+			fields.push_back(VertexField(Attrib::attrib, Attrib::size, Attrib::dataType));
 		}
 	};
 
 	template <typename Attrib>
 	struct VertexFormatConstructor<0, Attrib> {
 		static void construct(std::vector<VertexField> &fields) {
-			fields[0] = VertexField(Attrib::attrib, Attrib::size, Attrib::dataType);
+			fields.push_back(VertexField(Attrib::attrib, Attrib::size, Attrib::dataType));
 		}
 	};
 

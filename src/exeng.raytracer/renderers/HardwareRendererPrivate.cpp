@@ -61,11 +61,11 @@ namespace exeng { namespace raytracer { namespace renderers {
         for (cl::Platform &platform_ : platforms) {
             std::vector<cl::Device> devices;
             platform_.getDevices(CL_DEVICE_TYPE_GPU, &devices);
-
+			
             // Select the first platform
             BOOST_LOG_TRIVIAL(trace) 
-                << "Found " << devices.size() << " device(s) for platform "
-                << "with platform: " << platform.getInfo<CL_PLATFORM_NAME>(nullptr);
+                << "Found " << devices.size() << " device(s) for platform: "
+                << platform_.getInfo<CL_PLATFORM_NAME>(nullptr);
             
             if (devices.size() > 0) {
                 platform = platform_;
@@ -127,6 +127,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 		// programOptions += "-Werror";
 		// programOptions += "\"" + getRootPath() + "kernels/MultiHardwareTracer.cl\"";
 		
+		BOOST_LOG_TRIVIAL(trace) << "Compiling the ray tracer kernels...";
 		cl::Program program = cl::Program(context, programSources);
 		if (program.build({device}, programOptions.c_str()) != CL_SUCCESS) {
 			std::string msg;
@@ -137,7 +138,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 			throw std::runtime_error(msg);
 		}
 
-		BOOST_LOG_TRIVIAL(trace) << "Completing Multi-Object ray tracer initialization ...";
+		BOOST_LOG_TRIVIAL(trace) << "Completing ray tracer initialization ...";
 
 		// Command queue
 		cl::CommandQueue queue = cl::CommandQueue(context, device);
@@ -348,8 +349,7 @@ namespace exeng { namespace raytracer { namespace renderers {
         // fs.open("C:/rays.txt", std::ios_base::out);
         
         cl_int errCode = 0;
-        cl::Event event;
-
+		
         // Prepare the 'GenerateRays' kernel
         Vector3f pos = camera->getPosition(); 
         Vector3f lookAt = camera->getLookAt(); 
@@ -374,8 +374,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 
             throw std::runtime_error(msg);
         }
-        event.wait();
-		
+
         this->queue.finish();
 
 		this->generateRaysTime += timer.getTime();
@@ -389,7 +388,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 		Vector3i size = this->renderTarget->getSize();
         cl_int errCode = 0;
 		
-        cl::Event event;
+        // cl::Event event;
 		cl::EnqueueArgs eargs(this->queue, cl::NullRange, cl::NDRange(size.x, size.y), cl::NullRange);
 
 		errCode = this->functors->clearSynthesisDataFunctor(eargs, this->synthesisBuffer).wait();
@@ -400,8 +399,6 @@ namespace exeng { namespace raytracer { namespace renderers {
             throw std::runtime_error(msg);
         }
         
-        event.wait();
-
 		this->clearSynthesisBufferTime += timer.getTime();
     }
     

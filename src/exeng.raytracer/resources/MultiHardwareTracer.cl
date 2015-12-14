@@ -104,8 +104,7 @@ __kernel void GenerateRays (
 	global ray_t *rays, 
 	float camPosX, float camPosY, float camPosZ,
 	float camLookAtX, float camLookAtY, float camLookAtZ, 
-	float camUpX, float camUpY, float camUpZ,
-	int screenWidth, int screenHeight) 
+	float camUpX, float camUpY, float camUpZ) 
 {
 	const int x = get_global_id(0);
 	const int y = get_global_id(1);
