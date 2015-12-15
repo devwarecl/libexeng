@@ -55,7 +55,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 
 	// SynthetizeImage
 	typedef cl::make_kernel <
-		cl::Image2DGL,	// [out] image
+		cl::ImageGL,	// [out] image
 		cl::Buffer,		// synthesisBuffer
 		cl::Buffer,		// rays
 		int,			// materialSize
@@ -95,7 +95,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 		cl::Context context;
 
 		cl::Program program;
-		cl::Image2DGL image;
+		cl::ImageGL image;
 
 		std::unique_ptr<FunctorPack> functors;
 
