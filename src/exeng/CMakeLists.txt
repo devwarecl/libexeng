@@ -55,7 +55,6 @@ set (GraphicsFiles_hpp
 	graphics/VertexFormat.hpp 
 	graphics/VertexArray.hpp 
     graphics/Vertex.hpp
-	graphics/VertexWrapper.hpp
     graphics/IndexFormat.hpp          
     graphics/Texture.hpp              
     graphics/ColorFormat.hpp          
