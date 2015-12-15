@@ -8,7 +8,7 @@
 #include <exeng/Exception.hpp>
 #include <exeng/HeapBuffer.hpp>
 #include <exeng/graphics/TextureManager.hpp>
-#include <exeng/graphics/VertexWrapper.hpp>
+#include <exeng/graphics/MeshSubsetGenerator.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
 #include <exeng/scenegraph/MeshManager.hpp>
 #include <exeng/scenegraph/GenericSceneRenderer.hpp>
@@ -328,21 +328,21 @@ namespace exeng { namespace framework {
 				if (name == "mesh-subset-generator") {
 					std::string type = child.getAttribute("type");
 
-					std::unique_ptr<GeometryGenerator<StandardVertex>> generator;
+					std::unique_ptr<MeshSubsetGenerator> generator;
 
 					if (type == "box") {
 						Vector3f center = parseVector<float, 3>(child.getAttribute("center"));
 						Vector3f size = parseVector<float, 3>(child.getAttribute("size"));
 
-						generator = std::make_unique<BoxGenerator<StandardVertex>>(center, size);
+						// generator = std::make_unique<BoxGenerator<StandardVertex>>(center, size);
 					}
 
 					if (!generator) {
 						EXENG_THROW_EXCEPTION("Generator '" + type + "' not known.");
 					}
 
-					HeapBufferPtr vbuffer = generator->generateVertexBuffer();
-					HeapBufferPtr ibuffer = generator->generateIndexBuffer();
+					HeapBufferPtr vbuffer /*= generator->generateVertexBuffer()*/;
+					HeapBufferPtr ibuffer /*= generator->generateIndexBuffer()*/;
 
 					BufferPtr vertexBuffer  = this->driver->createVertexBuffer(vbuffer.get());
 					BufferPtr indexBuffer  = this->driver->createIndexBuffer(ibuffer.get());

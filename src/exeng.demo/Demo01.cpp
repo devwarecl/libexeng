@@ -5,7 +5,6 @@
 #include <boost/range/algorithm/for_each.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include <exeng/Exeng.hpp>
-#include <exeng/graphics/VertexWrapper.hpp>
 #include <exeng/graphics/ShaderLibrary.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/scenegraph/Mesh.hpp>
