@@ -19,7 +19,7 @@
 #include <exeng/Version.hpp>
 
 namespace exeng {
-    class EXENGAPI Root;
+    class EXENGAPI Core;
 }
 
 namespace exeng { namespace system {
@@ -52,7 +52,7 @@ namespace exeng { namespace system {
          * in the specified root object.
          * @param root Root instance to extend.
          */
-        virtual void initialize(Root *root);
+        virtual void initialize(Core *root);
             
         /**
          * @brief Terminate the plugin, removing its intefaces, and deallocating all created objects 

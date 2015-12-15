@@ -3,13 +3,13 @@ ADD_DEFINITIONS(-DEXENG_BUILD)
 
 set (BaseFiles_hpp 
     Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
-    Object.hpp Version.hpp Root.hpp
+    Object.hpp Version.hpp Core.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
     HeapBuffer.hpp StaticBuffer.hpp Resource.hpp ResourceLoader.hpp ResourceManager.hpp ISerializable.hpp Timer.hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp
 )
 set (BaseFiles_cpp Enum.cpp Object.cpp 
-    Version.cpp  Root.cpp TypeInfo.cpp
+    Version.cpp  Core.cpp TypeInfo.cpp
     Buffer.cpp HeapBuffer.cpp StaticBuffer.cpp
     Resource.cpp ResourceLoader.cpp ResourceManager.cpp 
     ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp Exception.cpp

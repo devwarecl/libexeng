@@ -15,7 +15,7 @@
 
 #include <exeng/Config.hpp>
 #include <exeng/Enum.hpp>
-#include <exeng/Root.hpp>
+#include <exeng/Core.hpp>
 
 namespace exeng { namespace framework {
     
@@ -32,7 +32,7 @@ namespace exeng { namespace framework {
     /**
      * @brief Basic application framework
      */
-    class EXENGAPI Application : public Root {
+    class EXENGAPI Application : public Core {
     public:
 		Application() {}
 		virtual ~Application() {}

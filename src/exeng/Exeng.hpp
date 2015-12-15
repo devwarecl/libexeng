@@ -18,7 +18,7 @@
 #include "exeng/TFlags.hpp"
 #include "exeng/Object.hpp"
 #include "exeng/Version.hpp"
-#include "exeng/Root.hpp"
+#include "exeng/Core.hpp"
 #include "exeng/Buffer.hpp"
 #include "exeng/HeapBuffer.hpp"
 #include "exeng/StaticBuffer.hpp"

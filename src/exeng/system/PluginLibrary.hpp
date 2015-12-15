@@ -34,7 +34,7 @@ namespace exeng { namespace system {
         virtual std::string getName() const override;
         virtual std::string getDescription() const override;
         virtual Version getVersion() const override;
-        virtual void initialize(Root *root) override;
+        virtual void initialize(Core *root) override;
         virtual void terminate() override;
         
     private:
@@ -107,7 +107,7 @@ namespace exeng { namespace system {
         return this->plugin->getVersion();
     }
     
-    inline void PluginLibrary::initialize(Root *root) {
+    inline void PluginLibrary::initialize(Core *root) {
         assert(this->plugin != nullptr);
 
         this->plugin->initialize(root);

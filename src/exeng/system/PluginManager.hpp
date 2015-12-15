@@ -18,7 +18,7 @@
 #include <exeng/Object.hpp>
 
 namespace exeng {
-    class EXENGAPI Root;
+    class EXENGAPI Core;
 }
 
 namespace exeng { namespace system {
@@ -26,13 +26,13 @@ namespace exeng { namespace system {
      * @brief Administrador de plugins. No es instanciable directamente por el usuario
      */
     class EXENGAPI PluginManager {
-        friend class exeng::Root;
+        friend class exeng::Core;
 
         PluginManager(const PluginManager &other) = delete;
         PluginManager& operator= (const PluginManager& other) = delete; 
 
     private:
-        PluginManager(Root* root);
+        PluginManager(Core* root);
             
     public:
         ~PluginManager();
@@ -40,12 +40,12 @@ namespace exeng { namespace system {
         /**
          * @brief Get a pointer to the root object
          */
-        Root* getRoot();
+        Core* getRoot();
             
         /**
          * @brief Get a pointer to the root object
          */
-        const Root* getRoot() const;
+        const Core* getRoot() const;
         
         /**
          * @brief Load a plugin from a dynamic module (SO/DLL).

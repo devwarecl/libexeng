@@ -19,7 +19,7 @@
 #include <memory>
 #include <boost/filesystem.hpp>
 
-#include <exeng/Root.hpp>
+#include <exeng/Core.hpp>
 #include <exeng/Exception.hpp>
 #include <exeng/system/Library.hpp>
 #include <exeng/system/Plugin.hpp>
@@ -35,12 +35,12 @@ namespace exeng { namespace system {
 
     struct PluginManager::Private 
     {
-        Root* root = nullptr;
+        Core* root = nullptr;
         PluginMap plugins;
         fs::path pluginPath;
     };
     
-    PluginManager::PluginManager(Root* root) : impl(nullptr) 
+    PluginManager::PluginManager(Core* root) : impl(nullptr) 
     {
         if (root == nullptr) {
 			EXENG_THROW_EXCEPTION("The root object can't be nullptr.");
@@ -58,7 +58,7 @@ namespace exeng { namespace system {
         this->impl = nullptr;
     }
     
-    Root* PluginManager::getRoot() 
+    Core* PluginManager::getRoot() 
     {
         assert(this->impl != nullptr);
         assert(this->impl->root != nullptr);
@@ -66,7 +66,7 @@ namespace exeng { namespace system {
         return this->impl->root;
     }
         
-    const Root* PluginManager::getRoot() const 
+    const Core* PluginManager::getRoot() const 
     {
         assert(this->impl != nullptr);
         assert(this->impl->root != nullptr);

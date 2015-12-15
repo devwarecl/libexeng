@@ -31,7 +31,7 @@ namespace exeng {
             throw std::logic_error("Plugin::getVersion not implemented");
         }
 
-        void Plugin::initialize(Root *root) {
+        void Plugin::initialize(Core *root) {
             throw std::logic_error("Plugin::initialize not implemented");
         }
         
