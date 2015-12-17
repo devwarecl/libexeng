@@ -2,7 +2,7 @@
 #ifndef __EXENG_PRODUCTMANAGER_HPP__
 #define __EXENG_PRODUCTMANAGER_HPP__
 
-#include "ProductLoader.hpp"
+#include <string>
 
 namespace exeng {
 	template<typename Product, typename ProductLoader>
