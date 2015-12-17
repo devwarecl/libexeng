@@ -309,7 +309,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 
 		cl_int errorCode = 0;
 
-		cl::ImageGL image(this->context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureId, &errorCode);
+		cl::Image2DGL image(this->context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureId, &errorCode);
 		if (errorCode != CL_SUCCESS) {
 			std::string str;
 			str += "HardwareTracer::setRenderTarget: Invalid render target texture. Error code: ";

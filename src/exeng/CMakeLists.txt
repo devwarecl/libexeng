@@ -5,9 +5,13 @@ set (BaseFiles_hpp
     Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
     Object.hpp Version.hpp Core.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
-    HeapBuffer.hpp StaticBuffer.hpp Resource.hpp ResourceLoader.hpp ResourceManager.hpp ISerializable.hpp Timer.hpp
+    HeapBuffer.hpp StaticBuffer.hpp 
+	Resource.hpp ResourceLoader.hpp ResourceManager.hpp 
+	Product.hpp ProductLoader.hpp ProductManager.hpp ProductManagerImpl.hpp
+	ISerializable.hpp Timer.hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp
 )
+
 set (BaseFiles_cpp Enum.cpp Object.cpp 
     Version.cpp  Core.cpp TypeInfo.cpp
     Buffer.cpp HeapBuffer.cpp StaticBuffer.cpp
@@ -151,16 +155,17 @@ set (InputFiles ${InputFiles_hpp} ${InputFiles_cpp})
 set (ScenegraphFiles_cpp
     scenegraph/SceneNode.cpp 
     scenegraph/Scene.cpp
+	scenegraph/SceneNodeAnimator.cpp
+	scenegraph/SceneNodeData.cpp 
+	scenegraph/SceneRenderer.cpp
+	scenegraph/GenericSceneRenderer.cpp
+	scenegraph/SceneLoader.cpp
     scenegraph/Camera.cpp 
     scenegraph/Light.cpp
-    scenegraph/SceneNodeData.cpp 
     scenegraph/Geometry.cpp
     scenegraph/Mesh.cpp
     scenegraph/MeshManager.cpp
     scenegraph/IMeshLoader.cpp
-    scenegraph/SceneRenderer.cpp
-    scenegraph/GenericSceneRenderer.cpp
-	scenegraph/SceneNodeAnimator.cpp
 	scenegraph/AssetsLibrary.cpp
 	scenegraph/GeometryLibrary.cpp
 )
@@ -186,6 +191,7 @@ set (ScenegraphFiles_hpp
     scenegraph/SceneRenderer.hpp
     scenegraph/Triangle.hpp
     scenegraph/GenericSceneRenderer.hpp
+	scenegraph/SceneLoader.hpp
 	scenegraph/SceneNodeAnimator.hpp
 	scenegraph/AssetsLibrary.hpp
 	scenegraph/GeometryLibrary.hpp
