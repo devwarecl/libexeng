@@ -6,12 +6,12 @@
 
 namespace exeng {
 
-	template<typename ProductType>
-	class ProductManagerImpl : public ProductManager<ProductType> {
+	template<typename Product, typename ProductLoader>
+	class ProductManagerImpl : public ProductManager<Product, ProductLoader> {
 	public:
-		virtual ~ProductManager() {}
+		virtual ~ProductManagerImpl() {}
 
-		virtual ProductType* get(const std::string &productId) override {
+		virtual Product* get(const std::string &productId) override {
 			// get already loaded resource
 			auto productIt = products.find(productId);
 
@@ -34,17 +34,17 @@ namespace exeng {
 			return nullptr;
 		}
 
-		virtual void addLoader(ProductLoader<ProductType> *loader) override {
+		virtual void addLoader(ProductLoader *loader) override {
 			loaders.push_back(loader);
 		}
 
-		virtual void removeLoader(ProductLoader<ProductType> *loader) override {
+		virtual void removeLoader(ProductLoader *loader) override {
 			loaders.remove(loader);
 		}
 
 	private
-		std::list<ProductLoader<ProductType>*> loaders;
-		std::map<std::string, std::unique_ptr<ProductType>> products;
+		std::list<ProductLoader*> loaders;
+		std::map<std::string, std::unique_ptr<Product>> products;
 	};
 }
 

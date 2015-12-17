@@ -5,16 +5,16 @@
 #include "ProductLoader.hpp"
 
 namespace exeng {
-	template<typename ProductType>
+	template<typename Product, typename ProductLoader>
 	class ProductManager {
 	public:
 		virtual ~ProductManager() {}
 
-		virtual ProductType* get(const std::string &productId) = 0;
+		virtual Product* get(const std::string &productId) = 0;
 
-		virtual void addLoader(ProductLoader<ProductType> *loader) = 0;
+		virtual void addLoader(ProductLoader *loader) = 0;
 
-		virtual void removeLoader(ProductLoader<ProductType> *loader) = 0;
+		virtual void removeLoader(ProductLoader *loader) = 0;
 	};
 }
 
