@@ -40,12 +40,12 @@ namespace exeng { namespace system {
         /**
          * @brief Get a pointer to the root object
          */
-        Core* getRoot();
+        Core* getCore();
             
         /**
          * @brief Get a pointer to the root object
          */
-        const Core* getRoot() const;
+        const Core* getCore() const;
         
         /**
          * @brief Load a plugin from a dynamic module (SO/DLL).

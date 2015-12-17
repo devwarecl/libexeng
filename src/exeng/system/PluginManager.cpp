@@ -58,7 +58,7 @@ namespace exeng { namespace system {
         this->impl = nullptr;
     }
     
-    Core* PluginManager::getRoot() 
+    Core* PluginManager::getCore() 
     {
         assert(this->impl != nullptr);
         assert(this->impl->root != nullptr);
@@ -66,7 +66,7 @@ namespace exeng { namespace system {
         return this->impl->root;
     }
         
-    const Core* PluginManager::getRoot() const 
+    const Core* PluginManager::getCore() const 
     {
         assert(this->impl != nullptr);
         assert(this->impl->root != nullptr);
@@ -104,7 +104,7 @@ namespace exeng { namespace system {
             PluginPtr pluginLibrary = std::make_unique<PluginLibrary>(std::move(library));
 
             plugins[name] = std::move(pluginLibrary);
-            plugins[name]->initialize(this->getRoot());
+            plugins[name]->initialize(this->getCore());
         }
     }
     
