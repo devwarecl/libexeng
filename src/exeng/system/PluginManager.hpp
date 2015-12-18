@@ -15,11 +15,7 @@
 #define __EXENG_SYSTEM_PLUGINMANAGER_HPP__
 
 #include <string>
-#include <exeng/Object.hpp>
-
-namespace exeng {
-    class EXENGAPI Core;
-}
+#include <exeng/Forward.hpp>
 
 namespace exeng { namespace system {
     /**
