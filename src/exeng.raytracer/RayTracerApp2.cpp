@@ -13,7 +13,7 @@
 #include <exeng/graphics/GraphicsManager.hpp>
 #include <exeng/graphics/TextureManager.hpp>
 #include <exeng/graphics/Vertex.hpp>
-#include <exeng/scenegraph/MeshManager.hpp>
+#include <exeng/graphics/MeshManager.hpp>
 #include <exeng/scenegraph/GenericSceneRenderer.hpp>
 
 #include "resources/Assets.xml.hpp"

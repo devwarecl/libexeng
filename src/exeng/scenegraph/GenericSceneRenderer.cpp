@@ -101,7 +101,7 @@ namespace exeng { namespace scenegraph {
 		assert(driver->getModernModule());
 
 		if (info == TypeId<Mesh>()) {
-			const auto mesh = static_cast<const exeng::scenegraph::Mesh*>(data);
+			const auto mesh = static_cast<const exeng::graphics::Mesh*>(data);
 
 			assert(mesh);
 

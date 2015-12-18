@@ -17,14 +17,11 @@
 #include <map>
 #include <boost/checked_delete.hpp>
 #include <exeng/Vector.hpp>
-#include <exeng/scenegraph/Plane.hpp>
 #include <exeng/graphics/VertexArray.hpp>
 
-using namespace exeng;
 using namespace exeng::scenegraph;
-using namespace exeng::graphics;
 
-namespace exeng { namespace scenegraph {
+namespace exeng { namespace graphics {
     typedef std::vector<std::unique_ptr<MeshSubset>> MeshSubsetVector;
 
     /**
@@ -247,7 +244,7 @@ namespace exeng { namespace scenegraph {
 /*
  * Mesh implementation
  */
-namespace exeng { namespace scenegraph {
+namespace exeng { namespace graphics {
     struct Mesh::Private {
         MeshSubsetVector    subsets;    //! Vector of MeshPart pointers
         Boxf                box;        //! Mesh collision box.
@@ -285,7 +282,7 @@ namespace exeng { namespace scenegraph {
     bool Mesh::hit(const Ray &ray, IntersectInfo *intersectInfo) {
         assert(this->impl != nullptr);
         
-        IntersectInfo info, bestInfo;
+		IntersectInfo info = {}, bestInfo = {};
         
         for (auto &subset : this->impl->subsets) {
             if (meshSubsetIntersect(subset.get(), ray, &info) && info.distance >= 0.0f ) {

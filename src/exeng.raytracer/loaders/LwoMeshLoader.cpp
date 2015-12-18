@@ -469,7 +469,7 @@ namespace raytracer { namespace loaders {
 		return ext == ".lwo";
 	}
 
-	std::unique_ptr<Mesh> LwoMeshLoader::loadMesh(const std::string &filename, GraphicsDriver *graphicsDriver) 
+	std::unique_ptr<Mesh> LwoMeshLoader::load(const std::string &filename, GraphicsDriver *graphicsDriver) 
 	{
 		struct lwObjectGuard {
 			lwObject *obj = nullptr;

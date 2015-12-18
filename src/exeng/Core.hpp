@@ -23,13 +23,10 @@ namespace exeng {
         class EXENGAPI PluginManager;
     }
     
-    namespace scenegraph {
-        class EXENGAPI MeshManager;
-    }
-    
     namespace graphics {
         class EXENGAPI GraphicsManager;
         class EXENGAPI TextureManager;
+		class EXENGAPI MeshManager;
     }
     
     /**
@@ -40,15 +37,15 @@ namespace exeng {
     class EXENGAPI Core {
     public:
         Core();
-        ~Core();
+        virtual ~Core();
         
         Version getVersion() const;
         
         exeng::system::PluginManager* getPluginManager();
         const exeng::system::PluginManager* getPluginManager() const;
         
-        exeng::scenegraph::MeshManager* getMeshManager();
-        const exeng::scenegraph::MeshManager* getMeshManager() const;
+        exeng::graphics::MeshManager* getMeshManager();
+        const exeng::graphics::MeshManager* getMeshManager() const;
         
         exeng::graphics::GraphicsManager* getGraphicsManager();
         const exeng::graphics::GraphicsManager* getGraphicsManager() const;

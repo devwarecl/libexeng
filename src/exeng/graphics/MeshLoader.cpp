@@ -11,8 +11,8 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include <exeng/scenegraph/IMeshLoader.hpp>
+#include <exeng/graphics/MeshLoader.hpp>
 
-namespace exeng { namespace scenegraph {
-    IMeshLoader::~IMeshLoader() {}
+namespace exeng { namespace graphics {
+    MeshLoader::~MeshLoader() {}
 }}

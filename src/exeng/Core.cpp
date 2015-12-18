@@ -19,11 +19,10 @@
 #include <exeng/system/PluginManager.hpp>
 #include <exeng/graphics/GraphicsManager.hpp>
 #include <exeng/graphics/TextureManager.hpp>
-#include <exeng/scenegraph/MeshManager.hpp>
+#include <exeng/graphics/MeshManager.hpp>
 
 namespace exeng {
 	using namespace exeng::system;
-	using namespace exeng::scenegraph;
 	using namespace exeng::graphics;
 
     struct Core::Private 
@@ -33,7 +32,6 @@ namespace exeng {
 		std::unique_ptr<PluginManager> pluginManager;
 		std::unique_ptr<TextureManager> textureManager;
         std::unique_ptr<MeshManager> meshManager;
-        // std::unique_ptr<SceneManager> sceneManager;
     };
 
     static const char licenseMsg[] = 

@@ -3,9 +3,10 @@
 
 #include <exeng/Exception.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
-#include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/graphics/Mesh.hpp>
 #include <exeng/scenegraph/Ray.hpp>
 #include <exeng/scenegraph/Camera.hpp>
+#include <exeng/scenegraph/Geometry.hpp>
 #include <exeng/scenegraph/Intersect.hpp>
 #include <exeng/scenegraph/IntersectInfo.hpp>
 

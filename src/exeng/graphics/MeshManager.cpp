@@ -24,8 +24,8 @@
 #include <boost/filesystem/operations.hpp>
 
 #include <exeng/Vector.hpp>
-#include <exeng/scenegraph/IMeshLoader.hpp>
-#include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/graphics/MeshLoader.hpp>
+#include <exeng/graphics/Mesh.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
 #include <exeng/graphics/MeshSubsetGenerator.hpp>
 #include <exeng/graphics/MeshSubsetTransformer.hpp>
@@ -34,14 +34,12 @@
 
 namespace fs = boost::filesystem;
 
-namespace exeng { namespace scenegraph {
-
-	using namespace exeng::graphics;
-
+namespace exeng { namespace graphics {
+	
     struct MeshManager::Private {
 		GraphicsDriver *graphicsDriver = nullptr;
 
-        std::list<std::unique_ptr<IMeshLoader>> loaders;
+        std::list<std::unique_ptr<MeshLoader>> loaders;
         std::map<std::string, std::unique_ptr<Mesh>> meshes;
 
 		std::string path;
@@ -88,16 +86,16 @@ namespace exeng { namespace scenegraph {
         delete impl;
     }
     
-    void MeshManager::addMeshLoader(IMeshLoader *loader) {
+    void MeshManager::addMeshLoader(MeshLoader *loader) {
 		assert(this->impl != nullptr);
 
-        this->impl->loaders.push_front(std::unique_ptr<IMeshLoader>(loader));
+        this->impl->loaders.push_front(std::unique_ptr<MeshLoader>(loader));
     }
     
-    void MeshManager::removeMeshLoader(IMeshLoader *loader) {
+    void MeshManager::removeMeshLoader(MeshLoader *loader) {
 		assert(this->impl != nullptr);
 
-        this->impl->loaders.remove(std::unique_ptr<IMeshLoader>(loader));
+        this->impl->loaders.remove(std::unique_ptr<MeshLoader>(loader));
     }
     
     Mesh* MeshManager::getMesh(const std::string &filename) {
@@ -124,9 +122,9 @@ namespace exeng { namespace scenegraph {
         }
 
         // search for a suitable loader
-        for (std::unique_ptr<IMeshLoader> &loader : this->impl->loaders) {
+        for (std::unique_ptr<MeshLoader> &loader : this->impl->loaders) {
             if (loader->isSupported(path.string()) == true) {
-                auto meshPtr = loader->loadMesh(path.string(), graphicsDriver);
+                auto meshPtr = loader->load(path.string(), graphicsDriver);
 
                 mesh = meshPtr.get();
 

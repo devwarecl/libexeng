@@ -6,7 +6,7 @@
 #include <exeng/input/IEventHandler.hpp>
 #include <exeng/framework/GraphicsApplication.hpp>
 #include <exeng/graphics/Material.hpp>
-#include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/graphics/Mesh.hpp>
 #include <exeng/scenegraph/SceneNodeAnimator.hpp>
 
 #include "samplers/Sampler.hpp"
@@ -43,7 +43,7 @@ namespace exeng { namespace raytracer {
 
     private:
         exeng::scenegraph::Camera *camera = nullptr;
-        exeng::scenegraph::Mesh *screenMesh = nullptr;
+        exeng::graphics::Mesh *screenMesh = nullptr;
         exeng::graphics::Material *screenMaterial = nullptr;
 
 		std::unique_ptr<ButtonPressHandler> buttonPressHandler;

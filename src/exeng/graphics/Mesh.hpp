@@ -11,24 +11,26 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_SCENEGRAPH_MESH_HPP__
-#define __EXENG_SCENEGRAPH_MESH_HPP__
+#ifndef __EXENG_GRAPHICS_MESH_HPP__
+#define __EXENG_GRAPHICS_MESH_HPP__
 
 #include <memory>
 #include <vector>
 #include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
+#include <exeng/scenegraph/Plane.hpp>
+#include <exeng/scenegraph/Box.hpp>
+#include <exeng/scenegraph/IntersectInfo.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace exeng { namespace graphics {
+	
     /**
-     * @brief Holds the geometric information about a object, composed of different MeshParts.
-     * 
-     * The MeshParts ARE owned by the Mesh object, and they cannot be shared.
+     * @brief Holds the geometric information about a object, composed of different MeshSubset.
      */
-    class EXENGAPI Mesh : public Geometry {
+    class EXENGAPI Mesh : public exeng::scenegraph::Geometry {
     public:
-        explicit Mesh(exeng::graphics::MeshSubsetPtr subset);
-        explicit Mesh(std::vector<exeng::graphics::MeshSubsetPtr> subsets);
+        explicit Mesh(MeshSubsetPtr subset);
+        explicit Mesh(std::vector<MeshSubsetPtr> subsets);
         
         virtual ~Mesh();
         
@@ -40,7 +42,7 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Checks if the specified ray intersects with the Mesh.
          */
-        virtual bool hit(const Ray &ray, IntersectInfo *intersectInfo) override;
+        virtual bool hit(const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo) override;
         
         /**
          * @brief Get the numbers of MeshParts on the Mesh.
@@ -50,14 +52,14 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Get the part at the corresponding index.
          */
-        exeng::graphics::MeshSubset* getSubset(int index);
+        MeshSubset* getSubset(int index);
         
         /**
          * @brief Get the part at the corresponding index.
          */
-        const exeng::graphics::MeshSubset* getSubset(int index) const;
+        const MeshSubset* getSubset(int index) const;
         
-        virtual TypeInfo getTypeInfo() const override;
+        virtual TypeInfo getTypeInfo() const;
 
     private:
         struct Private;
@@ -67,4 +69,4 @@ namespace exeng { namespace scenegraph {
 	typedef std::unique_ptr<Mesh> MeshPtr;
 }}
 
-#endif  //__EXENG_SCENEGRAPH_MESH_HPP__
+#endif 

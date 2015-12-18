@@ -16,22 +16,17 @@
 #define __EXENG_SCENEGRAPH_IMESHLOADER_HPP__
 
 #include <exeng/Config.hpp>
+#include <exeng/graphics/Forward.hpp>
 #include <string>
 #include <memory>
 
 namespace exeng { namespace graphics {
-    class EXENGAPI GraphicsDriver;
-}}
-
-namespace exeng { namespace scenegraph {
-    class EXENGAPI Mesh;    
-    
     /**
      * @brief Mesh loader interface.
      */
-    class EXENGAPI IMeshLoader{
+    class EXENGAPI MeshLoader {
     public:
-        virtual ~IMeshLoader();
+        virtual ~MeshLoader();
         
         /**
          * @brief Check if the specified filename extension is supported by the current loader.
@@ -43,7 +38,7 @@ namespace exeng { namespace scenegraph {
          * @brief Load the mesh contained in the specified file.
          */
 
-        virtual std::unique_ptr<Mesh> loadMesh(const std::string &filename, exeng::graphics::GraphicsDriver *graphicsDriver) = 0;
+        virtual std::unique_ptr<Mesh> load(const std::string &filename, GraphicsDriver *graphicsDriver) = 0;
     };
 }}
         

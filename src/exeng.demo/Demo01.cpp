@@ -7,7 +7,7 @@
 #include <exeng/Exeng.hpp>
 #include <exeng/graphics/ShaderLibrary.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
-#include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/graphics/Mesh.hpp>
 #include <exeng/scenegraph/AssetsLibrary.hpp>
 #include <exeng/scenegraph/GeometryLibrary.hpp>
 #include <exeng/framework/GraphicsApplication.hpp>

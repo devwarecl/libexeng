@@ -7,7 +7,8 @@ set (BaseFiles_hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
     HeapBuffer.hpp StaticBuffer.hpp 
 	Resource.hpp ResourceLoader.hpp ResourceManager.hpp 
-	Product.hpp ProductLoader.hpp ProductManager.hpp ProductManagerImpl.hpp
+	# Product.hpp ProductLoader.hpp 
+	ProductManager.hpp ProductManagerImpl.hpp
 	ISerializable.hpp Timer.hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp
 )
@@ -69,6 +70,9 @@ set (GraphicsFiles_hpp
     graphics/MeshSubsetBase.hpp	
 	graphics/MeshSubsetTransformer.hpp	
 	graphics/MeshSubsetGenerator.hpp	
+	graphics/Mesh.hpp
+    graphics/MeshManager.hpp
+    graphics/MeshLoader.hpp
 
 	graphics/TextureManager.hpp
 	graphics/TextureLoader.hpp
@@ -97,6 +101,9 @@ set (GraphicsFiles_cpp
     graphics/MeshSubset.cpp
 	graphics/MeshSubsetTransformer.cpp
 	graphics/MeshSubsetGenerator.cpp
+	graphics/Mesh.cpp
+    graphics/MeshManager.cpp
+    graphics/MeshLoader.cpp
 	graphics/TextureManager.cpp
 	graphics/TextureLoader.cpp
 	graphics/LegacyModule.cpp
@@ -163,9 +170,6 @@ set (ScenegraphFiles_cpp
     scenegraph/Camera.cpp 
     scenegraph/Light.cpp
     scenegraph/Geometry.cpp
-    scenegraph/Mesh.cpp
-    scenegraph/MeshManager.cpp
-    scenegraph/IMeshLoader.cpp
 	scenegraph/AssetsLibrary.cpp
 	scenegraph/GeometryLibrary.cpp
 )
@@ -184,10 +188,7 @@ set (ScenegraphFiles_hpp
     scenegraph/Plane.hpp          
     scenegraph/Intersect.hpp      
     scenegraph/IntersectInfo.hpp  
-    scenegraph/Sphere.hpp         
-    scenegraph/Mesh.hpp           
-    scenegraph/MeshManager.hpp    
-    scenegraph/IMeshLoader.hpp    
+    scenegraph/Sphere.hpp
     scenegraph/SceneRenderer.hpp
     scenegraph/Triangle.hpp
     scenegraph/GenericSceneRenderer.hpp

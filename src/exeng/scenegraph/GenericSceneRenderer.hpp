@@ -8,10 +8,10 @@
 #include <exeng/Matrix.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
+#include <exeng/graphics/Mesh.hpp>
 #include <exeng/scenegraph/SceneRenderer.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/Camera.hpp>
-#include <exeng/scenegraph/Mesh.hpp>
 
 namespace exeng { namespace scenegraph {
 

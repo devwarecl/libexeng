@@ -9,8 +9,8 @@
 #include <exeng/HeapBuffer.hpp>
 #include <exeng/graphics/TextureManager.hpp>
 #include <exeng/graphics/MeshSubsetGenerator.hpp>
-#include <exeng/scenegraph/Mesh.hpp>
-#include <exeng/scenegraph/MeshManager.hpp>
+#include <exeng/graphics/Mesh.hpp>
+#include <exeng/graphics/MeshManager.hpp>
 #include <exeng/scenegraph/GenericSceneRenderer.hpp>
 
 namespace exeng { namespace framework {
@@ -404,7 +404,7 @@ namespace exeng { namespace framework {
 				} else if (child.getName() == "geometry") {
 
 					if (child.getAttribute("type") == "mesh") {
-						GeometryPtr geometry = this->parseGeometryMesh(child.getChild("mesh"), format);
+						GeometryPtr geometry /*= this->parseGeometryMesh(child.getChild("mesh"), format)*/;
 						this->geometryLibrary->addGeometry(child.getAttribute("name"), std::move(geometry));
 					}
 				}

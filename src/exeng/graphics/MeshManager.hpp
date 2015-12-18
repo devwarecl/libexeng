@@ -24,15 +24,9 @@
 #include <exeng/Size.hpp>
 #include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/graphics/IndexFormat.hpp>
+#include <exeng/graphics/Forward.hpp>
 
 namespace exeng { namespace graphics {
-    class EXENGAPI GraphicsDriver; 
-}}
-
-namespace exeng { namespace scenegraph {
-    class EXENGAPI Mesh;    
-    class EXENGAPI IMeshLoader;
-
     /**
     * @brief Mesh manager class.
     */
@@ -55,12 +49,12 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief Add a new mesh loader in the mesh manager.
          */
-        void addMeshLoader(IMeshLoader *loader);
+        void addMeshLoader(MeshLoader *loader);
         
         /**
          * @brief Remove a mesh loader in the mesh manager
          */
-        void removeMeshLoader(IMeshLoader *loader);
+        void removeMeshLoader(MeshLoader *loader);
         
 		void setGraphicsDriver(exeng::graphics::GraphicsDriver *driver);
 

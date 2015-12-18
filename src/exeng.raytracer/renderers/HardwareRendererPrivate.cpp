@@ -8,7 +8,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
 #include <exeng/Exception.hpp>
-#include <exeng/scenegraph/Mesh.hpp>
+#include <exeng/graphics/Mesh.hpp>
 #include <exeng/graphics/Vertex.hpp>
 #include <exeng/Timer.hpp>
 
