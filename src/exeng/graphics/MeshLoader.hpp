@@ -1,6 +1,6 @@
 /**
- * @file IMeshLoader.hpp
- * @brief IMeshLoader interface definition. 
+ * @file MeshLoader.hpp
+ * @brief MeshLoader interface definition. 
  */
 
 
@@ -26,8 +26,14 @@ namespace exeng { namespace graphics {
      */
     class EXENGAPI MeshLoader {
     public:
+		MeshLoader();
+
         virtual ~MeshLoader();
         
+		void setGraphicsDriver(GraphicsDriver *driver);
+
+		GraphicsDriver* getGraphicsDriver();
+
         /**
          * @brief Check if the specified filename extension is supported by the current loader.
          * @param filename Raw string to the filename to check. 
@@ -37,8 +43,10 @@ namespace exeng { namespace graphics {
         /**
          * @brief Load the mesh contained in the specified file.
          */
+        virtual std::unique_ptr<Mesh> load(const std::string &filename) = 0;
 
-        virtual std::unique_ptr<Mesh> load(const std::string &filename, GraphicsDriver *graphicsDriver) = 0;
+	private:
+		GraphicsDriver *graphicsDriver = nullptr;
     };
 }}
         

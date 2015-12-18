@@ -16,7 +16,7 @@ namespace raytracer { namespace loaders {
 	public:
 		LwoMeshLoader();
 		virtual bool isSupported(const std::string &filename) override;
-		virtual std::unique_ptr<exeng::graphics::Mesh> load(const std::string &filename, exeng::graphics::GraphicsDriver *graphicsDriver) override;
+		virtual std::unique_ptr<exeng::graphics::Mesh> load(const std::string &filename) override;
 
 	private:
 		struct Impl;

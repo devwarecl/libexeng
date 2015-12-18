@@ -57,15 +57,19 @@ namespace exeng {
 		}
 
 		virtual void addLoader(ProductLoader *loader) override {
-			loaders.push_back(loader);
+			this->loaders.push_back(loader);
 		}
 
 		virtual void removeLoader(ProductLoader *loader) override {
-			loaders.remove(loader);
+			this->loaders.remove(loader);
 		}
 
 		virtual std::list<ProductLoader*> getLoaders() const override {
 			return this->loaders;
+		}
+
+		virtual bool existProduct(const std::string &productId) const override {
+			return this->products.find(productId) != std::end(this->products);
 		}
 
 	private:

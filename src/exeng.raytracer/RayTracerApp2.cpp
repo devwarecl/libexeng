@@ -346,7 +346,7 @@ namespace exeng { namespace raytracer {
         // Create the mesh for rendering
 		VertexFormat format =  ScreenVertex::getFormat();
 
-        Mesh *screenMesh = this->getMeshManager()->generateScreenMesh("screen", &format, IndexFormat::Index32);
+        Mesh *screenMesh = this->getMeshManager()->generateScreenMesh("screen", graphicsDriver, &format, IndexFormat::Index32);
         
         AssetLibrary *assets = this->getAssetLibrary();
         MaterialLibrary *materials = this->getMaterialLibrary();

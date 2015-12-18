@@ -14,5 +14,16 @@
 #include <exeng/graphics/MeshLoader.hpp>
 
 namespace exeng { namespace graphics {
-    MeshLoader::~MeshLoader() {}
+    
+	MeshLoader::MeshLoader() {}
+
+	MeshLoader::~MeshLoader() {}
+
+	void MeshLoader::setGraphicsDriver(GraphicsDriver *driver) {
+		this->graphicsDriver = driver;
+	}
+
+	GraphicsDriver* MeshLoader::getGraphicsDriver() {
+		return this->graphicsDriver;
+	}
 }}

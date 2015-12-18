@@ -20,6 +20,8 @@ namespace exeng {
 		virtual void removeLoader(ProductLoader *loader) = 0;
 
 		virtual std::list<ProductLoader*> getLoaders() const = 0;
+
+		virtual bool existProduct(const std::string &productId) const = 0;
 	};
 }
 

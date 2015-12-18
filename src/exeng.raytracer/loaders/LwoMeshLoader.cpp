@@ -469,7 +469,7 @@ namespace raytracer { namespace loaders {
 		return ext == ".lwo";
 	}
 
-	std::unique_ptr<Mesh> LwoMeshLoader::load(const std::string &filename, GraphicsDriver *graphicsDriver) 
+	std::unique_ptr<Mesh> LwoMeshLoader::load(const std::string &filename) 
 	{
 		struct lwObjectGuard {
 			lwObject *obj = nullptr;
@@ -491,7 +491,7 @@ namespace raytracer { namespace loaders {
 		lwObjectGuard obj = lwObjectGuard(lwGetObject( (char*)filename.c_str(), nullptr, nullptr));
 		for (lwSurface *surf=obj->surf; surf!=nullptr; surf=surf->next) {
 			for (lwLayer *layer=obj->layer; layer!=nullptr; layer=layer->next) {
-				auto meshSubset = this->impl->createMeshSubsetFromLWOData(graphicsDriver, layer, surf);
+				auto meshSubset = this->impl->createMeshSubsetFromLWOData(this->getGraphicsDriver(), layer, surf);
 				meshSubsets.push_back( std::move(meshSubset) );
 			}
 		}

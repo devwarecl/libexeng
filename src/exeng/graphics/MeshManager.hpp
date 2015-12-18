@@ -39,12 +39,12 @@ namespace exeng { namespace graphics {
          * @brief Set the default location to search for mesh files when a non-full
 		 * path is given.
          */
-		void setPath(const std::string &path);
+		// void setPath(const std::string &path);
 
 		/**
          * @brief Get the default location for mesh files.
          */
-		std::string getPath() const;
+		// std::string getPath() const;
 
         /**
          * @brief Add a new mesh loader in the mesh manager.
@@ -56,12 +56,6 @@ namespace exeng { namespace graphics {
          */
         void removeMeshLoader(MeshLoader *loader);
         
-		void setGraphicsDriver(exeng::graphics::GraphicsDriver *driver);
-
-		exeng::graphics::GraphicsDriver* getGraphicsDriver();
-
-		const exeng::graphics::GraphicsDriver* getGraphicsDriver() const;
-
         /**
          * @brief Load a mesh from the specified file.
          */
@@ -70,12 +64,12 @@ namespace exeng { namespace graphics {
 		/**
 		 * @brief Generate a box shaped mesh
 		 */
-		Mesh* generateBoxMesh(const std::string &id, const exeng::graphics::VertexFormat *vertexFormat, exeng::graphics::IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size);
+		Mesh* generateBoxMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size);
 
         /**
 		 * @brief Generate a rectangle mesh (for two-dimensional rendering)
 		 */
-        Mesh* generateScreenMesh(const std::string &id, const exeng::graphics::VertexFormat *vertexFormat, exeng::graphics::IndexFormat::Enum indexFormat);
+        Mesh* generateScreenMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat);
 
     private:
         struct Private;

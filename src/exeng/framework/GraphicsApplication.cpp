@@ -626,7 +626,7 @@ namespace exeng { namespace framework {
 		GeometryLibraryPtr geometryLibrary = std::make_unique<GeometryLibrary>();
 		ScenePtr scene = std::make_unique<Scene>();
 
-		this->getMeshManager()->setGraphicsDriver(graphicsDriver.get());
+		// this->getMeshManager()->setGraphicsDriver(graphicsDriver.get());
 		this->getTextureManager()->setGraphicsDriver(graphicsDriver.get());
 
 		// loads scene, objects and materials
