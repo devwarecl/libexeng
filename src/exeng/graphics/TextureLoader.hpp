@@ -17,7 +17,7 @@ namespace exeng { namespace graphics {
 
 		const GraphicsDriver* getGraphicsDriver() const;
 
-		virtual bool tryLoad(const std::string &uri) = 0;
+		virtual bool isSupported(const std::string &uri) = 0;
 
 		virtual TexturePtr load(const std::string &uri) = 0;
 

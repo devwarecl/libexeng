@@ -4,6 +4,8 @@
 
 #include "ProductManager.hpp"
 #include <map>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 
 namespace exeng {
 
@@ -13,16 +15,31 @@ namespace exeng {
 		virtual ~ProductManagerImpl() {}
 
 		virtual Product* getProduct(const std::string &productId) override {
-			// get already loaded resource
+			namespace fs = boost::filesystem;
+
+			// get an already loaded resource
 			auto productIt = products.find(productId);
 
 			if (productIt != std::end(products)) {
 				return productIt->second.get();
 			}
 
-			// try to load the resource using the available loaders
+			// check if the specified file already exists.
+			fs::path path = fs::path(productId);
+
+			/*
+			if (!path.has_parent_path()) {
+				path = fs::path(this->getPath() + "/" + productId);
+			}
+			*/
+
+			if (!fs::is_regular_file(path) || !fs::exists(path)) {
+				throw std::runtime_error("MeshManager::getMesh: Invalid file:'" + path.string() + "'");
+			}
+
+			// try to load the resource using one of the available loaders
 			for (auto *loader : loaders) {
-				if (loader->tryLoad(productId)) {
+				if (loader->isSupported(productId)) {
 					auto productPtr = loader->load(productId);
 					auto product = productPtr.get();
 
