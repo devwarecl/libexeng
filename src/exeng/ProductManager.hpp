@@ -3,18 +3,23 @@
 #define __EXENG_PRODUCTMANAGER_HPP__
 
 #include <string>
+#include <list>
 
 namespace exeng {
-	template<typename Product, typename ProductLoader>
+	template<typename ProductLoader, typename Product>
 	class ProductManager {
 	public:
 		virtual ~ProductManager() {}
 
-		virtual Product* get(const std::string &productId) = 0;
+		virtual Product* getProduct(const std::string &productId) = 0;
+
+		virtual void putProduct(const std::string &productId, std::unique_ptr<Product> product) = 0;
 
 		virtual void addLoader(ProductLoader *loader) = 0;
 
 		virtual void removeLoader(ProductLoader *loader) = 0;
+
+		virtual std::list<ProductLoader*> getLoaders() const = 0;
 	};
 }
 

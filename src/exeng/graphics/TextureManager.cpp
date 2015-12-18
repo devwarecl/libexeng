@@ -2,42 +2,55 @@
 #include "TextureManager.hpp"
 
 #include <exeng/Size.hpp>
+#include <exeng/ProductManagerImpl.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
 
 namespace exeng { namespace graphics {
 
+	struct TextureManager::Private {
+		GraphicsDriver *graphicsDriver = nullptr;
+
+		ProductManagerImpl<TextureLoader, Texture> manager;
+	};
+
+	TextureManager::TextureManager() {
+		this->impl = new TextureManager::Private();
+	}
+
+	TextureManager::~TextureManager() {
+		delete this->impl;
+	}
+
 	GraphicsDriver* TextureManager::getGraphicsDriver() {
-		return this->graphicsDriver;
+		return this->impl->graphicsDriver;
 	}
 
 	const GraphicsDriver* TextureManager::getGraphicsDriver() const {
-		return this->graphicsDriver;
+		return this->impl->graphicsDriver;
 	}
 
 	void TextureManager::setGraphicsDriver(GraphicsDriver *graphicsDriver) {
-		for (ResourceLoader* resourceLoader : this->getLoaders()) {
-			TextureLoader* textureLoader = static_cast<TextureLoader*>(resourceLoader);
-			textureLoader->setGraphicsDriver(graphicsDriver);
+		for (TextureLoader* loader: this->impl->manager.getLoaders()) {
+			loader->setGraphicsDriver(graphicsDriver);
 		}
 		
-		this->graphicsDriver = graphicsDriver;
+		this->impl->graphicsDriver = graphicsDriver;
 	}
 
-	Texture* TextureManager::get(const std::string &uri) {
-		return static_cast<Texture*>(ResourceManager::get(uri));
+	Texture* TextureManager::getTexture(const std::string &uri) {
+		return this->impl->manager.getProduct(uri);
 	}
 
-	const Texture* TextureManager::get(const std::string &uri) const {
-		return static_cast<const Texture*>(ResourceManager::get(uri));
+	const Texture* TextureManager::getTexture(const std::string &uri) const {
+		return this->impl->manager.getProduct(uri);
 	}
 
 	void TextureManager::addLoader(TextureLoader *loader) {
-		ResourceManager::addLoader(loader);
-		loader->setGraphicsDriver(this->graphicsDriver);
+		this->impl->manager.addLoader(loader);
 	}
 
 	void TextureManager::removeLoader(TextureLoader *loader) {
-		ResourceManager::removeLoader(loader);
+		this->impl->manager.removeLoader(loader);
 	}
 
 	Texture* TextureManager::generateCheckerboard(const std::string &uri, const Vector2i &size, const Vector2i &tileSize) {
@@ -65,7 +78,7 @@ namespace exeng { namespace graphics {
 
 		Texture *result = texture.get();
 
-		this->put(uri, std::move(texture));
+		this->impl->manager.putProduct(uri, std::move(texture));
 
 		return result;
 	}
@@ -75,9 +88,9 @@ namespace exeng { namespace graphics {
 
 		TexturePtr texture = this->getGraphicsDriver()->createTexture(size, format);
 
-        this->put(uri, std::move(texture));
+        this->impl->manager.putProduct(uri, std::move(texture));
 
-        return this->get(uri);
+        return this->getTexture(uri);
     }
 
     Texture* TextureManager::create(const std::string &uri, const Vector2i &size, const Vector4f &color) {

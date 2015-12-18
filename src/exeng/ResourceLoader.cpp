@@ -1,9 +1,9 @@
-
-#include "ResourceLoader.hpp"
-
-namespace exeng {
-
-	ResourceLoader::~ResourceLoader() 
-	{
-	}
-}
+//
+//#include "ResourceLoader.hpp"
+//
+//namespace exeng {
+//
+//	ResourceLoader::~ResourceLoader() 
+//	{
+//	}
+//}

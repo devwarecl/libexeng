@@ -2,21 +2,21 @@
 #include "TextureLoader.hpp"
 
 namespace exeng { namespace graphics {
-
 	TextureLoader::TextureLoader() {}
 	
-	TextureLoader::TextureLoader(GraphicsDriver *graphicsDriver)
-	{
+	TextureLoader::TextureLoader(GraphicsDriver *graphicsDriver) {
 		this->setGraphicsDriver(graphicsDriver);
 	}
 
-	void TextureLoader::setGraphicsDriver(GraphicsDriver *graphicsDriver)
-	{
+	void TextureLoader::setGraphicsDriver(GraphicsDriver *graphicsDriver) {
 		this->graphicsDriver = graphicsDriver;
 	}
 
-	GraphicsDriver* TextureLoader::getGraphicsDriver()
-	{
+	GraphicsDriver* TextureLoader::getGraphicsDriver() {
+		return this->graphicsDriver;
+	}
+
+	const GraphicsDriver* TextureLoader::getGraphicsDriver() const {
 		return this->graphicsDriver;
 	}
 }}

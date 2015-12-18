@@ -17,7 +17,7 @@
 
 #include <memory>
 #include <exeng/Enum.hpp>
-#include <exeng/Resource.hpp>
+#include <exeng/Object.hpp>
 #include <exeng/Vector.hpp>
 #include <exeng/graphics/TextureType.hpp>
 #include <exeng/graphics/PixelFormat.hpp>
@@ -39,7 +39,7 @@ namespace exeng { namespace graphics {
     /**
      * @brief Visual specific appearance for materials.
      */
-    class EXENGAPI Texture : public Resource {
+    class EXENGAPI Texture : public Object {
     public:
         Texture();
         
@@ -86,7 +86,7 @@ namespace exeng { namespace graphics {
          * For graphics devices implemented for the exeng library, it just return 
          * the 'this' pointer, casted to std::uint64_t.
          */
-        virtual int getHandle() const override = 0;
+        virtual int getHandle() const = 0;
     };
 
 	typedef std::unique_ptr<Texture> TexturePtr;

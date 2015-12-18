@@ -16,14 +16,14 @@
 #define __EXENG_GRAPHICS_SHADER_HPP__
 
 #include <memory>
-#include <exeng/Resource.hpp>
+#include <exeng/Object.hpp>
 #include <exeng/graphics/ShaderType.hpp>
 
 namespace exeng { namespace graphics {
     /**
      * @brief A shader subprogram, with source code included.
      */
-    class EXENGAPI Shader : public Resource {
+    class EXENGAPI Shader : public Object {
     public:
         Shader();
     

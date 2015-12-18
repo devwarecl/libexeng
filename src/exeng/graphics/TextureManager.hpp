@@ -3,25 +3,27 @@
 #define __EXENG_GRAPHICS_TEXTUREMANAGER_HPP__
 
 #include <exeng/Vector.hpp>
-#include <exeng/ResourceManager.hpp>
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/graphics/TextureLoader.hpp>
 
 namespace exeng { namespace graphics {
 	
 	class EXENGAPI GraphicsDriver;
-	class EXENGAPI TextureManager : public ResourceManager {
+	class EXENGAPI TextureManager {
 	public:
+		TextureManager();
+		~TextureManager();
+
 		GraphicsDriver* getGraphicsDriver();
 		const GraphicsDriver* getGraphicsDriver() const;
 
 		void setGraphicsDriver(GraphicsDriver *graphicsDriver);
 
-		virtual Texture* get(const std::string &uri) override;
-		virtual const Texture* get(const std::string &uri) const override;
+		Texture* getTexture(const std::string &uri);
+		const Texture* getTexture(const std::string &uri) const;
 
-		virtual void addLoader(TextureLoader *loader);
-		virtual void removeLoader(TextureLoader *loader);
+		void addLoader(TextureLoader *loader);
+		void removeLoader(TextureLoader *loader);
 
 		Texture* generateCheckerboard(const std::string &uri, const Vector2i &size, const Vector2i &tileSize);
 
@@ -36,7 +38,8 @@ namespace exeng { namespace graphics {
         Texture* create(const std::string &uri, const Vector2i &size, const Vector4f &color);
 
 	private:
-		GraphicsDriver* graphicsDriver = nullptr;
+		struct Private;
+		Private *impl = nullptr;
 	};
 }}
 

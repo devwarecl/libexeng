@@ -3,15 +3,16 @@
 #define __EXENG_PRODUCTMANAGERIMPL_HPP__
 
 #include "ProductManager.hpp"
+#include <map>
 
 namespace exeng {
 
-	template<typename Product, typename ProductLoader>
-	class ProductManagerImpl : public ProductManager<Product, ProductLoader> {
+	template<typename ProductLoader, typename Product>
+	class ProductManagerImpl : public ProductManager<ProductLoader, Product> {
 	public:
 		virtual ~ProductManagerImpl() {}
 
-		virtual Product* get(const std::string &productId) override {
+		virtual Product* getProduct(const std::string &productId) override {
 			// get already loaded resource
 			auto productIt = products.find(productId);
 
@@ -34,6 +35,10 @@ namespace exeng {
 			return nullptr;
 		}
 
+		virtual void putProduct(const std::string &productId, std::unique_ptr<Product> product) override {
+			products[productId] = std::move(product);
+		}
+
 		virtual void addLoader(ProductLoader *loader) override {
 			loaders.push_back(loader);
 		}
@@ -42,7 +47,11 @@ namespace exeng {
 			loaders.remove(loader);
 		}
 
-	private
+		virtual std::list<ProductLoader*> getLoaders() const override {
+			return this->loaders;
+		}
+
+	private:
 		std::list<ProductLoader*> loaders;
 		std::map<std::string, std::unique_ptr<Product>> products;
 	};
