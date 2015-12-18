@@ -18,17 +18,12 @@
 #include <exeng/Config.hpp>
 #include <exeng/Version.hpp>
 
+#include <exeng/system/Forward.hpp>
+#include <exeng/scenegraph/Forward.hpp>
+#include <exeng/graphics/Forward.hpp>
+
 namespace exeng {
-    namespace system {
-        class EXENGAPI PluginManager;
-    }
-    
-    namespace graphics {
-        class EXENGAPI GraphicsManager;
-        class EXENGAPI TextureManager;
-		class EXENGAPI MeshManager;
-    }
-    
+	
     /**
     * @brief The root class of the multimedia engine. 
     * 
@@ -53,6 +48,9 @@ namespace exeng {
 		exeng::graphics::TextureManager* getTextureManager();
         const exeng::graphics::TextureManager* getTextureManager() const;
         
+		exeng::scenegraph::SceneManager* getSceneManager();
+        const exeng::scenegraph::SceneManager* getSceneManager() const;
+
     private:
         struct Private;
         Private *impl = nullptr;

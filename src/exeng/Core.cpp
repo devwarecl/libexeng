@@ -20,10 +20,12 @@
 #include <exeng/graphics/GraphicsManager.hpp>
 #include <exeng/graphics/TextureManager.hpp>
 #include <exeng/graphics/MeshManager.hpp>
+#include <exeng/scenegraph/SceneManager.hpp>
 
 namespace exeng {
 	using namespace exeng::system;
 	using namespace exeng::graphics;
+	using namespace exeng::scenegraph;
 
     struct Core::Private 
 	{
@@ -32,6 +34,7 @@ namespace exeng {
 		std::unique_ptr<PluginManager> pluginManager;
 		std::unique_ptr<TextureManager> textureManager;
         std::unique_ptr<MeshManager> meshManager;
+		SceneManager sceneManager;
     };
 
     static const char licenseMsg[] = 
@@ -106,4 +109,12 @@ namespace exeng {
         assert(this->impl != nullptr);
         return this->impl->textureManager.get();
     }
+
+	exeng::scenegraph::SceneManager* Core::getSceneManager() {
+		return &this->impl->sceneManager;
+	}
+
+    const exeng::scenegraph::SceneManager* Core::getSceneManager() const {
+		return &this->impl->sceneManager;
+	}
 }

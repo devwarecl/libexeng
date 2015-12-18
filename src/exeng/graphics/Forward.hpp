@@ -10,6 +10,9 @@ namespace exeng { namespace graphics {
     class EXENGAPI Mesh;    
 	class EXENGAPI MeshSubset; 
     class EXENGAPI MeshLoader;
+	class EXENGAPI TextureManager;
+	class EXENGAPI GraphicsManager;
+	class EXENGAPI MeshManager;
 }}
 
 #endif

@@ -2,6 +2,7 @@
 ADD_DEFINITIONS(-DEXENG_BUILD)
 
 set (BaseFiles_hpp 
+	Forward.hpp
     Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
     Object.hpp Version.hpp Core.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
@@ -165,6 +166,8 @@ set (ScenegraphFiles_cpp
 	scenegraph/SceneNodeAnimator.cpp
 	scenegraph/SceneNodeData.cpp 
 	scenegraph/SceneRenderer.cpp
+	scenegraph/SceneLoader.cpp
+	scenegraph/SceneManager.cpp
 	scenegraph/GenericSceneRenderer.cpp
 	scenegraph/SceneLoader.cpp
     scenegraph/Camera.cpp 
@@ -175,6 +178,7 @@ set (ScenegraphFiles_cpp
 )
 
 set (ScenegraphFiles_hpp
+	scenegraph/Forward.hpp 
     scenegraph/SceneNode.hpp      
     scenegraph/Scene.hpp          
     scenegraph/Camera.hpp         
@@ -193,6 +197,7 @@ set (ScenegraphFiles_hpp
     scenegraph/Triangle.hpp
     scenegraph/GenericSceneRenderer.hpp
 	scenegraph/SceneLoader.hpp
+	scenegraph/SceneManager.hpp
 	scenegraph/SceneNodeAnimator.hpp
 	scenegraph/AssetsLibrary.hpp
 	scenegraph/GeometryLibrary.hpp
@@ -206,6 +211,7 @@ set (SystemFiles_cpp
     system/LibraryPrivatePosix.cpp system/LibraryPrivateWin32.cpp
 )
 set (SystemFiles_hpp
+	system/Forward.hpp        
     system/Library.hpp        
     system/Plugin.hpp         
     system/PluginLibrary.hpp  

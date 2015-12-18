@@ -21,7 +21,8 @@ namespace exeng { namespace scenegraph {
 	class EXENGAPI SceneLoader {
 	public:
 		virtual ~SceneLoader();
-		virtual ScenePtr loadScene(const std::string &file) = 0;
+		virtual ScenePtr load(const std::string &file) = 0;
+		virtual bool isSupported(const std::string &file) = 0;
 	};
 }}
 

@@ -2,6 +2,7 @@
 #ifndef __EXENG_PRODUCTMANAGER_HPP__
 #define __EXENG_PRODUCTMANAGER_HPP__
 
+#include <memory>
 #include <string>
 #include <list>
 
