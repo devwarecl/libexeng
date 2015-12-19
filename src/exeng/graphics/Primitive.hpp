@@ -18,7 +18,7 @@
 #include <exeng/TFlags.hpp>
 #include <exeng/Enum.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     /**
      * @brief Rendering primitives
      */

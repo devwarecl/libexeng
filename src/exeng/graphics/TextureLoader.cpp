@@ -1,7 +1,7 @@
 
 #include "TextureLoader.hpp"
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	TextureLoader::TextureLoader() {}
 	
 	TextureLoader::TextureLoader(GraphicsDriver *graphicsDriver) {

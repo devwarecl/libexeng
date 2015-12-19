@@ -1,6 +1,6 @@
 
 #include "LegacyModule.hpp"
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	LegacyModule::~LegacyModule() {}
 }}

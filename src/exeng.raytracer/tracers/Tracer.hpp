@@ -15,25 +15,25 @@
 //namespace raytracer { namespace tracers {
 //    class Tracer {
 //    public:
-//        Tracer(const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
+//        Tracer(const xe::sg::Scene *scene, const raytracer::samplers::Sampler *sampler);
 //        
 //        virtual ~Tracer();
 //        
-//        virtual void setRenderTarget(exeng::graphics::Texture *renderTarget);
-//        virtual exeng::graphics::Texture* getRenderTarget();
-//        virtual const exeng::graphics::Texture* getRenderTarget() const;
+//        virtual void setRenderTarget(xe::gfx::Texture *renderTarget);
+//        virtual xe::gfx::Texture* getRenderTarget();
+//        virtual const xe::gfx::Texture* getRenderTarget() const;
 //        
-//        virtual const exeng::scenegraph::Scene* getScene();
+//        virtual const xe::sg::Scene* getScene();
 //        virtual const raytracer::samplers::Sampler* getSampler();
 //        
-//        virtual const exeng::scenegraph::Scene* getScene() const;
+//        virtual const xe::sg::Scene* getScene() const;
 //        virtual const raytracer::samplers::Sampler* getSampler() const;
 //        
-//        virtual void render(const exeng::scenegraph::Camera *camera) = 0;
+//        virtual void render(const xe::sg::Camera *camera) = 0;
 //        
 //    private:
-//        exeng::graphics::Texture *renderTarget;
-//        const exeng::scenegraph::Scene *scene;
+//        xe::gfx::Texture *renderTarget;
+//        const xe::sg::Scene *scene;
 //        const raytracer::samplers::Sampler* sampler;
 //    };
 //}}

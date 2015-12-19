@@ -15,7 +15,7 @@
 
 #include <exeng/Object.hpp>
  
-namespace exeng { namespace io {
+namespace xe { namespace io {
     class EXENGAPI Stream : public Object {
     public:
         virtual ~Stream() = 0;
@@ -34,7 +34,7 @@ namespace exeng { namespace io {
     template<typename Type> void read(const Stream *stream, Type *values, int count);
 }}
 
-namespace exeng { namespace io {
+namespace xe { namespace io {
 
 	inline Stream::~Stream() {}
 

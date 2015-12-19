@@ -20,7 +20,7 @@
 #  include <Windows.h>
 #endif
 
-namespace exeng { namespace raytracer { namespace renderers {
+namespace xe { namespace raytracer { namespace renderers {
 
     struct SynthesisElement {
 		cl_float3	point;		// Point of intersection
@@ -33,10 +33,10 @@ namespace exeng { namespace raytracer { namespace renderers {
 		Timer() {}
 
 		float getTime() const {
-			return exeng::Timer::getTime() - start;
+			return xe::Timer::getTime() - start;
 		}
 
-		float start = static_cast<float>(exeng::Timer::getTime());
+		float start = static_cast<float>(xe::Timer::getTime());
 	};
 
 	const int MaterialSize = 4;	// Size of the material (number of float's)
@@ -300,7 +300,7 @@ namespace exeng { namespace raytracer { namespace renderers {
         return materialBuffer;
     }
 
-    void HardwareRendererPrivate::setRenderTarget(exeng::graphics::Texture *renderTarget) {
+    void HardwareRendererPrivate::setRenderTarget(xe::gfx::Texture *renderTarget) {
 		// Create a OpenCL 2D image  from the render target Texture
 		GLuint textureId = static_cast<GLuint>(renderTarget->getHandle());
 		if (textureId <= 0) {
@@ -334,7 +334,7 @@ namespace exeng { namespace raytracer { namespace renderers {
         this->renderTarget = renderTarget;
 	}
 
-    void HardwareRendererPrivate::generateRays(const exeng::scenegraph::Camera *camera) {
+    void HardwareRendererPrivate::generateRays(const xe::sg::Camera *camera) {
 		Timer timer;
 
 		/*

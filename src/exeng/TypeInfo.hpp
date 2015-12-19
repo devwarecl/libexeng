@@ -17,7 +17,7 @@
 #include <typeinfo>
 #include <exeng/Config.hpp>
 
-namespace exeng {
+namespace xe {
 
 	/**
 	 *  @brief std::type_info wrapper.

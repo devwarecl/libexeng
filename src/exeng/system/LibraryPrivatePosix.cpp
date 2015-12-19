@@ -21,7 +21,7 @@
 #include <cassert>
 #include <sstream>
 
-namespace exeng { namespace system {
+namespace xe { namespace sys {
 	
 	void Library::Private::load(const std::string &name) 
 	{

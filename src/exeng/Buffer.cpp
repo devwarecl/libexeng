@@ -12,6 +12,6 @@
 
 #include <exeng/Buffer.hpp>
 
-namespace exeng {
+namespace xe {
     
 }

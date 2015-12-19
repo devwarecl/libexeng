@@ -19,7 +19,7 @@
 #include <exeng/scenegraph/Ray.hpp>
 #include <exeng/scenegraph/IntersectInfo.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     template<typename VectorType>
     struct Triangle {
         const VectorType &p1;

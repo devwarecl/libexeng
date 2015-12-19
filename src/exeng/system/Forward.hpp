@@ -6,7 +6,7 @@
 
 #include <exeng/Config.hpp>
 
-namespace exeng { namespace system {
+namespace xe { namespace sys {
 	class EXENGAPI PluginManager;
 }}
 

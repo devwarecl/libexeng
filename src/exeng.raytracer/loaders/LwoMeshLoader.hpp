@@ -12,11 +12,11 @@
 #include <exeng/graphics/MeshLoader.hpp>
 
 namespace raytracer { namespace loaders {
-	class LwoMeshLoader : public exeng::graphics::MeshLoader {
+	class LwoMeshLoader : public xe::gfx::MeshLoader {
 	public:
 		LwoMeshLoader();
 		virtual bool isSupported(const std::string &filename) override;
-		virtual std::unique_ptr<exeng::graphics::Mesh> load(const std::string &filename) override;
+		virtual std::unique_ptr<xe::gfx::Mesh> load(const std::string &filename) override;
 
 	private:
 		struct Impl;

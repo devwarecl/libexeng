@@ -4,9 +4,9 @@
 //
 //namespace raytracer { namespace tracers {
 //
-//    using namespace exeng;
-//    using namespace exeng::graphics;
-//    using namespace exeng::scenegraph;
+//    using namespace xe;
+//    using namespace xe::gfx;
+//    using namespace xe::sg;
 //    using namespace raytracer::samplers;
 //    
 //    inline uint32_t SoftwareTracer::getOffset(const Vector2i &point) const {

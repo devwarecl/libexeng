@@ -4,7 +4,7 @@
 
 #include <exeng/DataType.hpp>
 
-using namespace exeng;
+using namespace xe;
 
 BOOST_AUTO_TEST_CASE(DataType_CheckSigned)
 {

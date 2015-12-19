@@ -67,6 +67,8 @@ set (GraphicsFiles_hpp
     graphics/Shader.hpp               
     graphics/ShaderProgram.hpp        
 
+	graphics/Forward.hpp        
+
     graphics/MeshSubset.hpp			
     graphics/MeshSubsetBase.hpp	
 	graphics/MeshSubsetTransformer.hpp	
@@ -74,6 +76,8 @@ set (GraphicsFiles_hpp
 	graphics/Mesh.hpp
     graphics/MeshManager.hpp
     graphics/MeshLoader.hpp
+
+	graphics/PixelType.hpp		
 
 	graphics/TextureManager.hpp
 	graphics/TextureLoader.hpp

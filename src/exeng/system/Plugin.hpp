@@ -18,11 +18,11 @@
 #include <exeng/Object.hpp>
 #include <exeng/Version.hpp>
 
-namespace exeng {
+namespace xe {
     class EXENGAPI Core;
 }
 
-namespace exeng { namespace system {
+namespace xe { namespace sys {
     class EXENGAPI Library;
     
     /**
@@ -84,9 +84,9 @@ namespace exeng { namespace system {
  * @brief Aids in implementing plugins.
  */
 template<typename PluginClass>
-void ExengGetPluginObjectImpl(std::unique_ptr<exeng::system::Plugin> &plugin) 
+void ExengGetPluginObjectImpl(std::unique_ptr<xe::sys::Plugin> &plugin) 
 {
-	plugin = std::unique_ptr<exeng::system::Plugin>(new PluginClass());
+	plugin = std::unique_ptr<xe::sys::Plugin>(new PluginClass());
 }
 
 /**
@@ -94,7 +94,7 @@ void ExengGetPluginObjectImpl(std::unique_ptr<exeng::system::Plugin> &plugin)
  */
 #define EXENG_EXPORT_PLUGIN(PluginImpl)																			\
 extern "C" {																									\
-    EXENG_EXPORT void EXENG_CALLCONV ExengGetPluginObject(std::unique_ptr<exeng::system::Plugin> &plugin) {		\
+    EXENG_EXPORT void EXENG_CALLCONV ExengGetPluginObject(std::unique_ptr<xe::sys::Plugin> &plugin) {		\
 		ExengGetPluginObjectImpl<PluginImpl>(plugin);															\
     }																											\
 }

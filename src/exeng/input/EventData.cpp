@@ -13,6 +13,6 @@
 
 #include <exeng/input/EventData.hpp>
 
-namespace exeng { namespace input {
+namespace xe { namespace input {
 
 }}

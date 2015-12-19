@@ -20,7 +20,7 @@
 #include <exeng/Config.hpp>
 #include <exeng/Vector.hpp>
 
-namespace exeng { namespace scenegraph { 
+namespace xe { namespace sg { 
     
 	/**
 	 * @brief Ray abstraction.
@@ -35,75 +35,75 @@ namespace exeng { namespace scenegraph {
 		/**
 		 * @brief Initialize the ray, orientated around a arbitrary origin and direction.
 		 */
-		Ray(const exeng::Vector3f& point, const exeng::Vector3f& direction);
+		Ray(const xe::Vector3f& point, const xe::Vector3f& direction);
 
 		/**
 		 * @brief Set the starting point of the ray.
 		 */
-		void setPoint(const exeng::Vector3f& point);
+		void setPoint(const xe::Vector3f& point);
 
 		/**
 		 * @brief Get the starting point of the ray.
 		 */
-		exeng::Vector3f getPoint() const;
+		xe::Vector3f getPoint() const;
     
 		/**
 		 * @brief Set the direction of the ray. The vector of direction is normalized before mutates the Ray object.
 		 */
-		void setDirection(const exeng::Vector3f& direction);
+		void setDirection(const xe::Vector3f& direction);
     
 		/**
 		 * @brief Get the direction of the ray. This vector is always normalized.
 		 */
-		exeng::Vector3f getDirection() const;
+		xe::Vector3f getDirection() const;
     
 		/**
 		 * @brief Computes the point of the ray at 't' distance from the starting point, to the 
 		 * direction of the ray.
 		 */
-		exeng::Vector3f getPointAt(float t) const;
+		xe::Vector3f getPointAt(float t) const;
     
 		/**
 		 * @brief Set the starting point and the direction of the ray in one method call.
 		 */
-		void set(const exeng::Vector3f& point, const exeng::Vector3f& direction);
+		void set(const xe::Vector3f& point, const xe::Vector3f& direction);
     
 	private:
-		exeng::Vector3f point;
-		exeng::Vector3f direction;
+		xe::Vector3f point;
+		xe::Vector3f direction;
 	};
 
 }}
 
-std::ostream& operator<< (std::ostream& os, const exeng::scenegraph::Ray& ray);
+std::ostream& operator<< (std::ostream& os, const xe::sg::Ray& ray);
 
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
 	inline Ray::Ray() : point(0.0f), direction(0.0, 0.0, 1.0f) { }
 
-	inline Ray::Ray(const exeng::Vector3f& point, const exeng::Vector3f& direction){
+	inline Ray::Ray(const xe::Vector3f& point, const xe::Vector3f& direction){
 		this->set(point, direction);
 	}
 
-	inline void Ray::setPoint(const exeng::Vector3f& point){
+	inline void Ray::setPoint(const xe::Vector3f& point){
 		this->point = point;
 	}
 
-	inline exeng::Vector3f Ray::getPoint() const {
+	inline xe::Vector3f Ray::getPoint() const {
 		return this->point;
 	}
 
-	inline void Ray::setDirection(const exeng::Vector3f& direction) {
+	inline void Ray::setDirection(const xe::Vector3f& direction) {
 		this->direction = normalize(direction);
 	}
 
-	inline exeng::Vector3f Ray::getDirection() const {
+	inline xe::Vector3f Ray::getDirection() const {
 		return this->direction;
 	}
 
-	inline exeng::Vector3f Ray::getPointAt(float t) const {
-		assert( exeng::equals( exeng::abs(this->direction), 1.0f) == true );
+	inline xe::Vector3f Ray::getPointAt(float t) const {
+		assert( xe::equals( xe::abs(this->direction), 1.0f) == true );
     
 		auto p = this->point;
 		auto d = this->direction;
@@ -120,7 +120,7 @@ namespace exeng { namespace scenegraph {
 }}
 
 
-inline std::ostream& operator<< (std::ostream& os, const exeng::scenegraph::Ray& ray) {
+inline std::ostream& operator<< (std::ostream& os, const xe::sg::Ray& ray) {
     return os << "Point : {" << ray.getPoint() << "}, Direction : {" << ray.getDirection() << "}";
 }
 

@@ -4,7 +4,7 @@
 
 #include <exeng/graphics/Texture.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	class EXENGAPI GraphicsDriver;
 	class EXENGAPI TextureLoader {
 	public:

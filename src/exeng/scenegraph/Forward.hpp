@@ -6,7 +6,7 @@
 
 #include <exeng/Config.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 	class EXENGAPI Scene;
 	class EXENGAPI SceneLoader;
 	class EXENGAPI SceneManager;

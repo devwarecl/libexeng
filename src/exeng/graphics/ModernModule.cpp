@@ -1,7 +1,7 @@
 
 #include "ModernModule.hpp" 
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	ModernModule::~ModernModule() {}
 

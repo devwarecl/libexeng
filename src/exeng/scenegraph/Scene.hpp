@@ -17,7 +17,7 @@
 #include <exeng/scenegraph/Light.hpp>
 #include <exeng/scenegraph/Camera.hpp>
 
-namespace exeng { namespace scenegraph { 
+namespace xe { namespace sg { 
     /**
      * @brief Scenegraph 
      */

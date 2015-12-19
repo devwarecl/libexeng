@@ -20,7 +20,7 @@
 #include <cassert>
 #include <boost/range/algorithm/find_if.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
     struct GraphicsManager::Private {
          std::map <GraphicsDriverInfo, IGraphicsDriverFactory*> factories;

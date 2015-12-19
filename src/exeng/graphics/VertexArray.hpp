@@ -20,7 +20,7 @@
 
 #include "VertexFormat.hpp"
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	/** 
 	 * @brief Aids in the manipulation of a buffer for initializing a sequence of vertices.

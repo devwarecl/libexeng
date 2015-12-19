@@ -19,7 +19,7 @@
 #include <exeng/scenegraph/GeometryLibrary.hpp>
 #include <exeng/scenegraph/SceneRenderer.hpp>
 
-namespace exeng { namespace framework {
+namespace xe { namespace fw {
     /**
      * @brief Basic application skeleton for graphics-based multimedia applications.
      */
@@ -32,21 +32,21 @@ namespace exeng { namespace framework {
 
 		virtual ApplicationStatus::Enum getApplicationStatus() const override;
 
-		exeng::graphics::GraphicsDriver* getGraphicsDriver();
-		exeng::graphics::ShaderLibrary* getShaderLibrary();
-		exeng::scenegraph::GeometryLibrary* getGeometryLibrary();
-		exeng::graphics::MaterialLibrary* getMaterialLibrary();
-		exeng::scenegraph::AssetLibrary* getAssetLibrary();
-		exeng::scenegraph::Scene* getScene();
-		exeng::scenegraph::SceneRenderer* getSceneRenderer();
+		xe::gfx::GraphicsDriver* getGraphicsDriver();
+		xe::gfx::ShaderLibrary* getShaderLibrary();
+		xe::sg::GeometryLibrary* getGeometryLibrary();
+		xe::gfx::MaterialLibrary* getMaterialLibrary();
+		xe::sg::AssetLibrary* getAssetLibrary();
+		xe::sg::Scene* getScene();
+		xe::sg::SceneRenderer* getSceneRenderer();
 
-		const exeng::graphics::GraphicsDriver* getGraphicsDriver() const;
-		const exeng::graphics::ShaderLibrary* getShaderLibrary() const;
-		const exeng::scenegraph::GeometryLibrary* getGeometryLibrary() const;
-		const exeng::graphics::MaterialLibrary* getMaterialLibrary() const;
-		const exeng::scenegraph::AssetLibrary* getAssetLibrary() const;
-		const exeng::scenegraph::Scene* getScene() const;
-		const exeng::scenegraph::SceneRenderer* getSceneRenderer() const;
+		const xe::gfx::GraphicsDriver* getGraphicsDriver() const;
+		const xe::gfx::ShaderLibrary* getShaderLibrary() const;
+		const xe::sg::GeometryLibrary* getGeometryLibrary() const;
+		const xe::gfx::MaterialLibrary* getMaterialLibrary() const;
+		const xe::sg::AssetLibrary* getAssetLibrary() const;
+		const xe::sg::Scene* getScene() const;
+		const xe::sg::SceneRenderer* getSceneRenderer() const;
 
     protected:
 		void setExitCode(int code);
@@ -55,16 +55,16 @@ namespace exeng { namespace framework {
 		void setApplicationStatus(ApplicationStatus::Enum status);
 
 		virtual BufferPtr getAssetsXmlData() = 0;
-		virtual exeng::graphics::GraphicsDriverPtr createGraphicsDriver() = 0;
-		virtual exeng::scenegraph::AssetLibraryPtr createAssetLibrary() = 0;
-		virtual exeng::scenegraph::SceneRendererPtr createSceneRenderer(exeng::graphics::GraphicsDriver *graphicsDriver) = 0;
+		virtual xe::gfx::GraphicsDriverPtr createGraphicsDriver() = 0;
+		virtual xe::sg::AssetLibraryPtr createAssetLibrary() = 0;
+		virtual xe::sg::SceneRendererPtr createSceneRenderer(xe::gfx::GraphicsDriver *graphicsDriver) = 0;
 
 		virtual void pollEvents();
         virtual void update(float frameTime);
 		virtual void render();
 
         // utility render functions
-        void renderMesh(const exeng::graphics::Mesh* mesh);
+        void renderMesh(const xe::gfx::Mesh* mesh);
 
 		/**
 		 * Post initialization routine

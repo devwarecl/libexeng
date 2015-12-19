@@ -23,12 +23,12 @@
 
 #include <limits>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     bool intersect(const Ray &ray, const Boxf &box, IntersectInfo *info);
     bool intersect(const Ray &ray, const Plane &plane, IntersectInfo *info);
     bool intersect(const Ray &ray, const Sphere &sphere, IntersectInfo *info);
 
-	inline bool intersect(const Ray &ray, const exeng::Boxf &box, IntersectInfo *info) 
+	inline bool intersect(const Ray &ray, const xe::Boxf &box, IntersectInfo *info) 
 	{
         Vector3f minEdge = box.getMin();
         Vector3f maxEdge = box.getMax();

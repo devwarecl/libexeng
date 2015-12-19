@@ -5,7 +5,7 @@
 #include <memory>
 #include <exeng/scenegraph/SceneNode.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
 	class EXENGAPI SceneNodeAnimator {
 	public:

@@ -17,12 +17,12 @@
 #include <string>
 #include <exeng/Forward.hpp>
 
-namespace exeng { namespace system {
+namespace xe { namespace sys {
     /**
      * @brief Administrador de plugins. No es instanciable directamente por el usuario
      */
     class EXENGAPI PluginManager {
-        friend class exeng::Core;
+        friend class xe::Core;
 
         PluginManager(const PluginManager &other) = delete;
         PluginManager& operator= (const PluginManager& other) = delete; 

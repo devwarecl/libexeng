@@ -6,20 +6,20 @@
 #include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/scenegraph/Geometry.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
 	class EXENGAPI GeometryLibrary {
 	public:
 		GeometryLibrary();
 		~GeometryLibrary();
 
-		void initialize(const exeng::graphics::VertexFormat &format);
+		void initialize(const xe::gfx::VertexFormat &format);
 
 		void addGeometry(const std::string &name, GeometryPtr geometry);
 
 		Geometry* getGeometry(const std::string &name);
 
-		exeng::graphics::VertexFormat getFormat() const;
+		xe::gfx::VertexFormat getFormat() const;
 
 	private:
 		struct Private;

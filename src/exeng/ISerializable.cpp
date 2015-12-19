@@ -1,7 +1,7 @@
 
 #include <exeng/ISerializable.hpp>
 
-namespace exeng {
+namespace xe {
     ISerializable::~ISerializable() {}
     
     bool ISerializable::isReadable() const {

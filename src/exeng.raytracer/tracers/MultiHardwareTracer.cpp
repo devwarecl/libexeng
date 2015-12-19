@@ -19,9 +19,9 @@
 //
 //#include <exeng/Buffer.hpp>
 //
-//using namespace exeng;
-//using namespace exeng::graphics;
-//using namespace exeng::scenegraph;
+//using namespace xe;
+//using namespace xe::gfx;
+//using namespace xe::sg;
 //
 //namespace raytracer { namespace tracers {
 //    using namespace raytracer::samplers;
@@ -203,7 +203,7 @@
 //		return content;
 //	}
 //    
-//	//static cl::Buffer createCLBuffer(cl::Context &context, exeng::Buffer *in) 
+//	//static cl::Buffer createCLBuffer(cl::Context &context, xe::Buffer *in) 
 //    //{
 //	//    if (in == nullptr) {
 //	//      throw std::runtime_error("[HardwareTracer.cpp] createCLBuffer -> The input buffer can't be a nullptr.");
@@ -369,7 +369,7 @@
 //		BOOST_LOG_TRIVIAL(trace) << "Multi-Object ray tracer initialization done.";
 //	}
 //
-//	void MultiHardwareTracer::setRenderTarget(exeng::graphics::Texture *renderTarget) 
+//	void MultiHardwareTracer::setRenderTarget(xe::gfx::Texture *renderTarget) 
 //    {
 //		// Create a OpenCL 2D image  from the render target Texture
 //		GLuint textureId = static_cast<GLuint>(renderTarget->getHandle());
@@ -407,7 +407,7 @@
 //
 //	MultiHardwareTracer::~MultiHardwareTracer() {}
 //
-//	//void MultiHardwareTracer::executeGenerateRaysKernelFromMatrix(const exeng::scenegraph::Camera *camera)
+//	//void MultiHardwareTracer::executeGenerateRaysKernelFromMatrix(const xe::sg::Camera *camera)
 // //   {
 //	//	BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRaysFromMatrix kernel with params: "
 //	//		<< "Pos={" << camera->getPosition() << "}, "
@@ -441,7 +441,7 @@
 // //       this->queue.finish();
 // //   }
 //	
-//    void MultiHardwareTracer::executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera) 
+//    void MultiHardwareTracer::executeGenerateRaysKernel(const xe::sg::Camera *camera) 
 //    {
 //		BOOST_LOG_TRIVIAL(trace) << "[2] Invoking generateRays kernel with params: "
 //			<< "Pos={" << camera->getPosition() << "}, "
@@ -710,7 +710,7 @@
 //		this->executeComputeSynthesisDataKernel(transformStack, rootNode);
 //	}
 //
-//	void MultiHardwareTracer::render(const exeng::scenegraph::Camera *camera) 
+//	void MultiHardwareTracer::render(const xe::sg::Camera *camera) 
 //    {
 //		BOOST_LOG_TRIVIAL(trace) << "Rendering scene ...";
 //        

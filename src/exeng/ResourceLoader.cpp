@@ -1,7 +1,7 @@
 //
 //#include "ResourceLoader.hpp"
 //
-//namespace exeng {
+//namespace xe {
 //
 //	ResourceLoader::~ResourceLoader() 
 //	{

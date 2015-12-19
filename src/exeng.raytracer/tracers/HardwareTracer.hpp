@@ -23,18 +23,18 @@
 //  #include <GL/glx.h>
 //#endif
 //
-//using namespace exeng;
-//using namespace exeng::graphics;
-//using namespace exeng::scenegraph;
+//using namespace xe;
+//using namespace xe::gfx;
+//using namespace xe::sg;
 //
 //namespace raytracer { namespace tracers {
 //    class HardwareTracer : public Tracer {
 //    public:
-//        HardwareTracer(const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
-//        virtual void render(const exeng::scenegraph::Camera *camera);
+//        HardwareTracer(const xe::sg::Scene *scene, const raytracer::samplers::Sampler *sampler);
+//        virtual void render(const xe::sg::Camera *camera);
 //        ~HardwareTracer();
 //        
-//        virtual void setRenderTarget(exeng::graphics::Texture *renderTarget);
+//        virtual void setRenderTarget(xe::gfx::Texture *renderTarget);
 //        
 //    private:
 //		cl::Platform platform;

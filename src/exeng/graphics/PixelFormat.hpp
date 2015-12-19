@@ -20,7 +20,7 @@
 #include <exeng/TFlags.hpp>
 #include <exeng/DataType.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
         
     //!
     enum class DepthFormat {

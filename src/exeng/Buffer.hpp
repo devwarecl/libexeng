@@ -19,7 +19,7 @@
 #include <exeng/Enum.hpp>
 #include <exeng/TFlags.hpp>
 
-namespace exeng {
+namespace xe {
 	/**
 	 * @brief Class for manipulation of memory areas.
 	 */

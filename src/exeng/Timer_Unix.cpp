@@ -17,7 +17,7 @@
 #if defined(EXENG_UNIX)
 #include <time.h>
 
-namespace exeng {
+namespace xe {
     uint32_t Timer::getTime() {
         timespec ts;
         

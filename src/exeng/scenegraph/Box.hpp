@@ -4,18 +4,18 @@
 
 #include <exeng/Boundary.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     template<typename OtherSolid>
-    exeng::Boxf box(const OtherSolid &solid);
+    xe::Boxf box(const OtherSolid &solid);
     
-    exeng::Boxf box(const exeng::Boxf &solid);
+    xe::Boxf box(const xe::Boxf &solid);
 
 	template<typename OtherSolid>
-    inline exeng::Boxf box(const OtherSolid &solid) {
-        return exeng::Boxf();
+    inline xe::Boxf box(const OtherSolid &solid) {
+        return xe::Boxf();
     }
     
-    inline exeng::Boxf box(const exeng::Boxf &solid) {
+    inline xe::Boxf box(const xe::Boxf &solid) {
         return solid;
     }
 

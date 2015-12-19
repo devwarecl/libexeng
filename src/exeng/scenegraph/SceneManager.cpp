@@ -5,7 +5,7 @@
 #include <exeng/scenegraph/Scene.hpp>
 #include <exeng/scenegraph/SceneLoader.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
 	struct SceneManager::Private {
 		ProductManagerImpl<SceneLoader, Scene> manager;

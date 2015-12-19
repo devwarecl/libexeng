@@ -5,7 +5,7 @@
 #include <exeng/Vector.hpp>
 #include <array>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     /**
      * @brief Line segment
      */
@@ -52,7 +52,7 @@ namespace exeng { namespace scenegraph {
     typedef Segment<int> Segmenti;
 }}
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     template<typename Type>
     Segment<Type>::Segment()  {}
     

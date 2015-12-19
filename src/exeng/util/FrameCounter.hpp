@@ -4,7 +4,7 @@
 
 #include <exeng/Config.hpp>
 
-namespace exeng { namespace util {
+namespace xe { namespace util {
     /**
      * @brief Simple frames per second counter
      */

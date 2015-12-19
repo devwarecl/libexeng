@@ -8,11 +8,11 @@
 #include <exeng/graphics/VertexFormat.hpp>
 #include <exeng/graphics/IndexFormat.hpp>
 
-namespace exeng {
+namespace xe {
 	class EXENGAPI Buffer;
 }
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	class EXENGAPI VertexBuffer;
 	class EXENGAPI MeshSubset;

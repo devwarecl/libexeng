@@ -13,7 +13,7 @@
 
 #include <exeng/scenegraph/Geometry.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     Geometry::~Geometry() { }
 
 	TypeInfo Geometry::getTypeInfo() const {

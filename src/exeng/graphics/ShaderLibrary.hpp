@@ -7,7 +7,7 @@
 #include <exeng/graphics/Shader.hpp>
 #include <exeng/graphics/ShaderProgram.hpp>
 
-namespace exeng { namespace graphics {	
+namespace xe { namespace gfx {	
 
 	class EXENGAPI ShaderLibrary {
 	public:

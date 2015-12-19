@@ -17,9 +17,9 @@
 
 #include <exeng/scenegraph/Camera.hpp>
 
-using namespace exeng::scenegraph;
+using namespace xe::sg;
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
         
     /**
      * @brief Atributos y funciones privados de la clase Camera.

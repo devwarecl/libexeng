@@ -16,7 +16,7 @@
 #include <exeng/Config.hpp>
 #include <exeng/framework/Application.hpp>
 
-namespace exeng { namespace framework {
+namespace xe { namespace fw {
     /*
 	template<typename AppClass>
 	int RunApplication(int argc) {
@@ -35,16 +35,16 @@ namespace exeng { namespace framework {
 #ifdef EXENG_WINDOWS
 	#define EXENG_IMPLEMENT_MAIN(AppClass)					\
 	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, INT nCmdShow) {  \
-		using namespace exeng;								\
-        using namespace exeng::framework;					\
+		using namespace xe;								\
+        using namespace xe::fw;					\
         StringVector cmdLine;								\
         return RunApplication<AppClass>(StringVector());	\
 	}
 #else 
   #define EXENG_IMPLEMENT_MAIN(AppClass)          \
   int EXENG_MAIN_CONVENTION main(int argc, char** argv) {               \
-      using namespace exeng;                      \
-      using namespace exeng::framework;           \
+      using namespace xe;                      \
+      using namespace xe::fw;           \
       StringVector cmdLine;                       \
       cmdLine.reserve(argc);                      \
       cmdLine.resize(argc);                       \

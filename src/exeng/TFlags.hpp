@@ -16,7 +16,7 @@
 
 #include <cstdint>
 
-namespace exeng {
+namespace xe {
 
 	/**
 	 * @brief Flag management class.

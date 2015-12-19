@@ -13,7 +13,7 @@
 
 #include <exeng/graphics/Shader.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     Shader::Shader() {}
     Shader::~Shader() {}
 }}

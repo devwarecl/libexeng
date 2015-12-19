@@ -4,7 +4,7 @@
 
 #include <exeng/ui/ControlPrivate.hpp>
 
-namespace exeng { namespace ui { 
+namespace xe { namespace ui { 
     class EXENGAPI WindowPrivate : public ControlPrivate {
     public:
         virtual ~WindowPrivate();

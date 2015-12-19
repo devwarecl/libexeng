@@ -7,7 +7,7 @@
 #include <string>
 #include <exeng/scenegraph/Forward.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 	class EXENGAPI SceneManager {
 	public:
 		SceneManager();

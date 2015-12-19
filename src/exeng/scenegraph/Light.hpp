@@ -17,7 +17,7 @@
 #include <exeng/Enum.hpp>
 #include <exeng/scenegraph/SceneNodeData.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     /**
      * @brief Available instanciable light types.
      */
@@ -49,22 +49,22 @@ namespace exeng { namespace scenegraph {
         /**
          * @brief 
          */
-        void setPosition(const exeng::Vector3f& pos);
+        void setPosition(const xe::Vector3f& pos);
             
         /**
          * @brief 
          */
-        exeng::Vector3f getPosition() const;
+        xe::Vector3f getPosition() const;
             
         /**
          * @brief 
          */
-        void setTarget(const exeng::Vector3f& target);
+        void setTarget(const xe::Vector3f& target);
             
         /**
          * @brief 
          */
-        exeng::Vector3f getTarget() const;
+        xe::Vector3f getTarget() const;
             
         /**
          * @brief 

@@ -16,7 +16,7 @@
 
 #include <exeng/Enum.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     /**
      * @brief The type of shader
      */

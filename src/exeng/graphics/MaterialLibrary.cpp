@@ -6,7 +6,7 @@
 #include <vector>
 #include <exeng/Exception.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	typedef std::unique_ptr<Material> MaterialPtr;
 	typedef std::vector<MaterialPtr> MaterialVector;
 

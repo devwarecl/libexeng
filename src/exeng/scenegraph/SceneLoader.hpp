@@ -17,7 +17,7 @@
 #include <exeng/Config.hpp>
 #include <exeng/scenegraph/Scene.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 	class EXENGAPI SceneLoader {
 	public:
 		virtual ~SceneLoader();

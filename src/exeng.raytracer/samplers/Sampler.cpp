@@ -5,7 +5,7 @@
 
 #include "Sampler.hpp"
 
-using exeng::Vector2f;
+using xe::Vector2f;
 
 namespace raytracer { namespace samplers {
     
@@ -39,7 +39,7 @@ namespace raytracer { namespace samplers {
         return this->sampleCount;
     }
 
-    const exeng::Vector2f* Sampler::getSampleData() const {
+    const xe::Vector2f* Sampler::getSampleData() const {
         return this->sampleArray.data();
     }
 }}

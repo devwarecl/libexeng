@@ -16,7 +16,7 @@
 
 #include <exeng/Config.hpp>
 
-namespace exeng {
+namespace xe {
 	/**
 	 * @brief Permite representar versiones de los diferentes componentes
 	 */

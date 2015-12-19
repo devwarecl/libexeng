@@ -3,7 +3,7 @@
 
 #include <exeng/Exception.hpp>
 
-namespace exeng {
+namespace xe {
 	StaticBuffer::StaticBuffer(void* data, const int dataSize) {
 		this->data = data;
 		this->dataSize = dataSize;

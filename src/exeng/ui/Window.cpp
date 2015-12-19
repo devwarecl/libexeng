@@ -4,7 +4,7 @@
 
 #include <cassert>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
 	Window::Window(Window *parent, const std::string &text) : Control(nullptr)  {
 		this->setParent(parent)->setText(text);
 	}

@@ -18,7 +18,7 @@
 #include <memory>
 #include <exeng/Object.hpp>
 
-namespace exeng { namespace system  {
+namespace xe { namespace sys  {
     typedef void* FunctionPtr;
 
 	/**

@@ -13,7 +13,7 @@
 
 #include <exeng/graphics/ColorFormat.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
         
     ColorFormat::ColorFormat() : size(0) {
         this->channels[0] = ColorChannel(ColorComponent::None, 0);

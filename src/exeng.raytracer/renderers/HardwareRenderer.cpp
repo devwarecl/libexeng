@@ -8,10 +8,10 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
 
-namespace exeng { namespace raytracer { namespace renderers {
+namespace xe { namespace raytracer { namespace renderers {
     
-    using namespace exeng::graphics;
-    using namespace exeng::scenegraph;
+    using namespace xe::gfx;
+    using namespace xe::sg;
 
     HardwareRenderer::HardwareRenderer(Texture *renderTarget, const AssetLibrary *assets, const MaterialLibrary *materialLibrary, ::raytracer::samplers::Sampler *sampler) {
 		this->impl = std::make_unique<HardwareRendererPrivate>(renderTarget, assets, materialLibrary, sampler);

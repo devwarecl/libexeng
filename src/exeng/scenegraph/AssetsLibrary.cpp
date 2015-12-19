@@ -5,7 +5,7 @@
 #include <exeng/StaticBuffer.hpp>
 #include <exeng/Exception.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 	struct AssetLibrary::Private {
 		std::map<std::string, BufferPtr> assets;
 	};

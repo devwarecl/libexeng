@@ -18,7 +18,7 @@
 #include <cmath>
 #include <exeng/Enum.hpp>
 
-namespace exeng { 
+namespace xe { 
     struct Side2 : public Enum {
         enum Type {
             Left, Bottom,

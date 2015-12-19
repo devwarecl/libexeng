@@ -6,7 +6,7 @@
 #include <string>
 #include <list>
 
-namespace exeng {
+namespace xe {
 	template<typename ProductLoader, typename Product>
 	class ProductManager {
 	public:

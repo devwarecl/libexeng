@@ -22,7 +22,7 @@
 #include "Boundary.hpp"
 #include "Vector.hpp"
 
-namespace exeng { 
+namespace xe { 
     
     /**
      * @brief Generic matrix class
@@ -776,9 +776,9 @@ namespace exeng {
         
         Vector<Type, 3> U(Axis), V(normalize(Axis));
         
-        auto MatS = exeng::zero<Type, 3, 3>();
-        auto MatUut = exeng::zero<Type, 3, 3>();
-        auto MatId = exeng::identity<Type, 3>();
+        auto MatS = xe::zero<Type, 3, 3>();
+        auto MatUut = xe::zero<Type, 3, 3>();
+        auto MatId = xe::identity<Type, 3>();
         
         //Iniciar S
         MatS.at(0, 1) = -V.z;
@@ -925,14 +925,14 @@ namespace exeng {
         {    
             static Vector<Type, Size> compute(const Matrix<Type, Size, Size> &matrix, const Vector<Type, Size> &vector) 
             {
-                return exeng::__private::transform<Type, Size>(matrix, vector);   
+                return xe::__private::transform<Type, Size>(matrix, vector);   
             } 
             
             static Vector<Type, Size> compute(const Matrix<Type, Size, Size> &matrix, const Vector<Type, Size-1> &v) 
             {
                 const Vector<Type, Size> vector = static_cast<Vector<Type, Size>>(v);
                 
-                return exeng::__private::transform<Type, Size>(matrix, vector);
+                return xe::__private::transform<Type, Size>(matrix, vector);
             } 
         };
         
@@ -941,7 +941,7 @@ namespace exeng {
         {    
             static Vector<Type, 4> compute(const Matrix<Type, 4, 4> &matrix, const Vector<Type, 4> &vector) 
             {
-                return exeng::__private::transform<Type, 4>(matrix, vector);   
+                return xe::__private::transform<Type, 4>(matrix, vector);   
             } 
             
             static Vector<Type, 4> compute(const Matrix<Type, 4, 4> &matrix, const Vector<Type, 3> &v) 
@@ -950,7 +950,7 @@ namespace exeng {
                 
                 vector[3] = Type(1);
                 
-                return exeng::__private::transform<Type, 4>(matrix, vector);
+                return xe::__private::transform<Type, 4>(matrix, vector);
             } 
         };
     }
@@ -958,13 +958,13 @@ namespace exeng {
     template<typename Type, int Size>
     Vector<Type, Size> transform(const Matrix<Type, Size, Size> &matrix, const Vector<Type, Size> &vector) 
     {
-        return exeng::__private::MatrixTranformation<Type, Size>::compute(matrix, vector);
+        return xe::__private::MatrixTranformation<Type, Size>::compute(matrix, vector);
     }
     
     template<typename Type, int Size>
     Vector<Type, Size> transform(const Matrix<Type, Size, Size> &matrix, const Vector<Type, Size-1> &vector) 
     {
-        return exeng::__private::MatrixTranformation<Type, Size>::compute(matrix, vector);
+        return xe::__private::MatrixTranformation<Type, Size>::compute(matrix, vector);
     }
     
     typedef Matrix<float, 2, 2> Matrix2f;

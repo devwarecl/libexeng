@@ -19,7 +19,7 @@
 #include <exeng/graphics/GraphicsDriver.hpp>
 #include <exeng/HeapBuffer.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     /**
      * @brief Base common functionality for easing the process 
      * of implementing graphics drivers
@@ -28,8 +28,8 @@ namespace exeng { namespace graphics {
     public:
 		GraphicsDriverBase();
 		virtual ~GraphicsDriverBase() {}
-        virtual exeng::Rectf getViewport() const override;
-        virtual const exeng::graphics::Material* getMaterial() const override;
+        virtual xe::Rectf getViewport() const override;
+        virtual const xe::gfx::Material* getMaterial() const override;
         virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data) override;
         virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data) override;
 

@@ -37,7 +37,7 @@
 //        return content;
 //    }
 //    
-//    cl::Buffer createCLBuffer(cl::Context &context, exeng::Buffer *in) {
+//    cl::Buffer createCLBuffer(cl::Context &context, xe::Buffer *in) {
 //        if (in == nullptr) {
 //            throw std::runtime_error("[HardwareTracer.cpp] createCLBuffer -> The input buffer can't be a nullptr.");
 //        }
@@ -132,7 +132,7 @@
 //        this->samplesCount = sampler->getSampleCount();
 //    }
 //    
-//    void HardwareTracer::setRenderTarget(exeng::graphics::Texture *renderTarget) {
+//    void HardwareTracer::setRenderTarget(xe::gfx::Texture *renderTarget) {
 //
 //        // Create a OpenCL 2D image  from the render target Texture
 //        GLuint textureId = static_cast<GLuint>(renderTarget->getHandle());
@@ -157,7 +157,7 @@
 //    
 //    HardwareTracer::~HardwareTracer() {}
 //
-//    void HardwareTracer::render(const exeng::scenegraph::Camera *camera) {
+//    void HardwareTracer::render(const xe::sg::Camera *camera) {
 //        Vector3i size = this->getRenderTarget()->getSize();
 //        cl::Image2DGL &image = this->image;
 //        cl::Buffer &samplesBuffer = this->samplesBuffer;

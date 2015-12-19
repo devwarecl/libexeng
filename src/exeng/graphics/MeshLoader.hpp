@@ -20,7 +20,7 @@
 #include <string>
 #include <memory>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     /**
      * @brief Mesh loader interface.
      */

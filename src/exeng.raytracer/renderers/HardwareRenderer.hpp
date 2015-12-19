@@ -10,27 +10,27 @@
 
 #include "exeng.raytracer/samplers/Sampler.hpp"
 
-namespace exeng { namespace raytracer { namespace renderers {
+namespace xe { namespace raytracer { namespace renderers {
 
     class HardwareRendererPrivate;
 
-    class HardwareRenderer : public exeng::scenegraph::RenderWrapper {
+    class HardwareRenderer : public xe::sg::RenderWrapper {
     public:
-        explicit HardwareRenderer(exeng::graphics::Texture *renderTarget, const exeng::scenegraph::AssetLibrary *assets, const exeng::graphics::MaterialLibrary *materialLibrary, ::raytracer::samplers::Sampler *sampler);
+        explicit HardwareRenderer(xe::gfx::Texture *renderTarget, const xe::sg::AssetLibrary *assets, const xe::gfx::MaterialLibrary *materialLibrary, ::raytracer::samplers::Sampler *sampler);
         virtual ~HardwareRenderer();
 
-        virtual Matrix4f getProjectionMatrix(const exeng::scenegraph::Camera *camera) override {
+        virtual Matrix4f getProjectionMatrix(const xe::sg::Camera *camera) override {
             return identity<float, 4>();
         }
 
-        virtual void prepareCamera(const exeng::scenegraph::Camera *camera) override;
+        virtual void prepareCamera(const xe::sg::Camera *camera) override;
 
         virtual void beginFrame(const Vector4f &color) override;
         virtual void endFrame() override;
 
         virtual void setTransform(const Matrix4f &transform) override;
 
-		virtual void renderNodeData(const exeng::scenegraph::SceneNodeData *data) override;
+		virtual void renderNodeData(const xe::sg::SceneNodeData *data) override;
 
     private:
         std::unique_ptr<HardwareRendererPrivate> impl;

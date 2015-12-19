@@ -5,7 +5,7 @@
 #include <map>
 #include <cassert>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	struct ShaderLibrary::Private {
 		GraphicsDriver *driver = nullptr;

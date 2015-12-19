@@ -27,7 +27,7 @@
 #include <stdexcept>
 #endif
 
-namespace exeng { 
+namespace xe { 
     template<typename Type, int size>
     struct VectorBase {
         Type data[size];

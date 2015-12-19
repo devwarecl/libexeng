@@ -17,9 +17,9 @@
 #include <exeng/graphics/PixelFormat.hpp>
 
 /*
-namespace exeng
+namespace xe
 {
-    namespace graphics
+    namespace gfx
     {
         int ColorFormat::getPitch(ColorFormat::Type pf)
         {

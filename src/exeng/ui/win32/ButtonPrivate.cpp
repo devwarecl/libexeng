@@ -5,7 +5,7 @@
 
 #include <exeng/ui/win32/ButtonPrivate.hpp>
 
-namespace exeng { namespace ui { namespace win32 {
+namespace xe { namespace ui { namespace win32 {
 
 	ButtonPrivateWin32::ButtonPrivateWin32(void *parentHandle) {
 		HWND hWnd = ::CreateWindow(

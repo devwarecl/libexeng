@@ -6,7 +6,7 @@
 #include <exeng/Enum.hpp>
 #include <exeng/Matrix.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	struct Transform : public Enum {
         enum Enum {View, World, Projection};
     };

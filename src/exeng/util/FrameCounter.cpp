@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-namespace exeng { namespace util {
+namespace xe { namespace util {
     FrameCounter::FrameCounter() {}
     
     void FrameCounter::update(double seconds) 

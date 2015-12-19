@@ -7,7 +7,7 @@
 #include <exeng/Config.hpp>
 #include <exeng/Buffer.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
 	class EXENGAPI AssetLibrary {
 	public:

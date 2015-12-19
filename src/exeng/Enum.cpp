@@ -14,6 +14,6 @@
 
 #include <exeng/Enum.hpp>
 
-namespace exeng {
+namespace xe {
 
 }

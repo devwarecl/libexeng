@@ -4,7 +4,7 @@
 
 #include <exeng/ui/win32/ControlPrivate.hpp>
 
-namespace exeng { namespace ui { namespace win32 {
+namespace xe { namespace ui { namespace win32 {
 	class WindowPrivateWin32 : public ControlPrivateWin32 {
 	public:
 		WindowPrivateWin32();

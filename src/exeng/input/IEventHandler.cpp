@@ -12,7 +12,7 @@
 
 #include <exeng/input/IEventHandler.hpp>
 
-namespace exeng {
+namespace xe {
     namespace input {
         IEventHandler::~IEventHandler(){
         }

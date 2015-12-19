@@ -7,7 +7,7 @@
 #include <exeng/Config.hpp>
 #include <exeng/Matrix.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	class EXENGAPI MeshSubset;
 	class EXENGAPI MeshSubsetTransformer {

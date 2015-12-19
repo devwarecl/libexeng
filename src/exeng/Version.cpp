@@ -13,7 +13,7 @@
 
 #include <exeng/Version.hpp>
 
-namespace exeng {
+namespace xe {
     void Version::setup(int Major, int Minor, int Revision, int Build) {
         this->setMajor(Major);
         this->setMinor(Minor);

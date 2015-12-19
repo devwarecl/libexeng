@@ -13,7 +13,7 @@
 #include <exeng/scenegraph/SceneNode.hpp>
 #include <exeng/scenegraph/Camera.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
     /** 
      * @brief Renderer technology minimal interface
@@ -22,7 +22,7 @@ namespace exeng { namespace scenegraph {
 	public:
         virtual ~RenderWrapper() {}
 
-        virtual void prepareCamera(const exeng::scenegraph::Camera *camera) = 0;
+        virtual void prepareCamera(const xe::sg::Camera *camera) = 0;
 
 		virtual void setTransform(const Matrix4f &transform) = 0;
 		virtual void renderNodeData(const SceneNodeData *data) = 0;
@@ -41,21 +41,21 @@ namespace exeng { namespace scenegraph {
      */
 	class EXENGAPI RasterizerRenderWrapper : public RenderWrapper {
 	public:
-		explicit RasterizerRenderWrapper(exeng::graphics::GraphicsDriver *driver);
+		explicit RasterizerRenderWrapper(xe::gfx::GraphicsDriver *driver);
 		virtual ~RasterizerRenderWrapper();
 
-        virtual void prepareCamera(const exeng::scenegraph::Camera *camera) {}
+        virtual void prepareCamera(const xe::sg::Camera *camera) {}
 
         virtual void beginFrame(const Vector4f &clearColor) override;
         virtual void endFrame() override;
 
         virtual void setTransform(const Matrix4f &transform) override;
 		
-		virtual void renderNodeData(const exeng::scenegraph::SceneNodeData *data) override;
+		virtual void renderNodeData(const xe::sg::SceneNodeData *data) override;
 
         void setTransformName(const std::string &transformName);
-        exeng::graphics::GraphicsDriver* getGraphicsDriver();
-		const exeng::graphics::GraphicsDriver* getGraphicsDriver() const;
+        xe::gfx::GraphicsDriver* getGraphicsDriver();
+		const xe::gfx::GraphicsDriver* getGraphicsDriver() const;
 
 	private:
         struct Private;

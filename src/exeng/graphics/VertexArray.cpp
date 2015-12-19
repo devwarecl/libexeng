@@ -1,7 +1,7 @@
 
 #include "VertexArray.hpp"
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	VertexArray::VertexArray(void *data, const VertexFormat *format) {
 		assert(data);

@@ -21,14 +21,14 @@
 #include <exeng/graphics/PixelType.hpp>
 #include <exeng/graphics/ColorFormat.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     /**
      * @brief Image class.
      */
     class EXENGAPI Image {
     public:
         Image();
-        Image(const exeng::Vector3i& size, 
+        Image(const xe::Vector3i& size, 
                 ColorFormat format, 
                 PixelType type=PixelType::Integer);
         

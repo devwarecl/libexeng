@@ -13,7 +13,7 @@
 
 #include <exeng/graphics/Texture.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     Texture::Texture() {}
 
     Texture::~Texture() {}

@@ -21,7 +21,7 @@
 #include <iomanip>
 #include <cassert>
 
-namespace exeng {
+namespace xe {
     template<typename Type, int Dimension>  class SizeBase;
 
     template<typename Type> class SizeBase<Type, 2> {
@@ -174,7 +174,7 @@ namespace exeng {
             return result;
         }
         
-        friend std::ostream& operator<< (std::ostream &os, const exeng::Size<Type, Dimension>& size) 
+        friend std::ostream& operator<< (std::ostream &os, const xe::Size<Type, Dimension>& size) 
         {
             for(int i=0; i<Dimension; ++i) {
                 os << std::fixed << std::setprecision( 4 ) << size[i];
@@ -197,7 +197,7 @@ namespace exeng {
     typedef Size<int, 2> Size2i;
 }
 
-namespace exeng { 
+namespace xe { 
     template<typename Type, int Dimension>
     Size<Type, Dimension>::Size() {}
 
@@ -257,7 +257,7 @@ namespace exeng {
 
     template<typename Type, int Dimension>
     bool Size<Type, Dimension>::operator== (const Size<Type, Dimension>& rhs) const {
-        return exeng::arrayCompare<Type, Dimension>(this->data, rhs.data);
+        return xe::arrayCompare<Type, Dimension>(this->data, rhs.data);
     }
     
     

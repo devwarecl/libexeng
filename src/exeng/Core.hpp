@@ -22,7 +22,7 @@
 #include <exeng/scenegraph/Forward.hpp>
 #include <exeng/graphics/Forward.hpp>
 
-namespace exeng {
+namespace xe {
 	
     /**
     * @brief The root class of the multimedia engine. 
@@ -36,20 +36,20 @@ namespace exeng {
         
         Version getVersion() const;
         
-        exeng::system::PluginManager* getPluginManager();
-        const exeng::system::PluginManager* getPluginManager() const;
+        xe::sys::PluginManager* getPluginManager();
+        const xe::sys::PluginManager* getPluginManager() const;
         
-        exeng::graphics::MeshManager* getMeshManager();
-        const exeng::graphics::MeshManager* getMeshManager() const;
+        xe::gfx::MeshManager* getMeshManager();
+        const xe::gfx::MeshManager* getMeshManager() const;
         
-        exeng::graphics::GraphicsManager* getGraphicsManager();
-        const exeng::graphics::GraphicsManager* getGraphicsManager() const;
+        xe::gfx::GraphicsManager* getGraphicsManager();
+        const xe::gfx::GraphicsManager* getGraphicsManager() const;
         
-		exeng::graphics::TextureManager* getTextureManager();
-        const exeng::graphics::TextureManager* getTextureManager() const;
+		xe::gfx::TextureManager* getTextureManager();
+        const xe::gfx::TextureManager* getTextureManager() const;
         
-		exeng::scenegraph::SceneManager* getSceneManager();
-        const exeng::scenegraph::SceneManager* getSceneManager() const;
+		xe::sg::SceneManager* getSceneManager();
+        const xe::sg::SceneManager* getSceneManager() const;
 
     private:
         struct Private;

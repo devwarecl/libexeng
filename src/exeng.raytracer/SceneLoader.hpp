@@ -15,17 +15,17 @@
 //        SceneLoader& operator=(const SceneLoader &) = delete;
 //
 //    public:
-//        explicit SceneLoader(exeng::graphics::GraphicsDriver *driver, exeng::scenegraph::MeshManager *meshManager);
+//        explicit SceneLoader(xe::gfx::GraphicsDriver *driver, xe::sg::MeshManager *meshManager);
 //        virtual ~SceneLoader();
 //
-//        std::unique_ptr<exeng::scenegraph::Scene> loadScene(const std::string &filename, const exeng::graphics::MaterialFormat *materialFormat);
+//        std::unique_ptr<xe::sg::Scene> loadScene(const std::string &filename, const xe::gfx::MaterialFormat *materialFormat);
 //
 //	private:
-//		exeng::scenegraph::SceneNode* addBoxNode(exeng::scenegraph::Scene *scene, const std::string &boxNodeName, const std::string &materialName, const exeng::Vector4f &materialColor, const std::string &boxMeshName, const exeng::Vector3f &boxCenter, const exeng::Vector3f &sizeCenter);
+//		xe::sg::SceneNode* addBoxNode(xe::sg::Scene *scene, const std::string &boxNodeName, const std::string &materialName, const xe::Vector4f &materialColor, const std::string &boxMeshName, const xe::Vector3f &boxCenter, const xe::Vector3f &sizeCenter);
 //
 //    private:
-//        exeng::graphics::GraphicsDriver *graphicsDriver = nullptr;
-//        exeng::scenegraph::MeshManager *meshManager = nullptr;
+//        xe::gfx::GraphicsDriver *graphicsDriver = nullptr;
+//        xe::sg::MeshManager *meshManager = nullptr;
 //    };
 //}
 //

@@ -16,7 +16,7 @@
 
 #include <exeng/system/Library.hpp>
 
-namespace exeng { namespace system {
+namespace xe { namespace sys {
     struct Library::Private {
         std::string name;
         void* handle = nullptr;

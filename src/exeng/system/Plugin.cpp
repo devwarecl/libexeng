@@ -14,8 +14,8 @@
 #include <exeng/system/Plugin.hpp>
 #include <stdexcept>
 
-namespace exeng {
-    namespace system  {
+namespace xe {
+    namespace sys  {
         Plugin::~Plugin() {
         }
         

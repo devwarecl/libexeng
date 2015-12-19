@@ -20,7 +20,7 @@
 #include <exeng/Object.hpp>
 #include <exeng/Matrix.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     class EXENGAPI SceneNode;
     class EXENGAPI SceneNodeData;
 
@@ -45,9 +45,9 @@ namespace exeng { namespace scenegraph {
 
         virtual std::string toString() const;
         
-        exeng::Matrix4f getTransform() const;
+        xe::Matrix4f getTransform() const;
         
-        void setTransform(const exeng::Matrix4f& transform);
+        void setTransform(const xe::Matrix4f& transform);
         
         std::string getName() const;
         

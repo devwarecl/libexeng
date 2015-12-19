@@ -17,7 +17,7 @@
 #include "Vector.hpp"
 #include "Size.hpp"
 
-namespace exeng { 
+namespace xe { 
 
     namespace detail {
         /**
@@ -164,7 +164,7 @@ namespace exeng {
          */
         VectorType getMax() const;
         
-        friend std::ostream& operator<< (std::ostream &os, const exeng::Boundary<Type, Dimension>& Boundary)
+        friend std::ostream& operator<< (std::ostream &os, const xe::Boundary<Type, Dimension>& Boundary)
         {
             return os << "Center: {" << Boundary.getCenter() << "}, Size: {" << Boundary.getSize() << "}";
         }
@@ -187,7 +187,7 @@ namespace exeng {
 }
 
 
-namespace exeng { 
+namespace xe { 
     template<typename Type, int Dimension>
     Boundary<Type, Dimension>::Boundary() {
         this->edges[0] = Vector<Type, Dimension>(-1);

@@ -13,10 +13,10 @@
 #include <exeng/graphics/MeshManager.hpp>
 #include <exeng/scenegraph/GenericSceneRenderer.hpp>
 
-namespace exeng { namespace framework {
+namespace xe { namespace fw {
 
-	using namespace exeng::graphics;
-	using namespace exeng::scenegraph;
+	using namespace xe::gfx;
+	using namespace xe::sg;
 
 	namespace xml {
 		class Node;

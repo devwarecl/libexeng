@@ -14,7 +14,7 @@
 
 #include <exeng/input/IEventRaiser.hpp>
 
-namespace exeng {
+namespace xe {
     namespace input {
         IEventRaiser::~IEventRaiser() {
         }

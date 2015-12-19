@@ -17,7 +17,7 @@
 #include <cstdint>
 #include <exeng/Config.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
             
     /**
     * @brief The different color channels

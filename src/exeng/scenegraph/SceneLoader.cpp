@@ -1,6 +1,6 @@
 
 #include "SceneLoader.hpp"
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 	SceneLoader::~SceneLoader() {}
 }}

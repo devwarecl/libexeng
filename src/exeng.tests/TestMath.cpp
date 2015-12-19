@@ -6,7 +6,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-using namespace exeng;
+using namespace xe;
 
 struct HyperBoxFixture {
     float size;
@@ -152,9 +152,9 @@ struct MatrixFixture {
     float detA;
     
     MatrixFixture() {
-        this->subIdentity = exeng::identity<float, 3>();
-        this->identity = exeng::identity<float, 4>();
-        this->zero = exeng::zero<float, 4, 4>();
+        this->subIdentity = xe::identity<float, 3>();
+        this->identity = xe::identity<float, 4>();
+        this->zero = xe::zero<float, 4, 4>();
         
         this->matA.setRowVector(0, Vector4f(1.0f, 2.0f, 1.0f, 0.0f));
         this->matA.setRowVector(1, Vector4f(2.0f, 1.0f, -3.0f, -1.0f));

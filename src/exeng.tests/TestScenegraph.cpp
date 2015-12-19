@@ -8,8 +8,8 @@
 #include <exeng/scenegraph/Camera.hpp>
 #include <exeng/scenegraph/Light.hpp>
 
-using namespace exeng;
-using namespace exeng::scenegraph;
+using namespace xe;
+using namespace xe::sg;
 
 struct SphereFixture 
 {

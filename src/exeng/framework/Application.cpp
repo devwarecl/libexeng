@@ -14,9 +14,9 @@
 
 #include <exeng/util/MessageBox.hpp>
 
-namespace exeng { namespace framework {
-	using exeng::util::MessageBox;
-	using exeng::util::MessageBoxIcon;
+namespace xe { namespace fw {
+	using xe::util::MessageBox;
+	using xe::util::MessageBoxIcon;
 
     int Application::execute(Application &app, int argc, char** argv) {
         int exitCode = 0;

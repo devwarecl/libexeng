@@ -7,7 +7,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 
-namespace exeng {
+namespace xe {
 
 	template<typename ProductLoader, typename Product>
 	class ProductManagerImpl : public ProductManager<ProductLoader, Product> {

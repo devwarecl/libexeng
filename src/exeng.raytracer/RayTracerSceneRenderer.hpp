@@ -12,15 +12,15 @@
 //    /**
 //     * @brief Ray tracer scene renderer
 //     */
-//    class RayTracerSceneRenderer : public exeng::scenegraph::SceneRenderer {
+//    class RayTracerSceneRenderer : public xe::sg::SceneRenderer {
 //    public:
-//        RayTracerSceneRenderer(const exeng::scenegraph::Scene *scene, raytracer::tracers::Tracer *tracer);
+//        RayTracerSceneRenderer(const xe::sg::Scene *scene, raytracer::tracers::Tracer *tracer);
 //        
 //        virtual ~RayTracerSceneRenderer();
-//        virtual void renderScene(const exeng::scenegraph::Camera *camera);
+//        virtual void renderScene(const xe::sg::Camera *camera);
 //
 //    private:
-//		exeng::scenegraph::Scene* scene = nullptr;
+//		xe::sg::Scene* scene = nullptr;
 //        raytracer::tracers::Tracer* tracer = nullptr;
 //    };
 //}

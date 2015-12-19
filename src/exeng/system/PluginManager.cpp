@@ -25,7 +25,7 @@
 #include <exeng/system/Plugin.hpp>
 #include <exeng/system/PluginLibrary.hpp>
 
-namespace exeng { namespace system {
+namespace xe { namespace sys {
     namespace fs = boost::filesystem;
     
     /**

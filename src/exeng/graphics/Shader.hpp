@@ -19,7 +19,7 @@
 #include <exeng/Object.hpp>
 #include <exeng/graphics/ShaderType.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     /**
      * @brief A shader subprogram, with source code included.
      */

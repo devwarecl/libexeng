@@ -23,25 +23,25 @@
 //namespace raytracer { namespace tracers {
 //	class MultiHardwareTracer : public Tracer {
 //	public:
-//		MultiHardwareTracer(const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
-//		virtual void render(const exeng::scenegraph::Camera *camera);
+//		MultiHardwareTracer(const xe::sg::Scene *scene, const raytracer::samplers::Sampler *sampler);
+//		virtual void render(const xe::sg::Camera *camera);
 //		~MultiHardwareTracer();
 //
-//		virtual void setRenderTarget(exeng::graphics::Texture *renderTarget);
+//		virtual void setRenderTarget(xe::gfx::Texture *renderTarget);
 //
 //	private:
-//        void syncLocalTransform(const exeng::Matrix4f &localTransform);
+//        void syncLocalTransform(const xe::Matrix4f &localTransform);
 //        
 //		void executeGetStructuresSizeKernel();
 //        void executeClearSynthBufferKernel();
 //        
-//        // void executeGenerateRaysKernelFromMatrix(const exeng::scenegraph::Camera *camera);
-//        void executeGenerateRaysKernel(const exeng::scenegraph::Camera *camera);
+//        // void executeGenerateRaysKernelFromMatrix(const xe::sg::Camera *camera);
+//        void executeGenerateRaysKernel(const xe::sg::Camera *camera);
 //		void executeSynthetizeImageKernel();
 //
 //		void synthetize();
 //
-//		void executeComputeSynthesisDataKernel(std::stack<exeng::Matrix4f> &transformStack, const exeng::scenegraph::SceneNode *sceneNode);
+//		void executeComputeSynthesisDataKernel(std::stack<xe::Matrix4f> &transformStack, const xe::sg::SceneNode *sceneNode);
 //
 //	private:
 //		cl::Platform platform;
@@ -57,7 +57,7 @@
 //		cl::Kernel synthesisDataComputerKernel;
 //		cl::Kernel imageSynthetizerKernel;
 //
-//        std::vector<exeng::scenegraph::Ray> raysData;
+//        std::vector<xe::sg::Ray> raysData;
 //        
 //		cl::Buffer raysBuffer;
 //		cl::Buffer synthesisBuffer;

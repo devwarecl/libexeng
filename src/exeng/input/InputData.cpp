@@ -12,7 +12,7 @@
 
 #include "InputData.hpp"
 
-namespace exeng {
+namespace xe {
     namespace input {
     }
 }

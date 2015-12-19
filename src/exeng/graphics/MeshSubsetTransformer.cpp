@@ -6,7 +6,7 @@
 #include <exeng/graphics/MeshSubset.hpp>
 #include <exeng/graphics/VertexArray.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	void MeshSubsetTransformer::transform(MeshSubset *subset, const Matrix4f &transformation) {
 		const VertexFormat format = subset->getVertexFormat();
@@ -26,8 +26,8 @@ namespace exeng { namespace graphics {
 			array.getAttribValue(i, VertexAttrib::Position, &position);
 			array.getAttribValue(i, VertexAttrib::Normal, &normal);
 
-			position	= exeng::transform(transformation, position);
-			normal		= exeng::transform(transformation, normal);
+			position	= xe::transform(transformation, position);
+			normal		= xe::transform(transformation, normal);
 
 			array.setAttribValue(i, VertexAttrib::Position, &position);
 			array.setAttribValue(i, VertexAttrib::Normal, &normal);

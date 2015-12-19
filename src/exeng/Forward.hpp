@@ -6,7 +6,7 @@
 
 #include <exeng/Config.hpp>
 
-namespace exeng {
+namespace xe {
     class EXENGAPI Core;
 }
 

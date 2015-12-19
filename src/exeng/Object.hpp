@@ -19,7 +19,7 @@
 #include <exeng/Config.hpp>
 #include <exeng/TypeInfo.hpp>
 
-namespace exeng {
+namespace xe {
     
     namespace io {
         class EXENGAPI Stream;
@@ -43,7 +43,7 @@ namespace exeng {
          * @brief Checks if the object can be cloned. 
          * 
          * Returns false for his default implementation. Derived clases must override this method
-         * in order to implement the exeng::Object::clone virtual method.
+         * in order to implement the xe::Object::clone virtual method.
          */
         virtual bool isClonable() const;
         
@@ -77,7 +77,7 @@ namespace exeng {
          * Throws a std::logic_exception if this operation is 
          * unsupported (Object::isSerializable returns false).
          */
-        virtual void serialize(exeng::io::Stream *outStream) const;
+        virtual void serialize(xe::io::Stream *outStream) const;
         
         /**
          * @brief Check if the object can be deserialized.
@@ -93,7 +93,7 @@ namespace exeng {
          * Throws a std::logic_exception if this operation is 
          * unsupported (Object::isDeserializable returns false).
          */
-        virtual void deserialize(const exeng::io::Stream *inStream);
+        virtual void deserialize(const xe::io::Stream *inStream);
 	};
 }
 

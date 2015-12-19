@@ -6,7 +6,7 @@
 #include <exeng/graphics/Texture.hpp>
 #include <exeng/graphics/TextureLoader.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	
 	class EXENGAPI GraphicsDriver;
 	class EXENGAPI TextureManager {

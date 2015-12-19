@@ -20,34 +20,34 @@
 //#include <exeng.raytracer/tracers/TracerFactory.hpp>
 //
 //namespace raytracer {
-//    typedef std::list<exeng::scenegraph::SceneNode*> SceneNodeList;
+//    typedef std::list<xe::sg::SceneNode*> SceneNodeList;
 //    typedef SceneNodeList::iterator SceneNodeListIt;
 //    
 //	class SceneNodeAnimator {
 //	public:
 //		virtual ~SceneNodeAnimator() {}
-//		virtual void animateNode(const float seconds, exeng::scenegraph::SceneNode *node) = 0;
+//		virtual void animateNode(const float seconds, xe::sg::SceneNode *node) = 0;
 //	};
 //
-//    class RayTracerApp : public exeng::framework::GraphicsApplication, public exeng::input::IEventHandler {
+//    class RayTracerApp : public xe::fw::GraphicsApplication, public xe::input::IEventHandler {
 //    public:
 //        RayTracerApp();
 //        virtual ~RayTracerApp();
 //        
-//        virtual exeng::BufferPtr getAssetsXmlData() override {
-//            return exeng::BufferPtr();
+//        virtual xe::BufferPtr getAssetsXmlData() override {
+//            return xe::BufferPtr();
 //        }
 //
-//        virtual exeng::graphics::GraphicsDriverPtr createGraphicsDriver() override {
-//            return exeng::graphics::GraphicsDriverPtr();
+//        virtual xe::gfx::GraphicsDriverPtr createGraphicsDriver() override {
+//            return xe::gfx::GraphicsDriverPtr();
 //        }
 //
-//        virtual exeng::scenegraph::AssetLibraryPtr createAssetLibrary() override {
-//            return exeng::scenegraph::AssetLibraryPtr();
+//        virtual xe::sg::AssetLibraryPtr createAssetLibrary() override {
+//            return xe::sg::AssetLibraryPtr();
 //        }
 //
-//        virtual exeng::scenegraph::SceneRendererPtr createSceneRenderer(exeng::graphics::GraphicsDriver *graphicsDriver) override {
-//            return exeng::scenegraph::SceneRendererPtr();
+//        virtual xe::sg::SceneRendererPtr createSceneRenderer(xe::gfx::GraphicsDriver *graphicsDriver) override {
+//            return xe::sg::SceneRendererPtr();
 //        }
 //
 //        virtual bool onInitialize() override {
@@ -55,24 +55,24 @@
 //        }
 //
 //    public:
-//        /* exeng::framework::GraphicsApplication */
+//        /* xe::fw::GraphicsApplication */
 //        virtual void initialize(int argc, char **argv);
 //        virtual void pollEvents();
-//        virtual exeng::framework::ApplicationStatus::Enum getStatus() const;
+//        virtual xe::fw::ApplicationStatus::Enum getStatus() const;
 //        virtual void update(double seconds);        
 //        virtual void render();
 //        virtual int getExitCode() const;
 //        virtual void terminate();
 //        
 //    public:
-//        /* exeng::input::IEventHandler*/
-//        virtual void handleEvent(const exeng::input::EventData &data);
+//        /* xe::input::IEventHandler*/
+//        virtual void handleEvent(const xe::input::EventData &data);
 //        
 //    private:
-//        std::unique_ptr<exeng::graphics::Texture> createTexture (
-//            exeng::graphics::GraphicsDriver *driver, 
-//            const exeng::Vector3f& size, 
-//            const exeng::Vector4f &color
+//        std::unique_ptr<xe::gfx::Texture> createTexture (
+//            xe::gfx::GraphicsDriver *driver, 
+//            const xe::Vector3f& size, 
+//            const xe::Vector4f &color
 //        );
 //        
 //        void clear();
@@ -80,30 +80,30 @@
 //        void loadScene();
 //        
 //    private:
-//        exeng::scenegraph::Camera camera;
+//        xe::sg::Camera camera;
 //		raytracer::tracers::TracerFactory tracerFactory;
 //
-//        std::unique_ptr<exeng::graphics::GraphicsDriver> driver;
+//        std::unique_ptr<xe::gfx::GraphicsDriver> driver;
 //        std::unique_ptr<raytracer::samplers::Sampler> sampler;
 //        std::unique_ptr<raytracer::tracers::Tracer> tracer;
-//        std::unique_ptr<exeng::scenegraph::Scene> scene;
+//        std::unique_ptr<xe::sg::Scene> scene;
 //        
-//        std::unique_ptr<exeng::graphics::Texture> screenTexture;
-//        std::unique_ptr<exeng::graphics::Material> screenMaterial;
-//        std::unique_ptr<exeng::graphics::MeshSubset> screenMeshSubset;
+//        std::unique_ptr<xe::gfx::Texture> screenTexture;
+//        std::unique_ptr<xe::gfx::Material> screenMaterial;
+//        std::unique_ptr<xe::gfx::MeshSubset> screenMeshSubset;
 //
-//		std::unique_ptr<exeng::graphics::Material> defaultMaterial;
+//		std::unique_ptr<xe::gfx::Material> defaultMaterial;
 //
 //        std::unique_ptr<SceneLoader> sceneLoader;
 //
-//		exeng::graphics::MaterialFormat materialFormat;
+//		xe::gfx::MaterialFormat materialFormat;
 //
 //        mutable uint32_t lastTime;
-//        exeng::util::FrameCounter frameCounter;
-//        exeng::framework::ApplicationStatus::Enum applicationStatus;
-//        exeng::graphics::ButtonStatus::Enum buttonStatus[exeng::graphics::ButtonCode::Count];
+//        xe::util::FrameCounter frameCounter;
+//        xe::fw::ApplicationStatus::Enum applicationStatus;
+//        xe::gfx::ButtonStatus::Enum buttonStatus[xe::gfx::ButtonCode::Count];
 //        
-//		std::map<exeng::scenegraph::SceneNode*, std::unique_ptr<SceneNodeAnimator>> animators;
+//		std::map<xe::sg::SceneNode*, std::unique_ptr<SceneNodeAnimator>> animators;
 //        
 //        float rotationAngle = 0.0f;
 //    };

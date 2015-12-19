@@ -5,6 +5,6 @@
 //    using namespace raytracer;
 //    using namespace raytracer::tracers;
 //    
-//    using namespace exeng;
-//    using namespace exeng::scenegraph;
+//    using namespace xe;
+//    using namespace xe::sg;
 //}

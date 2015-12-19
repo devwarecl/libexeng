@@ -206,7 +206,7 @@ void computeElementMeshSubset (
     global SynthesisElement *element, ray_t ray, 
     global float *vertices, global int *indices, int indexCount, int materialIndex)
 {
-	// const int VertexSize = 32/4;	// = sizeof(exeng::vertex_t)
+	// const int VertexSize = 32/4;	// = sizeof(xe::vertex_t)
 	// const int CoordOffset = 0;
 	// const int NormalOffset = 12/4;
 	// const int TexCoordOffset = 24/4;
@@ -262,7 +262,7 @@ void computeElementMeshSubset (
     global SynthesisElement *element, ray_t ray, 
     global float *vertices, global int *indices, int indexCount, int materialIndex)
 {
-	const int VertexSize = 32/4;	// = sizeof(exeng::vertex_t)
+	const int VertexSize = 32/4;	// = sizeof(xe::vertex_t)
 	const int CoordOffset = 0;
 	const int NormalOffset = 12/4;
 	const int TexCoordOffset = 24/4;

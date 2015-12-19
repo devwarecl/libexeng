@@ -8,9 +8,9 @@
 //#include <memory>
 //
 //namespace raytracer {
-//    using namespace exeng;
-//    using namespace exeng::scenegraph;
-//    using namespace exeng::graphics;
+//    using namespace xe;
+//    using namespace xe::sg;
+//    using namespace xe::gfx;
 //    
 //    SceneLoader::~SceneLoader() {}
 //    

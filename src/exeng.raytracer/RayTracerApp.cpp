@@ -46,11 +46,11 @@
 //}
 //
 //namespace raytracer {
-//    using namespace exeng;
-//    using namespace exeng::scenegraph;
-//    using namespace exeng::graphics;
-//    using namespace exeng::framework;
-//    using namespace exeng::input;
+//    using namespace xe;
+//    using namespace xe::sg;
+//    using namespace xe::gfx;
+//    using namespace xe::fw;
+//    using namespace xe::input;
 //    using namespace raytracer::samplers;
 //    using namespace raytracer::tracers;
 //    
@@ -65,7 +65,7 @@
 //				angle = std::fmod(angle, 360.0f);
 //			}
 //
-//			Matrix4f transform = rotatey(exeng::rad(angle));
+//			Matrix4f transform = rotatey(xe::rad(angle));
 //
 //			node->setTransform(transform);
 //		}
@@ -279,7 +279,7 @@
 //            rotate = rotateDelta;
 //        }
 //        
-//        Matrix4f rotationMatrix = exeng::rotate<float>(rad(rotate), this->camera.getUp());
+//        Matrix4f rotationMatrix = xe::rotate<float>(rad(rotate), this->camera.getUp());
 //        
 //        direction = transform(rotationMatrix, direction);
 //        
@@ -354,17 +354,17 @@
 //#endif
 //}
 //
-////namespace exeng { namespace main {
-////    using namespace exeng;
-////    using namespace exeng::framework;
-////    using namespace exeng::input;
-////    using namespace exeng::graphics;
+////namespace xe { namespace main {
+////    using namespace xe;
+////    using namespace xe::fw;
+////    using namespace xe::input;
+////    using namespace xe::gfx;
 ////
 ////	int main(int argc, char **argv) 
 ////	{
 ////		using namespace raytracer;
-////        using namespace exeng;
-////        using namespace exeng::framework;
+////        using namespace xe;
+////        using namespace xe::fw;
 ////
 ////        int exitCode = 1;
 ////

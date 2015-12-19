@@ -3,7 +3,7 @@
 
 #include <exeng/ui/ControlPrivate.hpp>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
 	class ButtonPrivate : public ControlPrivate {
 	public:
 		virtual ~ButtonPrivate();

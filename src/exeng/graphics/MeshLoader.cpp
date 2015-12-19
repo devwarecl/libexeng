@@ -13,7 +13,7 @@
 
 #include <exeng/graphics/MeshLoader.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     
 	MeshLoader::MeshLoader() {}
 

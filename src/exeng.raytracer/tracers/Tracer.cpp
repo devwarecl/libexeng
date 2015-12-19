@@ -2,9 +2,9 @@
 //#include <exeng.raytracer/tracers/Tracer.hpp>
 //
 //namespace raytracer { namespace tracers {
-//    using namespace exeng;
-//    using namespace exeng::graphics;
-//    using namespace exeng::scenegraph;
+//    using namespace xe;
+//    using namespace xe::gfx;
+//    using namespace xe::sg;
 //    
 //    using namespace raytracer::samplers;
 //    

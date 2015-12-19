@@ -1,6 +1,6 @@
 
 #include <exeng/ui/ControlPrivate.hpp>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
     ControlPrivate::~ControlPrivate() {}
 }}

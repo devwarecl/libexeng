@@ -18,7 +18,7 @@
 #include <exeng/TypeInfo.hpp>
 #include <exeng/input/EventData.hpp>
 
-namespace exeng { namespace input {
+namespace xe { namespace input {
     /**
      * @brief Interface to a event handler. The event handler is the 
      * object responsible of do a action in response for a event.

@@ -21,7 +21,7 @@
 #include <exeng/Boundary.hpp>
 #include <exeng/scenegraph/SceneNodeData.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     /** 
      * @brief 
      */
@@ -60,19 +60,19 @@ namespace exeng { namespace scenegraph {
         Camera();
         virtual ~Camera();
 
-        void setOrientation(const exeng::Vector3f &pos, const exeng::Vector3f& lookAt);
+        void setOrientation(const xe::Vector3f &pos, const xe::Vector3f& lookAt);
         
-        void setPosition(const exeng::Vector3f &position);
-        exeng::Vector3f getPosition() const;
+        void setPosition(const xe::Vector3f &position);
+        xe::Vector3f getPosition() const;
         
-        void setLookAt(const exeng::Vector3f &lookAt);
-        exeng::Vector3f getLookAt() const;
+        void setLookAt(const xe::Vector3f &lookAt);
+        xe::Vector3f getLookAt() const;
         
-        exeng::Vector3f getUp() const;
-        void setUp(const exeng::Vector3f &up);
+        xe::Vector3f getUp() const;
+        void setUp(const xe::Vector3f &up);
         
-        void setViewport(const exeng::Rectf &viewport);
-        exeng::Rectf getViewport() const;
+        void setViewport(const xe::Rectf &viewport);
+        xe::Rectf getViewport() const;
         
         void setProjection(const CameraProjection &proj);
         CameraProjection getProjection() const;

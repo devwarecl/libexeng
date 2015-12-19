@@ -39,7 +39,7 @@
 #include <exeng/graphics/ModernModule.hpp>
 #include <exeng/graphics/LegacyModule.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
     /**
      * @brief Framebuffer clearing flags
@@ -96,7 +96,7 @@ namespace exeng { namespace graphics {
         enum Enum{ User, System, Unknown };
     };
     
-    struct CloseEventData : public exeng::input::EventDataImpl<CloseEventData> {
+    struct CloseEventData : public xe::input::EventDataImpl<CloseEventData> {
         CloseReason::Enum reason = CloseReason::Unknown;
 
 		CloseEventData() {}
@@ -120,7 +120,7 @@ namespace exeng { namespace graphics {
         };
     };
 
-    struct InputEventData : public exeng::input::EventDataImpl<InputEventData> {
+    struct InputEventData : public xe::input::EventDataImpl<InputEventData> {
         ButtonStatus::Enum buttonStatus = ButtonStatus::Release;
         ButtonCode::Enum buttonCode = ButtonCode::None;
 
@@ -139,7 +139,7 @@ namespace exeng { namespace graphics {
     /**
      * @brief Software interface to graphics hardware
      */
-	class EXENGAPI GraphicsDriver : public exeng::input::IEventRaiser {
+	class EXENGAPI GraphicsDriver : public xe::input::IEventRaiser {
     public:
         virtual ~GraphicsDriver() {}
         

@@ -10,28 +10,28 @@
 #include <exeng/scenegraph/Box.hpp>
 #include <exeng/scenegraph/Intersect.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     template<typename Solid>
     class TSolidGeometry : public Geometry {
     public:
         TSolidGeometry();
-        TSolidGeometry(const Solid &solid_, const exeng::graphics::Material* material_);
+        TSolidGeometry(const Solid &solid_, const xe::gfx::Material* material_);
         
         virtual bool hit(const Ray &ray, IntersectInfo *intersectInfo);
         virtual Boxf getBox() const;
     
     public:
         Solid solid;
-        const exeng::graphics::Material* material;
+        const xe::gfx::Material* material;
     };
 }}
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     template<typename Solid>
     TSolidGeometry<Solid>::TSolidGeometry() : material(nullptr) {}
         
     template<typename Solid>
-    TSolidGeometry<Solid>::TSolidGeometry(const Solid &solid_, const exeng::graphics::Material* material_) : solid(solid_), material(material_) {}
+    TSolidGeometry<Solid>::TSolidGeometry(const Solid &solid_, const xe::gfx::Material* material_) : solid(solid_), material(material_) {}
     
     template<typename Solid>
     bool TSolidGeometry<Solid>::hit(const Ray &ray, IntersectInfo *intersectInfo) {

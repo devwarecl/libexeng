@@ -16,7 +16,7 @@
 
 #include <exeng/TypeInfo.hpp>
 
-namespace exeng { namespace input {
+namespace xe { namespace input {
 
 	/**
 	 * @brief Holds specific data of a determined event type.

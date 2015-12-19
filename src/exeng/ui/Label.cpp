@@ -3,7 +3,7 @@
 #include <exeng/ui/Label.hpp>
 #include <exeng/ui/LabelPrivate.hpp>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
 	Label::Label(Window *parent, const std::string &text)  {
 		this->setParent(parent)->setText(text);
 	}

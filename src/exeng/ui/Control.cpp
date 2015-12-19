@@ -6,7 +6,7 @@
 
 #include <cassert>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
     
     TypeInfo Control::getTypeInfo() const {
         return TypeId<Control>();
@@ -121,7 +121,7 @@ namespace exeng { namespace ui {
     }
     
 
-	Control* Control::seSize( const exeng::Size2i &size) {
+	Control* Control::seSize( const xe::Size2i &size) {
 		assert(this->impl != nullptr);
 		
 		this->impl->seSize(size);
@@ -129,14 +129,14 @@ namespace exeng { namespace ui {
 	}
 	
 
-	exeng::Size2i Control::geSize() const {
+	xe::Size2i Control::geSize() const {
 		assert(this->impl != nullptr);
 
 		return this->impl->geSize();
 	}
 
 
-	Control* Control::setPosition( const exeng::Vector2i &pos) {
+	Control* Control::setPosition( const xe::Vector2i &pos) {
 		assert(this->impl != nullptr);
 
 		this->impl->setPosition(pos);
@@ -145,7 +145,7 @@ namespace exeng { namespace ui {
 	}
 
 
-	exeng::Vector2i Control::getPosition() const {
+	xe::Vector2i Control::getPosition() const {
 		assert(this->impl != nullptr);
 
 		return this->impl->getPosition();

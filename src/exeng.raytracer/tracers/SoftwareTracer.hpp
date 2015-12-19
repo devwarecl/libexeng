@@ -14,25 +14,25 @@
 //namespace raytracer { namespace tracers {
 //    class SoftwareTracer : public Tracer {
 //    public:
-//        SoftwareTracer(const exeng::scenegraph::Scene *scene, const raytracer::samplers::Sampler *sampler);
+//        SoftwareTracer(const xe::sg::Scene *scene, const raytracer::samplers::Sampler *sampler);
 //        virtual ~SoftwareTracer();
-//        virtual void render(const exeng::scenegraph::Camera *camera);
+//        virtual void render(const xe::sg::Camera *camera);
 //        
 //    private:
-//        uint32_t getOffset(const exeng::Vector2i &point) const;
+//        uint32_t getOffset(const xe::Vector2i &point) const;
 //        
-//        void putPixel(std::uint32_t *backbuffer, const exeng::Vector2i &point, const std::uint32_t color);
+//        void putPixel(std::uint32_t *backbuffer, const xe::Vector2i &point, const std::uint32_t color);
 //        
-//        std::uint32_t getPixel(std::uint32_t *backbuffer, const exeng::Vector2i &point) const;
+//        std::uint32_t getPixel(std::uint32_t *backbuffer, const xe::Vector2i &point) const;
 //        
-//        exeng::scenegraph::Ray castRay(const exeng::Vector2f &pixel, const exeng::scenegraph::Camera *camera) const;
-//        exeng::scenegraph::Ray castRay(const exeng::Vector2f &pixel, const exeng::scenegraph::Camera *camera, const exeng::Vector2f &sample) const;
-//        exeng::scenegraph::IntersectInfo intersectRay(const std::list<const exeng::scenegraph::SceneNode*> &nodes, const exeng::scenegraph::Ray &ray) const;
+//        xe::sg::Ray castRay(const xe::Vector2f &pixel, const xe::sg::Camera *camera) const;
+//        xe::sg::Ray castRay(const xe::Vector2f &pixel, const xe::sg::Camera *camera, const xe::Vector2f &sample) const;
+//        xe::sg::IntersectInfo intersectRay(const std::list<const xe::sg::SceneNode*> &nodes, const xe::sg::Ray &ray) const;
 //
-//        exeng::Vector4f traceRay(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
-//        exeng::Vector4f traceRayMultisampled(const std::list<const exeng::scenegraph::SceneNode*> &nodeList, const exeng::Vector2i &pixel, const exeng::scenegraph::Camera *camera) const;
+//        xe::Vector4f traceRay(const std::list<const xe::sg::SceneNode*> &nodeList, const xe::Vector2i &pixel, const xe::sg::Camera *camera) const;
+//        xe::Vector4f traceRayMultisampled(const std::list<const xe::sg::SceneNode*> &nodeList, const xe::Vector2i &pixel, const xe::sg::Camera *camera) const;
 //        
-//        void flattenHierarchy(std::list<const exeng::scenegraph::SceneNode*> &out, const exeng::scenegraph::SceneNode* node) const;
+//        void flattenHierarchy(std::list<const xe::sg::SceneNode*> &out, const xe::sg::SceneNode* node) const;
 //    };
 //}}
 //

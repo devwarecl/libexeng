@@ -26,7 +26,7 @@
         static const DataType::Enum Enum = DataTypeEnum;	\
     }
 
-namespace exeng {
+namespace xe {
     
     /**
      * @brief Basic data type enumeration.

@@ -1,6 +1,6 @@
 
 #include <exeng/ui/WindowPrivate.hpp>
 
-namespace exeng { namespace ui { 
+namespace xe { namespace ui { 
     WindowPrivate::~WindowPrivate() {}
 }}

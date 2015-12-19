@@ -18,7 +18,7 @@
 #include <exeng/Boundary.hpp>
 #include <exeng/scenegraph/SceneNodeData.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
         
 	class Ray;
 	struct IntersectInfo;
@@ -42,7 +42,7 @@ namespace exeng { namespace scenegraph {
 		 * @param direction La direccion a la que el rayo apunta.
 		 * @return Un valor 'bool'. True si se detecto la interseccion, y False en caso contrario.
 		 */
-		virtual bool hit( const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo) = 0;
+		virtual bool hit( const xe::sg::Ray &ray, xe::sg::IntersectInfo *intersectInfo) = 0;
 			
 		virtual TypeInfo getTypeInfo() const;
 	};

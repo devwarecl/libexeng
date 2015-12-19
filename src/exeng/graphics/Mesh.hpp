@@ -22,12 +22,12 @@
 #include <exeng/scenegraph/Box.hpp>
 #include <exeng/scenegraph/IntersectInfo.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	
     /**
      * @brief Holds the geometric information about a object, composed of different MeshSubset.
      */
-    class EXENGAPI Mesh : public exeng::scenegraph::Geometry {
+    class EXENGAPI Mesh : public xe::sg::Geometry {
     public:
         explicit Mesh(MeshSubsetPtr subset);
         explicit Mesh(std::vector<MeshSubsetPtr> subsets);
@@ -42,7 +42,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Checks if the specified ray intersects with the Mesh.
          */
-        virtual bool hit(const exeng::scenegraph::Ray &ray, exeng::scenegraph::IntersectInfo *intersectInfo) override;
+        virtual bool hit(const xe::sg::Ray &ray, xe::sg::IntersectInfo *intersectInfo) override;
         
         /**
          * @brief Get the numbers of MeshParts on the Mesh.

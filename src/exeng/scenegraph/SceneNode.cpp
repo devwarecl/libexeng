@@ -19,10 +19,10 @@
 #include <exeng/Exception.hpp>
 #include <exeng/scenegraph/SceneNode.hpp>
 
-using namespace exeng;
-using namespace exeng::scenegraph;
+using namespace xe;
+using namespace xe::sg;
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
     //! SceneNode private data
     struct SceneNode::Private {
@@ -50,7 +50,7 @@ namespace exeng { namespace scenegraph {
     };
 }}
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
         
     SceneNode::SceneNode() {
         this->impl = new SceneNode::Private();

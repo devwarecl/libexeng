@@ -22,7 +22,7 @@
 #  include <GL/glx.h>
 #endif
 
-using namespace exeng;
+using namespace xe;
 
 namespace gl {
     void check() {

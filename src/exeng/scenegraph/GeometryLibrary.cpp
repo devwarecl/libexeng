@@ -4,8 +4,8 @@
 #include <cassert>
 #include <map>
 
-namespace exeng { namespace scenegraph {
-	using namespace exeng::graphics;
+namespace xe { namespace sg {
+	using namespace xe::gfx;
 
 	struct GeometryLibrary::Private {
 		std::map<std::string, GeometryPtr> geometries;

@@ -20,7 +20,7 @@
 //#include <exeng/Enum.hpp>
 //#include <exeng/TFlags.hpp>
 //
-//namespace exeng {
+//namespace xe {
 //    /**
 //    * @brief Resource status enumeration 
 //    */

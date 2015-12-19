@@ -23,7 +23,7 @@
 #include <exeng/graphics/PixelFormat.hpp>
 #include <exeng/graphics/ColorFormat.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     
     /**
      * @brief Faces for CubeMap textures.
@@ -78,7 +78,7 @@ namespace exeng { namespace graphics {
         /**
          * @brief Get the size, in texels, of the texture.
          */
-        virtual exeng::Vector3i getSize() const = 0;
+        virtual xe::Vector3i getSize() const = 0;
         
         /**
          * @brief Get the native handle of the underlying graphics API.

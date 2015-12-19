@@ -1,6 +1,6 @@
 
 #include <exeng/ui/ButtonPrivate.hpp>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
     ButtonPrivate::~ButtonPrivate() {}
 }}

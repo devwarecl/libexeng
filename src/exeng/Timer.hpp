@@ -17,7 +17,7 @@
 #include <exeng/Config.hpp>
 #include <cstdint>
 
-namespace exeng {
+namespace xe {
     class EXENGAPI Timer {
     public:
         /**

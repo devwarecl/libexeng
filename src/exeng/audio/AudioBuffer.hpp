@@ -16,7 +16,7 @@
 
 #include <exeng/Object.hpp>
 
-namespace exeng { namespace audio {
+namespace xe { namespace sfx {
 
 	struct AudioBufferFormat {};
 

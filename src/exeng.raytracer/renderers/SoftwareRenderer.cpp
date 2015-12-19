@@ -13,10 +13,10 @@
 #include "exeng.raytracer/samplers/Sampler.hpp"
 #include "exeng.raytracer/samplers/JitteredSampler.hpp"
 
-namespace exeng { namespace raytracer { namespace renderers {
+namespace xe { namespace raytracer { namespace renderers {
 
-    using namespace exeng::graphics;
-    using namespace exeng::scenegraph;
+    using namespace xe::gfx;
+    using namespace xe::sg;
 	using namespace ::raytracer::samplers;
 
 	

@@ -19,9 +19,9 @@
 #include <exeng/Vector.hpp>
 #include <exeng/graphics/VertexArray.hpp>
 
-using namespace exeng::scenegraph;
+using namespace xe::sg;
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     typedef std::vector<std::unique_ptr<MeshSubset>> MeshSubsetVector;
 
     /**
@@ -244,17 +244,17 @@ namespace exeng { namespace graphics {
 /*
  * Mesh implementation
  */
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     struct Mesh::Private {
         MeshSubsetVector    subsets;    //! Vector of MeshPart pointers
         Boxf                box;        //! Mesh collision box.
     };
     
-    Mesh::Mesh(std::unique_ptr<exeng::graphics::MeshSubset> subset) : impl(new Mesh::Private()) {
+    Mesh::Mesh(std::unique_ptr<xe::gfx::MeshSubset> subset) : impl(new Mesh::Private()) {
         this->impl->subsets.push_back(std::move(subset));
     }
 
-    Mesh::Mesh(std::vector<std::unique_ptr<exeng::graphics::MeshSubset>> subsets) : impl(new Mesh::Private()) {
+    Mesh::Mesh(std::vector<std::unique_ptr<xe::gfx::MeshSubset>> subsets) : impl(new Mesh::Private()) {
         this->impl->subsets = std::move(subsets);
     }
     

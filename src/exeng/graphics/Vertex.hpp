@@ -14,7 +14,7 @@
 #include "../Vector.hpp"
 #include "VertexFormat.hpp"
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	template<typename AttribType>
 	struct Attrib {

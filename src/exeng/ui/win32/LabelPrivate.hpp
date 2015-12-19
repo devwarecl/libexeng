@@ -4,7 +4,7 @@
 
 #include <exeng/ui/win32/ControlPrivate.hpp>
 
-namespace exeng { namespace ui { namespace win32 {
+namespace xe { namespace ui { namespace win32 {
 	class LabelPrivateWin32 : public ControlPrivateWin32 {
 	public:
 		LabelPrivateWin32(void *parentHandle);

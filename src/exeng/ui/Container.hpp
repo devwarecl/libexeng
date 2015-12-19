@@ -4,7 +4,7 @@
 
 #include <exeng/Object.hpp>
 
-namespace exeng {
+namespace xe {
 	/** 
 	* @brief Generic, dynamic object container. Specifically designed for the control management. 
 	*/

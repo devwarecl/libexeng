@@ -4,7 +4,7 @@
 
 #include <exeng/Buffer.hpp>
 
-namespace exeng {
+namespace xe {
 
 	/**
 	 * @brief Wrapper over a raw C buffer.

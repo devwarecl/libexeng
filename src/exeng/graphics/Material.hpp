@@ -26,7 +26,7 @@
 #  include <sstream>
 #endif
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
     class EXENGAPI Texture;
     class EXENGAPI ShaderProgram;
@@ -193,10 +193,10 @@ namespace exeng { namespace graphics {
         /* Serializable implementation */
     public:
         virtual bool isSerializable() const;
-        virtual void serialize(exeng::io::Stream *outStream) const;
+        virtual void serialize(xe::io::Stream *outStream) const;
         
         virtual bool isDeserializable() const;
-        virtual void deserialize(const exeng::io::Stream *inStream);
+        virtual void deserialize(const xe::io::Stream *inStream);
         
     private:
         struct Private;
@@ -208,7 +208,7 @@ namespace exeng { namespace graphics {
 
 
 // MaterialAttrib implementation
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
     inline MaterialAttrib::MaterialAttrib() 
     {
@@ -257,7 +257,7 @@ namespace exeng { namespace graphics {
 }}
 
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     inline MaterialFormat::MaterialFormat() {}
     
     inline MaterialFormat::MaterialFormat(const std::vector<MaterialAttrib> &attribs) 

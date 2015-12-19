@@ -1,6 +1,6 @@
 
 #include <exeng/ui/LabelPrivate.hpp>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
     LabelPrivate::~LabelPrivate() {}
 }}

@@ -14,7 +14,7 @@
 #ifndef __EXENG_ENUM_HPP__
 #define __EXENG_ENUM_HPP__
 
-namespace exeng {
+namespace xe {
 
     /**
      * @brief Base class for 'strogly typed' enumerations

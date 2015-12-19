@@ -7,7 +7,7 @@
 #include <exeng/Vector.hpp>
 #include <exeng/Size.hpp>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
     class Control;
     class EXENGAPI ControlPrivate {
     public:
@@ -28,11 +28,11 @@ namespace exeng { namespace ui {
         virtual void setVisible(bool visible) = 0;
         virtual bool getVisible() const = 0;
 
-        virtual void seSize( const exeng::Size2i &size) = 0;
-        virtual exeng::Size2i geSize() const = 0;
+        virtual void seSize( const xe::Size2i &size) = 0;
+        virtual xe::Size2i geSize() const = 0;
 
-        virtual void setPosition( const exeng::Vector2i &pos) = 0;
-        virtual exeng::Vector2i getPosition() const = 0;
+        virtual void setPosition( const xe::Vector2i &pos) = 0;
+        virtual xe::Vector2i getPosition() const = 0;
         
     public:
         static ControlPrivate* new_();

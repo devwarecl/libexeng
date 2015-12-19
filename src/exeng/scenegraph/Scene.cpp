@@ -24,10 +24,10 @@
 #include <exeng/scenegraph/Camera.hpp>
 #include <exeng/scenegraph/Light.hpp>
 
-namespace exeng { namespace scenegraph {
-    using namespace exeng;
-    using namespace exeng::graphics;
-    using namespace exeng::scenegraph;
+namespace xe { namespace sg {
+    using namespace xe;
+    using namespace xe::gfx;
+    using namespace xe::sg;
 
     struct Scene::Private {
         Vector4f backColor = {0.0f, 0.0f, 0.0f, 1.0f};

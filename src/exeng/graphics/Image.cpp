@@ -17,11 +17,11 @@
 
 #include <exeng/graphics/Image.hpp>
 
-using namespace exeng;
-using namespace exeng::graphics;
+using namespace xe;
+using namespace xe::gfx;
 
-namespace exeng {
-    namespace graphics {
+namespace xe {
+    namespace gfx {
         struct Image::Private {
             Vector3i size;
             ColorFormat format;
@@ -35,8 +35,8 @@ namespace exeng {
 }
 
 
-namespace exeng {
-    namespace graphics {
+namespace xe {
+    namespace gfx {
         Image::Image() : Data(nullptr) {
         }
         
@@ -78,13 +78,13 @@ namespace exeng {
         }
         
         
-        exeng::Vector3i Image::geSize() const {
+        xe::Vector3i Image::geSize() const {
             assert(this->Data != nullptr);
             return this->Data->size;
         }
         
         
-        void Image::initialize(const exeng::Vector3i& size, ColorFormat format, PixelType type) {
+        void Image::initialize(const xe::Vector3i& size, ColorFormat format, PixelType type) {
             std::uint32_t imageSize;
             
             //Validar el formato y el tipo de datos

@@ -18,7 +18,7 @@
 #if defined (EXENG_WINDOWS)
 #include <Windows.h>
 
-namespace exeng { namespace system {
+namespace xe { namespace sys {
 
 	static std::string getLastErrorStrWin32() {
 		// error string formatting WinAPI call extracted from

@@ -9,7 +9,7 @@
 #  include <iostream>
 #endif
 
-namespace exeng { namespace util {
+namespace xe { namespace util {
 #if defined(EXENG_WINDOWS)
 	void MessageBox::show(const std::string &title, const std::string &message, MessageBoxIcon::Enum icon)
 	{

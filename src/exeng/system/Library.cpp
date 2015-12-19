@@ -19,7 +19,7 @@
 #include <exeng/system/Library.hpp>
 #include <exeng/system/LibraryPrivate.hpp>
 
-namespace exeng { namespace system {
+namespace xe { namespace sys {
 
 	Library::Library()
 	{

@@ -14,7 +14,7 @@
 //#include "Resource.hpp"
 //#include <exeng/Exception.hpp>
 //
-//namespace exeng {
+//namespace xe {
 //    Resource::~Resource() 
 //	{
 //		this->release();

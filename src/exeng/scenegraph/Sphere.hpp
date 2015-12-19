@@ -18,7 +18,7 @@
 #include <exeng/scenegraph/Ray.hpp>
 #include <exeng/scenegraph/IntersectInfo.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
 	class Ray;
 	struct IntersectInfo;
@@ -40,12 +40,12 @@ namespace exeng { namespace scenegraph {
 		 * @param radius El radio de la esfera, en unidades de mundo.
 		 * @param center La posicion en el espacio, en donde estara ubicado el centro de la esfera.
 		 */
-		explicit Sphere(float radius, const exeng::Vector3f &center);
+		explicit Sphere(float radius, const xe::Vector3f &center);
     
 		/**
 		 * @brief Inicializa todos los atributos de la esfera de una sola vez.
 		 */
-		void setAttributes(float radius, const exeng::Vector3f &center);
+		void setAttributes(float radius, const xe::Vector3f &center);
     
 		/**
 		 * @brief Establece el radio de la esfera
@@ -55,7 +55,7 @@ namespace exeng { namespace scenegraph {
 		/**
 		 * @brief Establece la posicion en donde estara ubicado el centro de la esfera.
 		 */
-		void setCenter(const exeng::Vector3f &center);
+		void setCenter(const xe::Vector3f &center);
     
 		/**
 		 * @brief Devuelve el radio actual de la esfera
@@ -65,7 +65,7 @@ namespace exeng { namespace scenegraph {
 		/**
 		 * @brief Devuelve la posicion en donde esta ubicado el centro de la esfera
 		 */
-		exeng::Vector3f getCenter() const;
+		xe::Vector3f getCenter() const;
     
 		/**
 		 * @brief Calcula la interseccion entre el rayo indicado, y la esfera.
@@ -83,10 +83,10 @@ namespace exeng { namespace scenegraph {
 		bool operator!= (const Sphere &sphere) const;
     
 	private:
-		exeng::Vector3f center;
+		xe::Vector3f center;
 		float radius;
 
-		friend std::ostream& operator<< (std::ostream &os, const exeng::scenegraph::Sphere &sphere)
+		friend std::ostream& operator<< (std::ostream &os, const xe::sg::Sphere &sphere)
 		{
 			std::cout << sphere.getCenter() << ", " << sphere.getRadius();
 			return os;
@@ -95,21 +95,21 @@ namespace exeng { namespace scenegraph {
 
 
 	inline Sphere::Sphere() {
-		this->setAttributes(1.0f, exeng::Vector3f(0.0));
+		this->setAttributes(1.0f, xe::Vector3f(0.0));
 	}
 
 
 	inline Sphere::Sphere(float radius) {
-		this->setAttributes(radius, exeng::Vector3f(0.0));
+		this->setAttributes(radius, xe::Vector3f(0.0));
 	}
 
 
-	inline Sphere::Sphere(float radius, const exeng::Vector3f &center) {
+	inline Sphere::Sphere(float radius, const xe::Vector3f &center) {
 		this->setAttributes(radius, center);
 	}
 
 
-	inline void Sphere::setAttributes(float radius, const exeng::Vector3f &center){
+	inline void Sphere::setAttributes(float radius, const xe::Vector3f &center){
 		this->setRadius(radius);
 		this->setCenter(center);
 	}
@@ -124,7 +124,7 @@ namespace exeng { namespace scenegraph {
 	}
 
 
-	inline void Sphere::setCenter(const exeng::Vector3f &center) {
+	inline void Sphere::setCenter(const xe::Vector3f &center) {
 		this->center = center;
 	}
 
@@ -134,7 +134,7 @@ namespace exeng { namespace scenegraph {
 	}
 
 
-	inline exeng::Vector3f Sphere::getCenter() const{
+	inline xe::Vector3f Sphere::getCenter() const{
 		return this->center;
 	}
 

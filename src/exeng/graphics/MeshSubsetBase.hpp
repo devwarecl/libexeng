@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	template<typename BufferImpl>
     class MeshSubsetBase : public MeshSubset {

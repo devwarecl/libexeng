@@ -6,7 +6,7 @@
 #include <exeng/Enum.hpp>
 #include <exeng/Config.hpp>
 
-namespace exeng { namespace util {
+namespace xe { namespace util {
 
 	struct MessageBoxIcon : public Enum {
 		enum Enum {

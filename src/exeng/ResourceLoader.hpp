@@ -7,7 +7,7 @@
 //#include <exeng/Config.hpp>
 //#include <exeng/Resource.hpp>
 //
-//namespace exeng {
+//namespace xe {
 //	/**
 //	 * @brief Resource loader interface.
 //	 */

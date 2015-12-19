@@ -20,7 +20,7 @@
 #include <stdexcept>
 #include <memory>
 
-namespace exeng {
+namespace xe {
 	HeapBuffer::HeapBuffer(const int size) {
 		void* data = std::malloc(size);
 

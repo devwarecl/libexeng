@@ -23,10 +23,10 @@
 
 #include "exeng.raytracer/samplers/Sampler.hpp"
 
-namespace exeng { namespace raytracer { namespace renderers {
+namespace xe { namespace raytracer { namespace renderers {
 
-	using namespace exeng::graphics;
-	using namespace exeng::scenegraph;
+	using namespace xe::gfx;
+	using namespace xe::sg;
 	using namespace ::raytracer::samplers;
 
 	// ClearSynthesisData
@@ -85,8 +85,8 @@ namespace exeng { namespace raytracer { namespace renderers {
 			Sampler *sampler
 		);
 
-        exeng::graphics::Texture *renderTarget = nullptr;
-        const exeng::graphics::MaterialLibrary *materialLibrary = nullptr;
+        xe::gfx::Texture *renderTarget = nullptr;
+        const xe::gfx::MaterialLibrary *materialLibrary = nullptr;
 
         Matrix4f modelView = identity<float, 4>();
 
@@ -99,7 +99,7 @@ namespace exeng { namespace raytracer { namespace renderers {
 
 		std::unique_ptr<FunctorPack> functors;
 
-        std::vector<exeng::scenegraph::Ray> raysData;
+        std::vector<xe::sg::Ray> raysData;
         
 		cl::Buffer raysBuffer;
 		cl::Buffer synthesisBuffer;
@@ -129,15 +129,15 @@ namespace exeng { namespace raytracer { namespace renderers {
 
         static std::string clErrorToString(cl_int errCode);
         static Vector2i indexToCoord(int index, int width, int height);
-        static cl::Buffer createBuffer(cl::Context &context, const exeng::graphics::MaterialLibrary *library);
+        static cl::Buffer createBuffer(cl::Context &context, const xe::gfx::MaterialLibrary *library);
 
-        void setRenderTarget(exeng::graphics::Texture *renderTarget);
+        void setRenderTarget(xe::gfx::Texture *renderTarget);
 
-        void generateRays(const exeng::scenegraph::Camera *camera);
+        void generateRays(const xe::sg::Camera *camera);
 
         void clearSynthesisBuffer();
 
-	    void computeSynthesisBuffer(const exeng::scenegraph::SceneNodeData *nodeData);
+	    void computeSynthesisBuffer(const xe::sg::SceneNodeData *nodeData);
 
 	    void computeImage();
 

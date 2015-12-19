@@ -17,7 +17,7 @@
 //#include <exeng/Resource.hpp>
 //#include <exeng/ResourceLoader.hpp>
 //
-//namespace exeng {
+//namespace xe {
 //    /**
 //     * @brief Resource manager class.
 //	 *

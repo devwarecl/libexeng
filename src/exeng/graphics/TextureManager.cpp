@@ -5,7 +5,7 @@
 #include <exeng/ProductManagerImpl.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	struct TextureManager::Private {
 		GraphicsDriver *graphicsDriver = nullptr;

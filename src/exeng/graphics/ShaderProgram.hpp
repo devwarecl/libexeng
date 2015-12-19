@@ -17,7 +17,7 @@
 #include <memory>
 #include <exeng/Object.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
     class EXENGAPI Shader;
 

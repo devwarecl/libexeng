@@ -18,7 +18,7 @@
 #include <exeng/Object.hpp>
 // #include <iostream>
 
-namespace exeng {
+namespace xe {
 #if defined (EXENG_DEBUG)
 	int count = 0;
 #endif
@@ -74,7 +74,7 @@ namespace exeng {
     }
 
     
-    void Object::serialize(exeng::io::Stream *outStream) const {
+    void Object::serialize(xe::io::Stream *outStream) const {
         throw std::logic_error("Object::serialize must be implemented.");
     }
 
@@ -84,7 +84,7 @@ namespace exeng {
     }
 
     
-    void Object::deserialize(const exeng::io::Stream *inStream) {
+    void Object::deserialize(const xe::io::Stream *inStream) {
         throw std::logic_error("Object::deserialize must be implemented.");
     }
 }

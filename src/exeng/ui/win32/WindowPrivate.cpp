@@ -5,7 +5,7 @@
 
 #include <exeng/ui/win32/WindowPrivate.hpp>
 
-namespace exeng { namespace ui { namespace win32 {
+namespace xe { namespace ui { namespace win32 {
 
 	WindowPrivateWin32::WindowPrivateWin32() {
 		const char windowClassName[] = "WindowClassName";

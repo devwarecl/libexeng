@@ -19,7 +19,7 @@
 //#include <boost/checked_delete.hpp>
 //#include <exeng/Exception.hpp>
 //
-//namespace exeng {
+//namespace xe {
 //
 //	struct ResourceManager::Impl {
 //		mutable std::map<std::string, ResourcePtr> resources;

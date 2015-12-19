@@ -23,7 +23,7 @@
 #include <exeng/DataType.hpp>
 #include <exeng/Vector.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
     /**
      * @brief VertexField enumeration

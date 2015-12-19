@@ -16,10 +16,10 @@
 #include <cassert>
 #include <boost/checked_delete.hpp>
 
-using namespace exeng;
-using namespace exeng::scenegraph;
+using namespace xe;
+using namespace xe::sg;
 
-namespace exeng{ namespace scenegraph {
+namespace xe{ namespace sg {
     struct Light::Private {
         Vector3f position;
         Vector3f target;
@@ -28,7 +28,7 @@ namespace exeng{ namespace scenegraph {
     };
 }}
 
-namespace exeng{ namespace scenegraph {
+namespace xe{ namespace sg {
     Light::Light() : impl(new Light::Private()) {
     }
         

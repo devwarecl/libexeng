@@ -23,7 +23,7 @@
 #include <exeng/io/Stream.hpp>
 #include <exeng/HeapBuffer.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	struct MaterialLayer::Private {
 		Texture* texture = nullptr;
 	};
@@ -59,7 +59,7 @@ namespace exeng { namespace graphics {
 
 
 // Material implementation
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	static const int LayerCount = 4;
     
@@ -256,7 +256,7 @@ namespace exeng { namespace graphics {
         return false;
     }
     
-    void Material::serialize(exeng::io::Stream *out) const {
+    void Material::serialize(xe::io::Stream *out) const {
         assert(this->impl != nullptr);
     }
     
@@ -266,7 +266,7 @@ namespace exeng { namespace graphics {
         return false;
     }
     
-    void Material::deserialize(const exeng::io::Stream *inStream) {
+    void Material::deserialize(const xe::io::Stream *inStream) {
         assert(this->impl != nullptr);
     }
 }}

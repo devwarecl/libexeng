@@ -3,7 +3,7 @@
 
 #include <exeng/scenegraph/Scene.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 	template<typename MatrixType>
 	class TransformStack {
 	public:
@@ -30,7 +30,7 @@ namespace exeng { namespace scenegraph {
 	};
 }}
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     Matrix4f RenderWrapper::getViewMatrix(const Camera *camera) {
         Vector3f position = camera->getPosition();
 		Vector3f lookAt = camera->getLookAt();
@@ -47,9 +47,9 @@ namespace exeng { namespace scenegraph {
     }
 }}
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
-    using namespace exeng::graphics;
+    using namespace xe::gfx;
 
     struct RasterizerRenderWrapper::Private {
         GraphicsDriver* driver = nullptr;
@@ -83,14 +83,14 @@ namespace exeng { namespace scenegraph {
 	}
 
     void RasterizerRenderWrapper::beginFrame(const Vector4f &clearColor) {
-        this->getGraphicsDriver()->beginFrame(clearColor, exeng::graphics::ClearFlags::ColorDepth);
+        this->getGraphicsDriver()->beginFrame(clearColor, xe::gfx::ClearFlags::ColorDepth);
     }
 
     void RasterizerRenderWrapper::endFrame() {
         this->getGraphicsDriver()->endFrame();
     }
 
-	void RasterizerRenderWrapper::renderNodeData(const exeng::scenegraph::SceneNodeData *data) {
+	void RasterizerRenderWrapper::renderNodeData(const xe::sg::SceneNodeData *data) {
 		assert(this);
 		assert(this->impl);
 
@@ -101,12 +101,12 @@ namespace exeng { namespace scenegraph {
 		assert(driver->getModernModule());
 
 		if (info == TypeId<Mesh>()) {
-			const auto mesh = static_cast<const exeng::graphics::Mesh*>(data);
+			const auto mesh = static_cast<const xe::gfx::Mesh*>(data);
 
 			assert(mesh);
 
 			for (int i=0; i<mesh->getSubsetCount(); ++i) {
-				const exeng::graphics::MeshSubset *subset = mesh->getSubset(i);
+				const xe::gfx::MeshSubset *subset = mesh->getSubset(i);
 
 				assert(mesh);
 
@@ -121,7 +121,7 @@ namespace exeng { namespace scenegraph {
 	}
 }}
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
     struct GenericSceneRenderer::Private {
         TransformStack<Matrix4f> transformStack;

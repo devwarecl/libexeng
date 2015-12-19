@@ -13,7 +13,7 @@
 #include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/Primitive.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     /**
      * @brief MeshSubset
      **/

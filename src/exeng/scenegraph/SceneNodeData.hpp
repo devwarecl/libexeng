@@ -17,7 +17,7 @@
 
 #include <exeng/Object.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
 /**
  * @brief Base class for display data in the scene graph. Can be any multi-media element.

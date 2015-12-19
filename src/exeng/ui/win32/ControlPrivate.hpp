@@ -9,11 +9,11 @@
 #include <Windows.h>
 #include <stdexcept>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
 	class EXENGAPI Control;
 }}
 
-namespace exeng { namespace ui { namespace win32 {
+namespace xe { namespace ui { namespace win32 {
 	class WindowsException : public std::runtime_error {
 	public:
 		WindowsException(DWORD errorCode) : runtime_error("") {
@@ -65,11 +65,11 @@ namespace exeng { namespace ui { namespace win32 {
 		virtual void setVisible(bool visible);
 		virtual bool getVisible() const;
 
-		virtual void seSize( const exeng::Size2i &size);
-		virtual exeng::Size2i geSize() const;
+		virtual void seSize( const xe::Size2i &size);
+		virtual xe::Size2i geSize() const;
 
-		virtual void setPosition( const exeng::Vector2i &pos);
-		virtual exeng::Vector2i getPosition() const;
+		virtual void setPosition( const xe::Vector2i &pos);
+		virtual xe::Vector2i getPosition() const;
         
 	public:
 		HINSTANCE hInstance;

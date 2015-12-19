@@ -16,7 +16,7 @@
 #if defined(EXENG_WINDOWS)
 #include <Windows.h>
 
-namespace exeng {
+namespace xe {
     // thin wrapper around GetTickCount
     uint32_t Timer::getTime() {
         return static_cast<uint32_t>(::GetTickCount());

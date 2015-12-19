@@ -22,10 +22,10 @@
 #include <exeng/graphics/MeshManager.hpp>
 #include <exeng/scenegraph/SceneManager.hpp>
 
-namespace exeng {
-	using namespace exeng::system;
-	using namespace exeng::graphics;
-	using namespace exeng::scenegraph;
+namespace xe {
+	using namespace xe::sys;
+	using namespace xe::gfx;
+	using namespace xe::sg;
 
     struct Core::Private 
 	{
@@ -98,23 +98,23 @@ namespace exeng {
         return Version(0, 0, 1, 1);
     }
     
-	exeng::graphics::TextureManager * Core::getTextureManager() 
+	xe::gfx::TextureManager * Core::getTextureManager() 
 	{
         assert(this->impl != nullptr);
         return this->impl->textureManager.get();
     }
 
-	const exeng::graphics::TextureManager * Core::getTextureManager() const
+	const xe::gfx::TextureManager * Core::getTextureManager() const
 	{
         assert(this->impl != nullptr);
         return this->impl->textureManager.get();
     }
 
-	exeng::scenegraph::SceneManager* Core::getSceneManager() {
+	xe::sg::SceneManager* Core::getSceneManager() {
 		return &this->impl->sceneManager;
 	}
 
-    const exeng::scenegraph::SceneManager* Core::getSceneManager() const {
+    const xe::sg::SceneManager* Core::getSceneManager() const {
 		return &this->impl->sceneManager;
 	}
 }

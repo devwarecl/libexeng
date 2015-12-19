@@ -4,7 +4,7 @@
 
 #include <exeng/Config.hpp>
 
-namespace exeng {
+namespace xe {
     class EXENGAPI ISerializable {
     public:
         virtual ~ISerializable();

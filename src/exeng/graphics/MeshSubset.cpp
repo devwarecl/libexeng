@@ -3,6 +3,6 @@
 #include <boost/checked_delete.hpp>
 #include <exeng/graphics/MeshSubset.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     MeshSubset::~MeshSubset() {}
 }}

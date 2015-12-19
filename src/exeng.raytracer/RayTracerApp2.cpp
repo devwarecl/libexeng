@@ -27,7 +27,7 @@
 #include "samplers/JitteredSampler.hpp"
 
 ///*
-//namespace exeng { namespace graphics {
+//namespace xe { namespace gfx {
 //
 //	class TextureLoaderPng : public TextureLoader {
 //	public:
@@ -213,12 +213,12 @@
 //	};
 //}}
 //*/
-namespace exeng { namespace raytracer {
-    using namespace exeng::graphics;
-    using namespace exeng::scenegraph;
-    using namespace exeng::input;
-    using namespace exeng::framework;
-    using namespace exeng::raytracer::renderers;
+namespace xe { namespace raytracer {
+    using namespace xe::gfx;
+    using namespace xe::sg;
+    using namespace xe::input;
+    using namespace xe::fw;
+    using namespace xe::raytracer::renderers;
 
 	class ButtonPressHandler : public IEventHandler {
 	public:
@@ -454,11 +454,11 @@ namespace exeng { namespace raytracer {
     }
 }}
 
-namespace exeng { namespace main {
+namespace xe { namespace main {
     int main(int argc, char **argv) {
-        using namespace exeng;
-        using namespace exeng::framework;
-        using namespace exeng::raytracer;
+        using namespace xe;
+        using namespace xe::fw;
+        using namespace xe::raytracer;
 
         return Application::execute<RayTracerApp2>(argc, argv);
     }

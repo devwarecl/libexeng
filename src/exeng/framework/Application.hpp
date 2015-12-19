@@ -17,7 +17,7 @@
 #include <exeng/Enum.hpp>
 #include <exeng/Core.hpp>
 
-namespace exeng { namespace framework {
+namespace xe { namespace fw {
     
     /**
      * @brief Application status

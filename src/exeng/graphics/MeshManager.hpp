@@ -26,7 +26,7 @@
 #include <exeng/graphics/IndexFormat.hpp>
 #include <exeng/graphics/Forward.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     /**
     * @brief Mesh manager class.
     */

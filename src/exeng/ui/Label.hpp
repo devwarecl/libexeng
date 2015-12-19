@@ -4,7 +4,7 @@
 
 #include <exeng/ui/Control.hpp>
 
-namespace exeng { namespace ui {
+namespace xe { namespace ui {
 	class LabelPrivate;
 	class EXENGAPI Window;
 	class EXENGAPI Label : public Control {

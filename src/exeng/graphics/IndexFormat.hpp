@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <cstdint>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     struct IndexFormat : public Enum {
         enum Enum {
 			Unknown=0,

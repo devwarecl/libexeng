@@ -1,7 +1,7 @@
 
 #include "SceneNodeAnimator.hpp"
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
 
 	SceneNodeAnimator::SceneNodeAnimator()
 	{

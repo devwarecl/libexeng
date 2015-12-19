@@ -33,7 +33,7 @@
 
 namespace fs = boost::filesystem;
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	
     struct MeshManager::Private {
 		ProductManagerImpl<MeshLoader, Mesh> manager;

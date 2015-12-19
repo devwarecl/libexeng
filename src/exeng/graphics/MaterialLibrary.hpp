@@ -7,7 +7,7 @@
 #include <exeng/graphics/Material.hpp>
 #include <exeng/graphics/ShaderProgram.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	/**
 	 * @brief Manager class for material collections
 	 */

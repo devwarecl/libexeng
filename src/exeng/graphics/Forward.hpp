@@ -4,7 +4,7 @@
 
 #include <exeng/Config.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 	class EXENGAPI GraphicsDriver; 
 	class EXENGAPI Texture;
     class EXENGAPI Mesh;    

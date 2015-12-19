@@ -13,5 +13,5 @@
 
 #include <exeng/graphics/VertexFormat.hpp>
 
-namespace exeng  { namespace graphics {   
+namespace xe  { namespace gfx {   
 }}

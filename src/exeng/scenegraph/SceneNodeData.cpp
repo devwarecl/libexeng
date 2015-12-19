@@ -13,7 +13,7 @@
 
 #include <exeng/scenegraph/SceneNodeData.hpp>
 
-namespace exeng { namespace scenegraph {
+namespace xe { namespace sg {
     SceneNodeData::~SceneNodeData()  { 
     }
 }}

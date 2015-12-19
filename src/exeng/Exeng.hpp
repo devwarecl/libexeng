@@ -71,21 +71,21 @@
 /**
  * @brief The common namespace for the engine.
  */
-namespace exeng {
+namespace xe {
 	/**
 	 * @brief Classes for rendering raw 2D and 3D graphics.
 	 */
-    namespace graphics {}
+    namespace gfx {}
 
     /**
 	 * @brief Loading for plugins and dynamic linking libraries.
 	 */
-    namespace system {}
+    namespace sys {}
     
     /**
      * @brief Scenegraph module, for rendering 3D graphics.
      */
-    namespace scenegraph {}
+    namespace sg {}
 }
 
 #endif  //__EXENG_HPP__

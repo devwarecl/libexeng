@@ -17,7 +17,7 @@
 
 #include <exeng/TypeInfo.hpp>
 
-namespace exeng {
+namespace xe {
 	const std::string invalidTypePtr = "TypeInfo: Empty TypeInfo value.";
 
 	TypeInfo::TypeInfo() : typeInfo(nullptr) {}
@@ -32,7 +32,7 @@ namespace exeng {
 
 	const std::type_info& TypeInfo::getStdTypeInfo() const {
 		if (this->isEmpty() == true) {
-			throw std::logic_error(exeng::invalidTypePtr);
+			throw std::logic_error(xe::invalidTypePtr);
         }
 
 		return *this->typeInfo;

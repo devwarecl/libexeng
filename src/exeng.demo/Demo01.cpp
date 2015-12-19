@@ -17,11 +17,11 @@
 #include "Vertex.glsl.hpp"
 #include "Assets.xml.hpp"
 
-using namespace exeng;
-using namespace exeng::framework;
-using namespace exeng::graphics;
-using namespace exeng::scenegraph;
-using namespace exeng::input;
+using namespace xe;
+using namespace xe::fw;
+using namespace xe::gfx;
+using namespace xe::sg;
+using namespace xe::input;
 
 /*
 class SpatialAnimator : public SceneNodeAnimator {

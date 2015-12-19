@@ -8,7 +8,7 @@
 #include <exeng/Matrix.hpp>
 #include <exeng/HeapBuffer.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	// TODO: Replace with a Quaternion
 	struct Rotation {
@@ -114,7 +114,7 @@ namespace exeng { namespace graphics {
 }}
 
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
 	int RectGenerator::getVertexBufferSize(const VertexFormat *format) const {
 		return 4 * format->getSize();

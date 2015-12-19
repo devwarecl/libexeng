@@ -11,30 +11,30 @@
 
 #include "samplers/Sampler.hpp"
 
-namespace exeng { namespace raytracer {
+namespace xe { namespace raytracer {
 
 	class ButtonPressHandler;
 	class MoveAction;
 
-    class RayTracerApp2 : public exeng::framework::GraphicsApplication, public exeng::input::IEventHandler {
+    class RayTracerApp2 : public xe::fw::GraphicsApplication, public xe::input::IEventHandler {
     public:
         RayTracerApp2();
         virtual ~RayTracerApp2();
 
     public:
-        virtual exeng::BufferPtr getAssetsXmlData() override;
-        virtual exeng::graphics::GraphicsDriverPtr createGraphicsDriver() override;
-        virtual exeng::scenegraph::AssetLibraryPtr createAssetLibrary() override;
-        virtual exeng::scenegraph::SceneRendererPtr createSceneRenderer(exeng::graphics::GraphicsDriver *graphicsDriver) override;
+        virtual xe::BufferPtr getAssetsXmlData() override;
+        virtual xe::gfx::GraphicsDriverPtr createGraphicsDriver() override;
+        virtual xe::sg::AssetLibraryPtr createAssetLibrary() override;
+        virtual xe::sg::SceneRendererPtr createSceneRenderer(xe::gfx::GraphicsDriver *graphicsDriver) override;
         virtual bool onInitialize() override;
 
-        virtual void handleEvent(const exeng::input::EventData &data) override;
+        virtual void handleEvent(const xe::input::EventData &data) override;
 
         virtual void update(float seconds) override;
         virtual void render() override;
 
 	private:
-		void updateNodeRotation(float seconds, exeng::scenegraph::SceneNode *node);
+		void updateNodeRotation(float seconds, xe::sg::SceneNode *node);
 
 		void updateCamera(float seconds);
 
@@ -42,9 +42,9 @@ namespace exeng { namespace raytracer {
         std::string RayTracerApp2::getPluginPath();
 
     private:
-        exeng::scenegraph::Camera *camera = nullptr;
-        exeng::graphics::Mesh *screenMesh = nullptr;
-        exeng::graphics::Material *screenMaterial = nullptr;
+        xe::sg::Camera *camera = nullptr;
+        xe::gfx::Mesh *screenMesh = nullptr;
+        xe::gfx::Material *screenMaterial = nullptr;
 
 		std::unique_ptr<ButtonPressHandler> buttonPressHandler;
 		std::unique_ptr<MoveAction> moveAction;

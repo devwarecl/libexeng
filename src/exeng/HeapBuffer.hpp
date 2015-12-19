@@ -17,7 +17,7 @@
 #include <memory>
 #include <exeng/Buffer.hpp>
 
-namespace exeng {
+namespace xe {
 
 	/**
 	 * @brief Implementation of the buffer class, for heap memory.

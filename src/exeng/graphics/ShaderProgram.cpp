@@ -14,7 +14,7 @@
 
 #include <exeng/graphics/ShaderProgram.hpp>
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     ShaderProgram::ShaderProgram() {
     }
 

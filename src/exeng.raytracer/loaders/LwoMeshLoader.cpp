@@ -7,9 +7,9 @@
 #include <lwobject/lwo2.h>
 
 namespace raytracer { namespace loaders {
-	using namespace exeng;
-	using namespace exeng::graphics;
-	using namespace exeng::scenegraph;
+	using namespace xe;
+	using namespace xe::gfx;
+	using namespace xe::sg;
 
 	namespace fs = boost::filesystem;
 
@@ -78,9 +78,9 @@ namespace raytracer { namespace loaders {
 
 		Vector3f q = point - center;
 
-		q = exeng::transform(exeng::rotate<float>(ypr.z, { 0.0f, 0.0f, -1.0f}), q);
-		q = exeng::transform(exeng::rotate<float>(ypr.y, { 0.0f, 1.0f,  0.0f}), q);
-		q = exeng::transform(exeng::rotate<float>(ypr.x, {-1.0f, 0.0f,  0.0f}), q);
+		q = xe::transform(xe::rotate<float>(ypr.z, { 0.0f, 0.0f, -1.0f}), q);
+		q = xe::transform(xe::rotate<float>(ypr.y, { 0.0f, 1.0f,  0.0f}), q);
+		q = xe::transform(xe::rotate<float>(ypr.x, {-1.0f, 0.0f,  0.0f}), q);
 
 		if (proj != LW_PROJ_SPHERICAL) {
 			q = q / size;
@@ -98,7 +98,7 @@ namespace raytracer { namespace loaders {
 			Vector3f b = Vector3f(points->pt[ poly->v[1].index ].pos);
 			Vector3f c = Vector3f(points->pt[ poly->v[2].index ].pos);
 
-			normal = exeng::normalize(exeng::cross(b-a, c-a));
+			normal = xe::normalize(xe::cross(b-a, c-a));
 
 			if (invertNormal) {
 				normal = -normal;
@@ -270,7 +270,7 @@ namespace raytracer { namespace loaders {
 
 			Vector3f point = setupTexturePoint(coord, tmap, lwProj(imageMap->projection));
 
-			float r = exeng::abs(point);
+			float r = xe::abs(point);
 
 			if (r != 0.0f) {
 				texCoord = texCoordGenerator(r, point, lwAxis(imageMap->axis));

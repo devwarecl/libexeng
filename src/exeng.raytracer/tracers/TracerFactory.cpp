@@ -9,7 +9,7 @@
 //namespace raytracer { namespace tracers {
 //
 //	using namespace raytracer::samplers;
-//	using namespace exeng::scenegraph;
+//	using namespace xe::sg;
 //
 //	TracerFactory::TracerFactory()  {}
 //	TracerFactory::~TracerFactory() {}

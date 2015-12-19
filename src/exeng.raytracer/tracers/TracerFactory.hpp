@@ -14,7 +14,7 @@
 //		TracerFactory();
 //		~TracerFactory();
 //
-//		std::unique_ptr<Tracer> createTracer(exeng::scenegraph::Scene *scene, raytracer::samplers::Sampler *sampler);
+//		std::unique_ptr<Tracer> createTracer(xe::sg::Scene *scene, raytracer::samplers::Sampler *sampler);
 //	private:
 //		std::list<std::unique_ptr<TracerCreator>> tracerCreators;
 //	};

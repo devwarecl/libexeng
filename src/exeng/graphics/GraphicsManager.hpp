@@ -21,11 +21,11 @@
 #include <exeng/Version.hpp>
 #include <exeng/graphics/GraphicsDriver.hpp>
 
-namespace exeng {   
+namespace xe {   
     class EXENGAPI Root;
 }
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     
     /**
      * @brief Shader programming language description.
@@ -86,7 +86,7 @@ namespace exeng { namespace graphics {
      * @brief Clase "manager" del subsistema de graficos.
      */
     class EXENGAPI GraphicsManager {
-        friend class exeng::Root;
+        friend class xe::Root;
 
     public:
         GraphicsManager();
@@ -126,7 +126,7 @@ namespace exeng { namespace graphics {
 }}
 
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
 
     inline bool GraphicsDriverInfo::operator== (const GraphicsDriverInfo &other) const 
     {
@@ -152,7 +152,7 @@ namespace exeng { namespace graphics {
     }
 }}
 
-namespace exeng { namespace graphics {
+namespace xe { namespace gfx {
     
     inline ShaderLanguage::ShaderLanguage() {}
     

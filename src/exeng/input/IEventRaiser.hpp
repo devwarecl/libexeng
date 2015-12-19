@@ -17,7 +17,7 @@
 #include <exeng/Config.hpp>
 #include <exeng/input/EventData.hpp>
 
-namespace exeng { namespace input {
+namespace xe { namespace input {
 
 class EXENGAPI IEventHandler;
 
