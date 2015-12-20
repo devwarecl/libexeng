@@ -53,12 +53,12 @@ ENDIF()
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
 # 
-ADD_SUBDIRECTORY (src/exeng.sandbox)
-ADD_SUBDIRECTORY (src/exeng.tests)
-ADD_SUBDIRECTORY (src/exeng.raytracer)
-ADD_SUBDIRECTORY (src/exeng.main)
-ADD_SUBDIRECTORY (src/exeng.demo)
-ADD_SUBDIRECTORY (src/exeng)
+ADD_SUBDIRECTORY (src/xe)
+ADD_SUBDIRECTORY (src/xe.demo)
+ADD_SUBDIRECTORY (src/xe.main)
+ADD_SUBDIRECTORY (src/xe.rt)
+ADD_SUBDIRECTORY (src/xe.sandbox)
+ADD_SUBDIRECTORY (src/xe.tests)
 ADD_SUBDIRECTORY (src/lwobject)
 
 # Engine plugins

@@ -1,2 +1,2 @@
 
-add_subdirectory(libexeng.graphics.gl3)
+add_subdirectory(xe.gfx.gl3)
