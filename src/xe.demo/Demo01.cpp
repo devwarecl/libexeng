@@ -8,10 +8,10 @@
 #include <xe/gfx/ShaderLibrary.hpp>
 #include <xe/gfx/MeshSubset.hpp>
 #include <xe/gfx/Mesh.hpp>
+#include <xe/gfx/TextureManager.hpp>
 #include <xe/sg/AssetsLibrary.hpp>
 #include <xe/sg/GeometryLibrary.hpp>
 #include <xe/fw/GraphicsApplication.hpp>
-#include <xe/gfx/TextureManager.hpp>
 
 #include "Fragment.glsl.hpp"
 #include "Vertex.glsl.hpp"
