@@ -27,9 +27,6 @@ namespace xe { namespace sg {
         
         virtual ~Scene();
         
-        /**
-         * @brief 
-         */
         SceneNode* getRootNode();
         const SceneNode* getRootNode() const;
 
@@ -42,14 +39,8 @@ namespace xe { namespace sg {
 
 		int getCameraCount() const;
 
-        /**
-         * @brief 
-         */
         Light* createLight();
 
-        /**
-         * @brief 
-         */
         SceneNode* createSceneNode(const std::string &nodeName, SceneNodeData* nodeData);
 
         /**
