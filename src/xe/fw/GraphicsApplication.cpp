@@ -13,83 +13,12 @@
 #include <xe/gfx/MeshManager.hpp>
 #include <xe/sg/GenericSceneRenderer.hpp>
 
+#include "xmlpp/Document.hpp"
+
 namespace xe { namespace fw {
 
 	using namespace xe::gfx;
 	using namespace xe::sg;
-
-	namespace xml {
-		class Node;
-		typedef std::list<Node> NodeList;
-
-		class Node {
-		public:
-			Node(::xmlNode *node) {
-				this->node = node;
-			}
-
-			std::string getName() const {
-				return (const char*)(this->node->name);
-			}
-
-			std::string getAttribute(const std::string &attrName) const {
-				return (const char*)(::xmlGetProp(this->node, (const xmlChar*) attrName.c_str()));
-			}
-
-			bool hasAttribute(const std::string &attrName) const {
-				const void* raw = (::xmlGetProp(this->node, (const xmlChar*) attrName.c_str()));
-				return raw != nullptr;
-			}
-
-			std::string getContent() const {
-				return (const char*)::xmlNodeGetContent(this->node);
-			}
-
-			NodeList getChilds() const {
-				NodeList childs;
-
-				for (::xmlNode *child=this->node->children; child; child=child->next) {
-					if (child->type != XML_ELEMENT_NODE) {
-						continue;
-					}
-
-					childs.push_back(child);
-				}
-
-				return childs;
-			}
-
-			NodeList getChilds(const std::string &name) const {
-				NodeList childs;
-
-				for (::xmlNode *child=this->node->children; child; child=child->next) {
-					if (child->type != XML_ELEMENT_NODE) {
-						continue;
-					}
-
-					if ( ::xmlStrcmp(child->name, (const xmlChar*)name.c_str()) == 0) {
-						childs.push_back(child);
-					}
-				}
-
-				return childs;
-			}
-
-			Node getChild(const std::string &name) const {
-				auto &childs = this->getChilds(name);
-
-#if defined(EXENG_DEBUG)
-				if (childs.size() == 0) {
-					EXENG_THROW_EXCEPTION("No child with the name '" + name + "'");
-				}
-#endif
-				return *childs.begin();
-			}
-
-		private:
-			::xmlNode *node = nullptr;
-		};
-	}
 
 	class AssetsLoader {
 	public:
@@ -136,7 +65,7 @@ namespace xe { namespace fw {
 				EXENG_THROW_EXCEPTION("Can't read memory for XML parsing.");
 			}
 
-			xml::Node node = ::xmlDocGetRootElement(document);
+			xmlpp::NodeRef node = ::xmlDocGetRootElement(document);
 
 			if (node.getName() == "assets") {
 				this->parseAssets(node);
@@ -149,8 +78,8 @@ namespace xe { namespace fw {
 		}
 
 	private:
-		void parseShaderLibrary(const xml::Node &node) {
-			for (xml::Node child : node.getChilds()) {
+		void parseShaderLibrary(const xmlpp::NodeRef &node) {
+			for (xmlpp::NodeRef child : node.getChilds()) {
 				std::string name = child.getName();
 
 				if (name == "shader") {
@@ -168,7 +97,7 @@ namespace xe { namespace fw {
 
 					ShaderProgram *program = this->shaderLibrary->createProgram(programName);
 
-					for (xml::Node moduleNode : child.getChilds("module")) {
+					for (xmlpp::NodeRef moduleNode : child.getChilds("module")) {
 						std::string shaderName = moduleNode.getAttribute("ref-name");
 
 						Shader *shader = this->shaderLibrary->getShader(shaderName);
@@ -181,10 +110,10 @@ namespace xe { namespace fw {
 			}
 		}
 
-		MaterialFormat parseMaterialFormat(const xml::Node &node) {
+		MaterialFormat parseMaterialFormat(const xmlpp::NodeRef &node) {
 			std::vector<MaterialAttrib> attribs;
 
-			for (const xml::Node &child : node.getChilds("attribute")) {
+			for (const xmlpp::NodeRef &child : node.getChilds("attribute")) {
 				MaterialAttrib attrib;
 				attrib.name = child.getAttribute("name");
 				attrib.dimension = getDimension(child.getAttribute("type"));
@@ -217,7 +146,7 @@ namespace xe { namespace fw {
 
 
 
-		void parseMaterialAttribute(const xml::Node &node, Material *material) {
+		void parseMaterialAttribute(const xmlpp::NodeRef &node, Material *material) {
 			const std::string attribName = node.getAttribute("ref-name");
 			const std::string content = node.getContent();
 			const int attribIndex = material->getFormat()->getAttribIndex(attribName);
@@ -245,25 +174,25 @@ namespace xe { namespace fw {
 		</material>
 		*/
 
-		void parseMaterialLayers(const xml::Node &node, Material *material) {
+		void parseMaterialLayers(const xmlpp::NodeRef &node, Material *material) {
 			int layerIndex = 0;
 
-			for (const xml::Node &child : node.getChilds("material-layer")) {
+			for (const xmlpp::NodeRef &child : node.getChilds("material-layer")) {
 				Texture *texture = nullptr;
 
 				std::string childName = child.getName();
-				xml::NodeList textureNodes = child.getChilds("texture");
+				xmlpp::NodeRefList textureNodes = child.getChilds("texture");
 
 				if (textureNodes.size() > 1) {
 					EXENG_THROW_EXCEPTION("Only one 'texture' tag is supported per layer");
 				} else if (textureNodes.size() == 1) {
-					xml::Node textureNode = *textureNodes.begin();
+					xmlpp::NodeRef textureNode = *textureNodes.begin();
 
 					std::string textureName = textureNode.getAttribute("name");
 					std::string textureSource = textureNode.getAttribute("source");
 					
 					if (textureSource == "generator") {
-						xml::Node generatorNode = textureNode.getChild("texture-generator");
+						xmlpp::NodeRef generatorNode = textureNode.getChild("texture-generator");
 						std::string generatorType = generatorNode.getAttribute("type");
 						
 						if (generatorType == "checkerboard") {
@@ -284,12 +213,12 @@ namespace xe { namespace fw {
 			}
 		}
 
-		void parseMaterial(const xml::Node &node) {
+		void parseMaterial(const xmlpp::NodeRef &node) {
 			std::string name = node.getAttribute("name");
 
 			Material *material = this->materialLibrary->createMaterial(name, nullptr);
 
-			for (const xml::Node &child : node.getChilds()) {
+			for (const xmlpp::NodeRef &child : node.getChilds()) {
 				std::string attributeName = child.getName();
 
 				if (attributeName == "attribute") {
@@ -306,8 +235,8 @@ namespace xe { namespace fw {
 			}
 		}
 
-		void parseMaterialLibrary(const xml::Node &node) {
-			for (const xml::Node &child : node.getChilds()) {
+		void parseMaterialLibrary(const xmlpp::NodeRef &node) {
+			for (const xmlpp::NodeRef &child : node.getChilds()) {
 				std::string name = child.getName();
 
 				if (name == "material-format") {
@@ -319,10 +248,10 @@ namespace xe { namespace fw {
 			}
 		}
 
-		MeshSubsetPtr parseGeometryMeshSubset(const xml::Node &node, const VertexFormat &format) {
+		MeshSubsetPtr parseGeometryMeshSubset(const xmlpp::NodeRef &node, const VertexFormat &format) {
 			MeshSubsetPtr meshSubset;
 
-			for (const xml::Node &child : node.getChilds()) {
+			for (const xmlpp::NodeRef &child : node.getChilds()) {
 				std::string name = child.getName();
 
 				if (name == "mesh-subset-generator") {
@@ -362,14 +291,14 @@ namespace xe { namespace fw {
 			return meshSubset;
 		}
 
-		MeshPtr parseGeometryMesh(const xml::Node &node, const VertexFormat &format) {
+		MeshPtr parseGeometryMesh(const xmlpp::NodeRef &node, const VertexFormat &format) {
 			std::string source = node.getAttribute("source");
 			MeshPtr mesh;
 
 			if (source == "generator") {
 				std::vector<MeshSubsetPtr> subsets;
 
-				for (xml::Node child : node.getChilds("mesh-subset")) {
+				for (xmlpp::NodeRef child : node.getChilds("mesh-subset")) {
 					MeshSubsetPtr meshSubset = this->parseGeometryMeshSubset(child, format);
 					subsets.push_back(std::move(meshSubset));
 				}
@@ -382,14 +311,14 @@ namespace xe { namespace fw {
 			return mesh;
 		}
 	
-		void parseGeometryLibrary(const xml::Node &node) {
+		void parseGeometryLibrary(const xmlpp::NodeRef &node) {
 			VertexFormat format;
 
-			for (xml::Node child : node.getChilds()) {
+			for (xmlpp::NodeRef child : node.getChilds()) {
 				if (child.getName() == "vertex-format") {
 					int fieldIndex = 0;
 
-					for (xml::Node attributeNode : child.getChilds("attribute")) {
+					for (xmlpp::NodeRef attributeNode : child.getChilds("attribute")) {
 						std::string attributeType = attributeNode.getAttribute("type");
 						std::string use = attributeNode.getAttribute("use");
 						std::string name = attributeNode.getAttribute("name");
@@ -411,12 +340,12 @@ namespace xe { namespace fw {
 			}
 		}
 
-		void parseSceneNode(xml::Node &node, SceneNode *sceneNode) {
+		void parseSceneNode(xmlpp::NodeRef &node, SceneNode *sceneNode) {
 			// parse scene node
 			Matrix4f transform = zero<float, 4, 4>();
 
 			// transformation
-			for (xml::Node transformNode : node.getChild("transformation").getChilds()) {
+			for (xmlpp::NodeRef transformNode : node.getChild("transformation").getChilds()) {
 				std::string name = transformNode.getName();
 
 				if (name == "identity") {
@@ -437,7 +366,7 @@ namespace xe { namespace fw {
 			sceneNode->setTransform(transform);
 
 			// geometries
-			for (xml::Node dataNode : node.getChilds("data")) {
+			for (xmlpp::NodeRef dataNode : node.getChilds("data")) {
 				if (dataNode.getAttribute("type") ==  "geometry") {
 					std::string geometryName = dataNode.getAttribute("ref-name");
 					Geometry *geometry = this->geometryLibrary->getGeometry(geometryName);
@@ -447,14 +376,14 @@ namespace xe { namespace fw {
 			}
 
 			// parse scene node childs
-			for (xml::Node child : node.getChilds("node")) {
+			for (xmlpp::NodeRef child : node.getChilds("node")) {
 				SceneNode *childNode = sceneNode->addChild(child.getAttribute("name"));
 				this->parseSceneNode(child, childNode);
 			}
 		}
 
-		void parseScene(xml::Node &node) {
-			for (xml::Node child : node.getChilds()) {
+		void parseScene(xmlpp::NodeRef &node) {
+			for (xmlpp::NodeRef child : node.getChilds()) {
 				std::string name = child.getName();
 
 				if (name == "background") {
@@ -462,12 +391,12 @@ namespace xe { namespace fw {
 					this->scene->setBackColor(color);
 				} else if (name == "camera-collection") {
 
-					for (xml::Node cameraNode : child.getChilds("camera")) {
+					for (xmlpp::NodeRef cameraNode : child.getChilds("camera")) {
 						// TODO: Use the camera name.
 						std::string cameraName = cameraNode.getAttribute("name");
 
 						// view
-						xml::Node viewNode = cameraNode.getChild("view").getChild("look-at");
+						xmlpp::NodeRef viewNode = cameraNode.getChild("view").getChild("look-at");
 
 						Vector3f position = parseVector<float, 3>(viewNode.getAttribute("position"));
 						Vector3f lookAt = parseVector<float, 3>(viewNode.getAttribute("look-at"));
@@ -480,7 +409,7 @@ namespace xe { namespace fw {
 
 						// projection
 						// TODO: add projection to the camera node
-						xml::Node perspectiveNode = cameraNode.getChild("projection").getChild("perspective");
+						xmlpp::NodeRef perspectiveNode = cameraNode.getChild("projection").getChild("perspective");
 
 						float fov = boost::lexical_cast<float>(perspectiveNode.getAttribute("fov"));
 						float aspect = boost::lexical_cast<float>(perspectiveNode.getAttribute("aspect"));
@@ -488,7 +417,7 @@ namespace xe { namespace fw {
 						float zFar = boost::lexical_cast<float>(perspectiveNode.getAttribute("z-far"));
 
 						// viewport
-						xml::Node viewportNode = cameraNode.getChild("viewport");
+						xmlpp::NodeRef viewportNode = cameraNode.getChild("viewport");
 						Vector2f viewportPosition = parseVector<float, 2>(viewportNode.getAttribute("position"));
 						Vector2f viewportSize = parseVector<float, 2>(viewportNode.getAttribute("size"));
 						camera->setViewport(Rectf(viewportPosition, viewportPosition + viewportSize));
@@ -502,8 +431,8 @@ namespace xe { namespace fw {
 			}
 		}
 	
-		void parseAssets(const xml::Node &node) {
-			for (xml::Node child : node.getChilds()) {
+		void parseAssets(const xmlpp::NodeRef &node) {
+			for (xmlpp::NodeRef child : node.getChilds()) {
 				if (child.getName() == "shader-library") {
 					this->parseShaderLibrary(child);
 				} else if (child.getName() == "material-library") {

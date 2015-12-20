@@ -30,7 +30,6 @@ set (AudioFiles_cpp sfx/AudioBuffer.cpp sfx/Listener.cpp sfx/Source.cpp)
 set (AudioFiles_hpp sfx/AudioBuffer.hpp sfx/Listener.hpp sfx/Source.hpp)
 set (AudioFiles ${AudioFiles_hpp} ${AudioFiles_cpp})
 
-
 set (FrameworkFiles_cpp
 	fw/Application.cpp fw/GraphicsApplication.cpp
 )
@@ -266,7 +265,7 @@ SOURCE_GROUP(sg 		FILES ${ScenegraphFiles})
 SOURCE_GROUP(sys	    FILES ${SystemFiles})
 SOURCE_GROUP(util		FILES ${UtilFiles})
 
-TARGET_LINK_LIBRARIES(xe ${UNIX_LIBRARIES} lwobject ${Boost_LIBRARIES} ${LIBXML2_LIBRARIES})
+TARGET_LINK_LIBRARIES(xe ${UNIX_LIBRARIES} lwobject xmlpp ${Boost_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 INSTALL (
 	TARGETS xe 

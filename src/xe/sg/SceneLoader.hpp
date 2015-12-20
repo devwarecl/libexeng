@@ -17,12 +17,20 @@
 #include <xe/Config.hpp>
 #include <xe/sg/Scene.hpp>
 
+#include <xe/Forward.hpp>
+#include <xe/sys/Forward.hpp>
+#include <xe/sg/Forward.hpp>
+#include <xe/gfx/Forward.hpp>
+
 namespace xe { namespace sg {
 	class EXENGAPI SceneLoader {
 	public:
 		virtual ~SceneLoader();
 		virtual ScenePtr load(const std::string &file) = 0;
 		virtual bool isSupported(const std::string &file) = 0;
+
+	private:
+
 	};
 }}
 
