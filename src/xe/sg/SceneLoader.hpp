@@ -25,12 +25,16 @@
 namespace xe { namespace sg {
 	class EXENGAPI SceneLoader {
 	public:
+		explicit SceneLoader(Core *core);
+
 		virtual ~SceneLoader();
 		virtual ScenePtr load(const std::string &file) = 0;
 		virtual bool isSupported(const std::string &file) = 0;
 
-	private:
+		Core* getCore();
 
+	private:
+		Core *core = nullptr;
 	};
 }}
 

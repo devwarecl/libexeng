@@ -1,7 +1,11 @@
 
 #include "NodeRef.hpp"
+#include <array>
+#include <boost/lexical_cast.hpp>
+
 
 namespace xmlpp {
+
 
 	NodeRef::NodeRef(::xmlNode *node)
 	{

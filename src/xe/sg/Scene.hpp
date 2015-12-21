@@ -11,7 +11,10 @@
 #include <memory>
 #include <xe/Object.hpp>
 #include <xe/Vector.hpp>
+#include <xe/Core.hpp>
 #include <xe/gfx/Material.hpp>
+#include <xe/gfx/MaterialLibrary.hpp>
+#include <xe/gfx/ShaderLibrary.hpp>
 #include <xe/sg/Geometry.hpp>
 #include <xe/sg/SceneNode.hpp>
 #include <xe/sg/Light.hpp>
@@ -23,7 +26,7 @@ namespace xe { namespace sg {
      */
     class EXENGAPI Scene : public Object {
     public:
-        Scene();
+        explicit Scene(/*Core *core*/);
         
         virtual ~Scene();
         

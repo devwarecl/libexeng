@@ -35,14 +35,20 @@ namespace xe { namespace sg {
         std::list<SceneNode*> cameraNodes;
         std::list<SceneNode*> lightNodes;
 
-        std::unique_ptr<SceneNode> rootNode = std::make_unique<SceneNode>("rootNode");
+        SceneNode rootNode;
         
         std::list<std::unique_ptr<Light>> lights;
         std::list<std::unique_ptr<Camera>> cameras;
+
+		// Core *core = nullptr;
+
+		Private() : rootNode("root") {
+		}
     };
     
-    Scene::Scene() {
+    Scene::Scene(/*Core *core*/) {
 		this->impl = new Scene::Private();
+		// this->impl->core = core;
 	}
 
     Scene::~Scene() {
@@ -51,12 +57,12 @@ namespace xe { namespace sg {
     
     SceneNode* Scene::getRootNode() {
         assert(this->impl != nullptr);
-        return this->impl->rootNode.get();
+        return &this->impl->rootNode;
     }
 
     const SceneNode* Scene::getRootNode() const {
         assert(this->impl != nullptr);
-        return this->impl->rootNode.get();
+        return &this->impl->rootNode;
     }
     
     void Scene::setBackColor(const Vector4f &color) {
@@ -95,7 +101,7 @@ namespace xe { namespace sg {
         
         std::list<SceneNode*> *nodes = nullptr;
         
-        SceneNode *sceneNode = this->impl->rootNode->addChild(nodeName);
+        SceneNode *sceneNode = this->getRootNode()->addChild(nodeName);
         sceneNode->setData(nodeData);
         
         if (nodeData->getTypeInfo() == TypeId<Camera>()) {
