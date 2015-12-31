@@ -25,7 +25,7 @@ namespace xe { namespace sg {
     
 	class EXENGAPI SceneRenderer {
 	public:
-		virtual ~SceneRenderer() {}
+		virtual ~SceneRenderer();
 
 		virtual void setScene(const Scene* scene) = 0;
 		virtual const Scene* getScene() const = 0;

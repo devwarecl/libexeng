@@ -3,17 +3,22 @@ PROJECT (libexeng)
 
 CMAKE_MINIMUM_REQUIRED (VERSION 3.0)
 
+# Engine options
+OPTION (XE_GFX_GL3 "Enable OpenGL 3 graphics driver" OFF)
+OPTION (XE_GFX_D3D "Enable Direct3D graphics driver" OFF)
+OPTION (XE_SG_XML "Enable scene loading from XML files" OFF)
+
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 SET (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 
 SET (EXENG_VERSION_MAJOR 0)
-SET (EXENG_VERSION_MINOR 2)
+SET (EXENG_VERSION_MINOR 1)
 SET (DEST_BIN_DIR ${PROJECT_BINARY_DIR}/bin)
 
-# Compiler preprocessor defines
+# Enable dynamic library generation
 ADD_DEFINITIONS (-DEXENG_DYNAMIC)
 
-# for Visual C++
+# Prepropressor for Visual C++
 ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)	
 ADD_DEFINITIONS (-D_SCL_SECURE_NO_WARNINGS)
 
@@ -45,10 +50,10 @@ FIND_PACKAGE(libxml2 REQUIRED)
 INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
 
 # Additional import libraries for unix
+SET (UNIX_LIBRARIES "")
+
 IF(UNIX AND NOT APPLE)
-	SET (UNIX_LIBRARIES dl rt)
-ELSE()
-	SET (UNIX_LIBRARIES "")
+	SET (UNIX_LIBRARIES dl rt)	
 ENDIF()
 
 # 
@@ -65,9 +70,10 @@ ADD_SUBDIRECTORY (src/lwobject)
 ADD_SUBDIRECTORY (src/xmlpp)
 
 # Engine plugins
-ADD_SUBDIRECTORY (plugins)
+IF(XE_GFX_GL3)
+	ADD_SUBDIRECTORY (plugins/xe.gfx.gl3)
+ENDIF ()
 
-# TODO: Move to the corresponding CMakeLists.txt
-
-# enable_testing()
-# add_test(exeng-test test)
+IF(XE_SG_XML)
+	ADD_SUBDIRECTORY (plugins/xe.sg.scene_xml)
+ENDIF()

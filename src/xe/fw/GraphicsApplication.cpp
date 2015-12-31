@@ -11,7 +11,7 @@
 #include <xe/gfx/MeshSubsetGenerator.hpp>
 #include <xe/gfx/Mesh.hpp>
 #include <xe/gfx/MeshManager.hpp>
-#include <xe/sg/GenericSceneRenderer.hpp>
+#include <xe/sg/SceneRendererGeneric.hpp>
 
 #include "xmlpp/Document.hpp"
 

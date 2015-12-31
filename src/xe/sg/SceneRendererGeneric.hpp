@@ -67,10 +67,10 @@ namespace xe { namespace sg {
     /**
      *
      */
-	class EXENGAPI GenericSceneRenderer : public SceneRenderer {
+	class EXENGAPI SceneRendererGeneric : public SceneRenderer {
 	public:
-        explicit GenericSceneRenderer(RenderWrapperPtr renderWrapper);
-        ~GenericSceneRenderer();
+        explicit SceneRendererGeneric(RenderWrapperPtr renderWrapper);
+        ~SceneRendererGeneric();
 
         RenderWrapper* getRenderWrapper();
 

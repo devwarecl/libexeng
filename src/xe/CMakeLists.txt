@@ -168,10 +168,10 @@ set (ScenegraphFiles_cpp
     sg/Scene.cpp
 	sg/SceneNodeAnimator.cpp
 	sg/SceneNodeData.cpp 
-	sg/SceneRenderer.cpp
 	sg/SceneLoader.cpp
 	sg/SceneManager.cpp
-	sg/GenericSceneRenderer.cpp
+	sg/SceneRenderer.cpp
+	sg/SceneRendererGeneric.cpp
 	sg/SceneLoader.cpp
     sg/Camera.cpp 
     sg/Light.cpp
@@ -196,9 +196,9 @@ set (ScenegraphFiles_hpp
     sg/Intersect.hpp      
     sg/IntersectInfo.hpp  
     sg/Sphere.hpp
-    sg/SceneRenderer.hpp
     sg/Triangle.hpp
-    sg/GenericSceneRenderer.hpp
+	sg/SceneRenderer.hpp
+    sg/SceneRendererGeneric.hpp
 	sg/SceneLoader.hpp
 	sg/SceneManager.hpp
 	sg/SceneNodeAnimator.hpp

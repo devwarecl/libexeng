@@ -14,7 +14,7 @@
 #include <xe/gfx/TextureManager.hpp>
 #include <xe/gfx/Vertex.hpp>
 #include <xe/gfx/MeshManager.hpp>
-#include <xe/sg/GenericSceneRenderer.hpp>
+#include <xe/sg/SceneRendererGeneric.hpp>
 
 #include "resources/Assets.xml.hpp"
 #include "resources/VertexShader.glsl.hpp"
@@ -355,7 +355,7 @@ namespace xe { namespace raytracer {
 		
         auto renderWrapper = std::make_unique<HardwareRenderer>(renderTarget, assets, materials, this->sampler.get());
         
-        SceneRendererPtr sceneRenderer = std::make_unique<GenericSceneRenderer>(std::move(renderWrapper));
+        SceneRendererPtr sceneRenderer = std::make_unique<SceneRendererGeneric>(std::move(renderWrapper));
         sceneRenderer->setScene(this->getScene());
 
         return sceneRenderer;

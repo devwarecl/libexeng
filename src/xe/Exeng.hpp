@@ -66,7 +66,7 @@
 #include "xe/sg/Segment.hpp"
 #include "xe/sg/TSolidGeometry.hpp"
 #include "xe/sg/SceneRenderer.hpp"
-#include "xe/sg/GenericSceneRenderer.hpp"
+#include "xe/sg/SceneRendererGeneric.hpp"
 
 /**
  * @brief The common namespace for the engine.
