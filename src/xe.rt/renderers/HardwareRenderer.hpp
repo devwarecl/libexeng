@@ -6,7 +6,7 @@
 #include <xe/gfx/MaterialLibrary.hpp>
 #include <xe/sg/AssetsLibrary.hpp>
 #include <xe/sg/SceneNodeData.hpp>
-#include <xe/sg/GenericSceneRenderer.hpp>
+#include <xe/sg/SceneRendererGeneric.hpp>
 
 #include "xe.rt/samplers/Sampler.hpp"
 

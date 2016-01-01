@@ -4,10 +4,8 @@
 
 #define NOMINMAX
 
-#include <CL/cl.h>
-#include <CL/cl_gl.h>
+#include "CL/cl-xe.hpp"
 
-#include <CL/cl.hpp>
 #include <GLFW/glfw3.h>
 
 #include <list>
@@ -69,6 +67,8 @@ namespace xe { namespace raytracer { namespace renderers {
 			computeSynthesisDataFunctor	(compute),
 			synthetizeImageFunctor		(synthetize) 
 		{}
+
+		~FunctorPack() {}
 
 		ClearSynthesisDataFunctor	clearSynthesisDataFunctor;
 		GenerateRaysFunctor			generateRaysFunctor;

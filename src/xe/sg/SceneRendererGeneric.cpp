@@ -1,5 +1,5 @@
 
-#include "GenericSceneRenderer.hpp"
+#include "SceneRendererGeneric.hpp"
 
 #include <xe/sg/Scene.hpp>
 
@@ -123,7 +123,7 @@ namespace xe { namespace sg {
 
 namespace xe { namespace sg {
 
-    struct GenericSceneRenderer::Private {
+    struct SceneRendererGeneric::Private {
         TransformStack<Matrix4f> transformStack;
         RenderWrapperPtr renderWrapper;
         const Scene* scene = nullptr;
@@ -154,32 +154,32 @@ namespace xe { namespace sg {
 	    }
     };
 
-    GenericSceneRenderer::GenericSceneRenderer(RenderWrapperPtr renderWrapper) {
-        this->impl = new GenericSceneRenderer::Private();
+    SceneRendererGeneric::SceneRendererGeneric(RenderWrapperPtr renderWrapper) {
+        this->impl = new SceneRendererGeneric::Private();
         this->impl->renderWrapper = std::move(renderWrapper);
     }
 
-    GenericSceneRenderer::~GenericSceneRenderer() {
+    SceneRendererGeneric::~SceneRendererGeneric() {
         delete this->impl;
     }
 
-    RenderWrapper* GenericSceneRenderer::getRenderWrapper() {
+    RenderWrapper* SceneRendererGeneric::getRenderWrapper() {
         return this->impl->renderWrapper.get();
     }
 
-    const RenderWrapper* GenericSceneRenderer::getRenderWrapper() const {
+    const RenderWrapper* SceneRendererGeneric::getRenderWrapper() const {
         return this->impl->renderWrapper.get();
     }
 
-	void GenericSceneRenderer::setScene(const Scene *scene) {
+	void SceneRendererGeneric::setScene(const Scene *scene) {
 		this->impl->scene = scene;
 	}
 
-	const Scene* GenericSceneRenderer::getScene() const {
+	const Scene* SceneRendererGeneric::getScene() const {
 		return this->impl->scene;
 	}
 
-	void GenericSceneRenderer::render(const Camera *camera) {
+	void SceneRendererGeneric::render(const Camera *camera) {
         RenderWrapper *renderWrapper = this->getRenderWrapper();
 
         renderWrapper->beginFrame(this->getScene()->getBackColor());

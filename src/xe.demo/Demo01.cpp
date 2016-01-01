@@ -158,7 +158,7 @@ public:
         renderWrapper->setTransformName("WorldTransform");
 
         SceneRendererPtr 
-        sceneRenderer = std::make_unique<GenericSceneRenderer>(std::move(renderWrapper));
+        sceneRenderer = std::make_unique<SceneRendererGeneric>(std::move(renderWrapper));
         sceneRenderer->setScene(this->getScene());
 
 		return sceneRenderer;
