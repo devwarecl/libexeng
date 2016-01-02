@@ -141,7 +141,7 @@ namespace xe { namespace gfx {
      */
 	class EXENGAPI GraphicsDriver : public xe::input::IEventRaiser {
     public:
-        virtual ~GraphicsDriver() {}
+        virtual ~GraphicsDriver();
         
 		virtual DisplayMode getDisplayMode() const = 0;
 

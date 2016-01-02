@@ -56,9 +56,19 @@ namespace xe { namespace gfx {
 		return shader;
 	}
 
-	/*
-	ShaderProgramPtr ModernModule::createShaderProgram(const std::list<std::pair<int, char*>> &vertexShaders,  const std::list<std::pair<int, char*>> &fragmentShaders)
-	{
+	ShaderProgramPtr ModernModule::createShaderProgram(const std::list<ShaderSource> &shaderSources) {
+		ShaderProgramPtr shaderProgram;
+
+		// create the shader objects
+		for (const ShaderSource &source : shaderSources) {
+			ShaderPtr shader = this->createShader(source.type, source.source);
+			shader->compile();
+
+			shaderProgram->addShader(shader.get());
+		}
+
+		shaderProgram->link();
+
+		return shaderProgram;
 	}
-	*/
 }}

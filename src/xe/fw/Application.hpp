@@ -20,27 +20,12 @@
 namespace xe { namespace fw {
     
     /**
-     * @brief Application status
-     */
-    struct ApplicationStatus : public Enum {
-        enum Enum {
-            Running,
-            Terminated
-        };
-    };
-    
-    /**
      * @brief Basic application framework
      */
     class EXENGAPI Application : public Core {
     public:
 		Application() {}
 		virtual ~Application() {}
-        
-		/**
-		 * @brief Get the current state of the application.
-		 */
-		virtual ApplicationStatus::Enum getApplicationStatus() const = 0;
 
         /**
          * @brief Run the application.

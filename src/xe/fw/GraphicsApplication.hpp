@@ -30,15 +30,13 @@ namespace xe { namespace fw {
         
         virtual int run(int argc, char **argv) override;
 
-		virtual ApplicationStatus::Enum getApplicationStatus() const override;
-
 		xe::gfx::GraphicsDriver* getGraphicsDriver();
 		xe::gfx::ShaderLibrary* getShaderLibrary();
 		xe::sg::GeometryLibrary* getGeometryLibrary();
 		xe::gfx::MaterialLibrary* getMaterialLibrary();
 		xe::sg::AssetLibrary* getAssetLibrary();
 		xe::sg::Scene* getScene();
-		xe::sg::SceneRenderer* getSceneRenderer();
+		xe::sg::ISceneRenderer* getSceneRenderer();
 
 		const xe::gfx::GraphicsDriver* getGraphicsDriver() const;
 		const xe::gfx::ShaderLibrary* getShaderLibrary() const;
@@ -46,13 +44,11 @@ namespace xe { namespace fw {
 		const xe::gfx::MaterialLibrary* getMaterialLibrary() const;
 		const xe::sg::AssetLibrary* getAssetLibrary() const;
 		const xe::sg::Scene* getScene() const;
-		const xe::sg::SceneRenderer* getSceneRenderer() const;
+		const xe::sg::ISceneRenderer* getSceneRenderer() const;
 
     protected:
 		void setExitCode(int code);
         int getExitCode() const;
-
-		void setApplicationStatus(ApplicationStatus::Enum status);
 
 		virtual BufferPtr getAssetsXmlData() = 0;
 		virtual xe::gfx::GraphicsDriverPtr createGraphicsDriver() = 0;

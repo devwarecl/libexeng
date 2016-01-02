@@ -16,6 +16,7 @@
 #include <boost/checked_delete.hpp>
 
 #include <xe/sg/Camera.hpp>
+#include <xe/sg/IRenderer.hpp>
 
 using namespace xe::sg;
 
@@ -134,4 +135,8 @@ namespace xe { namespace sg {
     const Vector3f* Camera::getData() const {
         return &this->impl->position;
     }
+
+	void Camera::renderWith(xe::sg::IRenderer *renderer) {
+		renderer->render(this);
+	}
 }}

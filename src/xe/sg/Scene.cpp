@@ -35,14 +35,15 @@ namespace xe { namespace sg {
         std::list<SceneNode*> cameraNodes;
         std::list<SceneNode*> lightNodes;
 
-        SceneNode rootNode;
+        std::unique_ptr<SceneNode> rootNode;
         
         std::list<std::unique_ptr<Light>> lights;
         std::list<std::unique_ptr<Camera>> cameras;
 
 		// Core *core = nullptr;
 
-		Private() : rootNode("root") {
+		Private() {
+			this->rootNode = std::make_unique<SceneNode>("");
 		}
     };
     
@@ -57,12 +58,12 @@ namespace xe { namespace sg {
     
     SceneNode* Scene::getRootNode() {
         assert(this->impl != nullptr);
-        return &this->impl->rootNode;
+        return this->impl->rootNode.get();
     }
 
     const SceneNode* Scene::getRootNode() const {
         assert(this->impl != nullptr);
-        return &this->impl->rootNode;
+        return this->impl->rootNode.get();
     }
     
     void Scene::setBackColor(const Vector4f &color) {
@@ -95,29 +96,36 @@ namespace xe { namespace sg {
         return light;
     }
 
-    SceneNode* Scene::createSceneNode(const std::string &nodeName, SceneNodeData* nodeData) 
-    {
+    SceneNode* Scene::createSceneNode(const std::string &nodeName, IRenderable* renderable) {
         assert(this->impl != nullptr);
         
         std::list<SceneNode*> *nodes = nullptr;
         
         SceneNode *sceneNode = this->getRootNode()->addChild(nodeName);
-        sceneNode->setData(nodeData);
-        
-        if (nodeData->getTypeInfo() == TypeId<Camera>()) {
-            nodes = &this->impl->cameraNodes;
-        }
-        
-        if (nodeData->getTypeInfo() == TypeId<Light>()) {
-            nodes = &this->impl->lightNodes;
-        }
-        
-        if (nodes) {
-            nodes->push_back(sceneNode);
-        }
+        sceneNode->setRenderable(renderable);
         
         return sceneNode;
     }
+
+	SceneNode* Scene::createSceneNode(const std::string &nodeName, Geometry* geometry) {
+		return this->createSceneNode(nodeName, static_cast<xe::sg::IRenderable*>(geometry));
+	}
+
+	SceneNode* Scene::createSceneNode(const std::string &nodeName, Light* light) {
+		SceneNode *node = this->createSceneNode(nodeName, static_cast<xe::sg::IRenderable*>(light));
+
+		this->impl->lightNodes.push_back(node);
+
+		return node;
+	}
+
+	SceneNode* Scene::createSceneNode(const std::string &nodeName, Camera* camera) {
+		SceneNode *node = this->createSceneNode(nodeName, static_cast<xe::sg::IRenderable*>(camera));
+
+		this->impl->cameraNodes.push_back(node);
+
+		return node;
+	}
 
 	Camera* Scene::getCamera(int index) const {
 #if defined(EXENG_DEBUG)

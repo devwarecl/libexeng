@@ -11,19 +11,14 @@ namespace xe { namespace gfx {
 	/**
 	 * @brief Manager class for material collections
 	 */
-	class EXENGAPI MaterialLibrary : public Object {
+	class EXENGAPI MaterialLibrary {
 	public:
-		MaterialLibrary();
 		MaterialLibrary(const MaterialFormat &format);
 		virtual ~MaterialLibrary();
 
-		void initialize(const MaterialFormat &format);
-
-		bool isInitialized() const;
-
 		MaterialFormat getFormat() const;
 
-		Material* createMaterial(const std::string &name, const ShaderProgram *program);
+		Material* createMaterial(const std::string &name, const ShaderProgram *program=nullptr);
 
 		Material* getMaterial(const std::string &name);
 		Material* getMaterial(const int index);

@@ -1,39 +1,16 @@
-/**
- * @file ISceneRenderer.hpp
- * @brief Definition of the ISceneRenderer interface.
- */
 
+#pragma once
 
-/*
- * Copyright (c) 2013-2014 Felipe Apablaza.
- *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution.
- */
+#ifndef __xe_sg_scenerenderer_hpp__
+#define __xe_sg_scenerenderer_hpp__
 
-#ifndef __EXENG_SCENEGRAPH_SCENERENDERER_HPP__
-#define __EXENG_SCENEGRAPH_SCENERENDERER_HPP__
-
-#include <memory>
-#include <functional>
-#include <xe/Config.hpp>
+#include <xe/sg/SceneRendererBase.hpp>
 
 namespace xe { namespace sg {
-    
-    class EXENGAPI Scene;
-    class EXENGAPI Camera;
-    
-	class EXENGAPI SceneRenderer {
+	class SceneRenderer : public SceneRendererBase {
 	public:
-		virtual ~SceneRenderer();
 
-		virtual void setScene(const Scene* scene) = 0;
-		virtual const Scene* getScene() const = 0;
-
-		virtual void render(const Camera* camera) = 0;
 	};
-
-	typedef std::unique_ptr<SceneRenderer> SceneRendererPtr;
 }}
 
-#endif // __EXENG_SCENEGRAPH_SCENERENDERER_HPP__
+#endif

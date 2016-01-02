@@ -12,11 +12,16 @@
  */
 
 #include <xe/sg/Geometry.hpp>
+#include <xe/sg/IRenderer.hpp>
 
 namespace xe { namespace sg {
     Geometry::~Geometry() { }
 
 	TypeInfo Geometry::getTypeInfo() const {
 		return TypeId<Geometry>();
+	}
+
+	void Geometry::renderWith(xe::sg::IRenderer *renderer) {
+		renderer->render(this);
 	}
 }}

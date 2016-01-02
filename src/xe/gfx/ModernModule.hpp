@@ -12,6 +12,11 @@
 
 namespace xe { namespace gfx {
 
+	struct ShaderSource {
+		xe::gfx::ShaderType::Enum type = xe::gfx::ShaderType::Vertex;
+		std::string source;
+	};
+
 	class EXENGAPI ModernModule {
 	protected:
 		virtual ~ModernModule();
@@ -45,9 +50,15 @@ namespace xe { namespace gfx {
 		 */
 		virtual void setProgramGlobal(const std::string &globalName, const Matrix4f &value) = 0;
 
+		virtual void setProgramGlobal(const int index, const Vector4f &value) = 0;
+
+		virtual void setProgramGlobal(const int index, const Matrix4f &value) = 0;
+
 		virtual ShaderProgramPtr createShaderProgram(const std::list<std::string> &vertexShaderSrcs, const std::list<std::string> &fragmentShaderSrcs);
 
 		virtual ShaderProgramPtr createShaderProgram(std::string &vertexShaders, std::string &fragmentShaders);
+
+		virtual ShaderProgramPtr createShaderProgram(const std::list<ShaderSource> &shaderSources);
 	};
 }}
 

@@ -117,38 +117,6 @@ set (GraphicsFiles_cpp
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 
-set (UiFiles_cpp
-    ui/Container.cpp 
-    ui/Control.cpp 
-    ui/Window.cpp
-    ui/Label.cpp 
-    ui/Button.cpp 
-    ui/ControlPrivate.cpp 
-    ui/WindowPrivate.cpp 
-    ui/ButtonPrivate.cpp 
-    ui/LabelPrivate.cpp 
-    ui/win32/ControlPrivate.cpp
-    ui/win32/WindowPrivate.cpp
-    ui/win32/LabelPrivate.cpp 
-    ui/win32/ButtonPrivate.cpp 
-)
-set (UiFiles_hpp
-    ui/Container.hpp
-    ui/Control.hpp
-    ui/Window.hpp
-    ui/Label.hpp
-    ui/Button.hpp
-    ui/ControlPrivate.hpp         
-    ui/WindowPrivate.hpp          
-    ui/ButtonPrivate.hpp          
-    ui/LabelPrivate.hpp           
-    ui/win32/ControlPrivate.hpp    
-    ui/win32/WindowPrivate.hpp    
-    ui/win32/LabelPrivate.hpp     
-    ui/win32/ButtonPrivate.hpp    
-)
-set (UiFiles ${UiFiles_hpp} ${UiFiles_cpp})
-
 set (InputFiles_cpp
     input/IEventRaiser.cpp
     input/IEventHandler.cpp
@@ -164,13 +132,14 @@ set (InputFiles_hpp
 set (InputFiles ${InputFiles_hpp} ${InputFiles_cpp})
 
 set (ScenegraphFiles_cpp
+	sg/ISceneRenderer.cpp
     sg/SceneNode.cpp 
     sg/Scene.cpp
 	sg/SceneNodeAnimator.cpp
-	sg/SceneNodeData.cpp 
 	sg/SceneLoader.cpp
 	sg/SceneManager.cpp
 	sg/SceneRenderer.cpp
+	sg/SceneRendererBase.cpp
 	sg/SceneRendererGeneric.cpp
 	sg/SceneLoader.cpp
     sg/Camera.cpp 
@@ -182,11 +151,11 @@ set (ScenegraphFiles_cpp
 
 set (ScenegraphFiles_hpp
 	sg/Forward.hpp 
+	sg/ISceneRenderer.hpp
     sg/SceneNode.hpp      
     sg/Scene.hpp          
     sg/Camera.hpp         
     sg/Light.hpp          
-    sg/SceneNodeData.hpp  
     sg/Geometry.hpp       
     sg/TSolidGeometry.hpp 
     sg/Segment.hpp 
@@ -198,6 +167,7 @@ set (ScenegraphFiles_hpp
     sg/Sphere.hpp
     sg/Triangle.hpp
 	sg/SceneRenderer.hpp
+	sg/SceneRendererBase.hpp
     sg/SceneRendererGeneric.hpp
 	sg/SceneLoader.hpp
 	sg/SceneManager.hpp
@@ -240,7 +210,6 @@ add_library (xe SHARED
     ${FrameworkFiles}
     ${ComputeFiles}
     ${GraphicsFiles}
-    ${UiFiles}
     ${InputFiles}
     ${ScenegraphFiles}
     ${SystemFiles}
@@ -249,17 +218,12 @@ add_library (xe SHARED
 
 SET_PROPERTY (TARGET xe PROPERTY CXX_STANDARD 14)
 
-IF (WIN32)
-	SET_PROPERTY (TARGET xe PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
-ENDIF ()
-
 SOURCE_GROUP(\\			FILES ${BaseFiles})
 SOURCE_GROUP(io         FILES ${IoFiles})
 SOURCE_GROUP(sfx      	FILES ${AudioFiles})
 SOURCE_GROUP(fw  		FILES ${FrameworkFiles})
 SOURCE_GROUP(compute    FILES ${ComputeFiles})
 SOURCE_GROUP(gfx   		FILES ${GraphicsFiles})
-SOURCE_GROUP(ui         FILES ${UiFiles})
 SOURCE_GROUP(input      FILES ${InputFiles})
 SOURCE_GROUP(sg 		FILES ${ScenegraphFiles})
 SOURCE_GROUP(sys	    FILES ${SystemFiles})
@@ -281,7 +245,6 @@ INSTALL (FILES ${AudioFiles_hpp}		DESTINATION include/xe/sfx)
 INSTALL (FILES ${FrameworkFiles_hpp}	DESTINATION include/xe/fw)
 INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/xe/compute)
 INSTALL (FILES ${GraphicsFiles_hpp}		DESTINATION include/xe/gfx)
-INSTALL (FILES ${UiFiles_hpp}			DESTINATION include/xe/ui)
 INSTALL (FILES ${InputFiles_hpp}		DESTINATION include/xe/input)
 INSTALL (FILES ${ScenegraphFiles_hpp}	DESTINATION include/xe/sg)
 INSTALL (FILES ${SystemFiles_hpp}		DESTINATION include/xe/sys)

@@ -13,3 +13,9 @@
 
 
 #include <xe/gfx/GraphicsDriver.hpp>
+
+namespace xe { namespace gfx {
+
+	GraphicsDriver::~GraphicsDriver() {}
+
+}}

@@ -7,6 +7,8 @@ CMAKE_MINIMUM_REQUIRED (VERSION 3.0)
 OPTION (XE_GFX_GL3 "Enable OpenGL 3 graphics driver" OFF)
 OPTION (XE_GFX_D3D "Enable Direct3D graphics driver" OFF)
 OPTION (XE_SG_XML "Enable scene loading from XML files" OFF)
+OPTION (XE_RT "Enable scene rendering trough Ray Tracing" OFF)
+OPTION (XE_TESTING "Enable engine unit testings" OFF)
 
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 SET (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
@@ -63,11 +65,17 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 ADD_SUBDIRECTORY (src/xe)
 ADD_SUBDIRECTORY (src/xe.demo)
 ADD_SUBDIRECTORY (src/xe.main)
-ADD_SUBDIRECTORY (src/xe.rt)
 ADD_SUBDIRECTORY (src/xe.sandbox)
-ADD_SUBDIRECTORY (src/xe.tests)
 ADD_SUBDIRECTORY (src/lwobject)
 ADD_SUBDIRECTORY (src/xmlpp)
+
+IF (XE_TESTING)
+	ADD_SUBDIRECTORY (src/xe.tests)
+ENDIF ()
+
+IF (XE_RT)
+    ADD_SUBDIRECTORY (src/xe.rt)
+ENDIF ()
 
 # Engine plugins
 IF(XE_GFX_GL3)

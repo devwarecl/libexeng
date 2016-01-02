@@ -17,6 +17,7 @@
 #include <memory>
 #include <xe/Boundary.hpp>
 #include <xe/sg/SceneNodeData.hpp>
+#include <xe/sg/IRenderable.hpp>
 
 namespace xe { namespace sg {
         
@@ -26,7 +27,7 @@ namespace xe { namespace sg {
 	/**
 	 * @brief Abstract Geometry class.
 	 */
-	class EXENGAPI Geometry : public SceneNodeData {
+	class EXENGAPI Geometry : public IRenderable {
 	public:
 		virtual ~Geometry();
 
@@ -45,6 +46,8 @@ namespace xe { namespace sg {
 		virtual bool hit( const xe::sg::Ray &ray, xe::sg::IntersectInfo *intersectInfo) = 0;
 			
 		virtual TypeInfo getTypeInfo() const;
+
+		virtual void renderWith(xe::sg::IRenderer *renderer) override;
 	};
 
 	typedef std::unique_ptr<Geometry> GeometryPtr;

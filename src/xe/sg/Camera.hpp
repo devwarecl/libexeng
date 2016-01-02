@@ -20,6 +20,7 @@
 #include <xe/Size.hpp>
 #include <xe/Boundary.hpp>
 #include <xe/sg/SceneNodeData.hpp>
+#include <xe/sg/IRenderable.hpp>
 
 namespace xe { namespace sg {
     /** 
@@ -55,7 +56,7 @@ namespace xe { namespace sg {
     /**
      * @brief 
      */
-    class EXENGAPI Camera : public SceneNodeData {
+    class EXENGAPI Camera : public IRenderable {
     public:
         Camera();
         virtual ~Camera();
@@ -79,6 +80,8 @@ namespace xe { namespace sg {
         
         const Vector3f* getData() const;
         
+		virtual void renderWith(xe::sg::IRenderer *renderer) override;
+
     private:
         struct Private;
         Private *impl;

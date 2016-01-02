@@ -19,15 +19,16 @@
 
 namespace xe { namespace sg {
 
-/**
- * @brief Base class for display data in the scene graph. Can be any multi-media element.
- * The lifetime of this object is independent of the containing scenegraph.
- */
-class EXENGAPI SceneNodeData : public Object {
-public:
-    virtual ~SceneNodeData();
-};
-        
+	/**
+	 * @brief Base class for display data in the scene graph. Can be any multi-media element.
+	 * The lifetime of this object is independent of the containing scenegraph.
+	 */
+	/*
+	class EXENGAPI SceneNodeData : public Object {
+	public:
+		virtual ~SceneNodeData();
+	};
+	*/
 }}
 
 

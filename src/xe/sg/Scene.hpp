@@ -44,7 +44,9 @@ namespace xe { namespace sg {
 
         Light* createLight();
 
-        SceneNode* createSceneNode(const std::string &nodeName, SceneNodeData* nodeData);
+		SceneNode* createSceneNode(const std::string &nodeName, Geometry* geometry);
+		SceneNode* createSceneNode(const std::string &nodeName, Light* light);
+		SceneNode* createSceneNode(const std::string &nodeName, Camera* camera);
 
         /**
          * @brief Sets the scene background color.
@@ -55,6 +57,9 @@ namespace xe { namespace sg {
          * @brief Gets the scene background color.
          */
         Vector4f getBackColor() const;
+
+	protected:
+		SceneNode* createSceneNode(const std::string &nodeName, IRenderable* renderable);
 
     private:
         struct Private;

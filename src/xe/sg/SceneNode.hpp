@@ -19,11 +19,9 @@
 
 #include <xe/Object.hpp>
 #include <xe/Matrix.hpp>
+#include <xe/sg/Forward.hpp>
 
 namespace xe { namespace sg {
-    class EXENGAPI SceneNode;
-    class EXENGAPI SceneNodeData;
-
     typedef std::vector<SceneNode*> SceneNodes;
     typedef SceneNodes::iterator SceneNodesIterator;
 
@@ -83,9 +81,11 @@ namespace xe { namespace sg {
         
         void orphan();
         
-        void setData(SceneNodeData* data);
+		void setRenderable(IRenderable *renderable);
 
-        SceneNodeData* getData() const;
+		IRenderable* getRenderable();
+
+		const IRenderable* getRenderable() const;
         
         const SceneNodes& getChilds() const;
         

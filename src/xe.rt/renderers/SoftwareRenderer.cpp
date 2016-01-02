@@ -61,7 +61,7 @@ namespace xe { namespace raytracer { namespace renderers {
 		result.distance = std::numeric_limits<float>::infinity();
 
 		for (SceneNode *node : nodes) {
-			Geometry *geometry = static_cast<Geometry*>(node->getData());
+			Geometry *geometry = /*static_cast<Geometry*>(node->getData())*/nullptr;
 
 			if (geometry->hit(ray, &info) && info.distance < result.distance) {
 				result = info;

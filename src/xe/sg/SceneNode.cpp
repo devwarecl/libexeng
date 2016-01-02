@@ -26,19 +26,11 @@ namespace xe { namespace sg {
 
     //! SceneNode private data
     struct SceneNode::Private {
-        std::string name;       //! Node name
-        Matrix4f transform;     //! Node transformation
-        SceneNode* parentPtr;   //! 
-        SceneNodes childs;      //! Node childs
-        SceneNodeData *data;    //! Private data
-        
-        Private() {   
-            this->data = nullptr;
-            this->parentPtr = nullptr;
-            this->transform = identity<float, 4>();
-        }
-                
-        ~Private() {}
+        std::string name;							//! Node name
+        Matrix4f transform = identity<float, 4>();  //! Node transformation
+        SceneNode* parentPtr = nullptr;				//! 
+        SceneNodes childs;							//! Node childs
+        IRenderable *renderable = nullptr;			//! Private data
         
         SceneNodesIterator getChild(const std::string &name) {
             auto &childs = this->childs;
@@ -314,18 +306,24 @@ namespace xe { namespace sg {
             this->getParent()->removeChild(this);
         }
     }
+	
+	void SceneNode::setRenderable(IRenderable *renderable) {
+		assert(this->impl != nullptr);
 
-    void SceneNode::setData(SceneNodeData* data) {
-        assert(this->impl != nullptr);
-        
-        this->impl->data = data;
-    }
+		this->impl->renderable = renderable;
+	}
 
-    SceneNodeData* SceneNode::getData() const {
-        assert(this->impl != nullptr);
-        
-        return this->impl->data;
-    }
+	IRenderable* SceneNode::getRenderable() {
+		assert(this->impl != nullptr);
+
+		return this->impl->renderable;
+	}
+
+	const IRenderable* SceneNode::getRenderable() const {
+		assert(this->impl != nullptr);
+
+		return this->impl->renderable;
+	}
     
     const SceneNodes& SceneNode::getChilds() const {
         assert(this->impl != nullptr);
