@@ -127,6 +127,10 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		virtual void setProgramGlobal(const std::string &globalName, const Matrix4f &value) override;
 
+		virtual void setProgramGlobal(const int index, const Vector4f &value) override;
+
+		virtual void setProgramGlobal(const int index, const Matrix4f &value) override;
+
     private:
         std::unique_ptr<GL3Context> context;
         std::list<xe::input::IEventHandler*> eventHandlers;

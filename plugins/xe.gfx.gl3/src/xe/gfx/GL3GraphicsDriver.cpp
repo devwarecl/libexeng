@@ -539,7 +539,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		int location = glGetUniformLocation(programId, globalName.c_str());
 
 #if defined(EXENG_DEBUG)
-		if (location == -1) {
+		if (location < 0) {
 			EXENG_THROW_EXCEPTION("The uniform variable '" + globalName + "' doesn't exist in the current program.");
 		}
 #endif
@@ -564,8 +564,58 @@ namespace xe { namespace gfx { namespace gl3 {
 		int location = glGetUniformLocation(programId, globalName.c_str());
 
 #if defined(EXENG_DEBUG)
-		if (location == -1) {
+		if (location < 0) {
 			EXENG_THROW_EXCEPTION("The uniform variable '" + globalName + "' doesn't exist in the current program.");
+		}
+#endif
+		glUniformMatrix4fv(location, 1, GL_FALSE, value.getPtr());
+
+		GL3_CHECK();
+	}
+
+	void GL3GraphicsDriver::setProgramGlobal(const int index, const Vector4f &value) {
+#if defined(EXENG_DEBUG)
+		if (!this->getMaterial()) {
+			EXENG_THROW_EXCEPTION("No current material bound.");
+		}
+
+		if (!this->getMaterial()->getShaderProgram()) {
+			EXENG_THROW_EXCEPTION("No current shader program bound.");
+		}
+#endif
+		const GL3ShaderProgram *shaderProgram = this->getShaderProgram();
+
+		int programId = shaderProgram->getProgramId();
+		int location = index;
+
+#if defined(EXENG_DEBUG)
+		if (location < 0) {
+			EXENG_THROW_EXCEPTION("The uniform index '" + std::to_string(index) + "' doesn't exist in the current program.");
+		}
+#endif
+		glUniform4fv(location, 1, value.getPtr());
+
+		GL3_CHECK();
+	}
+
+	void GL3GraphicsDriver::setProgramGlobal(const int index, const Matrix4f &value) {
+#if defined(EXENG_DEBUG)
+		if (!this->getMaterial()) {
+			EXENG_THROW_EXCEPTION("No current material bound.");
+		}
+
+		if (!this->getMaterial()->getShaderProgram()) {
+			EXENG_THROW_EXCEPTION("No current shader program bound.");
+		}
+#endif
+		const GL3ShaderProgram *shaderProgram = this->getShaderProgram();
+
+		int programId = shaderProgram->getProgramId();
+		int location = index;
+
+#if defined(EXENG_DEBUG)
+		if (location < 0) {
+			EXENG_THROW_EXCEPTION("The uniform variable '" + std::to_string(index)  + "' doesn't exist in the current program.");
 		}
 #endif
 		glUniformMatrix4fv(location, 1, GL_FALSE, value.getPtr());
