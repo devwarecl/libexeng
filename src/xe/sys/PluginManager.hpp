@@ -16,6 +16,7 @@
 
 #include <string>
 #include <xe/Forward.hpp>
+#include <xe/sys/Forward.hpp>
 
 namespace xe { namespace sys {
     /**
@@ -68,6 +69,10 @@ namespace xe { namespace sys {
          * @brief Load all available plugins
          */
         void loadPlugins();
+
+		int getPluginCount() const;
+
+		const Plugin* getPlugin(const int index) const;
         
     private:
         struct Private;

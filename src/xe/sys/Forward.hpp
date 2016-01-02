@@ -7,6 +7,7 @@
 #include <xe/Config.hpp>
 
 namespace xe { namespace sys {
+	class EXENGAPI Plugin;
 	class EXENGAPI PluginManager;
 }}
 

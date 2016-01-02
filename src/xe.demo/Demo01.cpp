@@ -1,6 +1,7 @@
 
 #include <memory>
 #include <xe/fw/Application.hpp>
+#include <xe/sys/Plugin.hpp>
 #include <xe/sys/PluginManager.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
 #include <xe.main/Main.hpp>
@@ -9,8 +10,22 @@ namespace demo {
 	class DemoApplication : public xe::fw::Application {
 	public:
 		DemoApplication() {
-			// load all plugins
+			// load available plugins
+
 			this->getPluginManager()->loadPlugins();
+
+			std::cout << "Loaded plugins: " << std::endl;
+
+			for (int i=0; i<this->getPluginManager()->getPluginCount(); i++) {
+				const xe::sys::Plugin *plugin = this->getPluginManager()->getPlugin(i);
+
+				std::cout << "\tName: " << plugin->getName() << std::endl;
+				std::cout << "\tDesc: " << plugin->getDescription() << std::endl;
+				std::cout << "\tVersion: " << plugin->getVersion() << std::endl;
+				std::cout << std::endl;
+			}
+
+			std::cout << std::endl;
 
 			// display all available drivers
 			auto driverInfos = this->getGraphicsManager()->getAvailableDrivers();

@@ -15,6 +15,7 @@
 #define __EXENG_VERSION_HPP__
 
 #include <xe/Config.hpp>
+#include <iostream>
 
 namespace xe {
 	/**
@@ -47,20 +48,28 @@ namespace xe {
 		bool operator> 	(const Version &Other) const;
 		bool operator< 	(const Version &Other) const;
 
+		inline friend std::ostream& operator<< (std::ostream &os, const Version& version) {
+			os	<< version.getMajor();
+			os	<< "." << version.getMinor();
+			os	<< "." << version.getRevision();
+			os	<< "." << version.getBuild();
+				
+			return os;
+		}
+
 	private:
-		int _major;
-		int _minor;
-		int revision;
-		int build;
+		int _major = 0;
+		int _minor = 0;
+		int revision = 0;
+		int build = 0;
 	};
 	
 	
-	inline Version::Version() : _major(0), _minor(0), revision(0), build(0) { }
+	inline Version::Version() {}
 	
 	inline Version::Version(int Major, int Minor, int Revision, int Build) {
 		this->setup(Major, Minor, Revision, Build);
 	}
-	
 	
 	inline Version::Version(const Version& Other) {
 		*this = Other;
@@ -95,12 +104,10 @@ namespace xe {
 	inline void Version::setMinor(int Value) {
 		this->_minor = Value;
 	}
-	
-	
+		
 	inline void Version::setRevision(int Value) {
 		this->revision = Value;
 	}
-	
 	
 	inline void Version::setBuild(int Value) {
 		this->build = Value;

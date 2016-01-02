@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <map>
+#include <vector>
 #include <memory>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -34,12 +35,14 @@ namespace xe { namespace sys {
      * @brief Private attributes of the plugin manager.
      */
     typedef std::map<std::string, std::unique_ptr<Plugin>> PluginMap;
+	typedef std::vector<Plugin*> PluginArray;
 
     struct PluginManager::Private {
         Core* core = nullptr;
         PluginMap plugins;
+		PluginArray pluginArray;
         fs::path pluginPath;
-		
+
 		void loadPluginFile(const fs::path &file) {
 			std::string key = file.filename().stem().string();
 
@@ -57,6 +60,8 @@ namespace xe { namespace sys {
 			if (plugins.find(key) == plugins.end()) {
 				LibraryPtr library = std::make_unique<Library>(file.string());
 				PluginPtr pluginLibrary = std::make_unique<PluginLibrary>(std::move(library));
+
+				pluginArray.push_back(pluginLibrary.get());
 
 				plugins[key] = std::move(pluginLibrary);
 				plugins[key]->initialize(this->core);
@@ -113,10 +118,15 @@ namespace xe { namespace sys {
         assert(this->impl != nullptr);
         
         auto &plugins = this->impl->plugins;
+		auto &pluginArray = this->impl->pluginArray;
         auto it = plugins.find(name);
             
         if (it != plugins.end()) {
             it->second->terminate();
+			
+			auto pluginArrayIterator = std::find(pluginArray.begin(), pluginArray.end(), it->second.get());
+			pluginArray.erase(pluginArrayIterator);
+
             plugins.erase(name);
         }
     }
@@ -190,4 +200,15 @@ namespace xe { namespace sys {
 			}
 		}
     }
+
+	int PluginManager::getPluginCount() const {
+		return this->impl->pluginArray.size();
+	}
+
+	const Plugin* PluginManager::getPlugin(const int index) const {
+		assert(index >= 0);
+		assert(index < this->getPluginCount());
+
+		return this->impl->pluginArray[index];
+	}
 }}
