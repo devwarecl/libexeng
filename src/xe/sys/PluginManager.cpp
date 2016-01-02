@@ -183,7 +183,7 @@ namespace xe { namespace sys {
 		// finally, try to load the remaining plugins
 		for (const fs::path &file : files) {
 			try {
-				this->loadPlugin(file.string());
+				this->impl->loadPluginFile(file);
 
 			} catch (const std::exception &exp) {
 				std::cout << exp.what() << std::endl;
