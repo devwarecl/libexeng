@@ -132,18 +132,26 @@ set (InputFiles_hpp
 set (InputFiles ${InputFiles_hpp} ${InputFiles_cpp})
 
 set (Input2Files_hpp
+	input2/Event.hpp 
 	input2/IEvent.hpp 
 	input2/IEventHandler.hpp 
 	input2/IInputDevice.hpp 
 	input2/IInputManager.hpp 
 	input2/IKeyboard.hpp 
 	input2/IMouse.hpp 
+	input2/InputManager.hpp 
 	input2/KeyboardStatus.hpp 
 	input2/KeyCode.hpp 
 	input2/KeyStatus.hpp 
 	input2/KeyStroke.hpp 
 )
-set (Input2Files ${Input2Files_hpp})
+
+set (Input2Files_cpp
+	input2/InputManager.cpp 
+	input2/KeyboardStatus.cpp 
+)
+
+set (Input2Files ${Input2Files_hpp} ${Input2Files_cpp})
 
 set (ScenegraphFiles_cpp
 	sg/ISceneRenderer.cpp
