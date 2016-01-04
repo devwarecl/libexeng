@@ -53,9 +53,11 @@ namespace demo {
 			this->graphicsDriver->initialize();
 
 			while (!done) {
+				xe::Vector4f color(0.2f, 0.2f, 0.8f, 1.0f);
+
 				this->graphicsDriver->pollEvents();
 
-				this->graphicsDriver->beginFrame({0.2f, 0.2f, 0.8f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
+				this->graphicsDriver->beginFrame(color, xe::gfx::ClearFlags::ColorDepth);
 
 				this->graphicsDriver->endFrame();
 			}
@@ -67,11 +69,18 @@ namespace demo {
 
 		virtual void handleEvent(const xe::input::EventData &eventData) override {
 			if (eventData.eventType == xe::TypeId<xe::gfx::InputEventData>()) {
-				this->done = true;
+				auto inputEventData = eventData.cast<xe::gfx::InputEventData>();
+				this->done = inputEventData.check(xe::gfx::ButtonStatus::Press, xe::gfx::ButtonCode::KeyEsc);
 
 			} else if (eventData.eventType == xe::TypeId<xe::gfx::CloseEventData>()) {
 				this->done = true;
 			}
+		}
+
+		virtual void handleInputEvent(const xe::gfx::InputEventData &eventData) {
+
+			
+
 		}
 
 	private:

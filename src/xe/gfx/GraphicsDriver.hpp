@@ -136,6 +136,10 @@ namespace xe { namespace gfx {
 		}
     };
 	
+	struct ButtonEventData {
+
+	};
+
     /**
      * @brief Software interface to graphics hardware
      */

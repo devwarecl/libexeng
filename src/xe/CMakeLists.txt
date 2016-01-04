@@ -131,6 +131,20 @@ set (InputFiles_hpp
 )
 set (InputFiles ${InputFiles_hpp} ${InputFiles_cpp})
 
+set (Input2Files_hpp
+	input2/IEvent.hpp 
+	input2/IEventHandler.hpp 
+	input2/IInputDevice.hpp 
+	input2/IInputManager.hpp 
+	input2/IKeyboard.hpp 
+	input2/IMouse.hpp 
+	input2/KeyboardStatus.hpp 
+	input2/KeyCode.hpp 
+	input2/KeyStatus.hpp 
+	input2/KeyStroke.hpp 
+)
+set (Input2Files ${Input2Files_hpp})
+
 set (ScenegraphFiles_cpp
 	sg/ISceneRenderer.cpp
     sg/SceneNode.cpp 
@@ -211,6 +225,7 @@ add_library (xe SHARED
     ${ComputeFiles}
     ${GraphicsFiles}
     ${InputFiles}
+	${Input2Files}
     ${ScenegraphFiles}
     ${SystemFiles}
     ${UtilFiles}
@@ -225,6 +240,7 @@ SOURCE_GROUP(fw  		FILES ${FrameworkFiles})
 SOURCE_GROUP(compute    FILES ${ComputeFiles})
 SOURCE_GROUP(gfx   		FILES ${GraphicsFiles})
 SOURCE_GROUP(input      FILES ${InputFiles})
+SOURCE_GROUP(input2     FILES ${Input2Files})
 SOURCE_GROUP(sg 		FILES ${ScenegraphFiles})
 SOURCE_GROUP(sys	    FILES ${SystemFiles})
 SOURCE_GROUP(util		FILES ${UtilFiles})
@@ -246,6 +262,7 @@ INSTALL (FILES ${FrameworkFiles_hpp}	DESTINATION include/xe/fw)
 INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/xe/compute)
 INSTALL (FILES ${GraphicsFiles_hpp}		DESTINATION include/xe/gfx)
 INSTALL (FILES ${InputFiles_hpp}		DESTINATION include/xe/input)
+INSTALL (FILES ${Input2Files_hpp}		DESTINATION include/xe/input2)
 INSTALL (FILES ${ScenegraphFiles_hpp}	DESTINATION include/xe/sg)
 INSTALL (FILES ${SystemFiles_hpp}		DESTINATION include/xe/sys)
 INSTALL (FILES ${UtilFiles_hpp}			DESTINATION include/xe/util)
