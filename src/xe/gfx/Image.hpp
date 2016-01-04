@@ -1,6 +1,7 @@
+
 /**
  * @file Image.hpp
- * @brief Define the engine's basic data types. Also, define fixed-size, elemental platform-independent.
+ * @brief Image abstract class declaration
  */
 
 
@@ -11,76 +12,66 @@
  * found in the file LICENSE in this distribution.
  */
 
+#pragma once
 
 #ifndef __EXENG_GRAPHICS_IMAGE_HPP__
 #define __EXENG_GRAPHICS_IMAGE_HPP__
 
-#include <cstdint>
+#include <memory>
+#include <xe/Buffer.hpp>
 #include <xe/Vector.hpp>
+#include <xe/Object.hpp>
 #include <xe/gfx/PixelFormat.hpp>
 #include <xe/gfx/PixelType.hpp>
 #include <xe/gfx/ColorFormat.hpp>
 
 namespace xe { namespace gfx {
-    /**
-     * @brief Image class.
-     */
-    class EXENGAPI Image {
+
+	/** 
+	 * @brief The image type
+	 */
+	struct ImageType : public Enum {
+		enum Enum {
+			Unknown,
+			Img1D,
+			Img2D,
+			Img3D
+		};
+	};
+
+	/** 
+	 * @brief The image pixel format
+	 */
+	struct ImageFormat : public Enum {
+		enum Enum {
+			Unknown,
+			R5G5B5X1,
+			R5G5B5A1,
+			R5G6B5,
+			R8G8B8,
+			R8G8B8A8,
+		};
+	};
+
+	/** 
+	 * @brief Image abstract class
+	 */
+    class EXENGAPI Image : public Object {
     public:
-        Image();
-        Image(const xe::Vector3i& size, 
-                ColorFormat format, 
-                PixelType type=PixelType::Integer);
-        
-        virtual ~Image();
-        
-        /** 
-            * @brief Get a raw pointer to the pixel data
-            */
-        const void* getPtr() const;
-        
-        /**
-         * @brief Get a raw pointer
-         */
-        void* getPtr();
-        
-        /**
-         * @brief Get the current image format
-         */
-        ColorFormat getFormat() const;
-        
-        /**
-            * @brief Get the pixel data type storage
-            */
-        PixelType getType() const;
-        
-        /**
-            * @brief 
-            */
-        Vector3i geSize() const;
-        
-        /**
-            * @brief 
-            */
-        void initialize( const Vector3i& size, ColorFormat format, PixelType type=PixelType::Integer);
-        
-        /**
-            * @brief 
-            */
-        std::uint32_t getPixel(const Vector2i& position) const;
-        
-        /**
-            * @brief 
-            */
-        void setPixel(const Vector2i& position, std::uint32_t color);
-        
-    private:
-        int getOffset(const Vector2i& position) const;
-        
-    private:
-        struct Private;
-        Private* Data;
+		virtual ~Image();
+
+		virtual Buffer* getBuffer() = 0;
+
+		virtual const Buffer* getBuffer() const = 0;
+
+		virtual ImageType::Enum getType() const = 0;
+
+		virtual ImageFormat::Enum getFormat() const = 0;
+
+		virtual Vector3i getSize() const = 0;
     };
+
+	typedef std::unique_ptr<Image> ImagePtr;
 }}
 
 #endif  //__EXENG_GRAPHICS_IMAGE_HPP__

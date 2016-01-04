@@ -20,18 +20,14 @@
 #include <xe/Object.hpp>
 #include <xe/Version.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
-
-namespace xe {   
-    class EXENGAPI Root;
-}
+#include <xe/gfx/ImageLoader.hpp>
 
 namespace xe { namespace gfx {
     
     /**
      * @brief Shader programming language description.
      */
-    struct ShaderLanguage 
-    {
+    struct ShaderLanguage {
         enum Type {
             GLSL,
             HLSL,
@@ -45,12 +41,10 @@ namespace xe { namespace gfx {
         ShaderLanguage(ShaderLanguage::Type type, const Version &version);
     };
     
-    
     /**
      * @brief Type of GraphicsDriver
      */
-    struct DriverType : public Enum 
-    {
+    struct DriverType : public Enum {
         enum Enum {
             Software,
             Hardware
@@ -82,12 +76,7 @@ namespace xe { namespace gfx {
         virtual std::unique_ptr<GraphicsDriver> create() = 0;
     };
     
-    /**
-     * @brief Clase "manager" del subsistema de graficos.
-     */
     class EXENGAPI GraphicsManager {
-        friend class xe::Root;
-
     public:
         GraphicsManager();
         ~GraphicsManager();
@@ -119,6 +108,23 @@ namespace xe { namespace gfx {
 		 */
 		std::vector<GraphicsDriverInfo> getAvailableDrivers() const;
 		
+		/**
+		 * @brief Set the current image loading toolkit.
+		 *
+		 * Throws when the parameter and the current loader are both non-nulls
+		 */
+		void setImageToolkit(ImageLoader* loader);
+
+		/**
+		 * @brief Get the current image loading toolkit.
+		 */
+		ImageLoader* getImageToolkit();
+
+		/**
+		 * @brief Get the current image loading toolkit.
+		 */
+		const ImageLoader* getImageToolkit() const;
+		
     private:
         struct Private;
         Private *impl = nullptr;
@@ -127,9 +133,7 @@ namespace xe { namespace gfx {
 
 
 namespace xe { namespace gfx {
-
-    inline bool GraphicsDriverInfo::operator== (const GraphicsDriverInfo &other) const 
-    {
+    inline bool GraphicsDriverInfo::operator== (const GraphicsDriverInfo &other) const {
         if (this->name != other.name) {
             return false;
         }
@@ -141,23 +145,19 @@ namespace xe { namespace gfx {
         return true;
     }
         
-    inline bool GraphicsDriverInfo::operator!= (const GraphicsDriverInfo &other) const 
-    {
+    inline bool GraphicsDriverInfo::operator!= (const GraphicsDriverInfo &other) const {
         return !(*this == other);
     }
         
-    inline bool GraphicsDriverInfo::operator< (const GraphicsDriverInfo &other) const 
-    {
+    inline bool GraphicsDriverInfo::operator< (const GraphicsDriverInfo &other) const {
         return this->name < other.name && this->version < other.version;
     }
 }}
 
-namespace xe { namespace gfx {
-    
+namespace xe { namespace gfx {    
     inline ShaderLanguage::ShaderLanguage() {}
     
-    inline ShaderLanguage::ShaderLanguage(ShaderLanguage::Type type, const Version &version)
-    {
+    inline ShaderLanguage::ShaderLanguage(ShaderLanguage::Type type, const Version &version) {
         this->type = type;
         this->version = version;
     }

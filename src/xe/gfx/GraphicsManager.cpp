@@ -24,20 +24,19 @@ namespace xe { namespace gfx {
 
     struct GraphicsManager::Private {
          std::map <GraphicsDriverInfo, IGraphicsDriverFactory*> factories;
+
+		 ImageLoader *imageLoader = nullptr;
     };
-    
-    GraphicsManager::GraphicsManager()
-	{
+
+    GraphicsManager::GraphicsManager() {
 		this->impl = new GraphicsManager::Private();
     }
 
-    GraphicsManager::~GraphicsManager() 
-	{
+    GraphicsManager::~GraphicsManager()  {
         delete this->impl;
     }
 
-    void GraphicsManager::addDriverFactory(IGraphicsDriverFactory* factory) 
-	{
+    void GraphicsManager::addDriverFactory(IGraphicsDriverFactory* factory) {
         assert( this->impl != nullptr );
         
         if (factory == nullptr) {
@@ -48,8 +47,7 @@ namespace xe { namespace gfx {
         this->impl->factories.insert({driverInfo, factory});
     }
 
-    void GraphicsManager::removeDriverFactory(IGraphicsDriverFactory* factory) 
-	{
+    void GraphicsManager::removeDriverFactory(IGraphicsDriverFactory* factory) {
         assert( this->impl != nullptr );
         
         if (factory == nullptr) {
@@ -67,11 +65,9 @@ namespace xe { namespace gfx {
         factories.erase(pos);
     }
     
-    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver() 
-	{
+    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver() {
         assert( this->impl != nullptr );
         
-        //! TODO: Actually, implement the algorithm
         for (auto element : this->impl->factories) {
             return element.second->create();
         }
@@ -79,8 +75,7 @@ namespace xe { namespace gfx {
         return nullptr;
     }
     
-    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver(const GraphicsDriverInfo &info) 
-	{
+    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver(const GraphicsDriverInfo &info) {
         assert( this->impl != nullptr );
         
         auto &factories = this->impl->factories;
@@ -93,8 +88,7 @@ namespace xe { namespace gfx {
         return pos->second->create();
     }
 
-	std::vector<GraphicsDriverInfo> GraphicsManager::getAvailableDrivers() const 
-	{
+	std::vector<GraphicsDriverInfo> GraphicsManager::getAvailableDrivers() const {
 		assert( this->impl != nullptr );
 
 		std::vector<GraphicsDriverInfo> driverInfos;
@@ -104,5 +98,21 @@ namespace xe { namespace gfx {
 		}
 
 		return driverInfos;
+	}
+
+	void GraphicsManager::setImageToolkit(ImageLoader* loader) {
+		if (loader && this->impl->imageLoader) {
+			throw std::runtime_error("GraphicsManager::setImageToolkit: We already have an imagetoolkit installed!");
+		}
+
+		this->impl->imageLoader = loader;
+	}
+
+	ImageLoader* GraphicsManager::getImageToolkit() {
+		return this->impl->imageLoader;
+	}
+
+	const ImageLoader* GraphicsManager::getImageToolkit() const {
+		return this->impl->imageLoader;
 	}
 }}
