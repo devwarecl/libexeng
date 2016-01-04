@@ -5,16 +5,16 @@
 #include <xe/gfx/MeshSubsetBase.hpp>
 
 #include "GL3.hpp"
-#include "GL3Buffer.hpp"
+#include "BufferGL3.hpp"
 
 namespace xe { namespace gfx { namespace gl3 {
-    class GL3MeshSubset : public MeshSubsetBase<GL3Buffer> {
+    class MeshSubsetGL3 : public MeshSubsetBase<BufferGL3> {
     public:
-        GL3MeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format);
+        MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format);
 
-		GL3MeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format, BufferPtr indexBuffer, IndexFormat::Enum indexFormat);
+		MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format, BufferPtr indexBuffer, IndexFormat::Enum indexFormat);
 
-        virtual ~GL3MeshSubset();
+        virtual ~MeshSubsetGL3();
 
         inline GLuint getVertexArrayId() const {
             return this->vertexArrayId;

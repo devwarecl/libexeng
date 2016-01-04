@@ -1,6 +1,6 @@
 /**
- * @file GL3Shader.cpp
- * @brief Definition of the GL3Shader class.
+ * @file ShaderGL3.cpp
+ * @brief Definition of the ShaderGL3 class.
  */
 
 /*
@@ -11,16 +11,16 @@
  */
 
 #include "GL3.hpp"
-#include "GL3Utils.hpp"
-#include "GL3Shader.hpp"
-#include "GL3Debug.hpp"
+#include "UtilGL3.hpp"
+#include "ShaderGL3.hpp"
+#include "DebugGL3.hpp"
 
 #include <sstream>
 #include <map>
 #include <stdexcept>
 
 namespace xe  { namespace gfx { namespace gl3 {
-    GL3Shader::GL3Shader(ShaderType::Enum type) {
+    ShaderGL3::ShaderGL3(ShaderType::Enum type) {
         this->name = 0;
         this->modified = false;
         this->compiled = false;
@@ -30,7 +30,7 @@ namespace xe  { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    GL3Shader::~GL3Shader() {
+    ShaderGL3::~ShaderGL3() {
         if (this->name != 0) {
             //! TODO: Remove the shader from the parent shader program.
             ::glDeleteShader(this->name);
@@ -38,26 +38,26 @@ namespace xe  { namespace gfx { namespace gl3 {
         }
     }
 
-    TypeInfo GL3Shader::getTypeInfo() const {
-        return TypeId<GL3Shader>();
+    TypeInfo ShaderGL3::getTypeInfo() const {
+        return TypeId<ShaderGL3>();
     }
 
-    void GL3Shader::setSourceCode(const std::string &sourceCode) {
+    void ShaderGL3::setSourceCode(const std::string &sourceCode) {
         this->sourceCode = sourceCode;
         this->modified = true;
     }
 
-    std::string GL3Shader::getSourceCode() const {
+    std::string ShaderGL3::getSourceCode() const {
         return this->sourceCode;
     }
 
-    bool GL3Shader::isSourceModified() const {
+    bool ShaderGL3::isSourceModified() const {
         return this->modified;
     }
 
-    void GL3Shader::compile() {
+    void ShaderGL3::compile() {
         if (this->sourceCode.empty() == true) {
-            throw std::runtime_error("GL3Shader::compile: The source code must be non empty.");
+            throw std::runtime_error("ShaderGL3::compile: The source code must be non empty.");
         }
         
         if (this->modified == true || this->compiled == false) {
@@ -80,7 +80,7 @@ namespace xe  { namespace gfx { namespace gl3 {
                 infoLog.resize(infoLogLength + 1);
                 ::glGetShaderInfoLog(this->name, infoLogLength, NULL, (GLchar*) infoLog.c_str());
                 
-                throw std::runtime_error("GL3Shader::compile: Compile failure in " + 
+                throw std::runtime_error("ShaderGL3::compile: Compile failure in " + 
                                         shaderTypeStr(this->type) + " shader: \n" + infoLog);
             }
             
@@ -91,15 +91,15 @@ namespace xe  { namespace gfx { namespace gl3 {
         }
     }
 
-    bool GL3Shader::isCompiled() const {
+    bool ShaderGL3::isCompiled() const {
         return this->compiled;
     }
 
-    ShaderType::Enum GL3Shader::getType() const {
+    ShaderType::Enum ShaderGL3::getType() const {
         return this->type;
     }
 
-    GLuint GL3Shader::getName() const {
+    GLuint ShaderGL3::getName() const {
         return this->name;
     }
 }}}

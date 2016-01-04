@@ -1,5 +1,5 @@
 /**
- * @file GL3GraphicsDriverFactory.cpp
+ * @file GraphicsDriverFactoryGL3.cpp
  * @brief Implementation of the graphics driver factory
  */
 
@@ -12,14 +12,14 @@
  */
 
 #include "GL3.hpp"
-#include "GL3GraphicsDriver.hpp"
-#include "GL3GraphicsDriverFactory.hpp"
+#include "GraphicsDriverGL3.hpp"
+#include "GraphicsDriverFactoryGL3.hpp"
 
 namespace xe { namespace gfx { namespace gl3 {
-    GL3GraphicsDriverFactory::GL3GraphicsDriverFactory() {}
-    GL3GraphicsDriverFactory::~GL3GraphicsDriverFactory() {}
+    GraphicsDriverFactoryGL3::GraphicsDriverFactoryGL3() {}
+    GraphicsDriverFactoryGL3::~GraphicsDriverFactoryGL3() {}
 
-    GraphicsDriverInfo GL3GraphicsDriverFactory::getDriverInfo() const 
+    GraphicsDriverInfo GraphicsDriverFactoryGL3::getDriverInfo() const 
     {
         GraphicsDriverInfo info;
         
@@ -31,8 +31,8 @@ namespace xe { namespace gfx { namespace gl3 {
         return info;
     }
 
-    std::unique_ptr<GraphicsDriver> GL3GraphicsDriverFactory::create() 
+    std::unique_ptr<GraphicsDriver> GraphicsDriverFactoryGL3::create() 
     {
-		return std::unique_ptr<GraphicsDriver>(new GL3GraphicsDriver());
+		return std::unique_ptr<GraphicsDriver>(new GraphicsDriverGL3());
     }
 }}}

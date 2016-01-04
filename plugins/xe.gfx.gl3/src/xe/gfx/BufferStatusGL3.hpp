@@ -1,6 +1,6 @@
 /**
- * @file GL3BufferStatus.hpp
- * @brief Definition of the GL3BufferStatus class.
+ * @file BufferGL3Status.hpp
+ * @brief Definition of the BufferGL3Status class.
  */
 
 /*

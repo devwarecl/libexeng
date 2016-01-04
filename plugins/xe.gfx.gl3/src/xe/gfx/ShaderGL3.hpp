@@ -1,6 +1,6 @@
 /**
- * @file GL3Shader.hpp
- * @brief Definition of the GL3Shader class.
+ * @file ShaderGL3.hpp
+ * @brief Definition of the ShaderGL3 class.
  */
 
 /*
@@ -22,11 +22,11 @@ namespace xe { namespace gfx { namespace gl3 {
     /**
     * @brief OpenGL 3 shader.
     */
-    class GL3Shader : public Shader {
+    class ShaderGL3 : public Shader {
     public:
-        GL3Shader(ShaderType::Enum type);
+        ShaderGL3(ShaderType::Enum type);
         
-        virtual ~GL3Shader();
+        virtual ~ShaderGL3();
         
         virtual TypeInfo getTypeInfo() const override;
         

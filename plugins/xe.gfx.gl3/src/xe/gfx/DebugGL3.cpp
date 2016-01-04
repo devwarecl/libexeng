@@ -11,7 +11,7 @@
  */
 
 #include <xe/Exception.hpp>
-#include "GL3Debug.hpp"
+#include "DebugGL3.hpp"
 #include "GL3.hpp"
 
 #include <map>

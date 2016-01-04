@@ -9,11 +9,11 @@
 
 namespace xe { namespace gfx { namespace gl3 {
 
-    class GL3Buffer :  public Buffer {
+    class BufferGL3 :  public Buffer {
     public:
         /* Buffer overrides */
-        GL3Buffer(const int size, GLenum target);
-        virtual ~GL3Buffer();
+        BufferGL3(const int size, GLenum target);
+        virtual ~BufferGL3();
 
         virtual const void* getPointer() const override;
 

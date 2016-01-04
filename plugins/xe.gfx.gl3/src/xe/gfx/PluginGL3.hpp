@@ -1,5 +1,5 @@
 /**
- * @file GL3Plugin.hpp
+ * @file PluginGL3.hpp
  * @brief Definition of the plugin implementation
  */
 
@@ -19,15 +19,15 @@
 
 namespace xe { namespace gfx { namespace gl3 {
 
-    class GL3GraphicsDriverFactory;
+    class GraphicsDriverFactoryGL3;
 
     /**
-    * @brief The GL3Plugin class
+    * @brief The PluginGL3 class
     */
-    class GL3Plugin : public xe::sys::Plugin {
+    class PluginGL3 : public xe::sys::Plugin {
     public:
-        GL3Plugin();
-        virtual ~GL3Plugin();
+        PluginGL3();
+        virtual ~PluginGL3();
         virtual std::string getName() const override;
         virtual std::string getDescription() const override;
         virtual Version getVersion() const override;
@@ -35,13 +35,13 @@ namespace xe { namespace gfx { namespace gl3 {
         virtual void terminate() override;
         
     public:
-        inline GL3GraphicsDriverFactory* getFactory() {
+        inline GraphicsDriverFactoryGL3* getFactory() {
             return this->factory.get();
         }
         
     private:
         Core *root = nullptr;
-        std::unique_ptr<GL3GraphicsDriverFactory> factory;
+        std::unique_ptr<GraphicsDriverFactoryGL3> factory;
     };
 }}}
 

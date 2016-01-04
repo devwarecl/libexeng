@@ -1,12 +1,12 @@
 
-#include "GL3Buffer.hpp"
-#include "GL3BufferStatus.hpp"
-#include "GL3Debug.hpp"
+#include "BufferGL3.hpp"
+#include "BufferStatusGL3.hpp"
+#include "DebugGL3.hpp"
 #include <stdexcept>
 
 namespace xe { namespace gfx { namespace gl3 {
 
-    GL3Buffer::GL3Buffer(const int size, GLenum target) {
+    BufferGL3::BufferGL3(const int size, GLenum target) {
 		this->cacheBuffer = std::make_unique<HeapBuffer>(size);
 		this->target = target;
 
@@ -21,34 +21,34 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
 	}
 
-    GL3Buffer::~GL3Buffer() {
+    BufferGL3::~BufferGL3() {
 		assert(this);
 		assert(this->bufferId);
 
 		::glDeleteBuffers(1, &this->bufferId);
 	}
 
-	const void* GL3Buffer::getPointer() const {
+	const void* BufferGL3::getPointer() const {
 		assert(this);
 		assert(this->cacheBuffer.get());
 
 		return this->cacheBuffer->getPointer();
 	}
 
-	int GL3Buffer::getSize() const {
+	int BufferGL3::getSize() const {
 		assert(this);
 		assert(this->cacheBuffer.get());
 
 		return this->cacheBuffer->getSize();
 	}
 
-	int GL3Buffer::getHandle() const {
+	int BufferGL3::getHandle() const {
 		assert(this);
 
 		return this->bufferId;
 	}
 
-    void GL3Buffer::setData(const void *data, const int size, const int dataOffset, const int bufferOffset) {
+    void BufferGL3::setData(const void *data, const int size, const int dataOffset, const int bufferOffset) {
 		assert(this);
 		assert(this->cacheBuffer.get());
 
@@ -63,7 +63,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
 	}
 
-    void GL3Buffer::getData(void* data, const int size, const int dataOffset, const int bufferOffset) const {
+    void BufferGL3::getData(void* data, const int size, const int dataOffset, const int bufferOffset) const {
 		assert(this);
 
 		this->cacheBuffer->getData(data, size, dataOffset, bufferOffset);
@@ -71,9 +71,9 @@ namespace xe { namespace gfx { namespace gl3 {
 		// GL3_CHECK();
 	}
 
-	TypeInfo GL3Buffer::getTypeInfo() const {
+	TypeInfo BufferGL3::getTypeInfo() const {
 		assert(this);
 		
-        return TypeId<GL3Buffer>();
+        return TypeId<BufferGL3>();
     }
 }}}

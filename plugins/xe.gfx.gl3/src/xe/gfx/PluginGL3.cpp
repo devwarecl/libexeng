@@ -1,5 +1,5 @@
 /**
- * @file GL3Plugin.cpp
+ * @file PluginGL3.cpp
  * @brief Implementation of the plugin
  */
 
@@ -12,35 +12,35 @@
  */
 
 
-#include "GL3Plugin.hpp"
-#include "GL3GraphicsDriverFactory.hpp"
+#include "PluginGL3.hpp"
+#include "GraphicsDriverFactoryGL3.hpp"
 
 #include <xe/Core.hpp>
 #include <xe/Exception.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
 
 namespace xe { namespace gfx { namespace gl3 {
-    GL3Plugin::GL3Plugin() {
-        this->factory = std::make_unique<GL3GraphicsDriverFactory>();
+    PluginGL3::PluginGL3() {
+        this->factory = std::make_unique<GraphicsDriverFactoryGL3>();
     }
 
-    GL3Plugin::~GL3Plugin() {
+    PluginGL3::~PluginGL3() {
         this->terminate();
     }
 
-    std::string GL3Plugin::getName() const {
+    std::string PluginGL3::getName() const {
         return "OpenGL 3 Graphics Driver";
     }
 
-    std::string GL3Plugin::getDescription() const {
+    std::string PluginGL3::getDescription() const {
         return "Graphics driver implemented using the OpenGL 3 Core Profile API.";
     }
 
-    Version GL3Plugin::getVersion() const {
+    Version PluginGL3::getVersion() const {
         return Version(0, 0, 1, 1);
     }
 
-    void GL3Plugin::initialize(Core *root) {
+    void PluginGL3::initialize(Core *root) {
         if (this->root != nullptr) {
 			EXENG_THROW_EXCEPTION("Can't initialize the plugin if already been initialized.");
         } 
@@ -49,7 +49,7 @@ namespace xe { namespace gfx { namespace gl3 {
         this->root->getGraphicsManager()->addDriverFactory(this->factory.get());
     }
 
-    void GL3Plugin::terminate() {
+    void PluginGL3::terminate() {
         if (this->root == nullptr) {
             EXENG_THROW_EXCEPTION("Can't terminate the plugin if has not been initialized.");
         } 
@@ -58,7 +58,7 @@ namespace xe { namespace gfx { namespace gl3 {
         this->root = nullptr;
     }
 
-    GL3Plugin *currentPlugin = nullptr;
+    PluginGL3 *currentPlugin = nullptr;
 }}}
 
 #if defined (EXENG_WINDOWS)
@@ -68,4 +68,4 @@ namespace xe { namespace gfx { namespace gl3 {
 #  endif
 #endif 
 
-EXENG_EXPORT_PLUGIN(xe::gfx::gl3::GL3Plugin)
+EXENG_EXPORT_PLUGIN(xe::gfx::gl3::PluginGL3)

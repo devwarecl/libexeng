@@ -1,5 +1,5 @@
 /**
- * @file GL3Debug.hpp
+ * @file DebugGL3.hpp
  * @brief Definition of OpenGL debugging routines and macros.
  */
 

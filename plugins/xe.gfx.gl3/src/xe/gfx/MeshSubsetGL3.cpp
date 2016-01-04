@@ -1,14 +1,14 @@
 
-#include "GL3MeshSubset.hpp"
-#include "GL3Buffer.hpp"
-#include "GL3Utils.hpp"
-#include "GL3Debug.hpp"
+#include "MeshSubsetGL3.hpp"
+#include "BufferGL3.hpp"
+#include "UtilGL3.hpp"
+#include "DebugGL3.hpp"
 
 namespace xe { namespace gfx { namespace gl3 {
 
-	const std::string errMessage = "GL3MeshSubset::GL3MeshSubset -> The vertex buffer vector must contain at least one element.";
+	const std::string errMessage = "MeshSubsetGL3::MeshSubsetGL3 -> The vertex buffer vector must contain at least one element.";
 	
-    GL3MeshSubset::GL3MeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format) {
+    MeshSubsetGL3::MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format) {
 #if defined(EXENG_DEBUG)
         if (vertexBuffers.size() == 0) {
             throw std::runtime_error(errMessage);
@@ -18,7 +18,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		this->construct();
     }
 
-	GL3MeshSubset::GL3MeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format, BufferPtr indexBuffer, IndexFormat::Enum indexFormat) {
+	MeshSubsetGL3::MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format, BufferPtr indexBuffer, IndexFormat::Enum indexFormat) {
 #if defined(EXENG_DEBUG)
         if (vertexBuffers.size() == 0) {
             throw std::runtime_error(errMessage);
@@ -29,29 +29,29 @@ namespace xe { namespace gfx { namespace gl3 {
 		this->construct();
 	}
 
-	void GL3MeshSubset::initializeVertexArray(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format) {
+	void MeshSubsetGL3::initializeVertexArray(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format) {
 		assert(this);
 
 		for (auto &vbuffer : vertexBuffers) {
 			BufferPtr _buffer = std::move(vbuffer);
 
-			std::unique_ptr<GL3Buffer> buffer(static_cast<GL3Buffer*>(_buffer.release()));
+			std::unique_ptr<BufferGL3> buffer(static_cast<BufferGL3*>(_buffer.release()));
 			this->buffers.push_back(std::move(buffer));
 		}
 
 		this->vertexFormat = format;
 	}
 
-	void GL3MeshSubset::initializeIndexArray(BufferPtr indexBuffer, IndexFormat::Enum indexFormat) {
+	void MeshSubsetGL3::initializeIndexArray(BufferPtr indexBuffer, IndexFormat::Enum indexFormat) {
 		assert(this);
 
 		BufferPtr buffer = std::move(indexBuffer);
 
-		this->indexBuffer.reset(static_cast<GL3Buffer*>(buffer.release()));
+		this->indexBuffer.reset(static_cast<BufferGL3*>(buffer.release()));
 		this->indexFormat = indexFormat;
 	}
 
-	void GL3MeshSubset::construct() {
+	void MeshSubsetGL3::construct() {
 		assert(this);
 
 		const VertexFormat format = this->getVertexFormat();
@@ -65,7 +65,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			int baseAttrib = 0;
 			int offset = 0;
 
-			const auto buffer = static_cast<GL3Buffer*>(this->getBuffer(0));
+			const auto buffer = static_cast<BufferGL3*>(this->getBuffer(0));
 			const GLenum bufferTarget = buffer->getTarget();
 			const GLuint bufferId = buffer->getBufferId();
 
@@ -96,7 +96,7 @@ namespace xe { namespace gfx { namespace gl3 {
 					break;
 				}
 				
-				const auto buffer = static_cast<GL3Buffer*>(this->getBuffer(baseAttrib));
+				const auto buffer = static_cast<BufferGL3*>(this->getBuffer(baseAttrib));
 				const GLenum bufferTarget = buffer->getTarget();
 				const GLuint bufferId = buffer->getBufferId();
 
@@ -115,7 +115,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		}
 
 		if (this->indexBuffer) {
-			const auto buffer = static_cast<const GL3Buffer*>(this->indexBuffer.get());
+			const auto buffer = static_cast<const BufferGL3*>(this->indexBuffer.get());
 			const GLuint bufferId = buffer->getBufferId();
 			const GLenum target = buffer->getTarget();
 
@@ -139,7 +139,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
 	}
 	
-    GL3MeshSubset::~GL3MeshSubset() {
+    MeshSubsetGL3::~MeshSubsetGL3() {
 		assert(this);
 		assert(this->vertexArrayId);
 
@@ -148,9 +148,9 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
     }
 
-    TypeInfo GL3MeshSubset::getTypeInfo() const {
+    TypeInfo MeshSubsetGL3::getTypeInfo() const {
 		assert(this);
 
-        return TypeId<GL3MeshSubset>();
+        return TypeId<MeshSubsetGL3>();
     }
 }}}

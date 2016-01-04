@@ -1,6 +1,6 @@
 
 /**
- * @file GL3Texture.cpp
+ * @file TextureGL3.cpp
  * @brief Implementation of the OpenGL 3 texture class
  */
 
@@ -12,9 +12,9 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "GL3Utils.hpp"
-#include "GL3Texture.hpp"
-#include "GL3Debug.hpp"
+#include "UtilGL3.hpp"
+#include "TextureGL3.hpp"
+#include "DebugGL3.hpp"
 
 #include <stdexcept>
 #include <cassert>
@@ -23,17 +23,17 @@ using namespace xe;
 
 namespace xe { namespace gfx { namespace gl3 {
 
-	GL3Texture::GL3Texture(TextureType::Enum type, Vector3i size, const ColorFormat &format, const void *data) {
+	TextureGL3::TextureGL3(TextureType::Enum type, Vector3i size, const ColorFormat &format, const void *data) {
 		GLuint textureId = 0;
 #if defined(EXENG_DEBUG)
 		// check for a valid type
 		if (convTextureType(type) == GL_FALSE) {
-			throw std::invalid_argument("GL3Texture::GL3Texture: Unsupported texture type");
+			throw std::invalid_argument("TextureGL3::TextureGL3: Unsupported texture type");
 		}
         
 		// check the pixel format
 		if (format.isValid() == false) {
-			throw std::invalid_argument("GL3Texture::GL3Texture: Unsupported texture color format");
+			throw std::invalid_argument("TextureGL3::TextureGL3: Unsupported texture color format");
 		}
 #endif
 		// adjust the size
@@ -124,26 +124,26 @@ namespace xe { namespace gfx { namespace gl3 {
 		::glBindTexture(textureTarget, 0);
 	}
 
-	GL3Texture::~GL3Texture() {
+	TextureGL3::~TextureGL3() {
 		if (this->textureId != 0) {
 			::glDeleteTextures(1, &this->textureId);
 			this->textureId = 0;
 		}
 	}
 
-	void* GL3Texture::lock() {
+	void* TextureGL3::lock() {
 		assert(this->textureId != 0);
         
 		this->textureData = this->buffer->getPointer();
 		return this->textureData;
 	}
 
-	void* GL3Texture::lock(TextureCubeMapFace::Enum face) {
+	void* TextureGL3::lock(TextureCubeMapFace::Enum face) {
 		assert(this->textureId != 0);
-		throw std::runtime_error("GL3Texture::lock(TextureCubeMapFace): Not yet implemented.");
+		throw std::runtime_error("TextureGL3::lock(TextureCubeMapFace): Not yet implemented.");
 	}
 
-	void GL3Texture::unlock() {
+	void TextureGL3::unlock() {
 		assert(this->textureId != 0);
 		assert(this->textureTarget != 0);
 		assert(this->textureData != nullptr);
@@ -170,27 +170,27 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
 	}
 
-	TextureType::Enum GL3Texture::getType() const {
+	TextureType::Enum TextureGL3::getType() const {
 		return this->type;
 	}
 
-	ColorFormat GL3Texture::getColorFormat() const {
+	ColorFormat TextureGL3::getColorFormat() const {
 		return this->format;
 	}
 
-	Vector3i GL3Texture::getSize() const {
+	Vector3i TextureGL3::getSize() const {
 		return this->size;
 	}
 
-	TypeInfo GL3Texture::getTypeInfo() const {
-		return TypeId<GL3Texture>();
+	TypeInfo TextureGL3::getTypeInfo() const {
+		return TypeId<TextureGL3>();
 	}
 
-	int GL3Texture::getHandle() const {
+	int TextureGL3::getHandle() const {
         return static_cast<int>(this->textureId);
     }
     
-    const void* GL3Texture::getDataPtr() const {
+    const void* TextureGL3::getDataPtr() const {
         return this->textureData;
     }
 }}}

@@ -1,7 +1,7 @@
 
 /**
- * @file GL3ShaderProgram.hpp
- * @brief Definition of the GL3ShaderProgram class.
+ * @file ShaderProgramGL3.hpp
+ * @brief Definition of the ShaderProgramGL3 class.
  */
 
 
@@ -22,11 +22,11 @@
 
 namespace xe { namespace gfx { namespace gl3 {
 
-    class GL3Shader;
-    class GL3ShaderProgram : public ShaderProgram {
+    class ShaderGL3;
+    class ShaderProgramGL3 : public ShaderProgram {
     public:
-        GL3ShaderProgram();
-        virtual ~GL3ShaderProgram();
+        ShaderProgramGL3();
+        virtual ~ShaderProgramGL3();
 
         virtual TypeInfo getTypeInfo() const override;
         virtual void addShader(Shader *shader) override;

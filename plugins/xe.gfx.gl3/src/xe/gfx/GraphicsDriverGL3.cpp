@@ -1,5 +1,5 @@
 /**
- * @file GL3GraphicsDriver.cpp
+ * @file GraphicsDriverGL3.cpp
  * @brief Implementation of the GL3 Graphics Driver class.
  */
 
@@ -11,18 +11,18 @@
  */
 
 #include "GL3.hpp"
-#include "GL3Utils.hpp"
+#include "UtilGL3.hpp"
 #include <GLFW/glfw3.h>
 
-#include "GL3GraphicsDriver.hpp"
-#include "GL3Plugin.hpp"
-#include "GL3GraphicsDriverFactory.hpp"
-#include "GL3Debug.hpp"
-#include "GL3Shader.hpp"
-#include "GL3Texture.hpp"
-#include "GL3Shader.hpp"
-#include "GL3ShaderProgram.hpp"
-#include "GL3MeshSubset.hpp"
+#include "GraphicsDriverGL3.hpp"
+#include "PluginGL3.hpp"
+#include "GraphicsDriverFactoryGL3.hpp"
+#include "DebugGL3.hpp"
+#include "ShaderGL3.hpp"
+#include "TextureGL3.hpp"
+#include "ShaderGL3.hpp"
+#include "ShaderProgramGL3.hpp"
+#include "MeshSubsetGL3.hpp"
 
 #include <xe/DataType.hpp>
 #include <xe/Exception.hpp>
@@ -39,7 +39,7 @@ using namespace xe::input2;
 namespace xe { namespace gfx { namespace gl3 {
 
 	// 
-	static std::map<GLFWwindow*, GL3GraphicsDriver*> drivers;
+	static std::map<GLFWwindow*, GraphicsDriverGL3*> drivers;
 
     static void closeEvent(GLFWwindow *window)
     {
@@ -78,11 +78,11 @@ namespace xe { namespace gfx { namespace gl3 {
 		keyStroke.code = code;
 		keyStroke.status = status;
 
-		GL3GraphicsDriver *driver = xe::gfx::gl3::drivers[window];
+		GraphicsDriverGL3 *driver = xe::gfx::gl3::drivers[window];
 		driver->getInputManager()->getKeyboard()->getKeyStrokeEvent()->raise(keyStroke);
     }
 
-    int GL3GraphicsDriver::initializedCount = 0;
+    int GraphicsDriverGL3::initializedCount = 0;
 
 	typedef Event<KeyStroke> KeyStrokeEvent;
 
@@ -107,21 +107,21 @@ namespace xe { namespace gfx { namespace gl3 {
 		KeyboardStatus status;
 	};
 
-    GL3GraphicsDriver::GL3GraphicsDriver() {
+    GraphicsDriverGL3::GraphicsDriverGL3() {
 
 	}
 
-    GL3GraphicsDriver::~GL3GraphicsDriver() 
+    GraphicsDriverGL3::~GraphicsDriverGL3() 
     {
         this->terminate();
     }
 
-    void GL3GraphicsDriver::initialize() 
+    void GraphicsDriverGL3::initialize() 
     {
         this->initialize(DisplayMode());
     }
 
-    void GL3GraphicsDriver::initialize(const DisplayMode &displayMode) 
+    void GraphicsDriverGL3::initialize(const DisplayMode &displayMode) 
     {
         if (initializedCount > 0) {
             EXENG_THROW_EXCEPTION("Only a single GL3 graphics driver can be initialized at time");
@@ -153,7 +153,7 @@ namespace xe { namespace gfx { namespace gl3 {
         
         context->window = ::glfwCreateWindow(width, height, "exeng-graphics-gl3 Window", monitor, NULL);
         if (context->window == nullptr) {
-			EXENG_THROW_EXCEPTION("GL3GraphicsDriver::GL3GraphicsDriver: Cannot create a GLFW Window.");
+			EXENG_THROW_EXCEPTION("GraphicsDriverGL3::GraphicsDriverGL3: Cannot create a GLFW Window.");
         }
         
         ::glfwMakeContextCurrent(context->window);
@@ -177,15 +177,15 @@ namespace xe { namespace gfx { namespace gl3 {
         this->displayMode = displayMode;
         this->initialized = true;
 
-        ++GL3GraphicsDriver::initializedCount;
+        ++GraphicsDriverGL3::initializedCount;
 
 		GL3_CHECK();
     }
 
-    void GL3GraphicsDriver::terminate() 
+    void GraphicsDriverGL3::terminate() 
     {
         if (this->initialized == true) {
-            --GL3GraphicsDriver::initializedCount;
+            --GraphicsDriverGL3::initializedCount;
 			this->initialized = false;
 
 			drivers.erase(this->context->window);
@@ -194,18 +194,18 @@ namespace xe { namespace gfx { namespace gl3 {
 		this->context.reset(nullptr);
     }
 
-    bool GL3GraphicsDriver::isInitialized() const 
+    bool GraphicsDriverGL3::isInitialized() const 
     {
         return this->initialized;
     }
 
-    void GL3GraphicsDriver::beginFrame(const Vector4f &color, ClearFlags::Flags flags) 
+    void GraphicsDriverGL3::beginFrame(const Vector4f &color, ClearFlags::Flags flags) 
     {
 #if defined(EXENG_DEBUG)
         if (this->renderingFrame == true) {
             std::string msg;
             
-            msg += "GL3GraphicsDriver::beginFrame: ";
+            msg += "GraphicsDriverGL3::beginFrame: ";
             msg += "Can't rendering a new frame if the current one hasn't been completed.";
             
             EXENG_THROW_EXCEPTION(msg);
@@ -220,7 +220,7 @@ namespace xe { namespace gfx { namespace gl3 {
         if (!clearFlags) {
             std::string msg;
             
-            msg += "GL3GraphicsDriver::beginScene: ";
+            msg += "GraphicsDriverGL3::beginScene: ";
             msg += "Flags must be non 0.";
             
             EXENG_THROW_EXCEPTION(msg);
@@ -234,13 +234,13 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    void GL3GraphicsDriver::endFrame() 
+    void GraphicsDriverGL3::endFrame() 
     {
 #if defined(EXENG_DEBUG)
         if (this->renderingFrame == false) {
             std::string msg;
             
-            msg += "GL3GraphicsDriver::endFrame: ";
+            msg += "GraphicsDriverGL3::endFrame: ";
             msg += "Invalid call because must start a new frame first, via the beginFrame method.";
             
             EXENG_THROW_EXCEPTION(msg);
@@ -254,34 +254,34 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    void GL3GraphicsDriver::setMeshSubset(const MeshSubset *meshSubset) {
+    void GraphicsDriverGL3::setMeshSubset(const MeshSubset *meshSubset) {
 #if defined(EXENG_DEBUG)
 		assert(this);
 		assert(meshSubset);
-		assert(static_cast<const GL3MeshSubset*>(meshSubset)->getVertexArrayId());
+		assert(static_cast<const MeshSubsetGL3*>(meshSubset)->getVertexArrayId());
 		
-        if (meshSubset->getTypeInfo() != TypeId<GL3MeshSubset>()) {
-			EXENG_THROW_EXCEPTION("GL3GraphicsDriver::setMeshSubset: Invalid meshSubset TypeInfo.");
+        if (meshSubset->getTypeInfo() != TypeId<MeshSubsetGL3>()) {
+			EXENG_THROW_EXCEPTION("GraphicsDriverGL3::setMeshSubset: Invalid meshSubset TypeInfo.");
         }
 
         for (int i=0; i<meshSubset->getBufferCount(); ++i) {
-            if (meshSubset->getBuffer(i)->getTypeInfo() != TypeId<GL3Buffer>()) {
-                EXENG_THROW_EXCEPTION("GL3GraphicsDriver::setMeshSubset: Invalid vertex buffer TypeInfo.");
+            if (meshSubset->getBuffer(i)->getTypeInfo() != TypeId<BufferGL3>()) {
+                EXENG_THROW_EXCEPTION("GraphicsDriverGL3::setMeshSubset: Invalid vertex buffer TypeInfo.");
             }
         }
 
         //  
-        if (meshSubset->getIndexBuffer() && (meshSubset->getIndexBuffer()->getTypeInfo() != TypeId<GL3Buffer>())) {
-            EXENG_THROW_EXCEPTION("GL3GraphicsDriver::setMeshSubset: Invalid index buffer TypeInfo.");
+        if (meshSubset->getIndexBuffer() && (meshSubset->getIndexBuffer()->getTypeInfo() != TypeId<BufferGL3>())) {
+            EXENG_THROW_EXCEPTION("GraphicsDriverGL3::setMeshSubset: Invalid index buffer TypeInfo.");
         }
 
 		if (meshSubset->getBufferCount() != 1) {
-            EXENG_THROW_EXCEPTION("GL3GraphicsDriver::setMeshSubset: Only one vertex buffer is supported for now");
+            EXENG_THROW_EXCEPTION("GraphicsDriverGL3::setMeshSubset: Only one vertex buffer is supported for now");
         }
 #endif
-        this->meshSubset = static_cast<const GL3MeshSubset*>(meshSubset);
-        this->vertexBuffer = static_cast<const GL3Buffer*>(meshSubset->getBuffer(0));
-        this->indexBuffer = static_cast<const GL3Buffer*>(meshSubset->getIndexBuffer());
+        this->meshSubset = static_cast<const MeshSubsetGL3*>(meshSubset);
+        this->vertexBuffer = static_cast<const BufferGL3*>(meshSubset->getBuffer(0));
+        this->indexBuffer = static_cast<const BufferGL3*>(meshSubset->getIndexBuffer());
 
 		const GLuint vertexArrayId = this->meshSubset->getVertexArrayId();
 		::glBindVertexArray(vertexArrayId);
@@ -295,23 +295,23 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
     
-    const MeshSubset* GL3GraphicsDriver::getMeshSubset() const {
+    const MeshSubset* GraphicsDriverGL3::getMeshSubset() const {
         return this->meshSubset;
     }
 
-    void GL3GraphicsDriver::setMaterial(const Material* material) {
+    void GraphicsDriverGL3::setMaterial(const Material* material) {
 #if defined (EXENG_DEBUG)
 
 		if (!material) {
-			EXENG_THROW_EXCEPTION("GL3GraphicsDriver::setMaterial: The supplied material can't be null.");
+			EXENG_THROW_EXCEPTION("GraphicsDriverGL3::setMaterial: The supplied material can't be null.");
 		}
 
         // Check texture type info
-        if (material && material->checkTextureType(TypeId<GL3Texture>()) == false) {
-            EXENG_THROW_EXCEPTION("GL3GraphicsDriver::setMaterial: The supplied texture class implementation must be GL3Texture.");
+        if (material && material->checkTextureType(TypeId<TextureGL3>()) == false) {
+            EXENG_THROW_EXCEPTION("GraphicsDriverGL3::setMaterial: The supplied texture class implementation must be TextureGL3.");
         }
 		
-        // Check if the  textures were created by this GL3GraphicsDriver.
+        // Check if the  textures were created by this GraphicsDriverGL3.
         // const int layerCount = material->getLayerCount();
         // const MaterialLayer *layer = nullptr;
         // for (int i=0; i<layerCount; ++i) {
@@ -320,7 +320,7 @@ namespace xe { namespace gfx { namespace gl3 {
         //     if (layer->hasTexture() == true && layer->getTexture()->getResourceManager() != this) {
         //         std::string msg;
         //        
-        //         msg += "GL3GraphicsDriver::setMaterial: ";
+        //         msg += "GraphicsDriverGL3::setMaterial: ";
         //         msg += "The textures used by this material are not valid.";
         //        
         //         EXENG_THROW_EXCEPTION(msg);
@@ -329,11 +329,11 @@ namespace xe { namespace gfx { namespace gl3 {
         
         // Check for shader program info and status
         if (material && material->getShaderProgram() != nullptr ) {
-            if ( material->getShaderProgram()->getTypeInfo() != TypeId<GL3ShaderProgram>() ) {
+            if ( material->getShaderProgram()->getTypeInfo() != TypeId<ShaderProgramGL3>() ) {
                 std::string msg;
                 
-                msg += "GL3GraphicsDriver::setMaterial: ";
-                msg += "Expected a shader program of type GL3ShaderProgram";
+                msg += "GraphicsDriverGL3::setMaterial: ";
+                msg += "Expected a shader program of type ShaderProgramGL3";
                 
                 EXENG_THROW_EXCEPTION(msg);
             }
@@ -341,7 +341,7 @@ namespace xe { namespace gfx { namespace gl3 {
             if ( material->getShaderProgram()->isLinked() == false ) {
                 std::string msg;
                 
-                msg += "GL3GraphicsDriver::setMaterial: ";
+                msg += "GraphicsDriverGL3::setMaterial: ";
                 msg += "The shader program must be linked by client code.";
                 
                 EXENG_THROW_EXCEPTION(msg);
@@ -356,9 +356,9 @@ namespace xe { namespace gfx { namespace gl3 {
         this->material = material;
     }
 
-    std::unique_ptr<Buffer> GL3GraphicsDriver::createVertexBuffer(const std::int32_t size, const void* data) 
+    std::unique_ptr<Buffer> GraphicsDriverGL3::createVertexBuffer(const std::int32_t size, const void* data) 
     {
-        auto vertexBuffer = std::unique_ptr<Buffer>(new GL3Buffer(size, GL_ARRAY_BUFFER));
+        auto vertexBuffer = std::unique_ptr<Buffer>(new BufferGL3(size, GL_ARRAY_BUFFER));
 
         if (data) {
             vertexBuffer->setData(data);
@@ -367,9 +367,9 @@ namespace xe { namespace gfx { namespace gl3 {
         return vertexBuffer;
     }
 
-    std::unique_ptr<Buffer> GL3GraphicsDriver::createIndexBuffer(const std::int32_t size, const void* data) 
+    std::unique_ptr<Buffer> GraphicsDriverGL3::createIndexBuffer(const std::int32_t size, const void* data) 
     {
-        auto vertexBuffer = std::unique_ptr<Buffer>(new GL3Buffer(size, GL_ELEMENT_ARRAY_BUFFER));
+        auto vertexBuffer = std::unique_ptr<Buffer>(new BufferGL3(size, GL_ELEMENT_ARRAY_BUFFER));
 
         if (data) {
             vertexBuffer->setData(data);
@@ -378,28 +378,28 @@ namespace xe { namespace gfx { namespace gl3 {
         return vertexBuffer;
     }
 
-    TexturePtr GL3GraphicsDriver::createTexture(const Vector2i& size, const ColorFormat &format, const void* data) 
+    TexturePtr GraphicsDriverGL3::createTexture(const Vector2i& size, const ColorFormat &format, const void* data) 
     {
-		TexturePtr texture = std::make_unique<GL3Texture>(TextureType::Tex2D, (Vector3i)size, format, data);
+		TexturePtr texture = std::make_unique<TextureGL3>(TextureType::Tex2D, (Vector3i)size, format, data);
 
         return texture;
     }
 
-	TexturePtr GL3GraphicsDriver::createTexture(const Vector3i& size, const ColorFormat &format, const void* data) 
+	TexturePtr GraphicsDriverGL3::createTexture(const Vector3i& size, const ColorFormat &format, const void* data) 
     {
-		TexturePtr texture = std::make_unique<GL3Texture>(TextureType::Tex3D, size, format, data);
+		TexturePtr texture = std::make_unique<TextureGL3>(TextureType::Tex3D, size, format, data);
 
         return texture;
     }
 
-	TexturePtr GL3GraphicsDriver::createTextureCube(const Vector2i& size, const ColorFormat &format, const void* data) 
+	TexturePtr GraphicsDriverGL3::createTextureCube(const Vector2i& size, const ColorFormat &format, const void* data) 
     {
-		TexturePtr texture = std::make_unique<GL3Texture>(TextureType::TexCubeMap, (Vector3i)size, format, data);
+		TexturePtr texture = std::make_unique<TextureGL3>(TextureType::TexCubeMap, (Vector3i)size, format, data);
 
         return texture;
     }
 
-    void GL3GraphicsDriver::setViewport(const Rectf& viewport) 
+    void GraphicsDriverGL3::setViewport(const Rectf& viewport) 
     {
         const auto minEdge = static_cast<Vector2i>(viewport.getMin());
         const auto size = static_cast<Size2i>(viewport.getSize());
@@ -415,7 +415,7 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    void GL3GraphicsDriver::render(Primitive::Enum ptype, int count) {
+    void GraphicsDriverGL3::render(Primitive::Enum ptype, int count) {
 #if defined(EXENG_DEBUG)
 		xe::gfx::gl3::checkMeshSubsetBinding(this->meshSubset);
 #endif
@@ -435,26 +435,26 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    void GL3GraphicsDriver::poll()  {
+    void GraphicsDriverGL3::poll()  {
         ::glfwPollEvents();
         
         //! TODO: notify the event handlers for events
     }
 
-    DisplayMode GL3GraphicsDriver::getDisplayMode() const 
+    DisplayMode GraphicsDriverGL3::getDisplayMode() const 
     {
         return this->displayMode;
     }
 
-    std::unique_ptr<Shader> GL3GraphicsDriver::createShader( ShaderType::Enum type ) 
+    std::unique_ptr<Shader> GraphicsDriverGL3::createShader( ShaderType::Enum type ) 
     {
-        auto shader = std::unique_ptr<Shader>(new GL3Shader(type));
+        auto shader = std::unique_ptr<Shader>(new ShaderGL3(type));
         return shader;
     }
 
-    std::unique_ptr<ShaderProgram> GL3GraphicsDriver::createShaderProgram()
+    std::unique_ptr<ShaderProgram> GraphicsDriverGL3::createShaderProgram()
     {
-        auto shaderProgram = std::unique_ptr<ShaderProgram>(new GL3ShaderProgram());
+        auto shaderProgram = std::unique_ptr<ShaderProgram>(new ShaderProgramGL3());
         return shaderProgram;
     }
     
@@ -471,7 +471,7 @@ namespace xe { namespace gfx { namespace gl3 {
         }
     }
     
-    void GL3GraphicsDriver::preRenderMaterial(const Material *material) {
+    void GraphicsDriverGL3::preRenderMaterial(const Material *material) {
         assert(material != nullptr);
         
         // set the texture state
@@ -479,7 +479,7 @@ namespace xe { namespace gfx { namespace gl3 {
             const MaterialLayer *layer = material->getLayer(i);
             
             if (layer->hasTexture() == true) {
-                const GL3Texture *texture = static_cast<const GL3Texture*>(layer->getTexture());
+                const TextureGL3 *texture = static_cast<const TextureGL3*>(layer->getTexture());
                 GLenum textureType = convTextureType(texture->getType());
                 GLenum textureId = texture->getTextureId();
                 
@@ -489,7 +489,7 @@ namespace xe { namespace gfx { namespace gl3 {
         }
         
         // set the shader program state
-        const GL3ShaderProgram *shaderProgram = static_cast<const GL3ShaderProgram *>(material->getShaderProgram());
+        const ShaderProgramGL3 *shaderProgram = static_cast<const ShaderProgramGL3 *>(material->getShaderProgram());
         
         GLint programId = shaderProgram->getProgramId();
         ::glUseProgram(programId);
@@ -519,13 +519,13 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    void GL3GraphicsDriver::postRenderMaterial(const Material *material) {
+    void GraphicsDriverGL3::postRenderMaterial(const Material *material) {
 
         for (int i=0; i<material->getLayerCount(); ++i) {
 			const MaterialLayer *layer = material->getLayer(i);
 
             if (layer->hasTexture() == true) {
-                const GL3Texture *texture = static_cast<const GL3Texture*>(layer->getTexture());
+                const TextureGL3 *texture = static_cast<const TextureGL3*>(layer->getTexture());
                 GLenum textureType = convTextureType(texture->getType());
                 
                 ::glActiveTexture(GL_TEXTURE0 + i);
@@ -536,11 +536,11 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    std::unique_ptr<MeshSubset> GL3GraphicsDriver::createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) {
-		return std::unique_ptr<MeshSubset>(new GL3MeshSubset(std::move(vertexBuffers), format, std::move(indexBuffer), IndexFormat::Index32));
+    std::unique_ptr<MeshSubset> GraphicsDriverGL3::createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) {
+		return std::unique_ptr<MeshSubset>(new MeshSubsetGL3(std::move(vertexBuffers), format, std::move(indexBuffer), IndexFormat::Index32));
     }
 
-	void GL3GraphicsDriver::setProgramGlobal(const std::string &globalName, const Vector4f &value) {
+	void GraphicsDriverGL3::setProgramGlobal(const std::string &globalName, const Vector4f &value) {
 #if defined(EXENG_DEBUG)
 		if (!this->getMaterial()) {
 			EXENG_THROW_EXCEPTION("No current material bound.");
@@ -550,7 +550,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			EXENG_THROW_EXCEPTION("No current shader program bound.");
 		}
 #endif
-		const GL3ShaderProgram *shaderProgram = this->getShaderProgram();
+		const ShaderProgramGL3 *shaderProgram = this->getShaderProgram();
 
 		int programId = shaderProgram->getProgramId();
 		int location = glGetUniformLocation(programId, globalName.c_str());
@@ -565,7 +565,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
 	}
 
-	void GL3GraphicsDriver::setProgramGlobal(const std::string &globalName, const Matrix4f &value) {
+	void GraphicsDriverGL3::setProgramGlobal(const std::string &globalName, const Matrix4f &value) {
 #if defined(EXENG_DEBUG)
 		if (!this->getMaterial()) {
 			EXENG_THROW_EXCEPTION("No current material bound.");
@@ -575,7 +575,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			EXENG_THROW_EXCEPTION("No current shader program bound.");
 		}
 #endif
-		const GL3ShaderProgram *shaderProgram = this->getShaderProgram();
+		const ShaderProgramGL3 *shaderProgram = this->getShaderProgram();
 
 		int programId = shaderProgram->getProgramId();
 		int location = glGetUniformLocation(programId, globalName.c_str());
@@ -590,7 +590,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
 	}
 
-	void GL3GraphicsDriver::setProgramGlobal(const int index, const Vector4f &value) {
+	void GraphicsDriverGL3::setProgramGlobal(const int index, const Vector4f &value) {
 #if defined(EXENG_DEBUG)
 		if (!this->getMaterial()) {
 			EXENG_THROW_EXCEPTION("No current material bound.");
@@ -600,7 +600,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			EXENG_THROW_EXCEPTION("No current shader program bound.");
 		}
 #endif
-		const GL3ShaderProgram *shaderProgram = this->getShaderProgram();
+		const ShaderProgramGL3 *shaderProgram = this->getShaderProgram();
 
 		int programId = shaderProgram->getProgramId();
 		int location = index;
@@ -615,7 +615,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
 	}
 
-	void GL3GraphicsDriver::setProgramGlobal(const int index, const Matrix4f &value) {
+	void GraphicsDriverGL3::setProgramGlobal(const int index, const Matrix4f &value) {
 #if defined(EXENG_DEBUG)
 		if (!this->getMaterial()) {
 			EXENG_THROW_EXCEPTION("No current material bound.");
@@ -625,7 +625,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			EXENG_THROW_EXCEPTION("No current shader program bound.");
 		}
 #endif
-		const GL3ShaderProgram *shaderProgram = this->getShaderProgram();
+		const ShaderProgramGL3 *shaderProgram = this->getShaderProgram();
 
 		int programId = shaderProgram->getProgramId();
 		int location = index;
@@ -640,7 +640,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
 	}
 
-	ModernModule* GL3GraphicsDriver::getModernModule() {
+	ModernModule* GraphicsDriverGL3::getModernModule() {
 		return this;
 	}
 }}}

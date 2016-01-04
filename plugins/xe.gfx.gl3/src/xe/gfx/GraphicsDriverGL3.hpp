@@ -1,5 +1,5 @@
 /**
- * @file GL3GraphicsDriver.hpp
+ * @file GraphicsDriverGL3.hpp
  * @brief Definition of the GL3 Graphics Driver class.
  */
 
@@ -25,9 +25,9 @@
 #include <xe/gfx/GraphicsDriverBase.hpp>
 #include <xe/gfx/VertexFormat.hpp>
 
-#include "GL3Buffer.hpp"
-#include "GL3MeshSubset.hpp"
-#include "GL3ShaderProgram.hpp"
+#include "BufferGL3.hpp"
+#include "MeshSubsetGL3.hpp"
+#include "ShaderProgramGL3.hpp"
 
 namespace xe { namespace gfx { namespace gl3 {
 
@@ -46,16 +46,16 @@ namespace xe { namespace gfx { namespace gl3 {
         }
     };
     
-    class GL3ShaderProgram;
+    class ShaderProgramGL3;
 
     /**
      * @brief GraphicsDriver implemented using OpenGL 3.x
      */
-    class GL3GraphicsDriver : public GraphicsDriverBase, public ModernModule, public xe::input2::InputManager { 
+    class GraphicsDriverGL3 : public GraphicsDriverBase, public ModernModule, public xe::input2::InputManager { 
     public:
-        GL3GraphicsDriver();
+        GraphicsDriverGL3();
         
-        virtual ~GL3GraphicsDriver();
+        virtual ~GraphicsDriverGL3();
         
         virtual void initialize() override;
         
@@ -97,8 +97,8 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		virtual ModernModule* getModernModule() override;
 
-		inline const GL3ShaderProgram* getShaderProgram() const {
-			return static_cast<const GL3ShaderProgram*>(this->getMaterial()->getShaderProgram());
+		inline const ShaderProgramGL3* getShaderProgram() const {
+			return static_cast<const ShaderProgramGL3*>(this->getMaterial()->getShaderProgram());
 		}
 
 		virtual void setProgramGlobal(const std::string &globalName, const Vector4f &value) override;
@@ -134,10 +134,10 @@ namespace xe { namespace gfx { namespace gl3 {
     private:
         std::unique_ptr<GL3Context> context;
         
-        const GL3ShaderProgram *shaderProgram = nullptr;
-        const GL3Buffer *vertexBuffer = nullptr;
-        const GL3Buffer *indexBuffer = nullptr;
-        const GL3MeshSubset *meshSubset = nullptr;
+        const ShaderProgramGL3 *shaderProgram = nullptr;
+        const BufferGL3 *vertexBuffer = nullptr;
+        const BufferGL3 *indexBuffer = nullptr;
+        const MeshSubsetGL3 *meshSubset = nullptr;
 
         bool initialized = false;
         bool renderingFrame = false;

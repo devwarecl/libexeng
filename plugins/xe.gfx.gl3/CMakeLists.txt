@@ -9,19 +9,19 @@ LINK_DIRECTORIES (${GLFW3_LIBRARY_DIR})
 
 SET (GL3Files
 	src/xe/gfx/Locker.hpp					src/xe/gfx/Locker.cpp
-	src/xe/gfx/GL3MeshSubset.hpp			src/xe/gfx/GL3MeshSubset.cpp
-	src/xe/gfx/GL3Buffer.hpp				src/xe/gfx/GL3Buffer.cpp
-	src/xe/gfx/GL3Texture.hpp				src/xe/gfx/GL3Texture.cpp
-	src/xe/gfx/GL3GraphicsDriver.hpp		src/xe/gfx/GL3GraphicsDriver.cpp
-	src/xe/gfx/GL3GraphicsDriverFactory.hpp	src/xe/gfx/GL3GraphicsDriverFactory.cpp
-	src/xe/gfx/GL3Shader.hpp				src/xe/gfx/GL3Shader.cpp
-	src/xe/gfx/GL3ShaderProgram.hpp			src/xe/gfx/GL3ShaderProgram.cpp
-	src/xe/gfx/GL3Debug.hpp					src/xe/gfx/GL3Debug.cpp
-	src/xe/gfx/GL3Utils.hpp
-	src/xe/gfx/GL3BufferStatus.hpp 
+	src/xe/gfx/MeshSubsetGL3.hpp			src/xe/gfx/MeshSubsetGL3.cpp
+	src/xe/gfx/BufferGL3.hpp				src/xe/gfx/BufferGL3.cpp
+	src/xe/gfx/TextureGL3.hpp				src/xe/gfx/TextureGL3.cpp
+	src/xe/gfx/GraphicsDriverGL3.hpp		src/xe/gfx/GraphicsDriverGL3.cpp
+	src/xe/gfx/GraphicsDriverFactoryGL3.hpp	src/xe/gfx/GraphicsDriverFactoryGL3.cpp
+	src/xe/gfx/ShaderGL3.hpp				src/xe/gfx/ShaderGL3.cpp
+	src/xe/gfx/ShaderProgramGL3.hpp			src/xe/gfx/ShaderProgramGL3.cpp
+	src/xe/gfx/DebugGL3.hpp					src/xe/gfx/DebugGL3.cpp
+	src/xe/gfx/UtilGL3.hpp
+	src/xe/gfx/BufferStatusGL3.hpp 
 	src/xe/gfx/GL3.hpp 
 	src/xe/gfx/gl_core_3_3.h                src/xe/gfx/gl_core_3_3.c
-	src/xe/gfx/GL3Plugin.hpp                src/xe/gfx/GL3Plugin.cpp
+	src/xe/gfx/PluginGL3.hpp                src/xe/gfx/PluginGL3.cpp
 )
 
 SOURCE_GROUP (\\ FILES ${GL3Files})

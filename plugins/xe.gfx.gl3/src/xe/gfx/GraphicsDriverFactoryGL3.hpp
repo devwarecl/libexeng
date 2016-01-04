@@ -1,5 +1,5 @@
 /**
- * @file GL3GraphicsDriverFactory.hpp
+ * @file GraphicsDriverFactoryGL3.hpp
  * @brief Definition of the graphics driver factory intetface
  */
 
@@ -20,11 +20,11 @@
 
 namespace xe { namespace gfx { namespace gl3 {
 
-    class GL3GraphicsDriver;
-    class GL3GraphicsDriverFactory : public IGraphicsDriverFactory {
+    class GraphicsDriverGL3;
+    class GraphicsDriverFactoryGL3 : public IGraphicsDriverFactory {
     public:
-        GL3GraphicsDriverFactory();
-        virtual ~GL3GraphicsDriverFactory();
+        GraphicsDriverFactoryGL3();
+        virtual ~GraphicsDriverFactoryGL3();
         
         virtual GraphicsDriverInfo getDriverInfo() const override;
         virtual std::unique_ptr<GraphicsDriver> create() override;

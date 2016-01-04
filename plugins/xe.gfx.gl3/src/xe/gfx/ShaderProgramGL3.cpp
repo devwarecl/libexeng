@@ -1,7 +1,7 @@
 
 /**
- * @file GL3ShaderProgram.cpp
- * @brief Definition of the GL3ShaderProgram class.
+ * @file ShaderProgramGL3.cpp
+ * @brief Definition of the ShaderProgramGL3 class.
  */
 
 
@@ -12,10 +12,10 @@
  * found in the file LICENSE in this distribution.
  */
 
-#include "GL3ShaderProgram.hpp"
+#include "ShaderProgramGL3.hpp"
 
-#include "GL3Shader.hpp"
-#include "GL3Debug.hpp"
+#include "ShaderGL3.hpp"
+#include "DebugGL3.hpp"
 
 #include <stdexcept>
 #include <algorithm>
@@ -45,7 +45,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			this->shaders = shaders;
 
             for (Shader *shader : this->shaders) {
-                GL3Shader* glshader = static_cast<GL3Shader*>(shader);
+                ShaderGL3* glshader = static_cast<ShaderGL3*>(shader);
                 ::glAttachShader(this->programId, glshader->getName());
             }
             
@@ -55,7 +55,7 @@ namespace xe { namespace gfx { namespace gl3 {
         ~ProgramAttacher() {
             // Detach the programs. They are not longer neccesary.
             for (Shader *shader : this->shaders) {
-                GL3Shader* glshader = static_cast<GL3Shader*>(shader);
+                ShaderGL3* glshader = static_cast<ShaderGL3*>(shader);
                 ::glDetachShader(this->programId, glshader->getName());
             }
             
@@ -66,13 +66,13 @@ namespace xe { namespace gfx { namespace gl3 {
         std::list<Shader*> shaders;
     };
 
-    GL3ShaderProgram::GL3ShaderProgram() {        
+    ShaderProgramGL3::ShaderProgramGL3() {        
         this->programId = ::glCreateProgram();
         
         GL3_CHECK();
     }
 
-    GL3ShaderProgram::~GL3ShaderProgram() {
+    ShaderProgramGL3::~ShaderProgramGL3() {
         if (this->programId != 0) {
             ::glDeleteProgram(this->programId);
             this->programId = 0;
@@ -81,20 +81,20 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    TypeInfo GL3ShaderProgram::getTypeInfo() const {
-        return TypeId<GL3ShaderProgram>();
+    TypeInfo ShaderProgramGL3::getTypeInfo() const {
+        return TypeId<ShaderProgramGL3>();
     }
     
-    void GL3ShaderProgram::addShader(Shader *shader) {
+    void ShaderProgramGL3::addShader(Shader *shader) {
         assert (this->programId != 0);
     
 #if defined(EXENG_DEBUG)
         if (shader == nullptr) {
-            throw std::invalid_argument("GL3ShaderProgram::addShader -> The shader object can't be null");
+            throw std::invalid_argument("ShaderProgramGL3::addShader -> The shader object can't be null");
         }
         
-        if (shader->getTypeInfo() != TypeId<GL3Shader>()) {
-            throw std::invalid_argument("GL3ShaderProgram::addShader -> The shader object must be of type GL3Shader.");
+        if (shader->getTypeInfo() != TypeId<ShaderGL3>()) {
+            throw std::invalid_argument("ShaderProgramGL3::addShader -> The shader object must be of type ShaderGL3.");
         }
 #endif
         
@@ -103,7 +103,7 @@ namespace xe { namespace gfx { namespace gl3 {
         this->shaders.push_back(shader);
     }
 
-    void GL3ShaderProgram::link() {
+    void ShaderProgramGL3::link() {
         assert (this->programId != 0);
         
         if (!(this->linked == false || this->modified == true || this->shaders.size() > 0)) {
@@ -129,7 +129,7 @@ namespace xe { namespace gfx { namespace gl3 {
             infoLog.resize(infoLogLength + 1);
             ::glGetProgramInfoLog(this->programId, infoLogLength, NULL, (GLchar*)infoLog.c_str());
                 
-            throw std::runtime_error(std::string("GL3ShaderProgram::link: Link failure:\n") + infoLog);
+            throw std::runtime_error(std::string("ShaderProgramGL3::link: Link failure:\n") + infoLog);
         }
         
         this->linked = true;
@@ -138,17 +138,17 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    bool GL3ShaderProgram::isLinked() const {
+    bool ShaderProgramGL3::isLinked() const {
         assert (this->programId != 0);
         return this->linked;
     }
 
-    bool GL3ShaderProgram::mustRelink() const {
+    bool ShaderProgramGL3::mustRelink() const {
         assert (this->programId != 0);
         return this->modified;
     }
 
-    GLuint GL3ShaderProgram::getProgramId() const {
+    GLuint ShaderProgramGL3::getProgramId() const {
         assert (this->programId != 0);
         return this->programId;
     }

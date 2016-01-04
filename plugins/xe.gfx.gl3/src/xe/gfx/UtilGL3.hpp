@@ -1,5 +1,5 @@
 /**
- * @file GL3Utils.hpp
+ * @file UtilGL3.hpp
  * @brief OpenGL 3 Utility functions
  */
 
@@ -15,8 +15,8 @@
 #define __EXENG_GRAPHICS_GL3_GL3UTILS_HPP__
 
 #include "GL3.hpp"
-#include "GL3MeshSubset.hpp"
-#include "GL3Buffer.hpp"
+#include "MeshSubsetGL3.hpp"
+#include "BufferGL3.hpp"
 
 #include <cassert>
 #include <xe/DataType.hpp>
@@ -113,7 +113,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		}
 	}
 
-	inline void checkMeshSubsetBinding(const GL3MeshSubset *meshSubset) 
+	inline void checkMeshSubsetBinding(const MeshSubsetGL3 *meshSubset) 
 	{
 // #if defined(EXENG_DEBUG)
 #if 0
@@ -125,8 +125,8 @@ namespace xe { namespace gfx { namespace gl3 {
 		const GLint vaoId = meshSubset->getVertexArrayId();
 		assert(currentVao == vaoId);
 
-		const auto vertexBuffer = static_cast<const GL3Buffer*>(meshSubset->getBuffer(0));
-		const auto indexBuffer = static_cast<const GL3Buffer*>(meshSubset->getIndexBuffer());
+		const auto vertexBuffer = static_cast<const BufferGL3*>(meshSubset->getBuffer(0));
+		const auto indexBuffer = static_cast<const BufferGL3*>(meshSubset->getIndexBuffer());
 
 		assert(vertexBuffer);
 

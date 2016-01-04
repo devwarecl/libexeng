@@ -1,5 +1,5 @@
 /**
- * @file GL3Texture.hpp
+ * @file TextureGL3.hpp
  * @brief Definition of the OpenGL 3 Texture class
  */
 
@@ -21,10 +21,10 @@
 
 namespace xe { namespace gfx { namespace gl3 {
 
-    class GL3Texture : public Texture {
+    class TextureGL3 : public Texture {
     public:
-        GL3Texture(TextureType::Enum type, Vector3i size, const ColorFormat &format, const void *data);
-        virtual ~GL3Texture();
+        TextureGL3(TextureType::Enum type, Vector3i size, const ColorFormat &format, const void *data);
+        virtual ~TextureGL3();
 
         virtual void* lock() override;
         virtual void* lock(TextureCubeMapFace::Enum Face) override;
