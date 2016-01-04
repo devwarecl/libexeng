@@ -16,17 +16,15 @@
 
 #include <string>
 #include <vector>
-
 #include <memory>
 
-#include <xe/ResourceManager.hpp>
 #include <xe/Enum.hpp>
 #include <xe/TFlags.hpp>
 #include <xe/Boundary.hpp>
 #include <xe/Vector.hpp>
 #include <xe/Matrix.hpp>
 #include <xe/Buffer.hpp>
-#include <xe/input/IEventRaiser.hpp>
+#include <xe/input2/IInputManager.hpp>
 
 #include <xe/gfx/Material.hpp>
 #include <xe/gfx/PixelFormat.hpp>
@@ -92,58 +90,10 @@ namespace xe { namespace gfx {
 		}
     };
 
-    struct CloseReason : public Enum {
-        enum Enum{ User, System, Unknown };
-    };
-    
-    struct CloseEventData : public xe::input::EventDataImpl<CloseEventData> {
-        CloseReason::Enum reason = CloseReason::Unknown;
-
-		CloseEventData() {}
-        CloseEventData(CloseReason::Enum reason) {
-			this->reason = reason;
-		}
-    };
-
-    struct ButtonStatus : public Enum {
-        enum Enum {
-            Release,
-            Press
-        };
-    };
-
-    struct ButtonCode : public Enum {
-        enum Enum {
-            None,
-            KeyLeft, KeyRight, KeyUp, KeyDown, KeyEsc, KeySpace, KeyEnter,
-            Count
-        };
-    };
-
-    struct InputEventData : public xe::input::EventDataImpl<InputEventData> {
-        ButtonStatus::Enum buttonStatus = ButtonStatus::Release;
-        ButtonCode::Enum buttonCode = ButtonCode::None;
-
-		InputEventData() {}
-
-        InputEventData(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) {
-			this->buttonStatus = buttonStatus;
-			this->buttonCode = buttonCode;
-		}
-
-        bool check(ButtonStatus::Enum buttonStatus, ButtonCode::Enum buttonCode) const {
-			return this->buttonStatus==buttonStatus && this->buttonCode==buttonCode;
-		}
-    };
-	
-	struct ButtonEventData {
-
-	};
-
     /**
      * @brief Software interface to graphics hardware
      */
-	class EXENGAPI GraphicsDriver : public xe::input::IEventRaiser {
+	class EXENGAPI GraphicsDriver {
     public:
         virtual ~GraphicsDriver();
         
@@ -296,6 +246,8 @@ namespace xe { namespace gfx {
 		 * @brief Get an interface to a fully-programmable pipeline functionality.
 		 */
 		virtual ModernModule* getModernModule() = 0;
+
+		virtual xe::input2::IInputManager* getInputManager() = 0;
     };
 
 	typedef std::unique_ptr<GraphicsDriver> GraphicsDriverPtr;

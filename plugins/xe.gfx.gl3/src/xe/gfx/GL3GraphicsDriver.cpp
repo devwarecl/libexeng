@@ -34,7 +34,7 @@
 
 using namespace xe;
 using namespace xe::gfx;
-using namespace xe::input;
+using namespace xe::input2;
 
 namespace xe { namespace gfx { namespace gl3 {
 
@@ -43,39 +43,73 @@ namespace xe { namespace gfx { namespace gl3 {
 
     static void closeEvent(GLFWwindow *window)
     {
-		CloseEventData closeEventData(CloseReason::Unknown);
-		xe::gfx::gl3::drivers[window]->raiseEvent(closeEventData);
+		// TODO: implement
+		// CloseEventData closeEventData(CloseReason::Unknown);
+		// xe::gfx::gl3::drivers[window]->raiseEvent(closeEventData);
     }
     
     static void keyEvent(GLFWwindow *window, int key, int scancode, int action, int mods) 
     {
-        ButtonCode::Enum code;
+		KeyCode::Enum code = KeyCode::Unknown;
+
         switch (key) {
-            case GLFW_KEY_ESCAPE:	code = ButtonCode::KeyEsc;		break;
-            case GLFW_KEY_LEFT:		code = ButtonCode::KeyLeft;		break;
-            case GLFW_KEY_RIGHT:	code = ButtonCode::KeyRight;	break;
-            case GLFW_KEY_UP:		code = ButtonCode::KeyUp;		break;
-            case GLFW_KEY_DOWN:		code = ButtonCode::KeyDown;		break;
-            case GLFW_KEY_SPACE:	code = ButtonCode::KeySpace;	break;
-            case GLFW_KEY_ENTER:	code = ButtonCode::KeyEnter;	break;
-            default: code = ButtonCode::None;
+            case GLFW_KEY_ESCAPE:	code = KeyCode::KeyEsc;		break;
+            case GLFW_KEY_LEFT:		code = KeyCode::KeyLeft;	break;
+            case GLFW_KEY_RIGHT:	code = KeyCode::KeyRight;	break;
+            case GLFW_KEY_UP:		code = KeyCode::KeyUp;		break;
+            case GLFW_KEY_DOWN:		code = KeyCode::KeyDown;	break;
+            case GLFW_KEY_ENTER:	code = KeyCode::KeyEnter;	break;
         }
 
-        ButtonStatus::Enum status = ButtonStatus::Press;
-        if (action == GLFW_RELEASE) {
-            status = ButtonStatus::Release;
-        } else if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-            status = ButtonStatus::Press;
-        }
+        KeyStatus::Enum status = KeyStatus::Release;
 
-        InputEventData inputEventData(status, code);
-        
-		xe::gfx::gl3::drivers[window]->raiseEvent(inputEventData);
+		switch (action) {
+			case GLFW_RELEASE:
+				status = KeyStatus::Release;
+				break;
+
+			case GLFW_PRESS: 
+			case GLFW_REPEAT:
+				status = KeyStatus::Press;
+				break;
+		}
+
+		KeyStroke keyStroke;
+		keyStroke.code = code;
+		keyStroke.status = status;
+
+		GL3GraphicsDriver *driver = xe::gfx::gl3::drivers[window];
+		driver->getInputManager()->getKeyboard()->getKeyStrokeEvent()->raise(keyStroke);
     }
 
     int GL3GraphicsDriver::initializedCount = 0;
 
-    GL3GraphicsDriver::GL3GraphicsDriver() {}
+	typedef Event<KeyStroke> KeyStrokeEvent;
+
+	class KeyboardGLFW : public IKeyboard {
+	public:
+		virtual void poll() override {}
+
+		virtual IEvent<KeyStroke>* getKeyStrokeEvent() override {
+			return &this->keyStrokeEvent;
+		}
+
+		virtual KeyboardStatus getStatus() override {
+			return this->status;
+		}
+
+		KeyboardStatus* getStatusPtr() {
+			return &this->status;
+		}
+
+	private:
+		KeyStrokeEvent keyStrokeEvent;
+		KeyboardStatus status;
+	};
+
+    GL3GraphicsDriver::GL3GraphicsDriver() {
+
+	}
 
     GL3GraphicsDriver::~GL3GraphicsDriver() 
     {
@@ -401,21 +435,10 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    void GL3GraphicsDriver::pollEvents() 
-    {
+    void GL3GraphicsDriver::poll()  {
         ::glfwPollEvents();
         
         //! TODO: notify the event handlers for events
-    }
-
-    void GL3GraphicsDriver::addEventHandler(IEventHandler *handler) 
-    {
-        this->eventHandlers.push_back(handler);
-    }
-
-    void GL3GraphicsDriver::removeEventHandler(IEventHandler *handler) 
-    {
-        this->eventHandlers.remove(handler);
     }
 
     DisplayMode GL3GraphicsDriver::getDisplayMode() const 
@@ -511,12 +534,6 @@ namespace xe { namespace gfx { namespace gl3 {
         }
         
         GL3_CHECK();
-    }
-
-    void GL3GraphicsDriver::raiseEvent(EventData &data)  {
-        for (IEventHandler *handler : this->eventHandlers) {
-            handler->handleEvent(data);
-        }
     }
 
     std::unique_ptr<MeshSubset> GL3GraphicsDriver::createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) {

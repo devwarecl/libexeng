@@ -45,7 +45,7 @@ namespace demo {
 
 			this->graphicsDriver = std::move(graphicsDriver);
 
-			this->graphicsDriver->addEventHandler(this);
+			// this->graphicsDriver->addEventHandler(this);
 		}
 
         virtual int run(int argc, char **argv) override {
@@ -55,7 +55,7 @@ namespace demo {
 			while (!done) {
 				xe::Vector4f color(0.2f, 0.2f, 0.8f, 1.0f);
 
-				this->graphicsDriver->pollEvents();
+				// this->graphicsDriver->pollEvents();
 
 				this->graphicsDriver->beginFrame(color, xe::gfx::ClearFlags::ColorDepth);
 
@@ -68,6 +68,7 @@ namespace demo {
 		}
 
 		virtual void handleEvent(const xe::input::EventData &eventData) override {
+			/*
 			if (eventData.eventType == xe::TypeId<xe::gfx::InputEventData>()) {
 				auto inputEventData = eventData.cast<xe::gfx::InputEventData>();
 				this->done = inputEventData.check(xe::gfx::ButtonStatus::Press, xe::gfx::ButtonCode::KeyEsc);
@@ -75,13 +76,11 @@ namespace demo {
 			} else if (eventData.eventType == xe::TypeId<xe::gfx::CloseEventData>()) {
 				this->done = true;
 			}
+			*/
 		}
 
-		virtual void handleInputEvent(const xe::gfx::InputEventData &eventData) {
-
-			
-
-		}
+		// virtual void handleInputEvent(const xe::gfx::InputEventData &eventData) {
+		// 	}
 
 	private:
 		xe::gfx::GraphicsDriverPtr graphicsDriver;

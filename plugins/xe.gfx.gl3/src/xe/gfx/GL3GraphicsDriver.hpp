@@ -19,6 +19,8 @@
 #include <exception>
 
 #include <GLFW/glfw3.h>
+#include <xe/input2/InputManager.hpp>
+#include <xe/input2/Event.hpp>
 #include <xe/gfx/ShaderProgram.hpp>
 #include <xe/gfx/GraphicsDriverBase.hpp>
 #include <xe/gfx/VertexFormat.hpp>
@@ -49,7 +51,7 @@ namespace xe { namespace gfx { namespace gl3 {
     /**
      * @brief GraphicsDriver implemented using OpenGL 3.x
      */
-    class GL3GraphicsDriver : public GraphicsDriverBase, public ModernModule {    
+    class GL3GraphicsDriver : public GraphicsDriverBase, public ModernModule, public xe::input2::InputManager { 
     public:
         GL3GraphicsDriver();
         
@@ -81,19 +83,11 @@ namespace xe { namespace gfx { namespace gl3 {
         
         virtual void render(xe::gfx::Primitive::Enum primitiveType, int vertexCount) override;
         
-        virtual void pollEvents() override;
-        
-        virtual void addEventHandler(xe::input::IEventHandler *handler) override;
-        
-        virtual void removeEventHandler(xe::input::IEventHandler *handler) override;
-        
         virtual DisplayMode getDisplayMode() const override;
         
         virtual std::unique_ptr<Shader> createShader( ShaderType::Enum type ) override;
         
         virtual std::unique_ptr<ShaderProgram> createShaderProgram( ) override;
-        
-        virtual void raiseEvent(xe::input::EventData &data) override;
         
         virtual std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) override;
 
@@ -106,6 +100,20 @@ namespace xe { namespace gfx { namespace gl3 {
 		inline const GL3ShaderProgram* getShaderProgram() const {
 			return static_cast<const GL3ShaderProgram*>(this->getMaterial()->getShaderProgram());
 		}
+
+		virtual void setProgramGlobal(const std::string &globalName, const Vector4f &value) override;
+
+		virtual void setProgramGlobal(const std::string &globalName, const Matrix4f &value) override;
+
+		virtual void setProgramGlobal(const int index, const Vector4f &value) override;
+
+		virtual void setProgramGlobal(const int index, const Matrix4f &value) override;
+
+		virtual IInputManager* getInputManager() override {
+			return this;
+		}
+
+		virtual void poll() override;
 
     public:
         inline const GLFWwindow* getGLFWwindow() const {
@@ -123,17 +131,8 @@ namespace xe { namespace gfx { namespace gl3 {
         */
         void postRenderMaterial(const Material *material);
 
-		virtual void setProgramGlobal(const std::string &globalName, const Vector4f &value) override;
-
-		virtual void setProgramGlobal(const std::string &globalName, const Matrix4f &value) override;
-
-		virtual void setProgramGlobal(const int index, const Vector4f &value) override;
-
-		virtual void setProgramGlobal(const int index, const Matrix4f &value) override;
-
     private:
         std::unique_ptr<GL3Context> context;
-        std::list<xe::input::IEventHandler*> eventHandlers;
         
         const GL3ShaderProgram *shaderProgram = nullptr;
         const GL3Buffer *vertexBuffer = nullptr;

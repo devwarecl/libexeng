@@ -31,7 +31,7 @@ namespace xe { namespace input2 {
 		}
 
 		virtual void removeHandler(IEventHandler<EventData>* handler) override {
-			handlers.erase(handler)
+			std::remove(handlers.begin(), handlers.end(), handler);
 		}
 
 		virtual void raise(const EventData &eventData) override {
