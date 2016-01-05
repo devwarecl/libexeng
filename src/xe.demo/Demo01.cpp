@@ -52,13 +52,11 @@ namespace demo {
 			auto keyboardStatus = this->graphicsDriver->getInputManager()->getKeyboard()->getStatus();
 
 			while (!done) {
-				xe::Vector4f color(0.2f, 0.2f, 0.8f, 1.0f);
-
 				this->graphicsDriver->getInputManager()->poll();
 			
 				done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
 
-				this->graphicsDriver->beginFrame(color, xe::gfx::ClearFlags::ColorDepth);
+				this->graphicsDriver->beginFrame({0.2f, 0.2f, 0.8f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
 
 				this->graphicsDriver->endFrame();
 			}

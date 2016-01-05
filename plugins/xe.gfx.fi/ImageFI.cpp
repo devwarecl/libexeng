@@ -24,7 +24,7 @@ namespace xe { namespace gfx {
 		return ImageType::Img2D;
 	}
 
-	ImageFormat::Enum ImageFI::getFormat() const {
+	PixelFormat::Enum ImageFI::getFormat() const {
 		switch (::FreeImage_GetBPP(this->bitmap)) {
 
 			case 16: {
@@ -33,17 +33,17 @@ namespace xe { namespace gfx {
 				bool blue = FreeImage_GetBlueMask(bitmap) == FI16_565_BLUE_MASK;
 
 				if (red && green && blue) {
-					return ImageFormat::R5G5B5X1;
+					return PixelFormat::R5G5B5X1;
 				} else {
-					return ImageFormat::R5G6B5;
+					return PixelFormat::R5G6B5;
 				}
 			}
 			
-			case 24: return ImageFormat::R8G8B8;
+			case 24: return PixelFormat::R8G8B8;
 		
-			case 32: return ImageFormat::R8G8B8A8;
+			case 32: return PixelFormat::R8G8B8A8;
 			
-			default: return ImageFormat::Unknown;
+			default: return PixelFormat::Unknown;
 		}
 	}
 
@@ -51,7 +51,7 @@ namespace xe { namespace gfx {
 		return Vector3i (
 			::FreeImage_GetWidth(bitmap),
 			::FreeImage_GetHeight(bitmap),
-			0
+			1
 		);
 	}
 

@@ -23,7 +23,7 @@ namespace xe { namespace gfx {
 
 		virtual ImageType::Enum getType() const override;
 
-		virtual ImageFormat::Enum getFormat() const override;
+		virtual PixelFormat::Enum getFormat() const override;
 
 		virtual Vector3i getSize() const override;
 

@@ -22,8 +22,6 @@
 #include <xe/Vector.hpp>
 #include <xe/Object.hpp>
 #include <xe/gfx/PixelFormat.hpp>
-#include <xe/gfx/PixelType.hpp>
-#include <xe/gfx/ColorFormat.hpp>
 
 namespace xe { namespace gfx {
 
@@ -38,21 +36,7 @@ namespace xe { namespace gfx {
 			Img3D
 		};
 	};
-
-	/** 
-	 * @brief The image pixel format
-	 */
-	struct ImageFormat : public Enum {
-		enum Enum {
-			Unknown,
-			R5G5B5X1,
-			R5G5B5A1,
-			R5G6B5,
-			R8G8B8,
-			R8G8B8A8,
-		};
-	};
-
+	
 	/** 
 	 * @brief Image abstract class
 	 */
@@ -66,7 +50,7 @@ namespace xe { namespace gfx {
 
 		virtual ImageType::Enum getType() const = 0;
 
-		virtual ImageFormat::Enum getFormat() const = 0;
+		virtual PixelFormat::Enum getFormat() const = 0;
 
 		virtual Vector3i getSize() const = 0;
     };

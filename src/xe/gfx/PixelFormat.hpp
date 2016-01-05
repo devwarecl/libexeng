@@ -21,29 +21,39 @@
 #include <xe/DataType.hpp>
 
 namespace xe { namespace gfx {
-        
-    //!
-    enum class DepthFormat {
-        Unknown,
-        D8,
-        D16,
-        D24,
-        D32
+    
+	/** 
+	 * @brief The image pixel format
+	 */
+	struct PixelFormat : public Enum {
+		enum Enum {
+			Unknown,
+			R5G5B5X1,
+			R5G5B5A1,
+			R5G6B5,
+			R8G8B8,
+			R8G8B8A8,
+		};
+	};
+
+	/*
+    struct DepthFormat : public Enum {
+		enum Enum {
+			Unknown,
+			D16,
+			D24,
+		};
     };
-        
-    //!
-    enum class StencilFormat {
-        Unknown,
-        S8,
-        S16,
-        S24,
-        S32
+       
+    struct StencilFormat : public Enum {
+		enum Enum {
+			Unknown,
+			S16,
+			S24,
+			S32
+		};
     };
-        
-        
-    struct PixelFormat {
-            
-    };
+	*/
 }}
 
 #endif  //__EXENG_GRAPHICS_PIXELFORMAT_HPP__
