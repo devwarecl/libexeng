@@ -5,6 +5,7 @@
 #ifndef __xe_input2_event_hpp__
 #define __xe_input2_event_hpp__
 
+#include <cassert>
 #include <vector>
 #include <xe/input2/IEvent.hpp>
 

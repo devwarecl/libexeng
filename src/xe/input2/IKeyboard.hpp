@@ -22,7 +22,9 @@ namespace xe { namespace input2 {
 		/**
 		 * @brief Get the most recent key status
 		 */
-		virtual KeyboardStatus getStatus() = 0;
+		virtual KeyboardStatus* getStatus() = 0;
+
+		virtual const KeyboardStatus* getStatus() const = 0;
 
 		/**
 		 * @brief Get the key stroke event interface

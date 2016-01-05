@@ -38,91 +38,19 @@ using namespace xe::input2;
 
 namespace xe { namespace gfx { namespace gl3 {
 
-	// 
-	static std::map<GLFWwindow*, GraphicsDriverGL3*> drivers;
-
-    static void closeEvent(GLFWwindow *window)
-    {
-		// TODO: implement
-		// CloseEventData closeEventData(CloseReason::Unknown);
-		// xe::gfx::gl3::drivers[window]->raiseEvent(closeEventData);
-    }
-    
-    static void keyEvent(GLFWwindow *window, int key, int scancode, int action, int mods) 
-    {
-		KeyCode::Enum code = KeyCode::Unknown;
-
-        switch (key) {
-            case GLFW_KEY_ESCAPE:	code = KeyCode::KeyEsc;		break;
-            case GLFW_KEY_LEFT:		code = KeyCode::KeyLeft;	break;
-            case GLFW_KEY_RIGHT:	code = KeyCode::KeyRight;	break;
-            case GLFW_KEY_UP:		code = KeyCode::KeyUp;		break;
-            case GLFW_KEY_DOWN:		code = KeyCode::KeyDown;	break;
-            case GLFW_KEY_ENTER:	code = KeyCode::KeyEnter;	break;
-        }
-
-        KeyStatus::Enum status = KeyStatus::Release;
-
-		switch (action) {
-			case GLFW_RELEASE:
-				status = KeyStatus::Release;
-				break;
-
-			case GLFW_PRESS: 
-			case GLFW_REPEAT:
-				status = KeyStatus::Press;
-				break;
-		}
-
-		KeyStroke keyStroke;
-		keyStroke.code = code;
-		keyStroke.status = status;
-
-		GraphicsDriverGL3 *driver = xe::gfx::gl3::drivers[window];
-		driver->getInputManager()->getKeyboard()->getKeyStrokeEvent()->raise(keyStroke);
-    }
-
     int GraphicsDriverGL3::initializedCount = 0;
 
-	typedef Event<KeyStroke> KeyStrokeEvent;
+    GraphicsDriverGL3::GraphicsDriverGL3() {}
 
-	class KeyboardGLFW : public IKeyboard {
-	public:
-		virtual void poll() override {}
-
-		virtual IEvent<KeyStroke>* getKeyStrokeEvent() override {
-			return &this->keyStrokeEvent;
-		}
-
-		virtual KeyboardStatus getStatus() override {
-			return this->status;
-		}
-
-		KeyboardStatus* getStatusPtr() {
-			return &this->status;
-		}
-
-	private:
-		KeyStrokeEvent keyStrokeEvent;
-		KeyboardStatus status;
-	};
-
-    GraphicsDriverGL3::GraphicsDriverGL3() {
-
-	}
-
-    GraphicsDriverGL3::~GraphicsDriverGL3() 
-    {
+    GraphicsDriverGL3::~GraphicsDriverGL3() {
         this->terminate();
     }
 
-    void GraphicsDriverGL3::initialize() 
-    {
+    void GraphicsDriverGL3::initialize() {
         this->initialize(DisplayMode());
     }
 
-    void GraphicsDriverGL3::initialize(const DisplayMode &displayMode) 
-    {
+    void GraphicsDriverGL3::initialize(const DisplayMode &displayMode) {
         if (initializedCount > 0) {
             EXENG_THROW_EXCEPTION("Only a single GL3 graphics driver can be initialized at time");
         }
@@ -158,10 +86,6 @@ namespace xe { namespace gfx { namespace gl3 {
         
         ::glfwMakeContextCurrent(context->window);
         
-        // Set the 
-        ::glfwSetWindowCloseCallback(context->window, closeEvent);
-        ::glfwSetKeyCallback(context->window, keyEvent);
-
         // Initialize the OpenGL 3 core functions
         ::ogl_LoadFunctions();
         
@@ -171,12 +95,15 @@ namespace xe { namespace gfx { namespace gl3 {
 		::glDepthFunc(GL_LEQUAL);
 		// ::glClearDepth(1.0f);
 
+		// Link the current input manager
+		::glfwSetWindowUserPointer(context->window, this);
+		this->inputManager.setWindow(context->window); 
+
         // Hold all the default objects
-		drivers[context->window] = this;
 		this->context = std::move(context);
         this->displayMode = displayMode;
         this->initialized = true;
-
+		
         ++GraphicsDriverGL3::initializedCount;
 
 		GL3_CHECK();
@@ -187,15 +114,12 @@ namespace xe { namespace gfx { namespace gl3 {
         if (this->initialized == true) {
             --GraphicsDriverGL3::initializedCount;
 			this->initialized = false;
-
-			drivers.erase(this->context->window);
         }
 
 		this->context.reset(nullptr);
     }
 
-    bool GraphicsDriverGL3::isInitialized() const 
-    {
+    bool GraphicsDriverGL3::isInitialized() const {
         return this->initialized;
     }
 
@@ -424,6 +348,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		// Normal render
 		if (!this->indexBuffer) {
 			::glDrawArrays(primitive, 0, count);
+
 		} else {
 			const IndexFormat::Enum indexFormat = this->meshSubset->getIndexFormat();
 			const GLuint dataType = convIndexFormatType(indexFormat);
@@ -433,12 +358,6 @@ namespace xe { namespace gfx { namespace gl3 {
 		}
         
         GL3_CHECK();
-    }
-
-    void GraphicsDriverGL3::poll()  {
-        ::glfwPollEvents();
-        
-        //! TODO: notify the event handlers for events
     }
 
     DisplayMode GraphicsDriverGL3::getDisplayMode() const 

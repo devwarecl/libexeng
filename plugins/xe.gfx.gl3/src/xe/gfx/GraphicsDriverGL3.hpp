@@ -19,12 +19,12 @@
 #include <exception>
 
 #include <GLFW/glfw3.h>
-#include <xe/input2/InputManager.hpp>
 #include <xe/input2/Event.hpp>
 #include <xe/gfx/ShaderProgram.hpp>
 #include <xe/gfx/GraphicsDriverBase.hpp>
 #include <xe/gfx/VertexFormat.hpp>
 
+#include "InputManagerGLFW.hpp"
 #include "BufferGL3.hpp"
 #include "MeshSubsetGL3.hpp"
 #include "ShaderProgramGL3.hpp"
@@ -51,7 +51,7 @@ namespace xe { namespace gfx { namespace gl3 {
     /**
      * @brief GraphicsDriver implemented using OpenGL 3.x
      */
-    class GraphicsDriverGL3 : public GraphicsDriverBase, public ModernModule, public xe::input2::InputManager { 
+    class GraphicsDriverGL3 : public GraphicsDriverBase, public ModernModule { 
     public:
         GraphicsDriverGL3();
         
@@ -109,11 +109,9 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		virtual void setProgramGlobal(const int index, const Matrix4f &value) override;
 
-		virtual IInputManager* getInputManager() override {
-			return this;
+		virtual InputManagerGLFW* getInputManager() override {
+			return &this->inputManager;
 		}
-
-		virtual void poll() override;
 
     public:
         inline const GLFWwindow* getGLFWwindow() const {
@@ -143,7 +141,8 @@ namespace xe { namespace gfx { namespace gl3 {
         bool renderingFrame = false;
         
         DisplayMode displayMode;
-        
+        InputManagerGLFW inputManager;
+
     private:
         static int initializedCount;
     };

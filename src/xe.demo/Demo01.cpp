@@ -52,10 +52,14 @@ namespace demo {
 			// initialize the graphics driver with default settings
 			this->graphicsDriver->initialize();
 
+			auto keyboardStatus = this->graphicsDriver->getInputManager()->getKeyboard()->getStatus();
+
 			while (!done) {
 				xe::Vector4f color(0.2f, 0.2f, 0.8f, 1.0f);
 
-				// this->graphicsDriver->pollEvents();
+				this->graphicsDriver->getInputManager()->poll();
+			
+				done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
 
 				this->graphicsDriver->beginFrame(color, xe::gfx::ClearFlags::ColorDepth);
 
