@@ -4,11 +4,10 @@
 #include <xe/sys/Plugin.hpp>
 #include <xe/sys/PluginManager.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
-#include <xe/input/IEventHandler.hpp>
 #include <xe.main/Main.hpp>
 
 namespace demo {
-	class DemoApplication : public xe::fw::Application, public xe::input::IEventHandler {
+	class DemoApplication : public xe::fw::Application {
 	public:
 		DemoApplication() {
 			// load available plugins
@@ -44,8 +43,6 @@ namespace demo {
 			auto graphicsDriver = this->getGraphicsManager()->createDriver(driverInfos[0]);
 
 			this->graphicsDriver = std::move(graphicsDriver);
-
-			// this->graphicsDriver->addEventHandler(this);
 		}
 
         virtual int run(int argc, char **argv) override {
@@ -70,21 +67,6 @@ namespace demo {
 
 			return 0;
 		}
-
-		virtual void handleEvent(const xe::input::EventData &eventData) override {
-			/*
-			if (eventData.eventType == xe::TypeId<xe::gfx::InputEventData>()) {
-				auto inputEventData = eventData.cast<xe::gfx::InputEventData>();
-				this->done = inputEventData.check(xe::gfx::ButtonStatus::Press, xe::gfx::ButtonCode::KeyEsc);
-
-			} else if (eventData.eventType == xe::TypeId<xe::gfx::CloseEventData>()) {
-				this->done = true;
-			}
-			*/
-		}
-
-		// virtual void handleInputEvent(const xe::gfx::InputEventData &eventData) {
-		// 	}
 
 	private:
 		xe::gfx::GraphicsDriverPtr graphicsDriver;
