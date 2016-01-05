@@ -55,6 +55,7 @@ set (GraphicsFiles_hpp
     gfx/GraphicsDriverBase.hpp   
     gfx/GraphicsManager.hpp      
     gfx/Image.hpp                
+	gfx/ImageLoader.hpp 
     gfx/Material.hpp             
     gfx/PixelFormat.hpp          
 	gfx/VertexFormat.hpp 
@@ -65,9 +66,7 @@ set (GraphicsFiles_hpp
     gfx/ColorFormat.hpp          
     gfx/Shader.hpp               
     gfx/ShaderProgram.hpp        
-
 	gfx/Forward.hpp        
-
     gfx/MeshSubset.hpp			
     gfx/MeshSubsetBase.hpp	
 	gfx/MeshSubsetTransformer.hpp	
@@ -75,9 +74,7 @@ set (GraphicsFiles_hpp
 	gfx/Mesh.hpp
     gfx/MeshManager.hpp
     gfx/MeshLoader.hpp
-
 	gfx/PixelType.hpp		
-
 	gfx/TextureManager.hpp
 	gfx/TextureLoader.hpp
 	gfx/ModernModule.hpp
@@ -92,6 +89,7 @@ set (GraphicsFiles_cpp
     gfx/GraphicsDriver.cpp 
     gfx/GraphicsManager.cpp 
     gfx/Image.cpp 
+	gfx/ImageLoader.cpp 
     gfx/Material.cpp 
     gfx/PixelFormat.cpp 
     gfx/Vertex.cpp

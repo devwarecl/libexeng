@@ -19,10 +19,6 @@ namespace xe {
 		
 		virtual const void* getPointer() const override;
 
-		virtual void getData(void* data, const int dataSize, const int dataOffset, const int bufferOffset) const;
-
-		virtual void setData(const void *data, const int dataSize, const int dataOffset, const int bufferOffset);
-	
 	private:
 		void* data = nullptr;
 		int dataSize = 0;

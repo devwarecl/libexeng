@@ -21,8 +21,8 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		virtual int getHandle() const override;
 
-        virtual void setData(const void *data, const int size, const int dataOffset, const int bufferOffset) override;
-        virtual void getData(void* data, const int size, const int dataOffset, const int bufferOffset) const override;
+        virtual void write(const void *data, const int size, const int dataOffset, const int bufferOffset) override;
+        virtual void read(void* data, const int size, const int dataOffset, const int bufferOffset) const override;
 
     public:
         /* Object overrides */

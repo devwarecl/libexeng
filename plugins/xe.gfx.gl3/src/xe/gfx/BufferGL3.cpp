@@ -48,7 +48,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		return this->bufferId;
 	}
 
-    void BufferGL3::setData(const void *data, const int size, const int dataOffset, const int bufferOffset) {
+    void BufferGL3::write(const void *data, const int size, const int dataOffset, const int bufferOffset) {
 		assert(this);
 		assert(this->cacheBuffer.get());
 
@@ -58,15 +58,15 @@ namespace xe { namespace gfx { namespace gl3 {
 		::glBufferSubData(this->target, bufferOffset, size, data);
 		::glBindBuffer(this->target, 0);
 
-		this->cacheBuffer->setData(data, size, dataOffset, bufferOffset);
+		this->cacheBuffer->write(data, size, dataOffset, bufferOffset);
 
 		GL3_CHECK();
 	}
 
-    void BufferGL3::getData(void* data, const int size, const int dataOffset, const int bufferOffset) const {
+    void BufferGL3::read(void* data, const int size, const int dataOffset, const int bufferOffset) const {
 		assert(this);
 
-		this->cacheBuffer->getData(data, size, dataOffset, bufferOffset);
+		this->cacheBuffer->read(data, size, dataOffset, bufferOffset);
 
 		// GL3_CHECK();
 	}

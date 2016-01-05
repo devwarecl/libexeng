@@ -18,7 +18,6 @@
 #include <map>
 #include <sstream>
 #include <cassert>
-#include <boost/range/algorithm/find_if.hpp>
 
 namespace xe { namespace gfx {
 

@@ -15,7 +15,7 @@ namespace xe { namespace gfx {
 
 		HeapBuffer tempBuffer(buffer->getSize());
 
-		tempBuffer.setData(buffer->getPointer());
+		tempBuffer.write(buffer->getPointer());
 
 		VertexArray array(tempBuffer.getPointer(), &format);
 
@@ -33,6 +33,6 @@ namespace xe { namespace gfx {
 			array.setAttribValue(i, VertexAttrib::Normal, &normal);
 		}
 		
-		buffer->setData(tempBuffer.getPointer());
+		buffer->write(tempBuffer.getPointer());
 	}
 }}

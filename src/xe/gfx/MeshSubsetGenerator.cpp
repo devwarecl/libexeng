@@ -81,7 +81,7 @@ namespace xe { namespace gfx {
 			}
 		}
 
-		buffer->setData(tempBuffer->getPointer());
+		buffer->write(tempBuffer->getPointer());
 	}
 	
 	void BoxGenerator::fillIndexBuffer(Buffer *buffer, IndexFormat::Enum indexFormat) {
@@ -94,7 +94,7 @@ namespace xe { namespace gfx {
 			20 + 0, 20 + 1, 20 + 2,     20 + 1, 20 + 3, 20 + 2
 		};
 
-		buffer->setData(indices);
+		buffer->write(indices);
 	}
 
 	int BoxGenerator::getVertexBufferSize(const VertexFormat *format) const {
@@ -127,7 +127,7 @@ namespace xe { namespace gfx {
 	void RectGenerator::fillVertices(Buffer *buffer, const VertexFormat *format) {
 		HeapBuffer hbuffer(buffer->getSize());
 
-		hbuffer.setData(buffer->getPointer());
+		hbuffer.write(buffer->getPointer());
 
 		VertexArray array(hbuffer.getPointer(), format);
 
@@ -150,7 +150,7 @@ namespace xe { namespace gfx {
 			array.setValue(i, VertexAttrib::TexCoord, texCoord[i]);
 		}
 
-		buffer->setData(hbuffer.getPointer());
+		buffer->write(hbuffer.getPointer());
 	}
 	
 	void RectGenerator::fillIndices(Buffer *buffer, IndexFormat::Enum indexFormat) {
@@ -159,7 +159,7 @@ namespace xe { namespace gfx {
 			0 + 1,  0 + 3,  0 + 2
 		};
 
-		buffer->setData(indices);
+		buffer->write(indices);
 	}
 
 	void RectGenerator::generate(MeshSubset *subset) {

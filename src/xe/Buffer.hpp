@@ -40,25 +40,37 @@ namespace xe {
 		/**
 		 * @brief Get buffer data
 		 */
-		virtual void getData(void* data, const int dataSize, const int dataOffset, const int bufferOffset) const = 0;
+		virtual void read(void* dst_data, const int read_size, const int dst_offset, const int src_offset) const;
 
-		virtual void getData(void* data) const {
-			this->getData(data, this->getSize(), 0, 0);
+		virtual void read(void* dst_data) const {
+			this->read(dst_data, this->getSize(), 0, 0);
+		}
+
+		virtual void read(void* dst_data, const int read_size) const {
+			this->read(dst_data, read_size, 0, 0);
 		}
 
 		/**
 		 * @brief Set buffer data
 		 */
-		virtual void setData(const void *data, const int dataSize, const int dataOffset, const int bufferOffset) = 0;
+		virtual void write(const void *src_data, const int write_size, const int src_offset, const int dst_offset);
 
-		virtual void setData(const void* data) {
-			this->setData(data, this->getSize(), 0, 0);
+		virtual void write(const void* src_data) {
+			this->write(src_data, this->getSize(), 0, 0);
+		}
+
+		virtual void write(const void* src_data, const int write_size) {
+			this->write(src_data, write_size, 0, 0);
 		}
 
 		/**
 		 * @brief Get a pointer to a read-only location
 		 */
 		virtual const void* getPointer() const = 0;
+
+		virtual void* getPointer() {
+			return nullptr;
+		}
 
 		virtual std::string toString() const override {
 			std::string dataStr;

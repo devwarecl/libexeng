@@ -40,7 +40,7 @@ namespace xe {
 		}
 	}
 
-	void HeapBuffer::getData(void* data, const int size, const int dataOffset, const int bufferOffset) const {
+	void HeapBuffer::read(void* data, const int size, const int dataOffset, const int bufferOffset) const {
 #if defined (EXENG_DEBUG)
 		if (bufferOffset + size > this->getSize()) {
 			EXENG_THROW_EXCEPTION("Buffer overrun.");
@@ -52,7 +52,7 @@ namespace xe {
 		std::memcpy(dstData, srcData, size);
 	}
 
-	void HeapBuffer::setData(const void *data, const int size, const int dataOffset, const int bufferOffset) {
+	void HeapBuffer::write(const void *data, const int size, const int dataOffset, const int bufferOffset) {
 #if defined (EXENG_DEBUG)
 		if (bufferOffset + size > this->getSize()) {
 			EXENG_THROW_EXCEPTION("Buffer overrun.");

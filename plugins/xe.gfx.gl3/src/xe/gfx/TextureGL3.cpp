@@ -82,7 +82,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		this->buffer = std::make_unique<HeapBuffer>(bufferSize);
 
 		if (data) {
-			this->buffer->setData(data);
+			this->buffer->write(data);
 		}
 
 		this->format = format;

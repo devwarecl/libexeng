@@ -59,7 +59,7 @@ namespace xe { namespace gfx {
         auto buffer = std::unique_ptr<Buffer>(new HeapBuffer(size));
 
         if (data) {
-            buffer->setData(data);
+            buffer->write(data);
         }
 
         return buffer;
@@ -69,7 +69,7 @@ namespace xe { namespace gfx {
         auto buffer = std::unique_ptr<Buffer>(new HeapBuffer(size));
 
         if (data) {
-            buffer->setData(data);
+            buffer->write(data);
         }
 
         return buffer;

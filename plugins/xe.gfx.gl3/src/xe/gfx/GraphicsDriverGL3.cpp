@@ -361,7 +361,7 @@ namespace xe { namespace gfx { namespace gl3 {
         auto vertexBuffer = std::unique_ptr<Buffer>(new BufferGL3(size, GL_ARRAY_BUFFER));
 
         if (data) {
-            vertexBuffer->setData(data);
+            vertexBuffer->write(data);
         }
 
         return vertexBuffer;
@@ -372,7 +372,7 @@ namespace xe { namespace gfx { namespace gl3 {
         auto vertexBuffer = std::unique_ptr<Buffer>(new BufferGL3(size, GL_ELEMENT_ARRAY_BUFFER));
 
         if (data) {
-            vertexBuffer->setData(data);
+            vertexBuffer->write(data);
         }
 
         return vertexBuffer;

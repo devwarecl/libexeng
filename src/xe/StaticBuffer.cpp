@@ -20,27 +20,4 @@ namespace xe {
 	const void* StaticBuffer::getPointer() const {
 		return this->data;
 	}
-
-	void StaticBuffer::getData(void* data, const int dataSize, const int dataOffset, const int bufferOffset) const {
-#if defined (EXENG_DEBUG)
-		if (bufferOffset + dataSize > this->getSize()) {
-			EXENG_THROW_EXCEPTION("Buffer overrun.");
-		}
-#endif
-		const std::uint8_t* srcData = static_cast<const std::uint8_t*>(this->data) + bufferOffset;
-		std::uint8_t* dstData = static_cast<std::uint8_t*>(data) + dataOffset;
-
-		std::memcpy(dstData, srcData, dataSize);
-	}
-
-	void StaticBuffer::setData(const void *data, const int dataSize, const int dataOffset, const int bufferOffset) {
-#if defined (EXENG_DEBUG)
-		if (bufferOffset + dataSize > this->getSize()) {
-			EXENG_THROW_EXCEPTION("Buffer overrun.");
-		}
-#endif
-		const std::uint8_t* srcData = static_cast<const std::uint8_t*>(data) + dataOffset;
-		std::uint8_t* dstData = static_cast<std::uint8_t*>(this->data) + bufferOffset;
-		std::memcpy(dstData, srcData, dataSize);
-	}
 }
