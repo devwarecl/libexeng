@@ -19,8 +19,7 @@ namespace xe { namespace gfx { namespace gl3 {
     GraphicsDriverFactoryGL3::GraphicsDriverFactoryGL3() {}
     GraphicsDriverFactoryGL3::~GraphicsDriverFactoryGL3() {}
 
-    GraphicsDriverInfo GraphicsDriverFactoryGL3::getDriverInfo() const 
-    {
+    GraphicsDriverInfo GraphicsDriverFactoryGL3::getDriverInfo() const {
         GraphicsDriverInfo info;
         
         info.name = "OpenGL 3 Core Profile Graphics Driver";
@@ -31,8 +30,7 @@ namespace xe { namespace gfx { namespace gl3 {
         return info;
     }
 
-    std::unique_ptr<GraphicsDriver> GraphicsDriverFactoryGL3::create() 
-    {
+    std::unique_ptr<GraphicsDriver> GraphicsDriverFactoryGL3::create() {
 		return std::unique_ptr<GraphicsDriver>(new GraphicsDriverGL3());
     }
 }}}

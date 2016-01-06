@@ -23,7 +23,7 @@ namespace xe { namespace gfx { namespace gl3 {
 
     class TextureGL3 : public Texture {
     public:
-        TextureGL3(TextureType::Enum type, Vector3i size, const ColorFormat &format, const void *data);
+        TextureGL3(TextureType::Enum type, Vector3i size, PixelFormat::Enum format, const void *data);
         virtual ~TextureGL3();
 
         virtual void* lock() override;
@@ -31,7 +31,7 @@ namespace xe { namespace gfx { namespace gl3 {
         virtual void unlock() override;
         
         virtual TextureType::Enum getType() const override;
-        virtual ColorFormat getColorFormat() const override;
+        virtual PixelFormat::Enum getFormat() const override;
         virtual Vector3i getSize() const override;
         
         inline GLuint getTextureId() const {
@@ -45,7 +45,7 @@ namespace xe { namespace gfx { namespace gl3 {
     private:
         GLuint textureId;
         TextureType::Enum type;
-        ColorFormat format;
+        PixelFormat::Enum format;
         xe::Vector3i size;
         HeapBufferPtr buffer;
         void* textureData;

@@ -3,12 +3,12 @@
 #define __EXENG_GRAPHICS_TEXTUREMANAGER_HPP__
 
 #include <xe/Vector.hpp>
+#include <xe/gfx/Forward.hpp>
 #include <xe/gfx/Texture.hpp>
 #include <xe/gfx/TextureLoader.hpp>
 
 namespace xe { namespace gfx {
 	
-	class EXENGAPI GraphicsDriver;
 	class EXENGAPI TextureManager {
 	public:
 		TextureManager();
@@ -36,6 +36,8 @@ namespace xe { namespace gfx {
          * @brief Create a managed, empty texture initialized with a default color.
          */
         Texture* create(const std::string &uri, const Vector2i &size, const Vector4f &color);
+
+		Texture* create(const std::string &uri, const Image *image);
 
 	private:
 		struct Private;

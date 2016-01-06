@@ -34,6 +34,7 @@ namespace xe { namespace gfx {
 
 				if (red && green && blue) {
 					return PixelFormat::R5G5B5X1;
+
 				} else {
 					return PixelFormat::R5G6B5;
 				}

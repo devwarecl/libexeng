@@ -20,6 +20,7 @@
 
 #include <cassert>
 #include <xe/DataType.hpp>
+#include <xe/gfx/PixelFormat.hpp>
 #include <xe/gfx/Primitive.hpp>
 #include <xe/gfx/TextureType.hpp>
 #include <xe/gfx/ColorFormat.hpp>
@@ -37,28 +38,12 @@ namespace xe { namespace gfx { namespace gl3 {
         }
     }
 
-    inline GLenum convFormat(const ColorFormat &format) {
-        if (format == ColorFormat(8, 
-                    ColorChannel( ColorComponent::Red, 8 ))) {
-            return GL_RED;
-        } else if (format == ColorFormat(16, 
-                            ColorChannel( ColorComponent::Red, 8 ), 
-                            ColorChannel( ColorComponent::Green, 8 ))) {
-            return GL_RG;
-        } else if (format == ColorFormat(24, 
-                            ColorChannel( ColorComponent::Red, 8 ), 
-                            ColorChannel( ColorComponent::Green, 8 ), 
-                            ColorChannel( ColorComponent::Blue, 8 ))) {
-            return GL_RGB;
-        } else if (format == ColorFormat(32, 
-                            ColorChannel( ColorComponent::Red, 8 ), 
-                            ColorChannel( ColorComponent::Green, 8 ), 
-                            ColorChannel( ColorComponent::Blue, 8 ), 
-                            ColorChannel( ColorComponent::Alpha, 8 ))) {
-            return GL_RGBA;
-        } else {
-            return GL_FALSE;
-        }
+    inline GLenum convFormat(PixelFormat::Enum format) {
+		switch (format) {
+			case PixelFormat::R8G8B8:	return GL_RG8;
+			case PixelFormat::R8G8B8A8:	return GL_RGBA;
+			default: return GL_FALSE;
+		}
     }
 
     inline GLenum convShaderType(ShaderType::Enum type) {

@@ -34,6 +34,24 @@ namespace xe { namespace gfx {
 			R8G8B8,
 			R8G8B8A8,
 		};
+
+		inline static int size(PixelFormat::Enum format) {
+			switch (format) {
+			case R5G5B5X1:
+			case R5G5B5A1:
+			case R5G6B5:
+				return 16;
+
+			case R8G8B8:
+				return 24;
+
+			case R8G8B8A8:
+				return 32;
+
+			default:
+				return 0;
+			}
+		}
 	};
 
 	/*

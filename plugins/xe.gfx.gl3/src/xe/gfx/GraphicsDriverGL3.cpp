@@ -291,8 +291,7 @@ namespace xe { namespace gfx { namespace gl3 {
         return vertexBuffer;
     }
 
-    std::unique_ptr<Buffer> GraphicsDriverGL3::createIndexBuffer(const std::int32_t size, const void* data) 
-    {
+    std::unique_ptr<Buffer> GraphicsDriverGL3::createIndexBuffer(const std::int32_t size, const void* data) {
         auto vertexBuffer = std::unique_ptr<Buffer>(new BufferGL3(size, GL_ELEMENT_ARRAY_BUFFER));
 
         if (data) {
@@ -302,29 +301,25 @@ namespace xe { namespace gfx { namespace gl3 {
         return vertexBuffer;
     }
 
-    TexturePtr GraphicsDriverGL3::createTexture(const Vector2i& size, const ColorFormat &format, const void* data) 
-    {
+    TexturePtr GraphicsDriverGL3::createTexture(const Vector2i& size, PixelFormat::Enum format, const void* data) {
 		TexturePtr texture = std::make_unique<TextureGL3>(TextureType::Tex2D, (Vector3i)size, format, data);
 
         return texture;
     }
 
-	TexturePtr GraphicsDriverGL3::createTexture(const Vector3i& size, const ColorFormat &format, const void* data) 
-    {
+	TexturePtr GraphicsDriverGL3::createTexture(const Vector3i& size, PixelFormat::Enum format, const void* data) {
 		TexturePtr texture = std::make_unique<TextureGL3>(TextureType::Tex3D, size, format, data);
 
         return texture;
     }
 
-	TexturePtr GraphicsDriverGL3::createTextureCube(const Vector2i& size, const ColorFormat &format, const void* data) 
-    {
+	TexturePtr GraphicsDriverGL3::createTextureCube(const Vector2i& size, PixelFormat::Enum format, const void* data) {
 		TexturePtr texture = std::make_unique<TextureGL3>(TextureType::TexCubeMap, (Vector3i)size, format, data);
 
         return texture;
     }
 
-    void GraphicsDriverGL3::setViewport(const Rectf& viewport) 
-    {
+    void GraphicsDriverGL3::setViewport(const Rectf& viewport) {
         const auto minEdge = static_cast<Vector2i>(viewport.getMin());
         const auto size = static_cast<Size2i>(viewport.getSize());
 

@@ -17,7 +17,6 @@
 #include <string>
 #include <vector>
 #include <memory>
-
 #include <xe/Enum.hpp>
 #include <xe/TFlags.hpp>
 #include <xe/Boundary.hpp>
@@ -25,7 +24,7 @@
 #include <xe/Matrix.hpp>
 #include <xe/Buffer.hpp>
 #include <xe/input2/IInputManager.hpp>
-
+#include <xe/gfx/Image.hpp>
 #include <xe/gfx/Material.hpp>
 #include <xe/gfx/PixelFormat.hpp>
 #include <xe/gfx/Texture.hpp>
@@ -33,7 +32,6 @@
 #include <xe/gfx/Shader.hpp>
 #include <xe/gfx/ShaderProgram.hpp>
 #include <xe/gfx/MeshSubset.hpp>
-
 #include <xe/gfx/ModernModule.hpp>
 #include <xe/gfx/LegacyModule.hpp>
 
@@ -215,10 +213,12 @@ namespace xe { namespace gfx {
         /**
          * @brief Create a new texture object.
          */
-		virtual TexturePtr createTexture(const Vector2i& size, const ColorFormat &format, const void *data = nullptr) = 0;
-		virtual TexturePtr createTexture(const Vector3i& size, const ColorFormat &format, const void *data = nullptr) = 0;
-		virtual TexturePtr createTextureCube(const Vector2i& size, const ColorFormat &format, const void *data = nullptr) = 0;
+		virtual TexturePtr createTexture(const Vector2i& size, PixelFormat::Enum format, const void *data = nullptr) = 0;
+		virtual TexturePtr createTexture(const Vector3i& size, PixelFormat::Enum format, const void *data = nullptr) = 0;
+		virtual TexturePtr createTextureCube(const Vector2i& size, PixelFormat::Enum format, const void *data = nullptr) = 0;
         
+		virtual TexturePtr createTexture(const Image *image) = 0;
+
         /**
          * @brief Set the area of the screen that can be rendered
          */

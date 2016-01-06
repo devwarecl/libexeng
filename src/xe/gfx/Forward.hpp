@@ -6,10 +6,11 @@
 
 namespace xe { namespace gfx {
 	class EXENGAPI GraphicsDriver; 
-	class EXENGAPI Texture;
-    class EXENGAPI Mesh;    
+	class EXENGAPI Image;
+    class EXENGAPI Mesh;
 	class EXENGAPI MeshSubset; 
     class EXENGAPI MeshLoader;
+	class EXENGAPI Texture;
 	class EXENGAPI TextureManager;
 	class EXENGAPI GraphicsManager;
 	class EXENGAPI MeshManager;

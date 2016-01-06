@@ -75,9 +75,9 @@ namespace xe { namespace gfx { namespace gl3 {
         
         virtual std::unique_ptr<Buffer> createIndexBuffer(const std::int32_t size, const void* data) override;
         
-        virtual TexturePtr createTexture(const Vector2i& size, const ColorFormat &format, const void *data = nullptr) override;	
-		virtual TexturePtr createTexture(const Vector3i& size, const ColorFormat &format, const void *data = nullptr) override;
-		virtual TexturePtr createTextureCube(const Vector2i& size, const ColorFormat &format, const void *data = nullptr) override;
+        virtual TexturePtr createTexture(const Vector2i& size, PixelFormat::Enum format, const void *data = nullptr) override;	
+		virtual TexturePtr createTexture(const Vector3i& size, PixelFormat::Enum format, const void *data = nullptr) override;
+		virtual TexturePtr createTextureCube(const Vector2i& size, PixelFormat::Enum format, const void *data = nullptr) override;
         
         virtual void setViewport(const xe::Rectf& viewport) override;
         

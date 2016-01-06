@@ -23,7 +23,7 @@ using namespace xe;
 
 namespace xe { namespace gfx { namespace gl3 {
 
-	TextureGL3::TextureGL3(TextureType::Enum type, Vector3i size, const ColorFormat &format, const void *data) {
+	TextureGL3::TextureGL3(TextureType::Enum type, Vector3i size, PixelFormat::Enum format, const void *data) {
 		GLuint textureId = 0;
 #if defined(EXENG_DEBUG)
 		// check for a valid type
@@ -32,9 +32,9 @@ namespace xe { namespace gfx { namespace gl3 {
 		}
         
 		// check the pixel format
-		if (format.isValid() == false) {
-			throw std::invalid_argument("TextureGL3::TextureGL3: Unsupported texture color format");
-		}
+		//if (format.isValid() == false) {
+		//	throw std::invalid_argument("TextureGL3::TextureGL3: Unsupported texture color format");
+		//}
 #endif
 		// adjust the size
 		for(int &coord : size.data) {
@@ -77,7 +77,7 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		GL3_CHECK();
     
-		const int bufferSize = size.x * size.y * size.z * (format.size/8);
+		const int bufferSize = size.x * size.y * size.z * (PixelFormat::size(format)/8);
 
 		this->buffer = std::make_unique<HeapBuffer>(bufferSize);
 
@@ -174,7 +174,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		return this->type;
 	}
 
-	ColorFormat TextureGL3::getColorFormat() const {
+	PixelFormat::Enum TextureGL3::getFormat() const {
 		return this->format;
 	}
 

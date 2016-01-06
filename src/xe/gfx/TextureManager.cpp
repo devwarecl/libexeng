@@ -54,7 +54,9 @@ namespace xe { namespace gfx {
 	}
 
 	Texture* TextureManager::generateCheckerboard(const std::string &uri, const Vector2i &size, const Vector2i &tileSize) {
-		const ColorFormat format = ColorFormat::getR8G8B8A8();
+
+		PixelFormat::Enum format = PixelFormat::R8G8B8A8;
+
 		TexturePtr texture = this->getGraphicsDriver()->createTexture(size, format);
 		Vector4ub *pixels = (Vector4ub *)texture->lock();
 
@@ -84,7 +86,7 @@ namespace xe { namespace gfx {
 	}
 
     Texture* TextureManager::create(const std::string &uri, const Vector2i &size) {
-		const ColorFormat format = ColorFormat::getR8G8B8A8();
+		PixelFormat::Enum format = PixelFormat::R8G8B8A8;
 
 		TexturePtr texture = this->getGraphicsDriver()->createTexture(size, format);
 

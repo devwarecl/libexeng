@@ -21,7 +21,6 @@
 #include <xe/Vector.hpp>
 #include <xe/gfx/TextureType.hpp>
 #include <xe/gfx/PixelFormat.hpp>
-#include <xe/gfx/ColorFormat.hpp>
 
 namespace xe { namespace gfx {
     
@@ -73,7 +72,7 @@ namespace xe { namespace gfx {
         /**
          * @brief Get the color format of the texture
          */
-        virtual ColorFormat getColorFormat() const = 0;
+        virtual PixelFormat::Enum getFormat() const = 0;
         
         /**
          * @brief Get the size, in texels, of the texture.

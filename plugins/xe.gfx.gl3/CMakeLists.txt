@@ -16,6 +16,7 @@ SET (GL3Files
 	src/xe/gfx/GraphicsDriverFactoryGL3.hpp	src/xe/gfx/GraphicsDriverFactoryGL3.cpp
 	src/xe/gfx/ShaderGL3.hpp				src/xe/gfx/ShaderGL3.cpp
 	src/xe/gfx/ShaderProgramGL3.hpp			src/xe/gfx/ShaderProgramGL3.cpp
+	src/xe/gfx/InputManagerGLFW.hpp			src/xe/gfx/InputManagerGLFW.cpp
 	src/xe/gfx/DebugGL3.hpp					src/xe/gfx/DebugGL3.cpp
 	src/xe/gfx/UtilGL3.hpp
 	src/xe/gfx/BufferStatusGL3.hpp 

@@ -67,7 +67,6 @@ ADD_SUBDIRECTORY (src/xe)
 ADD_SUBDIRECTORY (src/xe.demo)
 ADD_SUBDIRECTORY (src/xe.main)
 ADD_SUBDIRECTORY (src/xe.sandbox)
-ADD_SUBDIRECTORY (src/lwobject)
 ADD_SUBDIRECTORY (src/xmlpp)
 
 IF (XE_TESTING)

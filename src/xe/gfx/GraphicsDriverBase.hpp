@@ -33,6 +33,8 @@ namespace xe { namespace gfx {
         virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data) override;
         virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data) override;
 
+		virtual TexturePtr createTexture(const Image *image) override;
+
 		virtual ModernModule* getModernModule() override;
 
 		virtual LegacyModule* getLegacyModule() override;
@@ -82,6 +84,29 @@ namespace xe { namespace gfx {
 	inline LegacyModule* GraphicsDriverBase::getLegacyModule() {
 		return nullptr;
 	}
+
+	inline TexturePtr GraphicsDriverBase::createTexture(const Image *image) {
+
+		TexturePtr texture;
+
+		//switch (image->getType()) {
+
+		//case ImageType::Img1D:
+		//	texture = this->createTexture()
+
+
+		//case ImageType::Img2D:
+
+
+		//case ImageType::Img3D:
+
+		//}
+
+
+
+		return texture;
+	}
+
 }}
 
 #endif  // __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
