@@ -30,3 +30,9 @@ SOURCE_GROUP(\\lwo FILES ${src_lwo})
 ADD_LIBRARY(xe.gfx.lwo SHARED ${src} ${src_lwo})
 
 TARGET_LINK_LIBRARIES(xe.gfx.lwo xe)
+
+INSTALL (
+	TARGETS xe.gfx.lwo
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
+)
