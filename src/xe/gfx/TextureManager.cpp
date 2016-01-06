@@ -106,4 +106,12 @@ namespace xe { namespace gfx {
 
         return texture;
     }
+
+	Texture* TextureManager::create(const std::string &uri, const Image *image) {
+		TexturePtr texture = this->getGraphicsDriver()->createTexture(image);
+
+        this->impl->manager.putProduct(uri, std::move(texture));
+
+        return this->getTexture(uri);
+	}
 }}

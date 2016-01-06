@@ -32,8 +32,8 @@ namespace xe { namespace gfx {
         virtual const xe::gfx::Material* getMaterial() const override;
         virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data) override;
         virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data) override;
-
-		virtual TexturePtr createTexture(const Image *image) override;
+/*
+		virtual TexturePtr createTexture(const Image *image) override;*/
 
 		virtual ModernModule* getModernModule() override;
 
@@ -85,20 +85,20 @@ namespace xe { namespace gfx {
 		return nullptr;
 	}
 
-	inline TexturePtr GraphicsDriverBase::createTexture(const Image *image) {
-		if (image->getType() == ImageType::Img2D) {
-			Vector2i size = image->getSize();
+	//inline TexturePtr GraphicsDriverBase::createTexture(const Image *image) {
+	//	if (image->getType() == ImageType::Img2D) {
+	//		Vector2i size = image->getSize();
 
-			return GraphicsDriver::createTexture (
-				size, 
-				image->getFormat(), 
-				image->getBuffer()->getPointer()
-			);
+	//		return GraphicsDriver::createTexture (
+	//			size, 
+	//			image->getFormat(), 
+	//			image->getBuffer()->getPointer()
+	//		);
 
-		} else {
-			return nullptr;
-		}
-	}
+	//	} else {
+	//		return nullptr;
+	//	}
+	//}
 }}
 
 #endif  // __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
