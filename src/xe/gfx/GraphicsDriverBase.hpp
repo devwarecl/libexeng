@@ -86,27 +86,19 @@ namespace xe { namespace gfx {
 	}
 
 	inline TexturePtr GraphicsDriverBase::createTexture(const Image *image) {
+		if (image->getType() == ImageType::Img2D) {
+			Vector2i size = image->getSize();
 
-		TexturePtr texture;
+			return GraphicsDriver::createTexture (
+				size, 
+				image->getFormat(), 
+				image->getBuffer()->getPointer()
+			);
 
-		//switch (image->getType()) {
-
-		//case ImageType::Img1D:
-		//	texture = this->createTexture()
-
-
-		//case ImageType::Img2D:
-
-
-		//case ImageType::Img3D:
-
-		//}
-
-
-
-		return texture;
+		} else {
+			return nullptr;
+		}
 	}
-
 }}
 
 #endif  // __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__
