@@ -3,18 +3,20 @@
 #     ADD_DEFINITIONS(-fPIC )
 # ENDIF()
 
+INCLUDE_DIRECTORIES(lwo)
+
 SET (src_lwo
-	lwo2.h
-	clip.c 
-	envelope.c 
-	list.c 
-	lwio.c 
-	lwo2.c
-	lwob.c
-	pntspols.c
-	surface.c
-	vecmath.c
-	vmap.c 
+	lwo/lwo2.h
+	lwo/clip.c 
+	lwo/envelope.c 
+	lwo/list.c 
+	lwo/lwio.c 
+	lwo/lwo2.c
+	lwo/lwob.c
+	lwo/pntspols.c
+	lwo/surface.c
+	lwo/vecmath.c
+	lwo/vmap.c 
 )
 
 SET (src
@@ -25,4 +27,6 @@ SET (src
 SOURCE_GROUP(\\ FILES ${src})
 SOURCE_GROUP(\\lwo FILES ${src_lwo})
 
-ADD_LIBRARY(xe.gfx.lwo xe ${src_lwo} ${src_lwo})
+ADD_LIBRARY(xe.gfx.lwo SHARED ${src} ${src_lwo})
+
+TARGET_LINK_LIBRARIES(xe.gfx.lwo xe)

@@ -6,9 +6,11 @@ CMAKE_MINIMUM_REQUIRED (VERSION 3.0)
 # Engine options
 OPTION (XE_GFX_GL3 "Enable OpenGL 3 graphics driver" OFF)
 OPTION (XE_GFX_D3D "Enable Direct3D graphics driver" OFF)
-OPTION (XE_SG_XML "Enable scene loading from XML files" OFF)
-OPTION (XE_RT "Enable scene rendering trough Ray Tracing" OFF)
 OPTION (XE_GFX_FI "Enable FreeImage-based image loader implementation" OFF)
+OPTION (XE_GFX_LWO "Enable mesh loading from LWO files" OFF)
+OPTION (XE_SG_XML "Enable scene loading from XML files" OFF)
+
+OPTION (XE_RT "Enable scene rendering trough Ray Tracing" OFF)
 OPTION (XE_TESTING "Enable unit testings" OFF)
 
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -88,4 +90,8 @@ ENDIF()
 
 IF(XE_GFX_FI)
 	ADD_SUBDIRECTORY (plugins/xe.gfx.fi)
+ENDIF()
+
+IF(XE_GFX_LWO)
+	ADD_SUBDIRECTORY (plugins/xe.gfx.lwo)
 ENDIF()
