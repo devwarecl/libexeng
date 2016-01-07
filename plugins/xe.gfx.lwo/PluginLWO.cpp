@@ -1,5 +1,9 @@
 
+#include <xe/Core.hpp>
+#include <xe/gfx/MeshManager.hpp>
 #include <xe/sys/Plugin.hpp>
+
+#include "MeshLoaderLWO.hpp"
 
 namespace xe { namespace gfx {
 
@@ -18,12 +22,17 @@ namespace xe { namespace gfx {
 		}
 
         virtual void initialize(Core *core) override {
-			
+			meshLoader = std::make_unique<MeshLoaderLWO>();
+
+			core->getMeshManager()->addMeshLoader(meshLoader.get());
 		}
 
         virtual void terminate() override {
-			
+			meshLoader.reset();
 		}
+
+	private:
+		std::unique_ptr<MeshLoaderLWO> meshLoader;
 	};
 }}
 
