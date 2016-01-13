@@ -187,7 +187,7 @@ namespace raytracer { namespace loaders {
 			float *texCoordData = nullptr;
 
 			// search for discontinous mapping
-			for (int k=0; k<polygon->v[j].nvmaps; ++k) {
+			for (int k=0; k<<->v[j].nvmaps; ++k) {
 				lwVMapPt *vmapPt = &polygon->v[j].vm[k];
 
 				if (vmapPt->vmap->dim==2 && vmapPt->vmap->type==ID_TXUV) {
@@ -344,7 +344,6 @@ namespace raytracer { namespace loaders {
 	{
 		for(int j=0; j<polygon->nverts; j++)
 		{
-			Vector3f pivot = Vector3f(layer->pivot);
 			const int pointIndex = polygon->v[j].index;
 
 			StandardVertex vertex;
@@ -363,7 +362,6 @@ namespace raytracer { namespace loaders {
 			const int pointIndex = polygon->v[j].index;
 
 			StandardVertex vertex;
-
 			vertex.coord = Vector3f(pointList->pt[pointIndex].pos);
 			vertex.normal = Vector3f(polygon->norm);
 			vertex.texCoord = {0.0f, 0.0f};

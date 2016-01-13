@@ -17,6 +17,7 @@
 
 #include <xe/Config.hpp>
 #include <xe/gfx/Forward.hpp>
+#include <xe/gfx/Mesh.hpp>
 #include <string>
 #include <memory>
 
@@ -34,6 +35,10 @@ namespace xe { namespace gfx {
 
 		GraphicsDriver* getGraphicsDriver();
 
+		void setMaterialLibrary(MaterialLibrary *materialLibrary);
+
+		MaterialLibrary* getMaterialLibrary();
+
         /**
          * @brief Check if the specified filename extension is supported by the current loader.
          * @param filename Raw string to the filename to check. 
@@ -43,10 +48,11 @@ namespace xe { namespace gfx {
         /**
          * @brief Load the mesh contained in the specified file.
          */
-        virtual std::unique_ptr<Mesh> load(const std::string &filename) = 0;
+        virtual MeshPtr load(const std::string &filename) = 0;
 
 	private:
 		GraphicsDriver *graphicsDriver = nullptr;
+		MaterialLibrary *materialLibrary = nullptr;
     };
 }}
         

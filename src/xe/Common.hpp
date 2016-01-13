@@ -55,6 +55,8 @@ namespace xe {
     };
 
 	template<typename T> struct Pi { static const T Value; };
+	template<typename T> struct PiHalf { static const T Value; };
+	template<typename T> struct PiDouble { static const T Value; };
 	template<typename T> struct Deg { static const T Value; };
 	template<typename T> struct Rad { static const T Value; };
 	template<typename T> struct Epsilon { static const T Value; };
@@ -66,6 +68,12 @@ namespace xe {
 
     template<typename T>
     const T Pi<T>::Value = static_cast<T>(3.14159265358979);
+
+	template<typename T>
+    const T PiHalf<T>::Value = static_cast<T>(Pi<T>::Value*static_cast<T>(0.5));
+
+	template<typename T>
+    const T PiDouble<T>::Value = static_cast<T>(Pi<T>::Value*static_cast<T>(2));
 
     template<typename T>
     const T Deg<T>::Value = static_cast<T>(180) / Pi<T>::Value;

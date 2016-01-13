@@ -14,16 +14,12 @@
 #include <xe/gfx/MeshLoader.hpp>
 
 namespace xe { namespace gfx {
-	class MeshLoaderLWO : public xe::gfx::MeshLoader {
+	class MeshLoaderLWO : public MeshLoader {
 	public:
 		MeshLoaderLWO();
 		virtual ~MeshLoaderLWO();
 		virtual bool isSupported(const std::string &filename) override;
-		virtual xe::gfx::MeshPtr load(const std::string &filename) override;
-
-	private:
-		struct Private;
-		std::unique_ptr<Private> impl;
+		virtual MeshPtr load(const std::string &filename) override;
 	};
 }}
 

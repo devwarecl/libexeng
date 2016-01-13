@@ -26,4 +26,12 @@ namespace xe { namespace gfx {
 	GraphicsDriver* MeshLoader::getGraphicsDriver() {
 		return this->graphicsDriver;
 	}
+
+	void MeshLoader::setMaterialLibrary(MaterialLibrary *materialLibrary) {
+		this->materialLibrary = materialLibrary;
+	}
+
+	MaterialLibrary* MeshLoader::getMaterialLibrary() {
+		return this->materialLibrary;
+	}
 }}

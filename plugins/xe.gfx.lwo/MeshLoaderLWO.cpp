@@ -2,6 +2,7 @@
 #include "MeshLoaderLWO.hpp"
 
 #include <cassert>
+#include <vector>
 #include <boost/filesystem/path.hpp>
 #include <xe/gfx/Vertex.hpp>
 
@@ -10,120 +11,42 @@
 namespace xe { namespace gfx {
 	namespace fs = boost::filesystem;
 
-	enum lwProj {
-		LW_PROJ_PLANAR = 0,
-		LW_PROJ_CYLINDRICAL = 1,
-		LW_PROJ_SPHERICAL = 2,
-		LW_PROJ_CUBIC = 3,
-		LW_PROJ_FRONT = 4,
-		LW_PROJ_UV = 5
-	};
+	MeshLoaderLWO::MeshLoaderLWO() {}
+	
+	MeshLoaderLWO::~MeshLoaderLWO() {}
 
-	enum lwAxis {
-		LW_AXIS_X = 0,
-		LW_AXIS_Y = 1,
-		LW_AXIS_Z = 2
-	};
-
-	const float pi = 3.14159265358979f;
-	const float pi_2 = pi / 2.0f;
-
-	/**
-	 * @brief Automatically generate the index array from the specified polygon size
-	 */
-	void appendIndices(std::vector<int> &indices, int polygonSize, int indexBase, bool invert) 
-	{
-		if (invert) {
-			for(int j=1; j<polygonSize-1; j++) {
-				indices.push_back(indexBase + 0);
-				indices.push_back(indexBase + j);
-				indices.push_back(indexBase + j + 1);
-			}
-		} else {
-			for(int j=1; j<polygonSize-1; j++) {
-				indices.push_back(indexBase + 0);
-				indices.push_back(indexBase + j + 1);
-				indices.push_back(indexBase + j);
-			}
-		}
+	bool MeshLoaderLWO::isSupported(const std::string &filename) {
+		std::string ext = fs::path(filename).extension().string();
+		return ext == ".lwo";
 	}
 
-	/**
-	 * @brief Search a clip with the specified index (id)
-	 */
-	lwClip* findClipFromIndex(lwObject* Object, int index)
-	{
-		//Recorrer los clips hasta dar con el que tenga el índice indicado
-		lwClip *outClip = nullptr;
-		for (outClip=Object->clip; outClip!=nullptr; outClip=outClip->next) {
-			if (outClip->index == index) {
-				break;
-			}
-		}
+	typedef std::vector<xe::gfx::StandardVertex> VertexArray;
 
-		return outClip;
-	}
-
-	/**
-	 * @brief 
-	 */
-	Vector3f setupTexturePoint(const Vector3f &point, lwTMap *tmap, lwProj proj)
-	{
-		Vector3f center = Vector3f(tmap->center.val); 
-		Vector3f ypr = Vector3f(tmap->rotate.val); 
-		Vector3f size = Vector3f(tmap->size.val); 
-
-		Vector3f q = point - center;
-
-		q = xe::transform(xe::rotate<float>(ypr.z, { 0.0f, 0.0f, -1.0f}), q);
-		q = xe::transform(xe::rotate<float>(ypr.y, { 0.0f, 1.0f,  0.0f}), q);
-		q = xe::transform(xe::rotate<float>(ypr.x, {-1.0f, 0.0f,  0.0f}), q);
-
-		if (proj != LW_PROJ_SPHERICAL) {
-			q = q / size;
-		}
-
-		return q;
-	}
-
-	Vector3f computePolygonNormal(const lwPolygon *poly, const lwPointList *points, bool invertNormal)
-	{
-		Vector3f normal = {0.0f, 0.0f, 0.0f};
-
-		if (poly->nverts >= 3) {
-			Vector3f a = Vector3f(points->pt[ poly->v[0].index ].pos);
-			Vector3f b = Vector3f(points->pt[ poly->v[1].index ].pos);
-			Vector3f c = Vector3f(points->pt[ poly->v[2].index ].pos);
-
-			normal = xe::normalize(xe::cross(b-a, c-a));
-
-			if (invertNormal) {
-				normal = -normal;
-			}
-		}
-
-		return normal;
-	}
-
-	float cylindricalAngle(float x, float y)
-	{
-		float r = std::sqrt(x*x + y*y);
-		float a = 0.0f;
+	float cylindricalAngle(const xe::Vector2f &point) {
+		const float pi		= xe::Pi<float>::Value;
+		const float pi_2	= xe::PiHalf<float>::Value;
+		const float r		= xe::abs(point);
+		const float x		= point.x / r;
+		const float y		= point.y;
 
 		if (r == 0.0f)  {
 			return 0.0f;
 		}
 
-		x /= r;
+		float a = 0.0f;
 
 		if (x < 0.0f && y >= 0.0f) {
 			a = pi_2 - acosf(-x);
+
 		} else if (x < 0.0f && y < 0.0f) {
 			a = acosf(-x) + pi_2;
+
 		} else if (x >= 0.0f && y >= 0.0f) {
 			a = acosf(x) + 3.0f * pi_2;
+
 		} else if (x >= 0.0f && y < 0.0f) {
 			a = 3.0f * pi_2 - acosf(x);
+
 		} else {
 			a = 0.0f;
 		}
@@ -131,64 +54,108 @@ namespace xe { namespace gfx {
 		return a/pi/2.0f;
 	}
 
-	static lwVMap* findVMap(lwVMap* Map, const std::string &vmapname, unsigned int type)
-	{
-		lwVMap* VMap = nullptr;
+	xe::Vector2f generateTexCoord_Spherical(float radius, const xe::Vector3f &point, lw::Axis::Enum axis) {
+		const float pi		= xe::Pi<float>::Value;
+		const float pi_2	= xe::PiHalf<float>::Value;
 
-		for(VMap=Map; VMap!=nullptr; VMap=VMap->next) {
-			if ((vmapname == VMap->name) && (type == VMap->type)){
+		xe::Vector2f texCoord = {0.0f, 0.0f};
+
+		switch (axis) {
+		case lw::Axis::X: 
+			texCoord.x = cylindricalAngle({-point.z, -point.y}); 
+			texCoord.y = (std::asin(point.x/radius) + pi_2) / pi;
+
+			break;
+
+		case lw::Axis::Y: 
+			texCoord.x = cylindricalAngle({point.x, point.z}); 
+			texCoord.y = (std::asin(point.y/radius) + pi_2) / pi;
+
+			break;
+
+		case lw::Axis::Z: 
+			texCoord.x = cylindricalAngle({point.x, -point.y}); 
+			texCoord.y = (std::asin(point.z/radius) + pi_2) / pi;
+			break;
+		}
+
+		return texCoord;
+	}
+
+	xe::Vector2f generateTexCoord_Cylindrical(float radius, const xe::Vector3f &point, lw::Axis::Enum axis) {
+		xe::Vector2f texCoord = {0.0f, 0.0f};
+
+		switch (axis) {
+			case lw::Axis::X: 
+				texCoord.x = cylindricalAngle({-point.z, -point.y});
+				texCoord.y = point.x;
 				break;
-			}
+
+			case lw::Axis::Y: 
+				texCoord.x = cylindricalAngle({point.x,  point.z});
+				texCoord.y = point.y;
+				break;
+
+			case lw::Axis::Z: 
+				texCoord.x = cylindricalAngle({point.x, -point.y});
+				texCoord.y = point.z;
+				break;
 		}
 
-		if ((VMap != nullptr) && (type == ID_TXUV)) {
-			lwVMap* BetterVMap = findVMap(VMap->next, vmapname, ID_TXUV);
-
-			if (BetterVMap != nullptr) {
-				VMap = BetterVMap;
-			}
-		}
-
-		return VMap;
+		return texCoord;
 	}
 
-	static lwVMap* getVMap(lwLayer* Layer, char* Name, bool Continuous)
-	{
-		lwVMap* VMap = nullptr;
+	xe::Vector2f generateTexCoord_Planar(float radius, const xe::Vector3f &point, lw::Axis::Enum axis) {
+		xe::Vector2f texCoord = {0.0f, 0.0f};
 
-		for(VMap=Layer->vmap; VMap!=nullptr; VMap=VMap->next) {
-			if (std::string(Name) == std::string(VMap->name)) {
-				if (Continuous==true) {
-					if (VMap->pindex==nullptr) {
-						return VMap;
-					}
-				} else {
-					if (VMap->pindex!=nullptr) {
-						return VMap;
-					}
-				}
-			}
+		switch (axis) {
+			case lw::Axis::X:
+				texCoord.x = point.z;
+				texCoord.y = point.y;
+				break;
+
+			case lw::Axis::Y: 
+				texCoord.x = point.x;
+				texCoord.y = point.z;
+				break;
+
+			case lw::Axis::Z: 
+				texCoord.x = point.x;
+				texCoord.y = point.y;
+				break;
 		}
 
-		return nullptr;
+		return texCoord;
 	}
-		
-	static void generateVertices_ProjUV (std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
-	{
-		lwVMap *vmap = getVMap(layer, imageMap->vmap_name, true);
 
-		for (int j=0; j<polygon->nverts; ++j) {
+	xe::Vector2f generateTexCoord_Default(float radius, const xe::Vector3f &point, lw::Axis::Enum axis) {
+		return {0.0f, 0.0f};
+	}
+
+	xe::Vector2f generateTexCoord_Cubic() {
+		xe::Vector2f texCoord;
+
+		return texCoord;
+	}
+
+	VertexArray generateVertices_UV(const lw::Layer &layer, lw::Polygon &polygon, const lw::PointList points, const lw::ImageMap &imap) {
+		VertexArray vertices;
+
+		lw::VMap map = layer.findVMap(imap.vmap_name(), true);
+
+		for (int j=0; j<polygon.nverts(); ++j) {
 			bool discontinuous = false;
 
-			const int pointIndex = polygon->v[j].index;
+			const int pointIndex = polygon.v(j).index();
 			float *texCoordData = nullptr;
 
 			// search for discontinous mapping
-			for (int k=0; k<polygon->v[j].nvmaps; ++k) {
-				lwVMapPt *vmapPt = &polygon->v[j].vm[k];
-
-				if (vmapPt->vmap->dim==2 && vmapPt->vmap->type==ID_TXUV) {
-					texCoordData = vmapPt->vmap->val[vmapPt->index];
+			for (int k=0; k<polygon.v(j).nvmaps(); ++k) {
+				const lw::VMapPt vmap_pt = polygon.v(j).vm(k);
+				const lw::VMap vmap = vmap_pt.vmap();
+				
+				if (vmap.dim()==2 && vmap.type()==ID_TXUV) {
+					texCoordData = vmap.val(vmap_pt.index());
 					discontinuous = true;
 					break;
 				}
@@ -197,301 +164,85 @@ namespace xe { namespace gfx {
 			// check for continuous mapping
 			if (discontinuous == false) {
 				// search for discontinous mapping
-				for (int k=0; k<pointList->pt[pointIndex].nvmaps; ++k) {
-					lwVMapPt *vmapPt = &pointList->pt[pointIndex].vm[k];
 
-					if (vmapPt->vmap->dim==2 && vmapPt->vmap->type==ID_TXUV) {
-						texCoordData = vmapPt->vmap->val[vmapPt->index];
+				for (int k=0; k<points.pt(pointIndex).nvmaps(); ++k) {
+					lw::VMapPt vmap_pt = points.pt(pointIndex).vm(k);
+
+					if (vmap_pt.vmap().dim()==2 && vmap_pt.vmap().type()==ID_TXUV) {
+						texCoordData = vmap_pt.vmap().val(vmap_pt.index());
 						break;
 					}
 				}
 			}
 
-			StandardVertex vertex;
-			vertex.coord = Vector3f(pointList->pt[pointIndex].pos);
-			vertex.normal = Vector3f(polygon->norm);
+			xe::gfx::StandardVertex vertex;
+			vertex.coord = Vector3f(points.pt(pointIndex).pos());
+			vertex.normal = polygon.norm();
 			vertex.texCoord = Vector2f(texCoordData[0], 1.0f - texCoordData[1]);
 
-			vertices.push_back(vertex);
+			vertices.push_back(vertex);	
 		}
+
+		return vertices;
 	}
 
-	static void generateVertices_ProjCubic(std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
-	{
-		Vector3f normal = computePolygonNormal(polygon, pointList, false);
+	VertexArray generateVerticesFromPolygon(const ::lwPolygon *polygon, const ::lwPointList *points, const ::lwTexture *texture) {
+		VertexArray vertices;
 
-		lwAxis axis = LW_AXIS_X;
-
-		if ( normal.y>normal.x &&  normal.y>normal.z)	axis = LW_AXIS_Y;
-		if (-normal.y>normal.x && -normal.y>normal.z)	axis = LW_AXIS_Y;
-
-		if ( normal.z>normal.x &&  normal.z>normal.y)	axis = LW_AXIS_Z;
-		if (-normal.z>normal.x && -normal.z>normal.y)	axis = LW_AXIS_Z;
-
-		for (int j=0; j<polygon->nverts; ++j) {
-			const int pointIndex = polygon->v[j].index;
-
-			Vector3f coord = Vector3f(pointList->pt[pointIndex].pos);
-			Vector3f point = setupTexturePoint(coord, tmap, lwProj(imageMap->projection));
-			Vector2f texCoord;
-
-			switch (axis) {
-				case LW_AXIS_X: texCoord = Vector2f(point.z, point.y); break;
-				case LW_AXIS_Y: texCoord = Vector2f(point.x, point.z); break;
-				case LW_AXIS_Z: texCoord = Vector2f(point.x, point.y); break;
-			}
-
-			texCoord += Vector2f(0.5f, 0.5f);
-			texCoord.y = 1.0f - texCoord.y;
-
-			StandardVertex vertex;
-			vertex.coord = coord;
-			vertex.normal = normal;
-			vertex.texCoord = texCoord;
-
-			vertices.push_back(vertex);
-		}
+		return vertices;
 	}
 
-	template<typename TexCoordGeneratorFunctor>
-	static void generateVertices_Proj(std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
-	{
-		TexCoordGeneratorFunctor texCoordGenerator;
+	VertexArray generateVertices(const lw::Layer &layer, const lw::Surface &surface) {
+		VertexArray vertices;
 
-		for (int j=0; j<polygon->nverts; ++j) {
-			const int pointIndex = polygon->v[j].index;
+		const lw::PolygonList polygons = layer.polygon();
+		const lw::PointList points = layer.points();
 
-			Vector3f coord = Vector3f(pointList->pt[pointIndex].pos);
-			Vector3f normal = Vector3f(polygon->norm);
-			Vector2f texCoord = Vector2f(0.0f, 0.0f);
+		for (int i=0; i<polygons.count(); i++) {
+			const lw::Polygon polygon = polygons.pol(i);
 
-			Vector3f point = setupTexturePoint(coord, tmap, lwProj(imageMap->projection));
-
-			float r = xe::abs(point);
-
-			if (r != 0.0f) {
-				texCoord = texCoordGenerator(r, point, lwAxis(imageMap->axis));
+			if (polygon.type()==ID_FACE || polygon.surf()!=surface) {
+				continue;
 			}
 
-			texCoord *= Vector2f(imageMap->wrapw.val, imageMap->wraph.val);
-			texCoord.y = 1.0f - texCoord.y;
+			const lw::Texture texture = surface.color().tex();
+			
+			if (texture.type()==ID_IMAP) {
+				// subset with texture
 
-			StandardVertex vertex;
-			vertex.coord = coord;
-			vertex.normal = coord;
-			vertex.texCoord = coord;
+				const lw::ImageMap imap = texture.imap();
 
-			vertices.push_back(vertex);
-		}
-	}
-
-	struct SphericalTexCoordGenerator {
-		Vector2f operator() (float r, const Vector3f &point, lwAxis axis) 
-		{
-			float tx=0.0f, ty=0.0f;
-
-			switch (axis) {
-			case LW_AXIS_X: 
-				tx = cylindricalAngle(-point.z, -point.y); 
-				ty = (std::asin(point.x/r) + pi_2) / pi;
-				break;
-
-			case LW_AXIS_Y: 
-				tx = cylindricalAngle(point.x, point.z); 
-				ty = (std::asin(point.y/r) + pi_2) / pi;
-				break;
-
-			case LW_AXIS_Z: 
-				tx = cylindricalAngle(point.x, -point.y); 
-				ty = (std::asin(point.z/r) + pi_2) / pi;
-				break;
-			}
-
-			return Vector2f(tx, ty);
-		}
-	};
-
-	struct CylindricalTexCoordGenerator {
-		Vector2f operator() (float r, const Vector3f &point, lwAxis axis) 
-		{
-			switch (axis) {
-			case LW_AXIS_X: return Vector2f(cylindricalAngle(-point.z, -point.y), point.x);
-			case LW_AXIS_Y: return Vector2f(cylindricalAngle( point.x,  point.z), point.y);
-			case LW_AXIS_Z: return Vector2f(cylindricalAngle( point.x, -point.y), point.z);
-			}
-
-			return Vector2f(0.0f, 0.0f);
-		}
-	};
-
-	struct PlanarTexCoordGenerator {
-		Vector2f operator() (float r, const Vector3f &point, lwAxis axis) 
-		{
-			switch (axis) {
-			case LW_AXIS_X: return Vector2f(point.z, point.y);
-			case LW_AXIS_Y: return Vector2f(point.x, point.z);
-			case LW_AXIS_Z: return Vector2f(point.x, point.y);
-			}
-
-			return Vector2f(0.0f, 0.0f);
-		}
-	};
-
-	static void generateVertices_ProjDefault(std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
-	{
-		for(int j=0; j<polygon->nverts; j++)
-		{
-			Vector3f pivot = Vector3f(layer->pivot);
-			const int pointIndex = polygon->v[j].index;
-
-			StandardVertex vertex;
-			vertex.coord = Vector3f(pointList->pt[pointIndex].pos);
-			vertex.normal = Vector3f(polygon->norm);
-			vertex.texCoord = {0.0f, 0.0f};
-
-			vertices.push_back(vertex);
-		}
-	}
-
-	static void generateVertices_Default(std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
-	{
-		for(int j=0; j<polygon->nverts; j++)
-		{
-			const int pointIndex = polygon->v[j].index;
-
-			StandardVertex vertex;
-
-			vertex.coord = Vector3f(pointList->pt[pointIndex].pos);
-			vertex.normal = Vector3f(polygon->norm);
-			vertex.texCoord = {0.0f, 0.0f};
-
-			vertices.push_back(vertex);
-		}
-	}
-
-	typedef std::function<
-		void (std::vector<StandardVertex> &vertices, lwLayer *layer, lwPointList *pointList , lwPolygon *polygon, lwImageMap *imageMap, lwTMap *tmap)
-	> ProjVertexGeneratorFunction;
-
-	struct MeshLoaderLWO::Private {
-		std::map<lwProj, ProjVertexGeneratorFunction> generators;
-
-		std::unique_ptr<MeshSubset> createMeshSubsetFromLWOData(GraphicsDriver *graphicsDriver, lwLayer *layer, lwSurface *surf)
-		{
-			std::vector<StandardVertex> vertices;
-			std::vector<int> indices;
-
-			lwPolygonList *polygonList = &layer->polygon;
-			lwPointList *pointList = &layer->point;
-
-			for (int i=0; i<polygonList->count; ++i) {
-				int baseIndex = vertices.size();
-
-				lwPolygon *polygon = &polygonList->pol[i];
-
-				if (polygon->type != ID_FACE) {
-					continue;
-				}
-
-				if (surf != polygon->surf) {
-					continue;
-				}
-
-				if (surf->color.tex && surf->color.tex->type==ID_IMAP) {
-					lwImageMap *imageMap = &surf->color.tex->param.imap;
-					lwTMap *tmap = &surf->color.tex->tmap;
-
-					ProjVertexGeneratorFunction generator;
-
-					// Get the appropiate generator
-					auto generatorIt = this->generators.find(lwProj(imageMap->projection));
-					if (generatorIt != std::end(this->generators)) {
-						generator = generatorIt->second;
-					} else {
- 						generator = generateVertices_ProjDefault;
-					}
+				switch (imap.projection()) {
+					case lw::Proj::Planar: break;
+					case lw::Proj::Cylindrical: break;
+					case lw::Proj::Spherical: break;
+					case lw::Proj::Cubic: break;
+					case lw::Proj::Front: break;
+					case lw::Proj::Map: break;
 					
-					generator(vertices, layer, pointList, polygon, imageMap, tmap);
-				} else {
-					ProjVertexGeneratorFunction generator = generateVertices_Default;
-					generator(vertices, layer, pointList, polygon, nullptr, nullptr);
+					default: break;
 				}
 
-				appendIndices(indices, polygon->nverts, baseIndex, false);
+			} else {
+				// subset without texture
 
-				// ¿The material is two-sided?
-				if (surf->sideflags == 3) {
-					const int begin = vertices.size()-polygon->nverts;
-					const int end = baseIndex;
-
-					for (int vertexIndex=begin; vertexIndex<end; vertexIndex++) {
-
-						StandardVertex vertex;
-						vertex.coord = vertices[vertexIndex].coord;
-						vertex.normal = -vertices[vertexIndex].normal;
-						vertex.texCoord = vertices[vertexIndex].texCoord;
-
-						vertices.push_back(vertex);
-					}
-
-					appendIndices(indices, polygon->nverts, baseIndex, true);
-				}
-			}
-
-			auto vertexBuffer = graphicsDriver->createVertexBuffer(vertices);
-			auto indexBuffer = graphicsDriver->createIndexBuffer(indices);
-			auto meshSubset = graphicsDriver->createMeshSubset(std::move(vertexBuffer), std::move(indexBuffer), StandardVertex::getFormat());
-
-			return meshSubset;
-		}
-	};
-
-	MeshLoaderLWO::MeshLoaderLWO() {
-		std::map<lwProj, ProjVertexGeneratorFunction> generators = {
-			{LW_PROJ_UV, ProjVertexGeneratorFunction(generateVertices_ProjUV)}, 
-			{LW_PROJ_CUBIC, ProjVertexGeneratorFunction(generateVertices_ProjCubic)}, 
-			{LW_PROJ_SPHERICAL, ProjVertexGeneratorFunction(generateVertices_Proj<SphericalTexCoordGenerator>)},
-			{LW_PROJ_CYLINDRICAL, ProjVertexGeneratorFunction(generateVertices_Proj<CylindricalTexCoordGenerator>)},
-			{LW_PROJ_PLANAR, ProjVertexGeneratorFunction(generateVertices_Proj<PlanarTexCoordGenerator>)}
-		};
-
-		this->impl = std::make_unique<MeshLoaderLWO::Private>();
-		this->impl->generators = generators;
-	}
-
-	MeshLoaderLWO::~MeshLoaderLWO() {}
-
-	bool MeshLoaderLWO::isSupported(const std::string &filename) {
-		std::string ext = fs::path(filename).extension().string();
-		return ext == ".lwo";
-	}
-
-	std::unique_ptr<Mesh> MeshLoaderLWO::load(const std::string &filename) {
-		struct lwObjectGuard {
-			lwObject *obj = nullptr;
-
-			explicit lwObjectGuard(lwObject *obj_) : obj(obj_){}
-
-			lwObject* operator->() { return this->obj; }
-			const lwObject* operator->() const { return this->obj;}
-
-			~lwObjectGuard() {
-				if (obj) {
-					lwFreeObject(obj);
-				}
-			}
-		};
-
-		std::vector<std::unique_ptr<MeshSubset>> meshSubsets;
-
-		lwObjectGuard obj = lwObjectGuard(lwGetObject( (char*)filename.c_str(), nullptr, nullptr));
-		for (lwSurface *surf=obj->surf; surf!=nullptr; surf=surf->next) {
-			for (lwLayer *layer=obj->layer; layer!=nullptr; layer=layer->next) {
-				auto meshSubset = this->impl->createMeshSubsetFromLWOData(this->getGraphicsDriver(), layer, surf);
-				meshSubsets.push_back( std::move(meshSubset) );
 			}
 		}
 
-        return std::unique_ptr<Mesh>( new Mesh(std::move(meshSubsets)) );
+		return vertices;
+	}
+
+	MeshPtr MeshLoaderLWO::load(const std::string &filename) {
+
+		std::vector<MeshSubsetPtr> subsets;
+
+		lw::Object object = ::lwGetObject((char*)filename.c_str(), nullptr, nullptr);
+
+		// extract geometry
+		for (lw::Layer layer : object.layer()) {
+
+		}
+
+        return std::make_unique<Mesh>(std::move(subsets));
     }
 }}
