@@ -1,6 +1,11 @@
 
 #pragma once
 
+#include <xe/Vector.hpp>
+#include "Wrapper.hpp"
+#include "Texture.hpp"
+#include "lwo/lwo2.h"
+
 namespace lw {
 	class CParam : public Wrapper<CParam, ::lwCParam> {
 	public:

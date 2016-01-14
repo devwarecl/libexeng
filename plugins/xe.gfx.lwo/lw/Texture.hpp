@@ -1,6 +1,17 @@
 
 #pragma once
 
+#ifndef __lw_texture_hpp__
+#define __lw_texture_hpp__
+
+#include <string>
+#include "Collection.hpp"
+#include "EParam.hpp"
+#include "Gradient.hpp"
+#include "ImageMap.hpp"
+#include "Procedural.hpp"
+#include "TMap.hpp"
+
 namespace lw {
 	
 	class Texture : public Collection<Texture, ::lwTexture> {
@@ -57,3 +68,5 @@ namespace lw {
 		}
 	};
 }
+
+#endif	

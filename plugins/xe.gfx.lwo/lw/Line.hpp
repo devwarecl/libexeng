@@ -1,6 +1,12 @@
 
 #pragma once
 
+#ifndef __lw_line_hpp__
+#define __lw_line_hpp__
+
+#include "Wrapper.hpp"
+#include "EParam.hpp"
+
 namespace lw {
 	
 	class Line : public Wrapper<Line, ::lwLine> {
@@ -20,5 +26,6 @@ namespace lw {
 			return EParam(&this->value->size);
 		}
 	};
-
 }
+
+#endif 

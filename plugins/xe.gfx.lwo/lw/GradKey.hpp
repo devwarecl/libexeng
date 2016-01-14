@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include "Wrapper.hpp"
+#include "lwo/lwo2.h"
+
 namespace lw {
 	
 	class GradKey : public Wrapper<GradKey, ::lwGradKey> {

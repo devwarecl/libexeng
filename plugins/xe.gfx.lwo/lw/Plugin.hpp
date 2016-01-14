@@ -1,6 +1,13 @@
 
 #pragma once
 
+#ifndef __lw_plugin_hpp__
+#define __lw_plugin_hpp__
+
+#include <string>
+#include "Collection.hpp"
+#include "lwo/lwo2.h"
+
 namespace lw {
 	class Plugin : public Collection<Plugin, ::lwPlugin> {
 	public:
@@ -24,3 +31,5 @@ namespace lw {
 		}
 	};
 }
+
+#endif

@@ -1,8 +1,12 @@
 
 #pragma once
 
+#include <xe/Vector.hpp>
+#include "Wrapper.hpp"
+#include "Surface.hpp"
+#include "PolVert.hpp"
+
 namespace lw {
-	
 	class Polygon : public Wrapper<Polygon, ::lwPolygon> {
 	public:
 		Polygon() {}
@@ -40,5 +44,4 @@ namespace lw {
 			return PolVert(&this->value->v[index]);
 		}
 	};
-
 }

@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include "Collection.hpp"
+#include "lwo/lwo2.h"
+
 namespace lw {
 	class Clip : public Collection<Clip, ::lwClip> {
 	public:

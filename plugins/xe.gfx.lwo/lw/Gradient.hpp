@@ -1,6 +1,11 @@
 
 #pragma once
 
+#include <string>
+#include "Wrapper.hpp"
+#include "GradKey.hpp"
+#include "lwo/lwo2.h"
+
 namespace lw {
 	
 	class Gradient : public Wrapper<Gradient, ::lwGradient> {

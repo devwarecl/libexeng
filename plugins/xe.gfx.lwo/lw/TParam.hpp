@@ -1,6 +1,12 @@
 
 #pragma once
 
+#ifndef __lw_tparam_hpp__
+#define __lw_tparam_hpp__
+
+#include "Wrapper.hpp"
+#include "Texture.hpp"
+
 namespace lw {
 	class TParam : public Wrapper<TParam, ::lwTParam> {
 	public:
@@ -18,3 +24,5 @@ namespace lw {
 		Texture tex() const;
 	};
 }
+
+#endif

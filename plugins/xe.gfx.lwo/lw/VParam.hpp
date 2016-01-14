@@ -1,6 +1,13 @@
 
 #pragma once
 
+#ifndef __lw_vparam_hpp__
+#define __lw_vparam_hpp__
+
+#include <xe/Vector.hpp>
+#include "Wrapper.hpp"
+#include "lwo/lwo2.h"
+
 namespace lw {
 	
 	class VParam : public Wrapper<VParam, ::lwVParam> {
@@ -16,5 +23,6 @@ namespace lw {
 			return this->value->eindex;
 		}
 	};
-
 }
+
+#endif

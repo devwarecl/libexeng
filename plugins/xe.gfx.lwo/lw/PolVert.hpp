@@ -1,6 +1,13 @@
 
 #pragma once
 
+#ifndef __lw_polvert_hpp__
+#define __lw_polvert_hpp__
+
+#include <xe/Vector.hpp>
+#include "Wrapper.hpp"
+#include "VMapPt.hpp"
+
 namespace lw {
 	
 	class PolVert : public Wrapper<PolVert, ::lwPolVert> {
@@ -24,5 +31,6 @@ namespace lw {
 			return VMapPt(&this->value->vm[index]);
 		}
 	};
-
 }
+
+#endif

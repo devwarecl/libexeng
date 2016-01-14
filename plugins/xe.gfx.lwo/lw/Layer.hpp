@@ -1,6 +1,11 @@
 
 #pragma once
 
+#include <xe/Boundary.hpp>
+#include "Collection.hpp"
+#include "VMap.hpp"
+
+
 namespace lw {
 	
 	class Layer : public Collection<Layer, ::lwLayer> {

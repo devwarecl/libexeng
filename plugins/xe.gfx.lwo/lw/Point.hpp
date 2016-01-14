@@ -1,6 +1,13 @@
 
 #pragma once
 
+#ifndef __lw_point_hpp__
+#define __lw_point_hpp__
+
+#include <xe/Vector.hpp>
+#include "Wrapper.hpp"
+#include "VMapPt.hpp
+
 namespace lw {
 	
 	class Point : public Wrapper<Point, ::lwPoint> {
@@ -28,5 +35,6 @@ namespace lw {
 			return xe::Vector3f(&this->value->pos[0]);
 		}
 	};
-
 }
+
+#endif

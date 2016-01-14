@@ -1,5 +1,12 @@
 
+#pragma once
+
+#ifndef __lw_vmap_hpp__
+#define __lw_vmap_hpp__
+
+#include <string>
 #include "Collection.hpp"
+#include "lwo/lwo2.h"
 
 namespace lw {
 	class VMap : public Collection<VMap, ::lwVMap> {
@@ -61,3 +68,5 @@ namespace lw {
 		}
 	};
 }
+
+#endif

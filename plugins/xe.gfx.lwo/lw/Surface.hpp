@@ -1,6 +1,17 @@
 
 #pragma once
 
+#ifndef __xe_surface_hpp__
+#define __xe_surface_hpp__
+
+#include "Collection.hpp"
+#include "EParam.hpp"
+#include "TParam.hpp"
+#include "CParam.hpp"
+#include "Line.hpp"
+#include "RMap.hpp"
+#include "Plugin.hpp"
+
 namespace lw {
 	
 	class Surface : public Collection<Surface, ::lwSurface> {
@@ -106,3 +117,5 @@ namespace lw {
 	};
 
 }
+
+#endif

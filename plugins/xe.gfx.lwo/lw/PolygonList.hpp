@@ -1,9 +1,10 @@
 
 #pragma once
 
-namespace lw {
+#include "Wrapper.hpp"
+#include "Polygon.hpp"
 
-	
+namespace lw {
 	class PolygonList : public Wrapper<PolygonList, ::lwPolygonList> {
 	public:
 		PolygonList() {}

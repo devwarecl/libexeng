@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include "Wrapper.hpp"
+#include "EParam.hpp"
+
 namespace lw {
 	
 	class ImageMap : public Wrapper<ImageMap, ::lwImageMap> {

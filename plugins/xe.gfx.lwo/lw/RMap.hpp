@@ -1,8 +1,13 @@
 
 #pragma once
 
+#ifndef __xe_rmap_hpp__
+#define __xe_rmap_hpp__
+
+#include "Wrapper.hpp"
+#include "lwo/lwo2.h"
+
 namespace lw {
-	
 	class RMap : public Wrapper<RMap, ::lwRMap> {
 	public:
 		RMap() {}
@@ -24,5 +29,6 @@ namespace lw {
 			return TParam(&this->value->val);
 		}
 	};
-
 }
+
+#endif
