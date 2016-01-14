@@ -3,6 +3,7 @@
 #ifndef __lw_collection_hpp__
 #define __lw_collection_hpp__
 
+#include <cassert>
 #include "Wrapper.hpp"
 
 namespace lw {

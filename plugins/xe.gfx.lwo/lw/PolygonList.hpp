@@ -1,34 +1,28 @@
 
 #pragma once
 
+#ifndef __lw_polygonlist_hpp__
+#define __lw_polygonlist_hpp__
+
 #include "Wrapper.hpp"
 #include "Polygon.hpp"
 
 namespace lw {
 	class PolygonList : public Wrapper<PolygonList, ::lwPolygonList> {
 	public:
-		PolygonList() {}
-		PolygonList(::lwPolygonList *value) : Wrapper<PolygonList, ::lwPolygonList>(value) {}
+		PolygonList();
+		PolygonList(::lwPolygonList *value);
 		
-		int count() const {
-			return this->value->count;
-		}
+		int count() const;
 
-		Polygon pol(const int index) const {
-			return Polygon(&this->value->pol[index]);
-		}
+		Polygon pol(const int index) const;
 
-		int vcount() const {
-			return this->value->vcount;
-		}
+		int vcount() const;
 
-		int offset() const {
-			return this->value->offset;
-		}
+		int offset() const;
 
-		int voffset() const {
-			return this->value->voffset;
-		}
+		int voffset() const;
 	};
-
 }
+
+#endif 

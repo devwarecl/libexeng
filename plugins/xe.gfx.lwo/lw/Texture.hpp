@@ -16,56 +16,32 @@ namespace lw {
 	
 	class Texture : public Collection<Texture, ::lwTexture> {
 	public:
-		Texture() {}
-		Texture(::lwTexture *value) : Collection<Texture, ::lwTexture>(value) {}
+		Texture();
+		Texture(::lwTexture *value);
 
-		short axis() const {
-			return this->value->axis;
-		}
+		short axis() const;
 
-		unsigned int chan() const {
-			return this->value->chan;
-		}
+		unsigned int chan() const;
 
-		short enabled() const {
-			return this->value->enabled;
-		}
+		short enabled() const;
 
-		short negative() const {
-			return this->value->negative;
-		}
+		short negative() const;
 
-		EParam opacity() const {
-			return EParam(&this->value->opacity);
-		}
+		EParam opacity() const;
 
-		short opac_type() const {
-			return this->value->opac_type;
-		}
+		short opac_type() const;
 
-		std::string ord() const {
-			return this->value->ord;
-		}
+		std::string ord() const;
 
-		Gradient grad() const {
-			return Gradient(&this->value->param.grad);
-		}
+		Gradient grad() const;
 
-		ImageMap imap() const {
-			return ImageMap(&this->value->param.imap);
-		}
+		ImageMap imap() const;
 
-		Procedural proc() const {
-			return Procedural(&this->value->param.proc);
-		}
+		Procedural proc() const;
 
-		TMap tmap() const {
-			return TMap(&this->value->tmap);
-		}
+		TMap tmap() const;
 
-		unsigned int type() const {
-			return this->value->type;
-		}
+		unsigned int type() const;
 	};
 }
 

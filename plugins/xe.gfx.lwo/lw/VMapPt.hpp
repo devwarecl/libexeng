@@ -7,20 +7,15 @@
 #include "Wrapper.hpp"
 #include "VMap.hpp"
 
-namespace lw {
-	
+namespace lw {	
 	class VMapPt : public Wrapper<VMapPt, ::lwVMapPt> {
 	public:
-		VMapPt() {}
-		VMapPt(::lwVMapPt *value) : Wrapper<VMapPt, ::lwVMapPt>(value) {}
+		VMapPt();
+		VMapPt(::lwVMapPt *value);
 
-		int index() const {
-			return this->value->index;
-		}
+		int index() const;
 
-		VMap vmap() const {
-			return VMap(this->value->vmap);
-		}
+		VMap vmap() const;
 	};
 }
 

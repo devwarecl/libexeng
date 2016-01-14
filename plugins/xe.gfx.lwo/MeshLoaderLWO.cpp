@@ -6,7 +6,11 @@
 #include <boost/filesystem/path.hpp>
 #include <xe/gfx/Vertex.hpp>
 
-#include "lwo.hpp"
+#include "lw/Axis.hpp"
+#include "lw/Object.hpp"
+#include "lw/VMapPt.hpp"
+#include "lw/PointList.hpp"
+#include "lw/PolygonList.hpp"
 
 namespace xe { namespace gfx {
 	namespace fs = boost::filesystem;

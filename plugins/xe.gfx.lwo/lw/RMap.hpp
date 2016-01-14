@@ -1,33 +1,26 @@
 
 #pragma once
 
-#ifndef __xe_rmap_hpp__
-#define __xe_rmap_hpp__
+#ifndef __lw_rmap_hpp__
+#define __lw_rmap_hpp__
 
 #include "Wrapper.hpp"
+#include "TParam.hpp"
 #include "lwo/lwo2.h"
 
 namespace lw {
 	class RMap : public Wrapper<RMap, ::lwRMap> {
 	public:
-		RMap() {}
-		RMap(::lwRMap *value) : Wrapper<RMap, ::lwRMap>(value) {}
+		RMap();
+		RMap(::lwRMap *value);
 
-		int cindex() const {
-			return this->value->cindex;
-		}
+		int cindex() const;
 
-		int options() const {
-			return this->value->options;
-		}
+		int options() const;
 
-		float seam_angle() const {
-			return this->value->seam_angle;
-		}
+		float seam_angle() const;
 
-		TParam val() const {
-			return TParam(&this->value->val);
-		}
+		TParam val() const;
 	};
 }
 

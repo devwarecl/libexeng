@@ -1,45 +1,34 @@
 
 #pragma once
 
+#ifndef __lw_gradient_hpp__
+#define __lw_gradient_hpp__
+
 #include <string>
 #include "Wrapper.hpp"
 #include "GradKey.hpp"
 #include "lwo/lwo2.h"
 
 namespace lw {
-	
 	class Gradient : public Wrapper<Gradient, ::lwGradient> {
 	public:
-		Gradient() {}
-		Gradient(::lwGradient *value) : Wrapper<Gradient, ::lwGradient>(value) {}
+		Gradient();
+		Gradient(::lwGradient *value);
 
-		float end() const {
-			return this->value->end;
-		}
+		float end() const;
 
-		short ikey(const int index) const {
-			return this->value->ikey[index];
-		}
+		short ikey(const int index) const;
 
-		std::string itemname() const {
-			return this->value->itemname;
-		}
+		std::string itemname() const;
 
-		GradKey key(const int index) const {
-			return GradKey(&this->value->key[index]);
-		}
+		GradKey key(const int index) const;
 
-		std::string paramname() const {
-			return this->value->paramname;
-		}
+		std::string paramname() const;
 
-		int repeat() const {
-			return this->value->repeat;
-		}
+		int repeat() const;
 
-		float start() const {
-			return this->value->start;
-		}
-
+		float start() const;
 	};
 }
+
+#endif

@@ -10,6 +10,8 @@ Ernie Wright  17 Sep 00
 #ifndef LWO2_H
 #define LWO2_H
 
+#include <stdio.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif 

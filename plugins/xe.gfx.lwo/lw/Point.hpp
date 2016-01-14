@@ -6,34 +6,23 @@
 
 #include <xe/Vector.hpp>
 #include "Wrapper.hpp"
-#include "VMapPt.hpp
+#include "VMapPt.hpp"
 
-namespace lw {
-	
+namespace lw {	
 	class Point : public Wrapper<Point, ::lwPoint> {
 	public:
-		Point() {}
-		Point(::lwPoint *value) : Wrapper<Point, ::lwPoint>(value) {}
+		Point();
+		Point(::lwPoint *value);
 
-		int npols() const {
-			return this->value->npols;
-		}
+		int npols() const;
 
-		int nvmaps() const {
-			return this->value->nvmaps;
-		}
+		int nvmaps() const;
 
-		int pol(const int index) const {
-			return this->value->pol[index];
-		}
+		int pol(const int index) const;
 
-		VMapPt vm(const int index) const {
-			return VMapPt(&this->value->vm[index]);
-		}
+		VMapPt vm(const int index) const;
 
-		xe::Vector3f pos() const {
-			return xe::Vector3f(&this->value->pos[0]);
-		}
+		xe::Vector3f pos() const;
 	};
 }
 

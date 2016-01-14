@@ -16,106 +16,57 @@ namespace lw {
 	
 	class Surface : public Collection<Surface, ::lwSurface> {
 	public:
-		Surface() {}
-		Surface(::lwSurface *value) : Collection<Surface, ::lwSurface>(value) {}
+		Surface();
+		Surface(::lwSurface *value);
 
-		EParam add_trans() const {
-			return EParam(&this->value->add_trans);
-		}
+		EParam add_trans() const;
 
-		float alpha() const {
-			return this->value->alpha;
-		}
+		float alpha() const;
 
-		int alpha_mode() const {
-			return this->value->alpha_mode;
-		}
+		int alpha_mode() const;
 
-		TParam bump() const {
-			return TParam(&this->value->bump);
-		}
+		TParam bump() const;
 
-		CParam color() const {
-			return CParam(&this->value->color);
-		}
+		CParam color() const;
 
-		EParam color_filter() const {
-			return EParam(&this->value->color_filter);
-		}
+		EParam color_filter() const;
 
-		EParam color_hilite() const {
-			return EParam(&this->value->color_hilite);
-		}
+		EParam color_hilite() const;
 
-		TParam diffuse() const {
-			return TParam(&this->value->diffuse);
-		}
+		TParam diffuse() const;
 		
-		EParam dif_sharp() const {
-			return EParam(&this->value->dif_sharp);
-		}
+		EParam dif_sharp() const;
 
-		TParam eta() const {
-			return TParam(&this->value->eta);
-		}
+		TParam eta() const;
 
-		TParam glossiness() const {
-			return TParam(&this->value->glossiness);
-		}
+		TParam glossiness() const;
 
-		EParam glow() const {
-			return EParam(&this->value->glow);
-		}
+		EParam glow() const;
 
-		Line line() const {
-			return Line(&this->value->line);
-		}
+		Line line() const;
 
-		TParam luminosity() const {
-			return TParam(&this->value->luminosity);
-		}
+		TParam luminosity() const;
 
-		std::string name() const {
-			return this->value->name;
-		}
+		std::string name() const;
 
-		int nshaders() const {
-			return this->value->nshaders;
-		}
+		int nshaders() const;
 
-		RMap reflection() const {
-			return RMap(&this->value->reflection);
-		}
+		RMap reflection() const;
 
-		Plugin shader() const {
-			return Plugin(this->value->shader);
-		}
+		Plugin shader() const;
 
-		int sideflags() const {
-			return this->value->sideflags;
-		}
+		int sideflags() const;
 
-		float smooth() const {
-			return this->value->smooth;
-		}
+		float smooth() const;
 
-		TParam specularity() const {
-			return TParam(&this->value->specularity);
-		}
+		TParam specularity() const;
 
-		std::string srcname() const {
-			return this->value->srcname;
-		}
+		std::string srcname() const;
 
-		TParam translucency() const {
-			return TParam(&this->value->translucency);
-		}
+		TParam translucency() const;
 
-		RMap transparency() const {
-			return RMap(&this->value->transparency);
-		}
+		RMap transparency() const;
 	};
-
 }
 
 #endif

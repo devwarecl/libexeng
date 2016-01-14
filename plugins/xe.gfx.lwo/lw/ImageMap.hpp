@@ -1,6 +1,10 @@
 
 #pragma once
 
+#ifndef __lw_imagemap_hpp__
+#define __lw_imagemap_hpp__
+
+#include <string>
 #include "Wrapper.hpp"
 #include "EParam.hpp"
 
@@ -8,55 +12,33 @@ namespace lw {
 	
 	class ImageMap : public Wrapper<ImageMap, ::lwImageMap> {
 	public:
-		ImageMap() {}
-		ImageMap(::lwImageMap *value) : Wrapper<ImageMap, ::lwImageMap>(value) {}
+		ImageMap();
+		ImageMap(::lwImageMap *value);
 
-		int aas_flags() const {
-			return this->value->aas_flags;
-		}
+		int aas_flags() const;
 
-		float aa_strength() const {
-			return this->value->aa_strength;
-		}
+		float aa_strength() const;
 
-		EParam amplitude() const {
-			return EParam (&this->value->amplitude);
-		}
+		EParam amplitude() const;
 
-		int axis() const {
-			return this->value->axis;
-		}
+		int axis() const;
 
-		int cindex() const {
-			return this->value->cindex;
-		}
+		int cindex() const;
 
-		int projection() const {
-			return this->value->projection;
-		}
+		int projection() const;
 
-		EParam stck() const {
-			return EParam(&this->value->stck);
-		}
+		EParam stck() const;
 
-		std::string vmap_name() const {
-			return this->value->vmap_name;
-		}
+		std::string vmap_name() const;
 		
-		EParam wraph() const {
-			return EParam(&this->value->wraph);
-		}
+		EParam wraph() const;
 
-		int wraph_type() const {
-			return this->value->wraph_type;
-		}
+		int wraph_type() const;
 
-		EParam wrapw() const {
-			return EParam(&this->value->wrapw);
-		}
+		EParam wrapw() const;
 
-		int wrapw_type() const {
-			return this->value->wrapw_type;
-		}
+		int wrapw_type() const;
 	};
 }
+
+#endif 

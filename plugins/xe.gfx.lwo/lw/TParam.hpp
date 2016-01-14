@@ -5,21 +5,18 @@
 #define __lw_tparam_hpp__
 
 #include "Wrapper.hpp"
-#include "Texture.hpp"
+#include "lwo/lwo2.h"
 
 namespace lw {
+	class Texture;
 	class TParam : public Wrapper<TParam, ::lwTParam> {
 	public:
-		TParam() {}
-		TParam(::lwTParam *value) : Wrapper<TParam, ::lwTParam>(value) {}
+		TParam();
+		TParam(::lwTParam *value);
 
-		float val() const {
-			return this->value->val;
-		}
+		float val() const;
 
-		int eindex() const {
-			return this->value->eindex;
-		}
+		int eindex() const;
 
 		Texture tex() const;
 	};

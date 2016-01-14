@@ -11,20 +11,14 @@ namespace lw {
 	
 	class Line : public Wrapper<Line, ::lwLine> {
 	public:
-		Line() {}
-		Line(::lwLine *value) : Wrapper<Line, ::lwLine>(value) {}
+		Line();
+		Line(::lwLine *value);
 
-		short enabled() const {
-			return this->value->enabled;
-		}
+		short enabled() const;
 
-		unsigned short flags() const {
-			return this->value->flags;
-		}
+		unsigned short flags() const;
 
-		EParam size() const {
-			return EParam(&this->value->size);
-		}
+		EParam size() const;
 	};
 }
 

@@ -12,24 +12,16 @@ namespace lw {
 	
 	class PolVert : public Wrapper<PolVert, ::lwPolVert> {
 	public:
-		PolVert() {}
-		PolVert(::lwPolVert *value) : Wrapper<PolVert, ::lwPolVert>(value) {}
+		PolVert();
+		PolVert(::lwPolVert *value);
 
-		int index() const {
-			return this->value->index;
-		}
+		int index() const;
 
-		xe::Vector3f norm() const {
-			return xe::Vector3f(&this->value->norm[0]);
-		}
+		xe::Vector3f norm() const;
 
-		int nvmaps() const {
-			return this->value->nvmaps;
-		}
+		int nvmaps() const;
 
-		VMapPt vm(const int index) const {
-			return VMapPt(&this->value->vm[index]);
-		}
+		VMapPt vm(const int index) const;
 	};
 }
 

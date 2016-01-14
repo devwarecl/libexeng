@@ -12,16 +12,12 @@ namespace lw {
 	
 	class VParam : public Wrapper<VParam, ::lwVParam> {
 	public:
-		VParam() {}
-		VParam(::lwVParam *value) : Wrapper<VParam, ::lwVParam>(value) {}
+		VParam();
+		VParam(::lwVParam *value);
 
-		xe::Vector3f val() const {
-			return xe::Vector3f(&this->value->val[0]);
-		}
+		xe::Vector3f val() const;
 
-		int eindex() const {
-			return this->value->eindex;
-		}
+		int eindex() const;
 	};
 }
 

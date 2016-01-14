@@ -11,24 +11,16 @@
 namespace lw {
 	class Plugin : public Collection<Plugin, ::lwPlugin> {
 	public:
-		Plugin() {}
-		Plugin(::lwPlugin *value) : Collection<Plugin, ::lwPlugin>(value) {}
+		Plugin();
+		Plugin(::lwPlugin *value);
 
-		void* data() const {
-			return this->value->data;
-		}
+		void* data() const;
 
-		int flags() const {
-			return this->value->flags;
-		}
+		int flags() const;
 
-		std::string name() const {
-			return this->value->name;
-		}
+		std::string name() const;
 
-		std::string ord() const {
-			return this->value->ord;
-		}
+		std::string ord() const;
 	};
 }
 

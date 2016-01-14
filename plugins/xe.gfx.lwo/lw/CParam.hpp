@@ -1,6 +1,9 @@
 
 #pragma once
 
+#ifndef __lw_cparam_hpp__
+#define __lw_cparam_hpp__
+
 #include <xe/Vector.hpp>
 #include "Wrapper.hpp"
 #include "Texture.hpp"
@@ -9,19 +12,15 @@
 namespace lw {
 	class CParam : public Wrapper<CParam, ::lwCParam> {
 	public:
-		CParam() {}
-		CParam(::lwCParam *value) : Wrapper<CParam, ::lwCParam>(value) {}
+		CParam();
+		CParam(::lwCParam *value);
 
-		int eindex() const {
-			return this->value->eindex;
-		}
+		int eindex() const;
 
-		xe::Vector3f rgb() const {
-			return xe::Vector3f(&this->value->rgb[0]);
-		}
+		xe::Vector3f rgb() const;
 
-		Texture tex() const {
-			return Texture(this->value->tex);
-		}
+		Texture tex() const;
 	};
 }
+
+#endif 

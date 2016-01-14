@@ -1,30 +1,22 @@
 
 #pragma once
 
+#ifndef __lw_clip_hpp__
+#define __lw_clip_hpp__
+
 #include "Collection.hpp"
 #include "lwo/lwo2.h"
 
 namespace lw {
 	class Clip : public Collection<Clip, ::lwClip> {
 	public:
-		Clip() {}
-		explicit Clip(::lwClip *clip) : Collection<Clip, ::lwClip>(clip) {}
+		Clip();
+		explicit Clip(::lwClip *clip);
 
-		int index() const {
-			return this->value->index;
-		}
+		int index() const;
 
-		Clip find(const int index) const {
-			Clip result;
-
-			for (const Clip &clip : *this) {
-				if (clip.index() == index) {
-					result = clip;
-					break;
-				}
-			}
-
-			return result;
-		}
+		Clip find(const int index) const;
 	};
 }
+
+#endif 
