@@ -24,6 +24,8 @@ SET (src_lw_lwo
 SET (src_lw
 	lw/lw.hpp 
 	lw/Array.hpp 
+	lw/List.hpp 
+	lw/Pointer.hpp 
 	lw/Collection.hpp 
 	lw/Wrapper.hpp 
 	lw/Axis.cpp			lw/Axis.hpp 

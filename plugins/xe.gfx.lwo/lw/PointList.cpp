@@ -3,7 +3,11 @@
 
 namespace lw {
 	PointList::PointList() {}
-	PointList::PointList(::lwPointList *value) : Wrapper<PointList, ::lwPointList>(value) {}
+
+	PointList::PointList(::lwPointList *value) : 
+		Wrapper<PointList, ::lwPointList>(value), 
+		Array<Point, ::lwPoint>(value->pt, value->count) 
+	{}
 
 	int PointList::count() const {
 		return this->value->count;

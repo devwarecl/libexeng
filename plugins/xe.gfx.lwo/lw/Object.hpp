@@ -4,18 +4,19 @@
 #ifndef __lw_object_hpp__
 #define __lw_object_hpp__
 
-#include "Surface.hpp"
-#include "Layer.hpp"
+#include "lw/lwo/lwo2.h"
+#include "lw/Pointer.hpp"
+#include "lw/List.hpp"
 
 namespace lw {
-	class Object : public Wrapper<Object, ::lwObject> {
+	class Object : public Pointer<::lwObject> {
 	public:
 		Object();
-		Object(::lwObject *value);
+		explicit Object(::lwObject *value);
 
-		Surface surf() const;
+		List<::lwSurface> surfaces() const;
 
-		Layer layer() const;
+		List<::lwLayer> layers() const;
 
 		virtual ~Object();
 	};

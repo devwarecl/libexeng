@@ -3,18 +3,19 @@
 
 namespace lw {
 	Object::Object() {}
-	Object::Object(::lwObject *value) : Wrapper<Object, ::lwObject>(value) {}
+	Object::Object(::lwObject *value) : Pointer<::lwObject>(value) {}
 	
 	Object::~Object() {
 		if (this->value) {
 			::lwFreeObject(this->value);
 		}
 	}
-	Surface Object::surf() const {
-		return Surface(this->value->surf);
+
+	List<::lwSurface> Object::surfaces() const {
+		return List<::lwSurface>(this->value->surf);
 	}
 
-	Layer Object::layer() const {
-		return Layer(this->value->layer);
+	List<::lwLayer> Object::layers() const {
+		return List<::lwLayer>(this->value->layer);
 	}
 }
