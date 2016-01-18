@@ -15,6 +15,7 @@
 #define __EXENG_HEAPBUFFER_HPP__
 
 #include <memory>
+#include <vector>
 #include <xe/Buffer.hpp>
 
 namespace xe {
@@ -25,9 +26,19 @@ namespace xe {
 	class EXENGAPI HeapBuffer : public Buffer {
 	public:
 		/* HeapBuffer class specific methods */
-		explicit HeapBuffer(const int size);
+		HeapBuffer() {}
 
-		virtual ~HeapBuffer();
+		explicit HeapBuffer(const int size) {
+			alloc(size);
+		}
+
+		virtual ~HeapBuffer() {
+			free();
+		}
+
+		void alloc(const int size);
+
+		void free();
 
 		void* getPointer() {
 			return this->data;
@@ -43,7 +54,7 @@ namespace xe {
 		}
 
 		virtual int getHandle() const override {
-			return reinterpret_cast<int>(this);
+			return reinterpret_cast<int>(data);
 		}
 
 		virtual void read(void* data, const int dataSize, const int dataOffset, const int bufferOffset) const override;
@@ -57,16 +68,6 @@ namespace xe {
 		inline void write(const void* data) {
 			this->write(data, this->getSize(), 0, 0);
 		}
-
-		/* Object class overrided methods*/
-
-		/*
-		virtual bool isClonable() const override {
-			return true;
-		}
-
-		virtual HeapBuffer* clone() const override;
-		*/
 
 	private:
 		void* data = nullptr;

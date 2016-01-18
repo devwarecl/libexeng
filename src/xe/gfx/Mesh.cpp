@@ -179,7 +179,7 @@ namespace xe { namespace gfx {
         Primitive::Enum type = subset->getPrimitive();
         Buffer *vertexBuffer = subset->getBuffer(0);
         
-        VertexFormat vertexFormat = subset->getVertexFormat();
+        VertexFormat vertexFormat = subset->getFormat();
         const void* vertexData = vertexBuffer->getPointer();
         
         int vertexOffset = vertexFormat.getAttribOffset(VertexAttrib::Position);

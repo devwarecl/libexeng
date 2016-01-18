@@ -106,7 +106,7 @@ namespace xe { namespace gfx {
 	}
 
 	void BoxGenerator::generate(MeshSubset *subset) {
-		const VertexFormat format = subset->getVertexFormat();
+		const VertexFormat format = subset->getFormat();
 
 		this->fillVertexBuffer(subset->getBuffer(0), &format);
 		this->fillIndexBuffer(subset->getIndexBuffer(), subset->getIndexFormat());
@@ -163,7 +163,7 @@ namespace xe { namespace gfx {
 	}
 
 	void RectGenerator::generate(MeshSubset *subset) {
-		const VertexFormat format = subset->getVertexFormat();
+		const VertexFormat format = subset->getFormat();
 
 		this->fillVertices(subset->getBuffer(0), &format);
 		this->fillIndices(subset->getIndexBuffer(), subset->getIndexFormat());

@@ -9,7 +9,7 @@
 namespace xe { namespace gfx {
 
 	void MeshSubsetTransformer::transform(MeshSubset *subset, const Matrix4f &transformation) {
-		const VertexFormat format = subset->getVertexFormat();
+		const VertexFormat format = subset->getFormat();
 
 		Buffer *buffer = subset->getBuffer(0);
 

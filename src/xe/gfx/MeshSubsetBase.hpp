@@ -12,7 +12,7 @@ namespace xe { namespace gfx {
     class MeshSubsetBase : public MeshSubset {
     public:
 		MeshSubsetBase() {}
-        virtual VertexFormat getVertexFormat() const override;
+        virtual VertexFormat getFormat() const override;
         virtual IndexFormat::Enum getIndexFormat() const override;
 
         virtual int getBufferCount() const override;
@@ -75,7 +75,7 @@ namespace xe { namespace gfx {
     }
 
 	template<typename BufferImpl>
-    inline VertexFormat MeshSubsetBase<BufferImpl>::getVertexFormat() const {
+    inline VertexFormat MeshSubsetBase<BufferImpl>::getFormat() const {
 		assert(this);
 
         return this->vertexFormat;

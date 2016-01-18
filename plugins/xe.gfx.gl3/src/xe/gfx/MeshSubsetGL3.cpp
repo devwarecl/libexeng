@@ -54,7 +54,7 @@ namespace xe { namespace gfx { namespace gl3 {
 	void MeshSubsetGL3::construct() {
 		assert(this);
 
-		const VertexFormat format = this->getVertexFormat();
+		const VertexFormat format = this->getFormat();
 
 		const bool multiBuffer = (this->buffers.size() > 1);
 

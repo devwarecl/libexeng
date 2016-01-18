@@ -21,7 +21,10 @@
 #include <memory>
 
 namespace xe {
-	HeapBuffer::HeapBuffer(const int size) {
+
+	void HeapBuffer::alloc(const int size) {
+		free();
+
 		void* data = std::malloc(size);
 
 		if (!data) {
@@ -34,9 +37,11 @@ namespace xe {
 		}
 	}
 
-	HeapBuffer::~HeapBuffer() {
-		if (this->data) {
-			std::free(this->data);
+	void HeapBuffer::free() {
+		if (data) {
+			std::free(data);
+			data = nullptr;
+			size = 0;
 		}
 	}
 
