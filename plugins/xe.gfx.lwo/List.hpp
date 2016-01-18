@@ -40,7 +40,7 @@ namespace lw {
 	public:
 		List() {}
 
-		List(Type *first_) : first(first_) {}
+		explicit List(Type *first_) : first(first_) {}
 
 		iterator begin() { return iterator(first);}
 		iterator end() {return iterator(nullptr);}

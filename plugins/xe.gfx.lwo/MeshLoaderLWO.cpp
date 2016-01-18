@@ -8,10 +8,9 @@
 
 #include "lwo/lwo2.h"
 
-#include "lw/Pointer.hpp"
-#include "lw/Array.hpp"
-#include "lw/List.hpp"
-#include "lw/Object.hpp"
+#include "Object.hpp"
+#include "Array.hpp"
+#include "List.hpp"
 
 namespace xe { namespace gfx {
 	namespace fs = boost::filesystem;
@@ -246,31 +245,15 @@ namespace xe { namespace gfx {
 	//	return vertices;
 	//}
 
-	//MeshPtr MeshLoaderLWO::load(const std::string &filename) {
-	//	std::vector<MeshSubsetPtr> subsets;
-
-	//	lw::Object object = ::lwGetObject ( 
-	//		const_cast<char*>(filename.c_str()), 
-	//		nullptr, 
-	//		nullptr
-	//	);
-
-	//	// extract geometry
-	//	for (lw::Layer layer : object.layer()) {
-
-	//	}
-
- //       return std::make_unique<Mesh>(std::move(subsets));
- //   }
 	
+
 	MeshPtr MeshLoaderLWO::load(const std::string &filename) {
-
 		char *file = const_cast<char*>(filename.c_str());
-
 		lw::Object object(::lwGetObject(file , nullptr, nullptr));
+		lw::List<::lwLayer> layers (object.getHandle()->layer);
 
-		for (const ::lwLayer &layer : object.layers()) {
-
+		for (const auto& layer : layers) {
+			
 		}
 
 		return MeshPtr();
