@@ -32,6 +32,11 @@ namespace xe {
 			alloc(size);
 		}
 
+		explicit HeapBuffer(const int size, const void* data) {
+			alloc(size);
+			write(data);
+		}
+
 		virtual ~HeapBuffer() {
 			free();
 		}
@@ -40,14 +45,17 @@ namespace xe {
 
 		void free();
 
-		void* getPointer() {
+		virtual const void* lock() const override {
 			return this->data;
 		}
 
-		virtual const void* getPointer() const override {
+		virtual void* lock(BufferLockMode::Enum) override {
 			return this->data;
 		}
-		
+
+		virtual void unlock() const override {}
+		virtual void unlock() override {}
+
 		/* Buffer class overrided methods*/
 		virtual int getSize() const override {
 			return this->size;

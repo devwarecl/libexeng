@@ -161,6 +161,9 @@ namespace xe { namespace gfx {
 		}
 
 		BufferPtr createVertexBuffer(Buffer *buffer) {
+			Buffer
+
+
 			return this->createVertexBuffer(buffer->getSize(), buffer->getPointer());
 		}
 

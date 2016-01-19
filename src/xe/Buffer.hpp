@@ -20,6 +20,15 @@
 #include <xe/TFlags.hpp>
 
 namespace xe {
+
+	struct BufferLockMode : public Enum {
+		enum Enum {
+			Read = 1,
+			Write = 2,
+			ReadWrite = Read | Write
+		};
+	};
+
 	/**
 	 * @brief Class for manipulation of memory areas.
 	 */
@@ -63,26 +72,60 @@ namespace xe {
 			this->write(src_data, write_size, 0, 0);
 		}
 
-		/**
-		 * @brief Get a pointer to a read-only location
-		 */
-		virtual const void* getPointer() const = 0;
+		virtual void* lock(BufferLockMode::Enum mode) = 0;
 
-		virtual void* getPointer() {
-			return nullptr;
-		}
+		virtual void unlock() = 0;
 
-		virtual std::string toString() const override {
-			std::string dataStr;
+		virtual const void* lock() const;
 
-			dataStr.resize(this->getSize());
-			std::memcpy( const_cast<char*>(dataStr.c_str()), this->getPointer(), this->getSize());
+		virtual void unlock() const = 0;
 
-			return dataStr;
-		}
+		virtual std::string toString() const override;
 	};
 
 	typedef std::unique_ptr<Buffer> BufferPtr;
+	
+	template<typename PointerType>
+	class BufferLocker {
+	public:
+		explicit BufferLocker(Buffer *buffer, BufferLockMode::Enum mode) {
+			this->buffer = buffer;
+			this->pointer = reinterpret_cast<PointerType*>(this->buffer->lock(mode));
+		}
+
+		~BufferLocker() {
+			this->buffer->unlock();
+		}
+
+		PointerType* getPointer() {
+			return pointer;
+		}
+
+	private:
+		Buffer *buffer = nullptr;
+		PointerType *pointer = nullptr;
+	};
+
+	template<typename PointerType>
+	class BufferLockerConst {
+	public:
+		explicit BufferLockerConst(const Buffer *buffer) {
+			this->buffer = buffer;
+			this->pointer = reinterpret_cast<const PointerType*>(this->buffer->lock());
+		}
+
+		~BufferLockerConst() {
+			this->buffer->unlock();
+		}
+
+		const PointerType* getPointer() const  {
+			return this->pointer;
+		}
+
+	private:
+		const Buffer *buffer = nullptr;
+		const PointerType *pointer = nullptr;
+	};
 }
 
 #endif // __EXENG_BUFFER_HPP__
