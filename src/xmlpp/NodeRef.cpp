@@ -67,7 +67,7 @@ namespace xmlpp {
 
 	xmlpp::NodeRef NodeRef::getChild(const std::string &name) const
 	{
-		auto &childs = this->getChilds(name);
+        const auto &childs = this->getChilds(name);
 
 		return *childs.begin();
 	}

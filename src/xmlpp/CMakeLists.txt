@@ -1,4 +1,11 @@
 
 # Simple C++ Wrapper over libxml2
 
+FIND_PACKAGE(libxml2 REQUIRED)
+
+INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIRS})
+
 ADD_LIBRARY(xmlpp Document.hpp Document.cpp NodeRef.hpp NodeRef.cpp)
+
+SET_PROPERTY(TARGET xmlpp PROPERTY CXX_STANDARD 14)
+

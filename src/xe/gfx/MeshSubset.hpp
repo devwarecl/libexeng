@@ -40,16 +40,23 @@ namespace xe { namespace gfx {
 		MeshSubsetDataImpl() {}
 
 		explicit MeshSubsetDataImpl(const MeshSubsetData &other) {
+            // initialize the local buffer array from other one
 			buffers.reserve(other.getBufferCount());
 
 			for (int i=0; i<other.getBufferCount(); i++) {
 				const Buffer *buffer = other.getBuffer(i);
 
-				buffers.push_back(BufferImpl(buffer->getPointer(), buffer->getSize()));
+                xe::BufferLocker<void> locker(buffer);
+                
+				buffers.push_back(BufferImpl(locker.getPointer(), buffer->getSize()));
 			}
 
+            // initialize the index buffer
 			const Buffer *buffer = other.getIndexBuffer();
-			ibuffer = BufferImpl(buffer->getPointer(), buffer->getSize());
+            
+            xe::BufferLocker<void> locker(buffer);
+            
+			ibuffer = BufferImpl(locker.getPointer(), buffer->getSize());
 		}
 
 		~MeshSubsetDataImpl() {}

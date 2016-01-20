@@ -62,7 +62,7 @@ namespace xe {
 		}
 
 		virtual int getHandle() const override {
-			return reinterpret_cast<int>(data);
+            return 0;
 		}
 
 		virtual void read(void* data, const int dataSize, const int dataOffset, const int bufferOffset) const override;

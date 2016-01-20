@@ -12,6 +12,7 @@
 
 #include <xe/Buffer.hpp>
 #include <xe/Exception.hpp>
+#include <cstring>
 
 namespace xe {
 

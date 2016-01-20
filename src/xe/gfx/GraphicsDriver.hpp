@@ -161,10 +161,9 @@ namespace xe { namespace gfx {
 		}
 
 		BufferPtr createVertexBuffer(Buffer *buffer) {
-			Buffer
-
-
-			return this->createVertexBuffer(buffer->getSize(), buffer->getPointer());
+			BufferLocker<void> locker(buffer, BufferLockMode::Read);
+            
+			return this->createVertexBuffer(buffer->getSize(), locker.getPointer());
 		}
 
         /**
@@ -173,7 +172,9 @@ namespace xe { namespace gfx {
         virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data) = 0;
 
 		BufferPtr createIndexBuffer(Buffer *buffer) {
-			return this->createIndexBuffer(buffer->getSize(), buffer->getPointer());
+            BufferLocker<void> locker(buffer, BufferLockMode::Read);
+            
+			return this->createIndexBuffer(buffer->getSize(), locker.getPointer());
 		}
         
 		template<typename Type>
@@ -223,11 +224,13 @@ namespace xe { namespace gfx {
 		virtual TexturePtr createTexture(const Image *image) {
 			if (image->getType() == ImageType::Img2D) {
 				Vector2i size = image->getSize();
-
+                
+                BufferLockerConst<void> locker(image->getBuffer());
+                
 				return this->createTexture (
 					size, 
 					image->getFormat(), 
-					image->getBuffer()->getPointer()
+					locker.getPointer()
 				);
 
 			} else {

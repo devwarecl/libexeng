@@ -12,6 +12,34 @@
 #include <libxml/tree.h>
 
 namespace xmlpp {
+
+    template<typename Type>
+    struct ArrayParser {
+        static std::vector<Type> parse(const std::string &content, const std::string &separator) {
+            std::vector<std::string> splitted;
+
+            boost::split(splitted, content, boost::is_any_of(separator));
+
+            std::vector<Type> values;
+            for (int i=0; i<static_cast<int>(splitted.size()); ++i) {
+                values[i] = boost::lexical_cast<Type>(splitted[i]);
+            }
+
+            return values;
+        }
+    };
+
+    template<>
+    struct ArrayParser<std::string> {
+        static std::vector<std::string> parse(const std::string &content, const std::string &separator) {
+            std::vector<std::string> splitted;
+
+            boost::split(splitted, content, boost::is_any_of(separator));
+
+            return splitted;
+        }
+    };
+
 	class NodeRef;
 	typedef std::list<NodeRef> NodeRefList;
 
@@ -50,36 +78,9 @@ namespace xmlpp {
 		}
 
 	private:
-		template<typename Type>
-		struct ArrayParser {
-			static std::vector<Type> parse(const std::string &content, const std::string &separator) {
-				std::vector<std::string> splitted;
-				
-				boost::split(splitted, content, boost::is_any_of(separator));
-
-				std::vector<Type> values;
-				for (int i=0; i<static_cast<int>(splitted.size()); ++i) {
-					values[i] = boost::lexical_cast<Type>(splitted[i]);
-				}
-
-				return values;
-			}
-		};
-
-		template<>
-		struct ArrayParser<std::string> {
-			static std::vector<std::string> parse(const std::string &content, const std::string &separator) {
-				std::vector<std::string> splitted;
-				
-				boost::split(splitted, content, boost::is_any_of(separator));
-
-				return splitted;
-			}
-		};
-
-	private:
 		::xmlNode *node = nullptr;
 	};
+
 }
 
 #endif	

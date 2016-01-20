@@ -101,7 +101,9 @@ namespace xe { namespace gfx {
 		 */
 		void fill() 
 		{
-			std::uint8_t *bufferData = (std::uint8_t*) this->buffer->getPointer();
+            BufferLocker<std::uint8_t> locker(this->buffer.get(), BufferLockMode::Write);
+            
+			std::uint8_t *bufferData = locker.getPointer();
 
 			for (int i=0; i<this->format->getAttribCount(); i++) {
 				const MaterialAttrib *attrib = this->format->getAttrib(i);
@@ -150,8 +152,11 @@ namespace xe { namespace gfx {
             throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
         }
 #endif
-        int offset = this->getFormat()->getOffset(index);
-        std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer->getPointer();
+        
+        BufferLocker<std::uint8_t> locker(this->impl->buffer.get(), BufferLockMode::Write);
+        
+        const int offset = this->getFormat()->getOffset(index);
+        std::uint8_t* materialData = locker.getPointer();
         
         std::memcpy(materialData + offset, data, this->getFormat()->getAttrib(index)->getSize());
     }
@@ -164,8 +169,10 @@ namespace xe { namespace gfx {
             throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
         }
 #endif
-        int offset = this->getFormat()->getOffset(index);
-        std::uint8_t* materialData = (std::uint8_t*)this->impl->buffer->getPointer();
+        BufferLockerConst<std::uint8_t> locker(this->impl->buffer.get());
+        
+        const int offset = this->getFormat()->getOffset(index);
+        const std::uint8_t* materialData = locker.getPointer();
         
         std::memcpy(data, materialData + offset, this->getFormat()->getAttrib(index)->getSize());
     }
