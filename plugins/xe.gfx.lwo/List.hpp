@@ -7,35 +7,35 @@
 #include <boost/iterator/iterator_facade.hpp>
 
 namespace lw {
-	
+    
+    template<typename Type>
+    class ListIterator : 
+        public boost::iterator_facade <ListIterator<Type>, Type, boost::forward_traversal_tag> {
+    
+    public:
+        ListIterator() {}
+    
+        ListIterator(Type *data_) : data(data_) {}
+    
+    private:
+        friend class boost::iterator_core_access;
+    
+        void increment() {data = data->next;}
+    
+        bool equal(ListIterator<Type> const& other) const {return data == other.data;}
+    
+        Type& dereference() const {return *data; }
+    
+    private:
+        Type *data = nullptr;
+    };
+
+
 	template<typename Type>
 	class List {
 	public:
-		template<typename Type>
-		class Iterator : 
-			public boost::iterator_facade <Iterator<Type>, Type, boost::forward_traversal_tag> {
-
-		public:
-			Iterator() {}
-
-			Iterator(Type *data_) : data(data_) {}
-
-		private:
-			friend class boost::iterator_core_access;
-
-			void increment() {data = data->next;}
-
-			bool equal(Iterator<Type> const& other) const {return data == other.data;}
-
-			Type& dereference() const {return *data; }
-
-		private:
-			Type *data = nullptr;
-		};
-
-	public:
-		typedef Iterator<Type> iterator;
-		typedef Iterator<const Type> const_iterator;
+		typedef ListIterator<Type> iterator;
+		typedef ListIterator<const Type> const_iterator;
 
 	public:
 		List() {}

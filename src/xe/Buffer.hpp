@@ -109,7 +109,7 @@ namespace xe {
 
 		virtual void unlock() = 0;
 
-		virtual const void* lock() const;
+		virtual const void* lock() const = 0;
 
 		virtual void unlock() const = 0;
 

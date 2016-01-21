@@ -32,6 +32,9 @@ SOURCE_GROUP(\\lwo		FILES ${src_lwo})
 
 ADD_LIBRARY(xe.gfx.lwo SHARED ${src} ${src_lwo})
 
+SET_PROPERTY(TARGET xe.gfx.lwo PROPERTY CXX_STANDARD 14)
+
+
 TARGET_LINK_LIBRARIES(xe.gfx.lwo xe)
 
 INSTALL (

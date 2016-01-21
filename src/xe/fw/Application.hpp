@@ -44,7 +44,9 @@ namespace xe { namespace fw {
         
         template<typename ApplicationClass>
         static int execute(int argc, char **argv) {
-			return Application::execute(ApplicationClass(), argc, argv);
+            ApplicationClass app;
+            
+			return Application::execute(app, argc, argv);
 		}
     };
 }}

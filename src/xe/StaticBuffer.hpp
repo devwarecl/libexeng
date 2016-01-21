@@ -30,11 +30,15 @@ namespace xe {
         
         virtual void unlock() const override {}
         
+        virtual int getHandle() const override {
+            return 0;
+        }
+        
 	private:
 		void* data = nullptr;
 		int dataSize = 0;
 	};
-
+    
 	typedef std::unique_ptr<StaticBuffer> StaticBufferPtr;
 }
 

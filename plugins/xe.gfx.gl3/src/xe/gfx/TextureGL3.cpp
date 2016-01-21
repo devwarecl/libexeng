@@ -149,6 +149,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		return nullptr;
 	}
 
+    /*
 	void* TextureGL3::lock(TextureCubeMapFace::Enum face) {
 		assert(this->textureId != 0);
 		throw std::runtime_error("TextureGL3::lock(TextureCubeMapFace): Not yet implemented.");
@@ -181,7 +182,8 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		GL3_CHECK();
 	}
-
+    */
+    
 	TextureType::Enum TextureGL3::getType() const {
 		return this->type;
 	}

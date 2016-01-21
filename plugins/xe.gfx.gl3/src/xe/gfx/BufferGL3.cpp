@@ -28,12 +28,25 @@ namespace xe { namespace gfx { namespace gl3 {
 		::glDeleteBuffers(1, &this->bufferId);
 	}
 
-	const void* BufferGL3::getPointer() const {
-		assert(this);
-		assert(this->cacheBuffer.get());
+    void* BufferGL3::lock(BufferLockMode::Enum mode) {
+        
+        
+        
+        
+        return nullptr;
+    }
 
-		return this->cacheBuffer->getPointer();
-	}
+    void BufferGL3::unlock() {
+        
+    }
+
+    const void* BufferGL3::lock() const {
+        return nullptr;
+    }
+
+    void BufferGL3::unlock() const {
+        
+    }
 
 	int BufferGL3::getSize() const {
 		assert(this);

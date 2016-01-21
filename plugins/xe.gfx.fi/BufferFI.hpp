@@ -17,9 +17,13 @@ namespace xe { namespace gfx {
 
 		virtual int getSize() const override;
 
-		virtual const void* getPointer() const override;
+        virtual void* lock(BufferLockMode::Enum mode) override;
 
-		virtual void* getPointer() override;
+		virtual void unlock() override;
+
+		virtual const void* lock() const override;
+
+		virtual void unlock() const override;
 
 	private:
 		ImageFI *image = nullptr;

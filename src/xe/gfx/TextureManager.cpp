@@ -54,30 +54,32 @@ namespace xe { namespace gfx {
 	}
 
 	Texture* TextureManager::generateCheckerboard(const std::string &uri, const Vector2i &size, const Vector2i &tileSize) {
-
 		PixelFormat::Enum format = PixelFormat::R8G8B8A8;
 
 		TexturePtr texture = this->getGraphicsDriver()->createTexture(size, format);
-		Vector4ub *pixels = (Vector4ub *)texture->lock();
-
-		for (int row=0; row<size.y; row++) {
-			for (int col=0; col<size.x; col++) {
-				bool rowBool = ((row&tileSize.y) == 0);
-				bool colBool = ((col&tileSize.x) == 0);
-
-				int c = ((int)(rowBool^colBool))*255;
-
-				pixels->x = (std::uint8_t) c;
-				pixels->y = (std::uint8_t) c;
-				pixels->z = (std::uint8_t) c;
-				pixels->w = (std::uint8_t) 255;
-
-				++pixels;
-			}
-		}
-
-		texture->unlock();
-
+        
+        {
+            auto locker = texture->getBuffer()->getLocker<Vector4ub>();
+        
+            Vector4ub *pixels = locker.getPointer();
+    
+            for (int row=0; row<size.y; row++) {
+                for (int col=0; col<size.x; col++) {
+                    bool rowBool = ((row&tileSize.y) == 0);
+                    bool colBool = ((col&tileSize.x) == 0);
+    
+                    int c = ((int)(rowBool^colBool))*255;
+    
+                    pixels->x = (std::uint8_t) c;
+                    pixels->y = (std::uint8_t) c;
+                    pixels->z = (std::uint8_t) c;
+                    pixels->w = (std::uint8_t) 255;
+    
+                    ++pixels;
+                }
+            }
+        }
+        
 		Texture *result = texture.get();
 
 		this->impl->manager.putProduct(uri, std::move(texture));
@@ -98,12 +100,13 @@ namespace xe { namespace gfx {
     Texture* TextureManager::create(const std::string &uri, const Vector2i &size, const Vector4f &color) {
         Texture *texture = this->create(uri, size);
 
-        Vector4ub *textureData = reinterpret_cast<Vector4ub*>(texture->lock());
+        auto locker = texture->getBuffer()->getLocker<Vector4ub>();
+        
+        Vector4ub *textureData = locker.getPointer();
         for (int i=0; i<size.x * size.y; ++i) {
 			textureData[i] = static_cast<Vector4ub>(color * Vector4f(255.0f, 255.0f, 255.0f, 255.0f));
         }
-        texture->unlock();
-
+        
         return texture;
     }
 

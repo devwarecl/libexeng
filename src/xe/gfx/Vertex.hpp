@@ -18,7 +18,7 @@ namespace xe { namespace gfx {
 
 	template<typename AttribType>
 	struct Attrib {
-		typedef typename AttribType attrib_type;
+		typedef AttribType attrib_type;
 		typedef typename AttribType::type type;
 		static const int size = AttribType::size;
 		static const DataType::Enum dataType = AttribType::dataType;
@@ -40,7 +40,7 @@ namespace xe { namespace gfx {
 		static const VertexAttrib::Enum attrib = VertexAttrib::Normal;
 
 		AttribNormal() {}
-		AttribNormal(const AttribType &value) : coord(value) {}
+		AttribNormal(const AttribType &value) : normal(value) {}
 	
 		AttribType normal;
 	};
@@ -50,7 +50,7 @@ namespace xe { namespace gfx {
 		static const VertexAttrib::Enum attrib = VertexAttrib::Binormal;
 
 		AttribBinormal() {}
-		AttribBinormal(const AttribType &value) : coord(value) {}
+		AttribBinormal(const AttribType &value) : binormal(value) {}
 		
 		AttribType binormal;
 	};
@@ -60,7 +60,7 @@ namespace xe { namespace gfx {
 		static const VertexAttrib::Enum attrib = VertexAttrib::Tangent;
 
 		AttribTangent() {}
-		AttribTangent(const AttribType &value) : coord(value) {}
+		AttribTangent(const AttribType &value) : tangent(value) {}
 
 		AttribType tangent;
 	};
@@ -70,7 +70,7 @@ namespace xe { namespace gfx {
 		static const VertexAttrib::Enum attrib = VertexAttrib::TexCoord;
 
 		AttribTexCoord() {}
-		AttribTexCoord(const AttribType &value) : coord(value) {}
+		AttribTexCoord(const AttribType &value) : texCoord(value) {}
 
 		AttribType texCoord;
 	};
@@ -80,7 +80,7 @@ namespace xe { namespace gfx {
 		static const VertexAttrib::Enum attrib = VertexAttrib::TexCoord;
 
 		AttribTexCoord2() {}
-		AttribTexCoord2(const AttribType &value) : coord(value) {}
+		AttribTexCoord2(const AttribType &value) : texCoord2(value) {}
 
 		AttribType texCoord2;
 	};
@@ -90,7 +90,7 @@ namespace xe { namespace gfx {
 		static const VertexAttrib::Enum attrib = VertexAttrib::TexCoord;
 
 		AttribTexCoord3() {}
-		AttribTexCoord3(const AttribType &value) : coord(value) {}
+		AttribTexCoord3(const AttribType &value) : texCoord3(value) {}
 
 		AttribType texCoord3;
 	};
@@ -100,7 +100,7 @@ namespace xe { namespace gfx {
 		static const VertexAttrib::Enum attrib = VertexAttrib::TexCoord;
 
 		AttribTexCoord4() {}
-		AttribTexCoord4(const AttribType &value) : coord(value) {}
+		AttribTexCoord4(const AttribType &value) : texCoord4(value) {}
 
 		AttribType texCoord4;
 	};

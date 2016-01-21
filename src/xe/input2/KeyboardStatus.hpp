@@ -5,6 +5,7 @@
 #define __xe_input2_keyboardstatus_hpp__
 
 #include <array>
+#include <algorithm>
 #include <xe/Config.hpp>
 #include <xe/input2/KeyStatus.hpp>
 #include <xe/input2/KeyCode.hpp>

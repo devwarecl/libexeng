@@ -9,17 +9,17 @@
 #include <cstdint>
 #include <memory>
 #include <xe/Matrix.hpp>
+#include <xe/Timer.hpp>
 #include <CL/cl.hpp>
-#include <Windows.h>
 
 class Timer {
 public:
     Timer() {
-        this->start = ::GetTickCount();
+        this->start = xe::Timer::getTime();
     }
-
+    
     ~Timer() {
-        std::cout << ::GetTickCount() - this->start << std::endl;
+        std::cout << xe::Timer::getTime() - start << std::endl;
     }
 
 private:

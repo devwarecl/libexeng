@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <vector>
+#include <algorithm>
 #include <xe/input2/IEvent.hpp>
 
 namespace xe { namespace input2 {
@@ -32,7 +33,7 @@ namespace xe { namespace input2 {
 		}
 
 		virtual void removeHandler(IEventHandler<EventData>* handler) override {
-			std::remove(handlers.begin(), handlers.end(), handler);
+            std::remove(handlers.begin(), handlers.end(), handler);
 		}
 
 		virtual void raise(const EventData &eventData) override {

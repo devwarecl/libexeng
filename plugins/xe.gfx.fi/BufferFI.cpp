@@ -3,7 +3,6 @@
 #include "ImageFI.hpp"
 
 namespace xe { namespace gfx {
-
 	BufferFI::BufferFI(ImageFI *image_) : image(image_) {}
 
 	int BufferFI::getHandle() const {
@@ -17,11 +16,15 @@ namespace xe { namespace gfx {
 		return ::FreeImage_GetPitch(this->image->getBitmap()) * volume;
 	}
 
-	void* BufferFI::getPointer() {
-		return ::FreeImage_GetBits(this->image->getBitmap());
-	}
+    void* BufferFI::lock(BufferLockMode::Enum mode) {
+        return ::FreeImage_GetBits(image->getBitmap());
+    }
 
-	const void* BufferFI::getPointer() const {
-		return ::FreeImage_GetBits(this->image->getBitmap());
-	}
+    void BufferFI::unlock() {}
+
+    const void* BufferFI::lock() const {
+        return ::FreeImage_GetBits(image->getBitmap());
+    }
+
+    void BufferFI::unlock() const {}
 }}
