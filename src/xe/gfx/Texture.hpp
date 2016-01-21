@@ -19,6 +19,7 @@
 #include <xe/Enum.hpp>
 #include <xe/Object.hpp>
 #include <xe/Vector.hpp>
+#include <xe/Buffer.hpp>
 #include <xe/gfx/TextureType.hpp>
 #include <xe/gfx/PixelFormat.hpp>
 
@@ -43,27 +44,15 @@ namespace xe { namespace gfx {
         Texture();
         
         virtual ~Texture();
-        
-        /**
-         * @brief Get a direct pointer to the 
-         */
-        virtual const void* getDataPtr() const = 0;
-        
-        /**
-         * @brief Locks the texture
-         */
-        virtual void* lock() = 0;
-        
-        /**
-         * @brief Locks the texture
-         */
-        virtual void* lock(TextureCubeMapFace::Enum Face) = 0;
-        
-        /**
-         * @brief Unlocks the texture.
-         */
-        virtual void unlock() = 0;
-        
+
+		virtual Buffer* getBuffer() = 0;
+
+		virtual const Buffer* getBuffer() const = 0;
+
+		virtual Buffer* getBuffer(TextureCubeMapFace::Enum face) = 0;
+
+		virtual const Buffer* getBuffer(TextureCubeMapFace::Enum face) const = 0;
+
         /**
          * @brief Get the current type of texture
          */

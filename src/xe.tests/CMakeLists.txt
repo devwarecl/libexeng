@@ -4,6 +4,7 @@ SET (BaseFiles
     TestMath.cpp 
     TestScenegraph.cpp 
 	TestMeshSubset.cpp 
+	TestBuffer.cpp
 )
 
 SOURCE_GROUP (\\ FILES ${BaseFiles})

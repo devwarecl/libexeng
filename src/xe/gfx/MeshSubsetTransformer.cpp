@@ -13,11 +13,9 @@ namespace xe { namespace gfx {
 
 		Buffer *buffer = subset->getBuffer(0);
 
-		HeapBuffer tempBuffer(buffer->getSize());
+		auto locker = buffer->getLocker<void>();
 
-		tempBuffer.write(buffer->getPointer());
-
-		VertexArray array(tempBuffer.getPointer(), &format);
+		VertexArray array(locker.getPointer(), &format);
 
 		for (int i=0; i<subset->getVertexCount(); i++) {
 			Vector4f position = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -32,7 +30,5 @@ namespace xe { namespace gfx {
 			array.setAttribValue(i, VertexAttrib::Position, &position);
 			array.setAttribValue(i, VertexAttrib::Normal, &normal);
 		}
-		
-		buffer->write(tempBuffer.getPointer());
 	}
 }}

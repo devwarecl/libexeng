@@ -8,6 +8,7 @@
 
 namespace xe {
     class EXENGAPI Core;
+	class EXENGAPI Buffer;
 }
 
 #endif	

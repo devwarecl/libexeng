@@ -26,9 +26,13 @@ namespace xe { namespace gfx { namespace gl3 {
         TextureGL3(TextureType::Enum type, Vector3i size, PixelFormat::Enum format, const void *data);
         virtual ~TextureGL3();
 
-        virtual void* lock() override;
-        virtual void* lock(TextureCubeMapFace::Enum Face) override;
-        virtual void unlock() override;
+		virtual Buffer* getBuffer() override;
+
+		virtual const Buffer* getBuffer() const override;
+
+		virtual Buffer* getBuffer(TextureCubeMapFace::Enum face) override;
+
+		virtual const Buffer* getBuffer(TextureCubeMapFace::Enum face) const override;
         
         virtual TextureType::Enum getType() const override;
         virtual PixelFormat::Enum getFormat() const override;
@@ -40,19 +44,15 @@ namespace xe { namespace gfx { namespace gl3 {
         
         virtual TypeInfo getTypeInfo() const override;
         virtual int getHandle() const override;
-        virtual const void* getDataPtr() const override;
         
     private:
         GLuint textureId;
         TextureType::Enum type;
         PixelFormat::Enum format;
         xe::Vector3i size;
-        HeapBufferPtr buffer;
-        void* textureData;
         GLenum textureTarget;
         GLenum internalFormat;
     };
-
 }}}
 
 #endif  //__EXENG_GRAPHICS_GL3_TEXTURE_HPP__

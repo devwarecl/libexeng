@@ -28,8 +28,9 @@ namespace xe { namespace gfx {
 	// Only supports float32 datatype for now.
 	void BoxGenerator::fillVertexBuffer(Buffer *buffer, const VertexFormat *format) {
 		auto tempBuffer = std::make_unique<HeapBuffer>(buffer->getSize());
+		auto locker = tempBuffer->getLocker<void>();
 
-		VertexArray array(tempBuffer->getPointer(), format);
+		VertexArray array(locker.getPointer(), format);
 
 		// Generate primary square
 		Vector4f position[] = {
@@ -81,7 +82,7 @@ namespace xe { namespace gfx {
 			}
 		}
 
-		buffer->write(tempBuffer->getPointer());
+		buffer->write(locker.getPointer());
 	}
 	
 	void BoxGenerator::fillIndexBuffer(Buffer *buffer, IndexFormat::Enum indexFormat) {
@@ -125,11 +126,9 @@ namespace xe { namespace gfx {
 	}
 
 	void RectGenerator::fillVertices(Buffer *buffer, const VertexFormat *format) {
-		HeapBuffer hbuffer(buffer->getSize());
-
-		hbuffer.write(buffer->getPointer());
-
-		VertexArray array(hbuffer.getPointer(), format);
+		auto locker = buffer->getLocker<void>();
+		
+		VertexArray array(locker.getPointer(), format);
 
 		Vector4f position[] = {
 			{ 0.5f,   0.5f,  0.5f, 1.0f}, 
@@ -149,8 +148,6 @@ namespace xe { namespace gfx {
 			array.setValue(i, VertexAttrib::Position, position[i]);
 			array.setValue(i, VertexAttrib::TexCoord, texCoord[i]);
 		}
-
-		buffer->write(hbuffer.getPointer());
 	}
 	
 	void RectGenerator::fillIndices(Buffer *buffer, IndexFormat::Enum indexFormat) {

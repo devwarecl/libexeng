@@ -15,6 +15,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <xe/Forward.hpp>
 #include <xe/Object.hpp>
 #include <xe/Enum.hpp>
 #include <xe/TFlags.hpp>
@@ -27,6 +28,38 @@ namespace xe {
 			Write = 2,
 			ReadWrite = Read | Write
 		};
+	};
+
+	template<typename PointerType>
+	class BufferLocker {
+	public:
+		explicit BufferLocker(Buffer *buffer, BufferLockMode::Enum mode);
+
+		~BufferLocker();
+
+		PointerType* getPointer() const;
+
+		int getSize() const;
+
+	private:
+		Buffer *buffer = nullptr;
+		PointerType *pointer = nullptr;
+	};
+
+	template<typename PointerType>
+	class BufferLockerConst {
+	public:
+		explicit BufferLockerConst(const Buffer *buffer);
+
+		~BufferLockerConst();
+
+		const PointerType* getPointer() const;
+		
+		int getSize() const;
+
+	private:
+		const Buffer *buffer = nullptr;
+		const PointerType *pointer = nullptr;
 	};
 
 	/**
@@ -80,52 +113,70 @@ namespace xe {
 
 		virtual void unlock() const = 0;
 
+		template<typename PointerType>
+		BufferLocker<PointerType> getLocker(BufferLockMode::Enum mode = BufferLockMode::ReadWrite) {
+			return BufferLocker<PointerType>(this, mode);
+		}
+
+		template<typename PointerType>
+		BufferLockerConst<PointerType> getLocker() const {
+			return BufferLockerConst<PointerType>(this);
+		}
+
+		BufferLocker<void> getLocker(BufferLockMode::Enum mode = BufferLockMode::ReadWrite) {
+			return BufferLocker<void>(this, mode);
+		}
+
+		BufferLockerConst<void> getLocker() const {
+			return BufferLockerConst<void>(this);
+		}
+
 		virtual std::string toString() const override;
 	};
 
 	typedef std::unique_ptr<Buffer> BufferPtr;
 	
 	template<typename PointerType>
-	class BufferLocker {
-	public:
-		explicit BufferLocker(Buffer *buffer, BufferLockMode::Enum mode) {
-			this->buffer = buffer;
-			this->pointer = reinterpret_cast<PointerType*>(this->buffer->lock(mode));
-		}
-
-		~BufferLocker() {
-			this->buffer->unlock();
-		}
-
-		PointerType* getPointer() {
-			return pointer;
-		}
-
-	private:
-		Buffer *buffer = nullptr;
-		PointerType *pointer = nullptr;
-	};
+	inline BufferLocker<PointerType>::BufferLocker(Buffer *buffer, BufferLockMode::Enum mode) {
+		this->buffer = buffer;
+		this->pointer = reinterpret_cast<PointerType*>(this->buffer->lock(mode));
+	}
 
 	template<typename PointerType>
-	class BufferLockerConst {
-	public:
-		explicit BufferLockerConst(const Buffer *buffer) {
-			this->buffer = buffer;
-			this->pointer = reinterpret_cast<const PointerType*>(this->buffer->lock());
-		}
+	inline BufferLocker<PointerType>::~BufferLocker() {
+		this->buffer->unlock();
+	}
 
-		~BufferLockerConst() {
-			this->buffer->unlock();
-		}
+	template<typename PointerType>
+	inline PointerType* BufferLocker<PointerType>::getPointer() const {
+		return pointer;
+	}
 
-		const PointerType* getPointer() const  {
-			return this->pointer;
-		}
+	template<typename PointerType>
+	inline int BufferLocker<PointerType>::getSize() const {
+		return buffer->getSize();
+	}
 
-	private:
-		const Buffer *buffer = nullptr;
-		const PointerType *pointer = nullptr;
-	};
+	template<typename PointerType>
+	inline BufferLockerConst<PointerType>::BufferLockerConst(const Buffer *buffer) {
+		this->buffer = buffer;
+		this->pointer = reinterpret_cast<const PointerType*>(this->buffer->lock());
+	}
+
+	template<typename PointerType>
+	inline BufferLockerConst<PointerType>::~BufferLockerConst() {
+		this->buffer->unlock();
+	}
+
+	template<typename PointerType>
+	inline const PointerType* BufferLockerConst<PointerType>::getPointer() const  {
+		return this->pointer;
+	}
+		
+	template<typename PointerType>
+	inline int BufferLockerConst<PointerType>::getSize() const {
+		return buffer->getSize();
+	}
 }
 
 #endif // __EXENG_BUFFER_HPP__

@@ -180,7 +180,10 @@ namespace xe { namespace gfx {
         Buffer *vertexBuffer = subset->getBuffer(0);
         
         VertexFormat vertexFormat = subset->getFormat();
-        const void* vertexData = vertexBuffer->getPointer();
+
+		auto locker = vertexBuffer->getLocker<void>();
+
+        const void* vertexData = locker.getPointer();
         
         int vertexOffset = vertexFormat.getAttribOffset(VertexAttrib::Position);
         int vertexStride = vertexFormat.getSize();

@@ -58,10 +58,13 @@ namespace xe { namespace gfx { namespace gl3 {
     
 		if (textureTarget == GL_TEXTURE_1D) {
 			::glTexImage1D(textureTarget, 0, internalFormat, size.x, 0, internalFormat, dataType, data);
+
 		} else if (textureTarget == GL_TEXTURE_2D) {
 			::glTexImage2D(textureTarget, 0, internalFormat, size.x, size.y, 0, internalFormat, dataType, data);
+
 		} else if (textureTarget == GL_TEXTURE_3D) {
 			::glTexImage3D(textureTarget, 0, internalFormat, size.x, size.y, size.z, 0, internalFormat, dataType, data);
+
 		} else {
 			assert(false);
 		}
@@ -78,13 +81,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		GL3_CHECK();
     
 		const int bufferSize = size.x * size.y * size.z * (PixelFormat::size(format)/8);
-
-		this->buffer = std::make_unique<HeapBuffer>(bufferSize);
-
-		if (data) {
-			this->buffer->write(data);
-		}
-
+		
 		this->format = format;
 		this->type = type;
 		this->textureId = textureId;
@@ -117,25 +114,39 @@ namespace xe { namespace gfx { namespace gl3 {
 			this->size.x = width;
 			this->size.y = height;
 			this->size.z = depth;
+
 		} else {
 			assert(false);
 		}
 
 		::glBindTexture(textureTarget, 0);
+
+		GL3_CHECK();
 	}
 
 	TextureGL3::~TextureGL3() {
 		if (this->textureId != 0) {
 			::glDeleteTextures(1, &this->textureId);
 			this->textureId = 0;
+
+			GL3_CHECK();
 		}
 	}
 
-	void* TextureGL3::lock() {
-		assert(this->textureId != 0);
-        
-		this->textureData = this->buffer->getPointer();
-		return this->textureData;
+	Buffer* TextureGL3::getBuffer() {
+		return nullptr;
+	}
+
+	const Buffer* TextureGL3::getBuffer() const {
+		return nullptr;
+	}
+
+	Buffer* TextureGL3::getBuffer(TextureCubeMapFace::Enum face) {
+		return nullptr;
+	}
+
+	const Buffer* TextureGL3::getBuffer(TextureCubeMapFace::Enum face) const {
+		return nullptr;
 	}
 
 	void* TextureGL3::lock(TextureCubeMapFace::Enum face) {
@@ -167,6 +178,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		}
     
 		::glBindTexture(this->textureTarget, 0);
+
 		GL3_CHECK();
 	}
 
@@ -188,9 +200,5 @@ namespace xe { namespace gfx { namespace gl3 {
 
 	int TextureGL3::getHandle() const {
         return static_cast<int>(this->textureId);
-    }
-    
-    const void* TextureGL3::getDataPtr() const {
-        return this->textureData;
     }
 }}}
