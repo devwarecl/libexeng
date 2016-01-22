@@ -19,8 +19,6 @@
 #include <stdexcept>
 #include <cassert>
 
-using namespace xe;
-
 namespace xe { namespace gfx { namespace gl3 {
 
 	TextureGL3::TextureGL3(TextureType::Enum type, Vector3i size, PixelFormat::Enum format, const void *data) {

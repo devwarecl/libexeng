@@ -12,6 +12,7 @@ SET (GL3Files
 	src/xe/gfx/MeshSubsetGL3.hpp			src/xe/gfx/MeshSubsetGL3.cpp
 	src/xe/gfx/BufferGL3.hpp				src/xe/gfx/BufferGL3.cpp
 	src/xe/gfx/TextureGL3.hpp				src/xe/gfx/TextureGL3.cpp
+    src/xe/gfx/TextureBufferGL3.hpp			src/xe/gfx/TextureBufferGL3.cpp
 	src/xe/gfx/GraphicsDriverGL3.hpp		src/xe/gfx/GraphicsDriverGL3.cpp
 	src/xe/gfx/GraphicsDriverFactoryGL3.hpp	src/xe/gfx/GraphicsDriverFactoryGL3.cpp
 	src/xe/gfx/ShaderGL3.hpp				src/xe/gfx/ShaderGL3.cpp

@@ -44,6 +44,14 @@ namespace xe { namespace gfx { namespace gl3 {
         
         virtual TypeInfo getTypeInfo() const override;
         virtual int getHandle() const override;
+
+        GLenum getTarget() const {
+            return textureTarget;
+        }
+        
+        GLenum getInternalFormat() const {
+            return internalFormat;
+        }
         
     private:
         GLuint textureId;
