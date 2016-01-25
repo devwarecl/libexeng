@@ -18,7 +18,7 @@ namespace xe { namespace gfx { namespace gl3 {
         
         void setTexture(TextureGL3 *texture);
         
-        GLuint getTexture() const {
+        TextureGL3 *getTexture() const {
             return texture;
         }
         

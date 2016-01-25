@@ -1,6 +1,7 @@
 
 #include "TextureBufferGL3.hpp"
 
+#include "DebugGL3.hpp"
 #include "TextureGL3.hpp"
 #include <cassert>
 
@@ -29,7 +30,6 @@ namespace xe { namespace gfx { namespace gl3 {
                 0, 
                 texture->getInternalFormat(), 
                 GL_UNSIGNED_BYTE, 
-                cache_locker.getSize(), 
                 cache_locker.getPointer()
         );
         ::glBindTexture(texture->getTarget(), 0);
@@ -66,7 +66,6 @@ namespace xe { namespace gfx { namespace gl3 {
                 0, 
                 texture->getInternalFormat(), 
                 GL_UNSIGNED_BYTE, 
-                cache_locker.getSize(), 
                 cache_locker.getPointer()
         );
         ::glBindTexture(texture->getTarget(), 0);
