@@ -24,8 +24,9 @@ namespace xe { namespace fw {
      */
     class EXENGAPI Application : public Core {
     public:
-		Application() {}
-		virtual ~Application() {}
+		Application();
+
+		virtual ~Application();
 
         /**
          * @brief Run the application.
