@@ -52,8 +52,6 @@ namespace xe { namespace gfx { namespace gl3 {
 		
 		assert(textureId != 0);
 
-		GL3_CHECK();
-    
 		if (textureTarget == GL_TEXTURE_1D) {
 			::glTexImage1D(textureTarget, 0, internalFormat, size.x, 0, internalFormat, dataType, data);
 
@@ -67,8 +65,6 @@ namespace xe { namespace gfx { namespace gl3 {
 			assert(false);
 		}
 		
-		GL3_CHECK();
-
         ::glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         ::glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		::glTexParameteri(textureTarget, GL_TEXTURE_BASE_LEVEL, 0);
@@ -76,8 +72,6 @@ namespace xe { namespace gfx { namespace gl3 {
 		::glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		::glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		GL3_CHECK();
-    
 		const int bufferSize = size.x * size.y * size.z * (PixelFormat::size(format)/8);
 		
 		this->format = format;
@@ -87,37 +81,24 @@ namespace xe { namespace gfx { namespace gl3 {
 		this->internalFormat = internalFormat;
 
 		// Determine true size
-		if (textureTarget == GL_TEXTURE_1D) {
-			GLint width;
+		xe::Vector3i tex_size = {1, 1, 1};
 
-			::glGetTexLevelParameteriv(GL_TEXTURE_1D, 0, GL_TEXTURE_WIDTH, &width);
-			this->size.x = width;
+		::glGetTexLevelParameteriv(textureTarget, 0, GL_TEXTURE_WIDTH, &tex_size.x);
 
-		} else if (textureTarget == GL_TEXTURE_2D) {
-			GLint width, height;
-
-			::glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-			::glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
-
-			this->size.x = width;
-			this->size.y = height;
-
-		} else if (textureTarget == GL_TEXTURE_3D) {
-			GLint width, height, depth;
-
-			::glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_WIDTH, &width);
-			::glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_HEIGHT, &height);
-			::glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_DEPTH, &depth);
-
-			this->size.x = width;
-			this->size.y = height;
-			this->size.z = depth;
-
-		} else {
-			assert(false);
+		if (textureTarget==GL_TEXTURE_3D || textureTarget==GL_TEXTURE_2D) {
+			::glGetTexLevelParameteriv(textureTarget, 0, GL_TEXTURE_HEIGHT, &tex_size.y);
 		}
 
+		if (textureTarget==GL_TEXTURE_3D) {
+			::glGetTexLevelParameteriv(textureTarget, 0, GL_TEXTURE_DEPTH, &tex_size.z);
+		}
+
+		this->size = tex_size;
+
 		::glBindTexture(textureTarget, 0);
+
+		// download the texture cache
+		buffer.setTexture(this);
 
 		GL3_CHECK();
 	}
@@ -132,11 +113,11 @@ namespace xe { namespace gfx { namespace gl3 {
 	}
 
 	Buffer* TextureGL3::getBuffer() {
-		return nullptr;
+		return &buffer;
 	}
 
 	const Buffer* TextureGL3::getBuffer() const {
-		return nullptr;
+		return &buffer;
 	}
 
 	Buffer* TextureGL3::getBuffer(TextureCubeMapFace::Enum face) {
@@ -147,41 +128,6 @@ namespace xe { namespace gfx { namespace gl3 {
 		return nullptr;
 	}
 
-    /*
-	void* TextureGL3::lock(TextureCubeMapFace::Enum face) {
-		assert(this->textureId != 0);
-		throw std::runtime_error("TextureGL3::lock(TextureCubeMapFace): Not yet implemented.");
-	}
-
-	void TextureGL3::unlock() {
-		assert(this->textureId != 0);
-		assert(this->textureTarget != 0);
-		assert(this->textureData != nullptr);
-    
-		::glBindTexture(this->textureTarget, this->textureId);
-    
-		switch (this->textureTarget) {
-		case GL_TEXTURE_1D:
-			::glTexSubImage1D(textureTarget, 0, 0, this->size.x, GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
-			break;
-        
-		case GL_TEXTURE_2D:
-			::glTexSubImage2D(textureTarget, 0, 0, 0, this->size.x, this->size.y, GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
-			break;
-        
-		case GL_TEXTURE_3D:
-			::glTexSubImage3D(textureTarget, 0, 0, 0, 0, this->size.x, this->size.y, this->size.z, GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
-			break;
-        
-		default: assert(false); break;
-		}
-    
-		::glBindTexture(this->textureTarget, 0);
-
-		GL3_CHECK();
-	}
-    */
-    
 	TextureType::Enum TextureGL3::getType() const {
 		return this->type;
 	}

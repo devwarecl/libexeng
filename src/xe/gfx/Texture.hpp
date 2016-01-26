@@ -16,6 +16,7 @@
 #define __EXENG_GRAPHICS_TEXTURE_HPP__
 
 #include <memory>
+#include <array>
 #include <xe/Enum.hpp>
 #include <xe/Object.hpp>
 #include <xe/Vector.hpp>
@@ -24,7 +25,6 @@
 #include <xe/gfx/PixelFormat.hpp>
 
 namespace xe { namespace gfx {
-    
     /**
      * @brief Faces for CubeMap textures.
      */
@@ -34,6 +34,10 @@ namespace xe { namespace gfx {
             PositiveY, NegativeY,
             PositiveZ, NegativeZ
         };
+
+		inline std::array<TextureCubeMapFace::Enum, 6> enumerate() {
+			return {PositiveX, NegativeX, PositiveY, NegativeY, PositiveZ, NegativeZ};
+		}
     };
     
     /**

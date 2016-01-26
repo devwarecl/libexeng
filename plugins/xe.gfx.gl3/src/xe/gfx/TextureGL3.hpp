@@ -17,7 +17,9 @@
 
 #include <xe/HeapBuffer.hpp>
 #include <xe/gfx/Texture.hpp>
+
 #include "GL3.hpp"
+#include "TextureBufferGL3.hpp"
 
 namespace xe { namespace gfx { namespace gl3 {
 
@@ -60,6 +62,7 @@ namespace xe { namespace gfx { namespace gl3 {
         xe::Vector3i size;
         GLenum textureTarget;
         GLenum internalFormat;
+		TextureBufferGL3 buffer;
     };
 }}}
 

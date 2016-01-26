@@ -24,8 +24,6 @@ namespace xe { namespace gfx { namespace gl3 {
         
         virtual ~TextureBufferGL3();
         
-		virtual int getHandle() const override;
-
 		virtual int getSize() const override;
 
         virtual void* lock(BufferLockMode::Enum mode) override;
@@ -36,17 +34,20 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		virtual void unlock() const override;
         
+		virtual int getHandle() const override {
+			return 0;
+		}
+
     private:
-        int getTextureStorage();
-        
-        void syncCache();
-        
-        void* lockImpl(BufferLockMode::Enum mode) const;
-        
-        void unlockImpl() const;
+		// read data from texture to cache
+        void download();
+
+		// write data to texture from cache
+		void upload();
         
     private:
         TextureGL3 *texture = nullptr;
+		void* cache_ptr = nullptr;
         HeapBuffer cache;
     };
 }}}
