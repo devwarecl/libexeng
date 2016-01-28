@@ -19,8 +19,12 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <algorithm>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/range/adaptor/filtered.hpp>
+#include <boost/range/adaptor/transformed.hpp>
+#include <boost/range/algorithm/sort.hpp>
 
 #include <xe/Core.hpp>
 #include <xe/Exception.hpp>
@@ -68,17 +72,45 @@ namespace xe { namespace sys {
 			}
 		}
 		
-		std::string getPluginFilename(const std::string &pluginName) {
-#if defined(EXENG_WINDOWS)
-			return pluginName + std::string(".dll");
-#elif defined(EXENG_UNIX)
-			return std::string("lib") + pluginName + std::string(".so");
-#else
-  #error Unsupported platform.
-#endif        
-		}
+
     };
     
+	std::string plugin_filename(const std::string &pluginName) {
+#if defined(EXENG_WINDOWS)
+		return pluginName + std::string(".dll");
+#elif defined(EXENG_UNIX)
+		return std::string("lib") + pluginName + std::string(".so");
+#else
+#error Unsupported platform.
+#endif        
+	}
+
+	bool is_plugin(const fs::path &file) {
+		const std::string xe_module = plugin_filename("xe");
+		const std::string ext = boost::algorithm::to_lower_copy(file.extension().string());
+		const std::string file_name = file.filename().string();
+
+		const bool is_library	= ext == ".so" || ext == ".dll";
+		const bool is_plugin	= file_name.find("xe.") != std::string::npos;
+		const bool is_xe_module	= file_name == xe_module;
+
+		return is_library && is_plugin && !is_xe_module;
+	}
+
+	std::list<fs::path> list_files(const fs::path &directory) {
+		std::list<fs::path> files;
+
+		if (fs::is_directory(directory)) {
+			auto range = boost::make_iterator_range(fs::directory_iterator(directory), {});
+
+			for (auto path_it : range) {
+				files.push_back(path_it.path());
+			}
+		}
+
+		return files;
+	}
+
     PluginManager::PluginManager(Core* core) {
 		assert(core);
 
@@ -108,7 +140,7 @@ namespace xe { namespace sys {
     void PluginManager::loadPlugin(const std::string &name) {
         assert(this->impl != nullptr);
         
-		fs::path file = this->impl->pluginPath / this->impl->getPluginFilename(name);
+		fs::path file = this->impl->pluginPath / plugin_filename(name);
 		std::string key = name;
 		
 		this->impl->loadPluginFile(file, key);
@@ -156,44 +188,33 @@ namespace xe { namespace sys {
     }
     
     void PluginManager::loadPlugins() {
+		namespace ba = boost::adaptors;
+
 		const std::string path_separator = ";";
-		const std::string xe_module = this->impl->getPluginFilename("xe");
+		const std::string xe_module = plugin_filename("xe");
+		const std::string env_path = std::getenv("PATH") + path_separator + fs::current_path().string();
 
-		// search for SO/DLL files in all directories on the path, and populate the 'files' list.
-		std::list<std::string> directories;
-		std::string env_path = std::getenv("PATH");
-		boost::algorithm::split(directories, env_path, boost::is_any_of(path_separator));
+		// get the directories from the string
+		std::list<std::string> paths;
+		boost::algorithm::split(paths, env_path, boost::is_any_of(path_separator));
 
+		// get all files from those directories
 		std::list<fs::path> files;
+		for (const std::string &path : paths) {
+			std::list<fs::path> listed_files = list_files(fs::path(path));
 
-		for (const auto &directory : directories) {
-			fs::path path_dir(directory);
+			listed_files.sort();
 
-			if (!fs::is_directory(path_dir)) {
-				continue;
-			}
-
-			auto range = boost::make_iterator_range(fs::directory_iterator(path_dir), {});
-
-			for (auto path_it : range) {
-				const fs::path file = path_it.path();
-				const std::string ext = boost::algorithm::to_lower_copy(file.extension().string());
-				const std::string file_name = file.filename().string();
-
-				const bool is_library		= ext == ".so" || ext == ".dll";
-				const bool is_plugin		= file_name.find("xe.") != std::string::npos;
-				const bool is_xe_library	= file_name == xe_module;
-
-				if (is_library && is_plugin && !is_xe_library) {
-					files.push_back(file);
-				}
-			}
+			files.merge(listed_files);
 		}
 
+		// filter only plugin files
+		auto plugins = files | ba::filtered(is_plugin);
+
 		// finally, try to load the remaining plugins
-		for (const fs::path &file : files) {
+		for (const fs::path &plugin : plugins) {
 			try {
-				this->impl->loadPluginFile(file);
+				this->impl->loadPluginFile(plugin);
 
 			} catch (const std::exception &exp) {
 				std::cout << exp.what() << std::endl;

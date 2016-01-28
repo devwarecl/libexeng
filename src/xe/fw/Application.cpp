@@ -36,6 +36,10 @@ namespace xe { namespace fw {
 			std::cout << std::endl;
 		}
 
+		if (pluginManager->getPluginCount() == 0) {
+			std::cout << "No plugins were loaded!" << std::endl;
+		}
+
 		std::cout << std::endl;
 	}
 

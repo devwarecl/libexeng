@@ -20,7 +20,8 @@ namespace demo {
 				}
 
 			} else {
-				throw std::runtime_error("No available graphics drivers.");
+				std::cout << "No available graphics drivers!" << std::endl;
+				throw std::runtime_error("");
 			}
 
 			// select the first graphics driver
