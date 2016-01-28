@@ -105,31 +105,6 @@ namespace xe { namespace gfx {
 		AttribType texCoord4;
 	};
 
-	/*namespace detail {
-
-		template<int index, typename ...Args>
-		struct GetTypeAt {};
-
-		template<typename Arg, typename ...Args>
-		struct GetTypeAt<0, Arg, Args...> {
-			using type = Arg;
-		};
-	}*/
-
-	/*
-	template <typename Attrib, typename ...Attribs>
-	void constructFormat(std::vector<VertexField> &fields) {
-		constructFormat<Attribs...>(fields);
-		fields.push_back(VertexField(Attrib::attrib, Attrib::size, Attrib::dataType));
-	}
-
-	template<typename Attrib>
-	void constructFormat(std::vector<VertexField> &fields) {
-		fields.push_back(VertexField(Attrib::attrib, Attrib::size, Attrib::dataType));
-	}
-	*/
-	
-	
 	template <int index, typename Attrib, typename ...Attribs>
 	struct VertexFormatConstructor {
 		static void construct(std::vector<VertexField> &fields) {

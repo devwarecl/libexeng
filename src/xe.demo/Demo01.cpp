@@ -1,9 +1,13 @@
 
 #include <memory>
+
 #include <xe/fw/Application.hpp>
 #include <xe/sys/Plugin.hpp>
 #include <xe/sys/PluginManager.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
+#include <xe/gfx/Vertex.hpp>
+#include <xe/gfx/Mesh.hpp>
+#include <xe/gfx/TextureManager.hpp>
 #include <xe.main/Main.hpp>
 
 namespace demo {
@@ -28,6 +32,26 @@ namespace demo {
 			auto graphicsDriver = this->getGraphicsManager()->createDriver(driverInfos[0]);
 
 			this->graphicsDriver = std::move(graphicsDriver);
+		}
+
+		void initGeometry() {
+			xe::gfx::Image *image = this->getGraphicsManager()->getImageToolkit()->getImage("assets/test.png");
+			xe::gfx::Texture *texture = this->getTextureManager()->create("assets/test.png", image);
+			xe::gfx::Material *material = new xe::gfx::Material();
+
+			xe::gfx::StandardVertex v1, v2, v3, v4;
+
+			v1.coord = {-1.0f, 1.0f, 0.0f};	v1.normal = { 0.0f, 0.0f, 0.0f}; v1.texCoord = {0.0f, 1.0f};
+			v2.coord = { 1.0f, 1.0f, 0.0f};	v2.normal = { 0.0f, 0.0f, 0.0f}; v2.texCoord = {1.0f, 1.0f};
+			v3.coord = {-1.0f, 0.0f, 0.0f};	v3.normal = { 0.0f, 0.0f, 0.0f}; v3.texCoord = {0.0f, 0.0f};
+			v4.coord = { 1.0f, 0.0f, 0.0f};	v4.normal = { 0.0f, 0.0f, 0.0f}; v4.texCoord = {0.0f, 0.0f};
+
+			std::vector<xe::gfx::StandardVertex> vertices = {v1, v2, v3, v4};
+
+			auto vbuffer = this->graphicsDriver->createVertexBuffer(vertices);
+
+			auto meshSubset = this->graphicsDriver->createMeshSubset(std::move(vbuffer), xe::BufferPtr(nullptr), xe::gfx::StandardVertex::getFormat());
+			auto mesh = std::make_unique<xe::gfx::Mesh>(std::move(meshSubset));
 		}
 
         virtual int run(int argc, char **argv) override {
