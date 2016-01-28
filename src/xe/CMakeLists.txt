@@ -262,7 +262,7 @@ INSTALL (
 		ARCHIVE DESTINATION lib
 )
 
-INSTALL (FILES ExengConfig.cmake		DESTINATION lib/cmake/xe/)
+# INSTALL (FILES ExengConfig.cmake		DESTINATION lib/cmake/xe/)
 INSTALL (FILES ${BaseFiles_hpp}			DESTINATION include/xe)
 INSTALL (FILES ${IoFiles_hpp}			DESTINATION include/xe/io)
 INSTALL (FILES ${AudioFiles_hpp}		DESTINATION include/xe/sfx)

@@ -85,26 +85,33 @@ namespace xe { namespace sys {
 #endif        
 	}
 
+    const std::string xe_module = plugin_filename("xe");
+
 	bool is_plugin(const fs::path &file) {
-		const std::string xe_module = plugin_filename("xe");
 		const std::string ext = boost::algorithm::to_lower_copy(file.extension().string());
 		const std::string file_name = file.filename().string();
 
-		const bool is_library	= ext == ".so" || ext == ".dll";
-		const bool is_plugin	= file_name.find("xe.") != std::string::npos;
-		const bool is_xe_module	= file_name == xe_module;
+        const bool is_library	= (ext == ".so" || ext == ".dll");
+        const bool have_plugin_name	= (file_name.find("xe.") != std::string::npos);
+        const bool is_xe_module	= (file_name == xe_module);
 
-		return is_library && is_plugin && !is_xe_module;
+        const std::string filename = file.string();
+
+        return is_library && have_plugin_name && !is_xe_module;
 	}
 
-	std::list<fs::path> list_files(const fs::path &directory) {
+    std::list<fs::path> list_plugin_files(const fs::path &directory) {
 		std::list<fs::path> files;
 
 		if (fs::is_directory(directory)) {
 			auto range = boost::make_iterator_range(fs::directory_iterator(directory), {});
 
 			for (auto path_it : range) {
-				files.push_back(path_it.path());
+                fs::path path(path_it.path());
+
+                if (is_plugin(path) && fs::is_regular(path)) {
+                    files.push_back(path);
+                }
 			}
 		}
 
@@ -190,26 +197,24 @@ namespace xe { namespace sys {
     void PluginManager::loadPlugins() {
 		namespace ba = boost::adaptors;
 
-		const std::string path_separator = ";";
-		const std::string xe_module = plugin_filename("xe");
-		const std::string env_path = std::getenv("PATH") + path_separator + fs::current_path().string();
+        const std::string path_separator = ";:";
+        const std::string env_path = std::getenv("PATH");
 
 		// get the directories from the string
-		std::list<std::string> paths;
-		boost::algorithm::split(paths, env_path, boost::is_any_of(path_separator));
+        std::list<std::string> paths;
+        boost::algorithm::split(paths, env_path, boost::is_any_of(path_separator));
 
-		// get all files from those directories
-		std::list<fs::path> files;
+        paths.push_back(fs::current_path().parent_path().string());
+
+        // get all plugins from those directories
+        std::list<fs::path> plugins;
 		for (const std::string &path : paths) {
-			std::list<fs::path> listed_files = list_files(fs::path(path));
+            std::list<fs::path> listed_plugins = list_plugin_files(fs::path(path));
 
-			listed_files.sort();
+            listed_plugins.sort();
 
-			files.merge(listed_files);
+            plugins.merge(listed_plugins);
 		}
-
-		// filter only plugin files
-		auto plugins = files | ba::filtered(is_plugin);
 
 		// finally, try to load the remaining plugins
 		for (const fs::path &plugin : plugins) {
