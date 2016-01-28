@@ -34,6 +34,7 @@
 #include <xe/gfx/MeshSubset.hpp>
 #include <xe/gfx/ModernModule.hpp>
 #include <xe/gfx/LegacyModule.hpp>
+#include <xe/gfx/Material2.hpp>
 
 namespace xe { namespace gfx {
 
@@ -225,14 +226,13 @@ namespace xe { namespace gfx {
 			if (image->getType() == ImageType::Img2D) {
 				Vector2i size = image->getSize();
                 
-                BufferLockerConst<void> locker(image->getBuffer());
+                auto locker = image->getBuffer()->getLocker();
                 
 				return this->createTexture (
 					size, 
 					image->getFormat(), 
 					locker.getPointer()
 				);
-
 			} else {
 				return nullptr;
 			}
@@ -267,6 +267,13 @@ namespace xe { namespace gfx {
 		virtual ModernModule* getModernModule() = 0;
 
 		virtual xe::input2::IInputManager* getInputManager() = 0;
+		
+		/**
+		 * @brief Create a GPU dependent material.
+		 * 
+		 * This material *maybe* stored in GPU memory.
+		 */
+		virtual Material2Ptr createMaterial(const MaterialFormat2 *format);
     };
 
 	typedef std::unique_ptr<GraphicsDriver> GraphicsDriverPtr;

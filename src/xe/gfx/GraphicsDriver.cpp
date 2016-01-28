@@ -11,11 +11,12 @@
  * found in the file LICENSE in this distribution.
  */
 
-
-#include <xe/gfx/GraphicsDriver.hpp>
+#include "GraphicsDriver.hpp"
 
 namespace xe { namespace gfx {
-
 	GraphicsDriver::~GraphicsDriver() {}
-
+    
+    Material2Ptr GraphicsDriver::createMaterial(const MaterialFormat2 *) {
+        return Material2Ptr();
+    }
 }}

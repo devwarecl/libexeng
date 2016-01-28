@@ -56,7 +56,8 @@ set (GraphicsFiles_hpp
     gfx/GraphicsManager.hpp      
     gfx/Image.hpp                
 	gfx/ImageLoader.hpp 
-    gfx/Material.hpp             
+    gfx/Material.hpp 
+    gfx/Material2.hpp 
     gfx/PixelFormat.hpp          
 	gfx/VertexFormat.hpp 
 	gfx/VertexArray.hpp 
@@ -91,6 +92,7 @@ set (GraphicsFiles_cpp
     gfx/Image.cpp 
 	gfx/ImageLoader.cpp 
     gfx/Material.cpp 
+    gfx/Material2.cpp
     gfx/PixelFormat.cpp 
     gfx/Vertex.cpp
     gfx/VertexFormat.cpp
