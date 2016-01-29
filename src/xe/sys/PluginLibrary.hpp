@@ -60,13 +60,16 @@ namespace xe { namespace sys {
 		getPluginObjectNameStr += EXENG_GET_PLUGIN_OBJECT_NAME_STR;
 		getPluginObjectNameStr += "@4";
 #  else 
-		getPluginObjectNameStr = EXENG_GET_PLUGIN_OBJECT_NAME_STR;
+		getPluginObjectNameStr += EXENG_GET_PLUGIN_OBJECT_NAME_STR;
 #  endif
+
+#else 
+		getPluginObjectNameStr += EXENG_GET_PLUGIN_OBJECT_NAME_STR;
 #endif
 
         // get the plugin entry point from the library.
         void* ptr = library->getFunctionPtr(getPluginObjectNameStr);
-        ExengGetPluginObjectProc getPluginObject = reinterpret_cast<ExengGetPluginObjectProc>(ptr);
+        auto getPluginObject = reinterpret_cast<ExengGetPluginObjectProc>(ptr);
 
 	    if (!getPluginObject) {
 		    std::string msg;

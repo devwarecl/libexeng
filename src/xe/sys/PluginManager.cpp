@@ -213,7 +213,11 @@ namespace xe { namespace sys {
         boost::algorithm::split(paths, env_path, boost::is_any_of(path_separator));
 
         paths.push_back(fs::current_path().parent_path().string());
-
+        
+#if defined(EXENG_UNIX)
+        paths.push_back("/usr/local/lib");
+#endif
+        
         // get all plugins from those directories
         std::list<fs::path> plugins;
 		for (const std::string &path : paths) {
