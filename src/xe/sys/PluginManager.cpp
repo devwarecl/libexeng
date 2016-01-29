@@ -194,10 +194,18 @@ namespace xe { namespace sys {
         return this->impl->pluginPath.string();
     }
     
+	std::string getPathSeparator() {
+#if defined(EXENG_WINDOWS)
+		return ";";
+#else 
+		return ":";
+#endif
+	}
+
     void PluginManager::loadPlugins() {
 		namespace ba = boost::adaptors;
 
-        const std::string path_separator = ";:";
+        const std::string path_separator = getPathSeparator();
         const std::string env_path = std::getenv("PATH");
 
 		// get the directories from the string
