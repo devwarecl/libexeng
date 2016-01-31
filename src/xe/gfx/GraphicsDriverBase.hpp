@@ -84,21 +84,6 @@ namespace xe { namespace gfx {
 	inline LegacyModule* GraphicsDriverBase::getLegacyModule() {
 		return nullptr;
 	}
-
-	//inline TexturePtr GraphicsDriverBase::createTexture(const Image *image) {
-	//	if (image->getType() == ImageType::Img2D) {
-	//		Vector2i size = image->getSize();
-
-	//		return GraphicsDriver::createTexture (
-	//			size, 
-	//			image->getFormat(), 
-	//			image->getBuffer()->getPointer()
-	//		);
-
-	//	} else {
-	//		return nullptr;
-	//	}
-	//}
 }}
 
 #endif  // __EXENG_GRAPHICS_GRAPHICSDRIVERBASE_HPP__

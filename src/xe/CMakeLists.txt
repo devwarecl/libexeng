@@ -40,10 +40,27 @@ set (FrameworkFiles_hpp
 set (FrameworkFiles ${FrameworkFiles_hpp} ${FrameworkFiles_cpp})
 
 set (ComputeFiles_hpp
-    compute/ComputeBuffer.hpp compute/ComputeDevice.hpp compute/ComputeManager.hpp compute/Kernel.hpp 
+    cm/ComputeLanguage.hpp
+    cm/ComputeManager.hpp
+    cm/ComputeModule.hpp
+    cm/ComputeModuleDesc.hpp
+    cm/ComputeModuleFactory.hpp
+    cm/Program.hpp
+    cm/ProgramModule.hpp
+    cm/Kernel.hpp
+    cm/Queue.hpp
 )
+
 set (ComputeFiles_cpp
-    compute/ComputeBuffer.cpp compute/ComputeDevice.cpp compute/ComputeManager.cpp compute/Kernel.cpp            
+    cm/ComputeLanguage.cpp
+    cm/ComputeManager.cpp
+    cm/ComputeModule.cpp
+    cm/ComputeModuleDesc.cpp
+    cm/ComputeModuleFactory.cpp
+    cm/Program.cpp
+    cm/ProgramModule.cpp
+    cm/Kernel.cpp
+    cm/Queue.cpp
 )
 set (ComputeFiles ${ComputeFiles_hpp} ${ComputeFiles_cpp})
 
@@ -245,7 +262,7 @@ SOURCE_GROUP(\\			FILES ${BaseFiles})
 SOURCE_GROUP(io         FILES ${IoFiles})
 SOURCE_GROUP(sfx      	FILES ${AudioFiles})
 SOURCE_GROUP(fw  		FILES ${FrameworkFiles})
-SOURCE_GROUP(compute    FILES ${ComputeFiles})
+SOURCE_GROUP(cm    FILES ${ComputeFiles})
 SOURCE_GROUP(gfx   		FILES ${GraphicsFiles})
 SOURCE_GROUP(input      FILES ${InputFiles})
 SOURCE_GROUP(input2     FILES ${Input2Files})
@@ -267,7 +284,7 @@ INSTALL (FILES ${BaseFiles_hpp}			DESTINATION include/xe)
 INSTALL (FILES ${IoFiles_hpp}			DESTINATION include/xe/io)
 INSTALL (FILES ${AudioFiles_hpp}		DESTINATION include/xe/sfx)
 INSTALL (FILES ${FrameworkFiles_hpp}	DESTINATION include/xe/fw)
-INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/xe/compute)
+INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/xe/cm)
 INSTALL (FILES ${GraphicsFiles_hpp}		DESTINATION include/xe/gfx)
 INSTALL (FILES ${InputFiles_hpp}		DESTINATION include/xe/input)
 INSTALL (FILES ${Input2Files_hpp}		DESTINATION include/xe/input2)
