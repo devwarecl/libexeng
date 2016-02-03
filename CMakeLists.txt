@@ -9,6 +9,7 @@ OPTION (XE_GFX_D3D "Enable Direct3D graphics driver" OFF)
 OPTION (XE_GFX_FI "Enable FreeImage-based image loader implementation" OFF)
 OPTION (XE_GFX_LWO "Enable mesh loading from LWO files" OFF)
 OPTION (XE_SG_XML "Enable scene loading from XML files" OFF)
+OPTION (XE_CM_CL "Enable OpenCL computing module" OFF)
 
 OPTION (XE_RT "Enable scene rendering trough Ray Tracing" OFF)
 OPTION (XE_TESTING "Enable unit testings" OFF)
@@ -96,4 +97,8 @@ ENDIF()
 
 IF(XE_GFX_LWO)
 	ADD_SUBDIRECTORY (plugins/xe.gfx.lwo)
+ENDIF()
+
+IF(XE_CM_CL)
+	ADD_SUBDIRECTORY (plugins/xe.cm.cl)
 ENDIF()
