@@ -21,93 +21,80 @@
 #include <xe/gfx/TextureManager.hpp>
 #include <xe/gfx/MeshManager.hpp>
 #include <xe/sg/SceneManager.hpp>
+#include <xe/cm/ComputeManager.hpp>
 
 namespace xe {
 	using namespace xe::sys;
 	using namespace xe::gfx;
 	using namespace xe::sg;
 
-    struct Core::Private 
-	{
+    struct Core::Private {
         // The order of the declaration of the different submodules is important.
-		std::unique_ptr<GraphicsManager> graphicsManager;
-		std::unique_ptr<PluginManager> pluginManager;
-		std::unique_ptr<TextureManager> textureManager;
-        std::unique_ptr<MeshManager> meshManager;
-		SceneManager sceneManager;
+		xe::gfx::GraphicsManager graphicsManager;
+		xe::cm::ComputeManager computeManager;
+		xe::sys::PluginManager pluginManager;
+		xe::gfx::TextureManager textureManager;
+        xe::gfx::MeshManager meshManager;
+		xe::sg::SceneManager sceneManager;
     };
 
-    static const char licenseMsg[] = 
+    const char licenseMsg[] = 
         "The C++ Multimedia Engine\n"
         "Copyright (c) 2013 - 2015 Felipe Apablaza\n\n"
         "The license and distribution terms for this library may be\n"
         "found in the file LICENSE in this distribution\n";
     
-    Core::Core() 
-	{
+    Core::Core() {
 		this->impl = new Core::Private();
-		this->impl->pluginManager.reset(new PluginManager(this));
-		this->impl->graphicsManager.reset(new GraphicsManager());
-		this->impl->textureManager.reset(new TextureManager());
-        this->impl->meshManager.reset(new MeshManager());
+		this->impl->pluginManager.setCore(this);
     }
 
-    Core::~Core() 
-	{
+    Core::~Core() {
         boost::checked_delete(this->impl);
     }
 
-    PluginManager* Core::getPluginManager() 
-	{
-        assert(this->impl != nullptr);
-        return this->impl->pluginManager.get();
-    }
-
-    const PluginManager* Core::getPluginManager() const 
-	{
-        assert(this->impl != nullptr);
-        return this->impl->pluginManager.get();
-    }
-
-    MeshManager* Core::getMeshManager() 
-	{
-        assert(this->impl != nullptr);
-        return this->impl->meshManager.get();
-    }
-
-    const MeshManager* Core::getMeshManager() const 
-	{
-        assert(this->impl != nullptr);
-        return this->impl->meshManager.get();
-    }
-
-    GraphicsManager* Core::getGraphicsManager() 
-	{
-        assert(this->impl != nullptr);
-        return this->impl->graphicsManager.get();
-    }
-
-    const GraphicsManager* Core::getGraphicsManager() const 
-	{
-        assert(this->impl != nullptr);
-        return this->impl->graphicsManager.get();
-    }
-
-    Version Core::getVersion() const 
-	{
+    Version Core::getVersion() const {
         return Version(0, 0, 1, 1);
     }
     
-	xe::gfx::TextureManager * Core::getTextureManager() 
-	{
+    PluginManager* Core::getPluginManager() {
         assert(this->impl != nullptr);
-        return this->impl->textureManager.get();
+        return &this->impl->pluginManager;
     }
 
-	const xe::gfx::TextureManager * Core::getTextureManager() const
-	{
+    const PluginManager* Core::getPluginManager() const {
         assert(this->impl != nullptr);
-        return this->impl->textureManager.get();
+        return &this->impl->pluginManager;
+    }
+
+    MeshManager* Core::getMeshManager() {
+        assert(this->impl != nullptr);
+        return &this->impl->meshManager;
+    }
+
+    const MeshManager* Core::getMeshManager() const {
+        assert(this->impl != nullptr);
+        return &this->impl->meshManager;
+    }
+
+    GraphicsManager* Core::getGraphicsManager() {
+        assert(this->impl != nullptr);
+        return &this->impl->graphicsManager;
+    }
+
+    const GraphicsManager* Core::getGraphicsManager() const {
+        assert(this->impl != nullptr);
+        return &this->impl->graphicsManager;
+    }
+
+	xe::gfx::TextureManager* Core::getTextureManager() {
+        assert(this->impl != nullptr);
+        return &this->impl->textureManager;
+    }
+
+	const xe::gfx::TextureManager* Core::getTextureManager() const {
+        assert(this->impl != nullptr);
+        return &this->impl->textureManager;
     }
 
 	xe::sg::SceneManager* Core::getSceneManager() {
@@ -116,5 +103,15 @@ namespace xe {
 
     const xe::sg::SceneManager* Core::getSceneManager() const {
 		return &this->impl->sceneManager;
+	}
+
+	xe::cm::ComputeManager* Core::getComputeManager() {
+		assert(this->impl != nullptr);
+		return &this->impl->computeManager;
+	}
+
+	const xe::cm::ComputeManager* Core::getComputeManager() const {
+		assert(this->impl != nullptr);
+		return &this->impl->computeManager;
 	}
 }

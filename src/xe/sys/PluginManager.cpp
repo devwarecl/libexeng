@@ -38,7 +38,7 @@ namespace xe { namespace sys {
     /**
      * @brief Private attributes of the plugin manager.
      */
-    typedef std::map<std::string, std::unique_ptr<Plugin>> PluginMap;
+    typedef std::map<std::string, PluginPtr> PluginMap;
 	typedef std::vector<Plugin*> PluginArray;
 
     struct PluginManager::Private {
@@ -71,8 +71,6 @@ namespace xe { namespace sys {
 				plugins[key]->initialize(this->core);
 			}
 		}
-		
-
     };
     
 	std::string plugin_filename(const std::string &pluginName) {
@@ -85,7 +83,7 @@ namespace xe { namespace sys {
 #endif        
 	}
 
-    const std::string xe_module = plugin_filename("xe");
+    static const std::string xe_module = plugin_filename("xe");
 
 	bool is_plugin(const fs::path &file) {
 		const std::string ext = boost::algorithm::to_lower_copy(file.extension().string());
@@ -118,34 +116,35 @@ namespace xe { namespace sys {
 		return files;
 	}
 
-    PluginManager::PluginManager(Core* core) {
-		assert(core);
-
+    PluginManager::PluginManager() {
         this->impl = new PluginManager::Private();
-        this->impl->core = core;
-        
         this->impl->pluginPath = fs::current_path();
     }
 
     PluginManager::~PluginManager() {
         delete this->impl;
-        this->impl = nullptr;
     }
     
+	void PluginManager::setCore(Core *core) {
+		assert(this->impl);
+
+		this->impl->core = core;
+	}
+
     Core* PluginManager::getCore() {
-        assert(this->impl != nullptr);
+        assert(this->impl);
         
         return this->impl->core;
     }
         
     const Core* PluginManager::getCore() const {
-        assert(this->impl != nullptr);
+        assert(this->impl);
         
         return this->impl->core;
     }
     
     void PluginManager::loadPlugin(const std::string &name) {
-        assert(this->impl != nullptr);
+        assert(this->impl);
         
 		fs::path file = this->impl->pluginPath / plugin_filename(name);
 		std::string key = name;
@@ -154,7 +153,7 @@ namespace xe { namespace sys {
     }
     
     void PluginManager::unloadPlugin(const std::string &name) {
-        assert(this->impl != nullptr);
+        assert(this->impl);
         
         auto &plugins = this->impl->plugins;
 		auto &pluginArray = this->impl->pluginArray;
@@ -171,7 +170,7 @@ namespace xe { namespace sys {
     }
     
     void PluginManager::setPluginPath(const std::string &path) {
-        assert(this->impl != nullptr);
+        assert(this->impl);
         
         fs::path pluginPath(path);
         
@@ -189,7 +188,7 @@ namespace xe { namespace sys {
     }
     
     std::string PluginManager::getPluginPath() const {
-        assert(this->impl != nullptr);
+        assert(this->impl);
         
         return this->impl->pluginPath.string();
     }
@@ -203,6 +202,8 @@ namespace xe { namespace sys {
 	}
 
     void PluginManager::loadPlugins() {
+		assert(this->impl);
+
 		namespace ba = boost::adaptors;
 
         const std::string path_separator = getPathSeparator();
@@ -215,6 +216,7 @@ namespace xe { namespace sys {
         paths.push_back(fs::current_path().parent_path().string());
         
 #if defined(EXENG_UNIX)
+		paths.push_back("/usr/lib");
         paths.push_back("/usr/local/lib");
 #endif
         
@@ -240,10 +242,13 @@ namespace xe { namespace sys {
     }
 
 	int PluginManager::getPluginCount() const {
+		assert(this->impl);
+
 		return this->impl->pluginArray.size();
 	}
 
 	const Plugin* PluginManager::getPlugin(const int index) const {
+		assert(this->impl);
 		assert(index >= 0);
 		assert(index < this->getPluginCount());
 

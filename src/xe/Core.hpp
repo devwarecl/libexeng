@@ -21,6 +21,7 @@
 #include <xe/sys/Forward.hpp>
 #include <xe/sg/Forward.hpp>
 #include <xe/gfx/Forward.hpp>
+#include <xe/cm/Forward.hpp>
 
 namespace xe {
 	
@@ -50,6 +51,9 @@ namespace xe {
         
 		xe::sg::SceneManager* getSceneManager();
         const xe::sg::SceneManager* getSceneManager() const;
+
+		xe::cm::ComputeManager* getComputeManager();
+		const xe::cm::ComputeManager* getComputeManager() const;
 
     private:
         struct Private;

@@ -28,10 +28,10 @@ namespace xe { namespace sys {
         PluginManager(const PluginManager &other) = delete;
         PluginManager& operator= (const PluginManager& other) = delete; 
 
-    private:
-        PluginManager(Core* root);
-            
+		void setCore(Core *core);
+
     public:
+		PluginManager();
         ~PluginManager();
         
         /**

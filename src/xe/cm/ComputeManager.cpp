@@ -24,15 +24,19 @@ namespace xe { namespace cm {
     ComputeModulePtr ComputeManager::createComputeModule() {
         assert(this->impl);
         
+		ComputeModulePtr computeModule;
+
         for (auto pair : this->impl->factories) {
-            return pair.second->create();
+            computeModule = pair.second->create();
         }
+
+		return computeModule;
     }
     
     ComputeModulePtr ComputeManager::createComputeModule(const ComputeModuleDesc &desc) {
         assert(this->impl);
         
-        this->impl->factories[desc]->create();
+        return this->impl->factories[desc]->create();
     }
     
     void ComputeManager::addFactory(ComputeModuleFactory *factory) {
