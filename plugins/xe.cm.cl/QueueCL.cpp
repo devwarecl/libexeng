@@ -5,7 +5,7 @@ namespace xe { namespace cm {
 
     QueueCL::QueueCL(cl::Context &context_) : context(context_) {
         cl_int errCode = 0;
-        cl::CommandQueue queue = cl::CommandQueue(context, &errCode);
+        cl::CommandQueue queue = cl::CommandQueue(context, 0, &errCode);
         
         this->queue = queue;
     }

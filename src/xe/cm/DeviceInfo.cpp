@@ -3,17 +3,32 @@
 
 namespace xe { namespace cm {
 
-    DeviceInfo::DeviceInfo() {}
+	struct DeviceInfo::Private {
+		std::string name;
+        std::string vendor;        
+	};
+
+    DeviceInfo::DeviceInfo() {
+		impl = new DeviceInfo::Private();
+	}
     
-    DeviceInfo::DeviceInfo(const std::string &name_, const std::string &vendor_) : 
-        name(name_), vendor(vendor_) {}
+    DeviceInfo::DeviceInfo(const std::string &name, const std::string &vendor) {
+		impl = new DeviceInfo::Private();
+
+		impl->name = name;
+		impl->vendor = vendor;
+	}
     
+	DeviceInfo::~DeviceInfo() {
+		delete impl;
+	}
+
     bool DeviceInfo::operator== (const DeviceInfo &other) const {
-        if (name != other.name) {
+        if (this->getName() != other.getName()) {
             return false;
         }
         
-        if (vendor != other.vendor) {
+        if (this->getVendor() != other.getVendor()) {
             return false;
         }
         
@@ -21,6 +36,14 @@ namespace xe { namespace cm {
     }
     
     bool DeviceInfo::operator!= (const DeviceInfo &other) const {
-        return ! (*this == other);
+        return !(*this == other);
     }
+	
+	std::string DeviceInfo::getName() const {
+		return impl->name;
+	}
+
+	std::string DeviceInfo::getVendor() const {
+		return impl->vendor;
+	}
 }}

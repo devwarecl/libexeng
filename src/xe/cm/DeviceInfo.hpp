@@ -9,16 +9,24 @@
 
 namespace xe { namespace cm {
 
-    struct EXENGAPI DeviceInfo {
-        std::string name;
-        std::string vendor;
-        
+    class EXENGAPI DeviceInfo {
+	public:
         DeviceInfo();
         
         DeviceInfo(const std::string &name, const std::string &vendor);
+
+		~DeviceInfo();
         
         bool operator== (const DeviceInfo &info) const;
         bool operator!= (const DeviceInfo &info) const;
+
+		std::string getName() const;
+
+		std::string getVendor() const;
+
+	private:
+		struct Private;
+		Private *impl = nullptr;
     };
 }}
 

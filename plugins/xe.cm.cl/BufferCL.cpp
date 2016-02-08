@@ -5,7 +5,15 @@ namespace xe { namespace cm {
 
     BufferCL::BufferCL(cl::CommandQueue *queue, cl::Context &context, const int cache_size) {
         cl_int errCode = 0;
-        this->buffer = cl::Buffer(context, CL_MEM_READ_WRITE, cache_size, nullptr, &errCode);
+
+        this->buffer = cl::Buffer (
+			context, 
+			static_cast<cl_mem_flags>(CL_MEM_READ_WRITE), 
+			static_cast<std::size_t>(cache_size), 
+			nullptr, 
+			&errCode
+		);
+
         this->cache_size = cache_size;
         this->queue = queue;        
     }

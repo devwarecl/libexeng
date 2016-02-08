@@ -17,6 +17,6 @@ namespace xe { namespace cm {
     }
     
     ContextPtr DeviceCL::createContext() {
-        
+        return ContextPtr();
     }
 }}
