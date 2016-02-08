@@ -49,7 +49,7 @@ namespace xe {
 			return this->data;
 		}
 
-		virtual void* lock(BufferLockMode::Enum) override {
+		virtual void* lock(BufferUsage::Enum) override {
 			return this->data;
 		}
 

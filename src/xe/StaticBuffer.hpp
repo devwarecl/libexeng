@@ -18,7 +18,7 @@ namespace xe {
             return dataSize;
         }
         
-        virtual void* lock(BufferLockMode::Enum) override {
+        virtual void* lock(BufferUsage::Enum) override {
             return data;
         }
         

@@ -11,6 +11,8 @@ namespace xe { namespace cm {
 
     class KernelCL : public Kernel {
     public:
+        KernelCL(const cl::Program &program, const std::string &kernel_name);
+        
         virtual ~KernelCL();
 
         virtual void setArg(const int index, const Buffer *buffer) override;
@@ -23,6 +25,7 @@ namespace xe { namespace cm {
         }
 
     private:
+        const cl::Program &program;
         cl::Kernel kernel;
     };
 }}

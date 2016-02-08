@@ -16,7 +16,7 @@ namespace xe { namespace gfx {
 		return ::FreeImage_GetPitch(this->image->getBitmap()) * volume;
 	}
 
-    void* BufferFI::lock(BufferLockMode::Enum mode) {
+    void* BufferFI::lock(BufferUsage::Enum mode) {
         return ::FreeImage_GetBits(image->getBitmap());
     }
 

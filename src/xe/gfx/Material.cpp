@@ -101,7 +101,7 @@ namespace xe { namespace gfx {
 		 */
 		void fill() 
 		{
-            BufferLocker<std::uint8_t> locker(this->buffer.get(), BufferLockMode::Write);
+            BufferLocker<std::uint8_t> locker(this->buffer.get(), BufferUsage::Write);
             
 			std::uint8_t *bufferData = locker.getPointer();
 
@@ -153,7 +153,7 @@ namespace xe { namespace gfx {
         }
 #endif
         
-        BufferLocker<std::uint8_t> locker(this->impl->buffer.get(), BufferLockMode::Write);
+        BufferLocker<std::uint8_t> locker(this->impl->buffer.get(), BufferUsage::Write);
         
         const int offset = this->getFormat()->getOffset(index);
         std::uint8_t* materialData = locker.getPointer();

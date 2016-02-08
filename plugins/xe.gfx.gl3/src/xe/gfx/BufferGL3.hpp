@@ -15,7 +15,7 @@ namespace xe { namespace gfx { namespace gl3 {
         BufferGL3(const int size, GLenum target);
         virtual ~BufferGL3();
         
-        virtual void* lock(BufferLockMode::Enum mode) override;
+        virtual void* lock(BufferUsage::Enum mode) override;
 
 		virtual void unlock() override;
 

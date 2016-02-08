@@ -1,4 +1,6 @@
 
+#pragma once
+
 #ifndef __xe_cm_queuecl_hpp__
 #define __xe_cm_queuecl_hpp__
 
@@ -8,7 +10,7 @@
 namespace xe { namespace cm {
     class QueueCL : public Queue {
     public:
-        QueueCL(cl::CommandQueue queue);
+        QueueCL(cl::Context &context);
 
         virtual ~QueueCL();
 
@@ -20,7 +22,16 @@ namespace xe { namespace cm {
         
         virtual void wait() override;
 
+        cl::CommandQueue& getWrapped() {
+            return queue;
+        }
+        
+        const cl::CommandQueue& getWrapped() const {
+            return queue;
+        }
+        
     private:
+        cl::Context &context;
         cl::CommandQueue queue;
         cl::Event event;
     };

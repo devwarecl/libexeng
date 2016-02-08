@@ -28,11 +28,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		::glDeleteBuffers(1, &this->bufferId);
 	}
 
-    void* BufferGL3::lock(BufferLockMode::Enum mode) {
-        
-        
-        
-        
+    void* BufferGL3::lock(BufferUsage::Enum mode) {
         return nullptr;
     }
 

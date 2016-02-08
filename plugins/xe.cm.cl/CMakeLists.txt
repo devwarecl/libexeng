@@ -12,6 +12,8 @@ set (xe_cm_cl_src
 	BufferCL.cpp BufferCL.hpp 
 	KernelCL.cpp KernelCL.hpp 
 	PluginCL.cpp PluginCL.hpp 
+    DeviceCL.cpp DeviceCL.hpp 
+    ContextCL.cpp ContextCL.hpp 
 	QueueCL.cpp QueueCL.hpp 
 	ProgramCL.cpp ProgramCL.hpp 
 	ProgramModuleCL.cpp ProgramModuleCL.hpp 

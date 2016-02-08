@@ -28,8 +28,8 @@ BOOST_AUTO_TEST_CASE(TestBuffer)
 		xe::HeapBuffer buffer2(sizeof(values2), values2);
 
 		{
-			auto locker1 = buffer1.getLocker(xe::BufferLockMode::Read);
-			auto locker2 = buffer2.getLocker(xe::BufferLockMode::Read);
+			auto locker1 = buffer1.getLocker(xe::BufferUsage::Read);
+			auto locker2 = buffer2.getLocker(xe::BufferUsage::Read);
 
 			BOOST_CHECK_EQUAL(std::memcmp(values1, locker1.getPointer(), sizeof(values1)), 0);
 			BOOST_CHECK_EQUAL(std::memcmp(values2, locker2.getPointer(), sizeof(values2)), 0);
@@ -39,8 +39,8 @@ BOOST_AUTO_TEST_CASE(TestBuffer)
 		buffer1.write(values1);
 		buffer2.write(values2);
 		{
-			auto locker1 = buffer1.getLocker(xe::BufferLockMode::Read);
-			auto locker2 = buffer2.getLocker(xe::BufferLockMode::Read);
+			auto locker1 = buffer1.getLocker(xe::BufferUsage::Read);
+			auto locker2 = buffer2.getLocker(xe::BufferUsage::Read);
 
 			BOOST_CHECK_EQUAL(std::memcmp(values1, locker1.getPointer(), sizeof(values1)), 0);	
 			BOOST_CHECK_EQUAL(std::memcmp(values2, locker2.getPointer(), sizeof(values2)), 0);	
@@ -68,8 +68,8 @@ BOOST_AUTO_TEST_CASE(TestBuffer)
 	buffer4.write(values4, 12, 4, 0);
 
 	{
-		auto locker3 = buffer3.getLocker(xe::BufferLockMode::Read);
-		auto locker4 = buffer4.getLocker(xe::BufferLockMode::Read);
+		auto locker3 = buffer3.getLocker(xe::BufferUsage::Read);
+		auto locker4 = buffer4.getLocker(xe::BufferUsage::Read);
 
 		BOOST_CHECK_NE(std::memcmp(values3, locker3.getPointer(), buffer3.getSize()), 0);
 		BOOST_CHECK_NE(std::memcmp(values4, locker4.getPointer(), buffer4.getSize()), 0);

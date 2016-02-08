@@ -20,35 +20,50 @@ namespace xe { namespace cm {
         return cache.getSize();
     }
 
-    void* BufferCL::lock(BufferLockMode::Enum mode) {
-        if (mode&BufferLockMode::Read) {
-            
-            
-            
-            
+    void* BufferCL::lock(BufferUsage::Enum mode) {
+        bool sync = false;
+        
+        if (cache.getSize() != cache_size) {
+            cache.alloc(cache_size);
+            sync = true;
+        }
+        
+        void* cache_ptr = cache.lock(mode);
+        
+        if (mode&BufferUsage::Read) {
+            // sync the buffer (enable for reading)
+            if (sync) {
+                queue->enqueueReadBuffer(buffer, CL_TRUE, 0, cache_size, cache_ptr);
+            }
         }
     
-        if (mode&BufferLockMode::Write) {
-        
+        if (mode&BufferUsage::Write) {
+            this->cache_ptr = cache_ptr;
         }
+        
+        return cache_ptr;
     }
 
     void BufferCL::unlock() {
+        void *cache_ptr = this->cache_ptr;
+        this->cache_ptr = nullptr;
         
+        if (cache_ptr) {
+            queue->enqueueWriteBuffer(buffer, CL_TRUE, 0, cache_size, cache_ptr);
+        }
+        
+        cache.unlock();
     }
 
     const void* BufferCL::lock() const {
-        if (cache.getSize() != cache_size) {
-            cache.alloc(cache_size);
-            
-            auto locker = cache.lock();
-            queue->enqueueReadBuffer(buffer, CL_TRUE, 0, locker.getSize(), locker.getPointer());
-        }
-        
-        return cache.lock();
+        return const_cast<BufferCL*>(this)->lock(BufferUsage::Read);
     }
 
     void BufferCL::unlock() const {
-        cache.unlock();
+        const_cast<BufferCL*>(this)->unlock();
+    }
+    
+    TypeInfo BufferCL::getTypeInfo() const {
+        return TypeId<BufferCL>();
     }
 }}

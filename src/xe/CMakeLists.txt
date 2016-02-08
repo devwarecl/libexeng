@@ -40,11 +40,16 @@ set (FrameworkFiles_hpp
 set (FrameworkFiles ${FrameworkFiles_hpp} ${FrameworkFiles_cpp})
 
 set (ComputeFiles_hpp
+    cm/Forward.hpp
     cm/ComputeLanguage.hpp
     cm/ComputeManager.hpp
+    cm/Device.hpp
+    cm/DeviceInfo.hpp
     cm/ComputeModule.hpp
     cm/ComputeModuleDesc.hpp
     cm/ComputeModuleFactory.hpp
+    cm/Context.hpp
+    cm/ContextOptions.hpp
     cm/Program.hpp
     cm/ProgramModule.hpp
     cm/Kernel.hpp
@@ -54,9 +59,13 @@ set (ComputeFiles_hpp
 set (ComputeFiles_cpp
     cm/ComputeLanguage.cpp
     cm/ComputeManager.cpp
+    cm/Device.cpp
+    cm/DeviceInfo.cpp
     cm/ComputeModule.cpp
     cm/ComputeModuleDesc.cpp
     cm/ComputeModuleFactory.cpp
+    cm/Context.cpp
+    cm/ContextOptions.cpp
     cm/Program.cpp
     cm/ProgramModule.cpp
     cm/Kernel.cpp

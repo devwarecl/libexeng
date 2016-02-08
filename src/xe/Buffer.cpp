@@ -34,7 +34,7 @@ namespace xe {
 	}
 
 	void Buffer::write(const void *src_data, const int write_size, const int src_offset, const int dst_offset) {
-		BufferLocker<void> locker(this, xe::BufferLockMode::Write);
+		BufferLocker<void> locker(this, xe::BufferUsage::Write);
 
 #if defined (EXENG_DEBUG)
 		if (src_offset + write_size > this->getSize()) {

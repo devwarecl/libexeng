@@ -166,7 +166,7 @@ namespace xe { namespace gfx {
 		}
 
 		BufferPtr createVertexBuffer(Buffer *buffer) {
-			BufferLocker<void> locker(buffer, BufferLockMode::Read);
+			BufferLocker<void> locker(buffer, BufferUsage::Read);
             
 			return this->createVertexBuffer(buffer->getSize(), locker.getPointer());
 		}
@@ -177,7 +177,7 @@ namespace xe { namespace gfx {
         virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data) = 0;
 
 		BufferPtr createIndexBuffer(Buffer *buffer) {
-            BufferLocker<void> locker(buffer, BufferLockMode::Read);
+            BufferLocker<void> locker(buffer, BufferUsage::Read);
             
 			return this->createIndexBuffer(buffer->getSize(), locker.getPointer());
 		}

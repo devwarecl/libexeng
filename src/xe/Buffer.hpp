@@ -22,7 +22,7 @@
 
 namespace xe {
 
-	struct BufferLockMode : public Enum {
+	struct BufferUsage : public Enum {
 		enum Enum {
 			Read = 1,
 			Write = 2,
@@ -33,7 +33,7 @@ namespace xe {
 	template<typename PointerType>
 	class BufferLocker {
 	public:
-		explicit BufferLocker(Buffer *buffer, BufferLockMode::Enum mode);
+		explicit BufferLocker(Buffer *buffer, BufferUsage::Enum mode);
 
 		~BufferLocker();
 
@@ -41,12 +41,12 @@ namespace xe {
 
 		int getSize() const;
         
-        const BufferLockMode::Enum getLockMode() const;
+        const BufferUsage::Enum getLockMode() const;
         
 	private:
 		Buffer *buffer = nullptr;
 		PointerType *pointer = nullptr;
-        const BufferLockMode::Enum mode;
+        const BufferUsage::Enum mode;
 	};
 
 	template<typename PointerType>
@@ -60,7 +60,7 @@ namespace xe {
 		
 		int getSize() const;
 
-        const BufferLockMode::Enum getLockMode() const;
+        const BufferUsage::Enum getLockMode() const;
         
 	private:
 		const Buffer *buffer = nullptr;
@@ -84,7 +84,7 @@ namespace xe {
 		 */
 		virtual int getSize() const = 0;
 
-        virtual void* lock(BufferLockMode::Enum mode) = 0;
+        virtual void* lock(BufferUsage::Enum mode) = 0;
 
 		virtual void unlock() = 0;
 
@@ -119,7 +119,7 @@ namespace xe {
 		}
 
 		template<typename PointerType>
-		BufferLocker<PointerType> getLocker(BufferLockMode::Enum mode = BufferLockMode::ReadWrite) {
+		BufferLocker<PointerType> getLocker(BufferUsage::Enum mode = BufferUsage::ReadWrite) {
 			return BufferLocker<PointerType>(this, mode);
 		}
 
@@ -128,7 +128,7 @@ namespace xe {
 			return BufferLockerConst<PointerType>(this);
 		}
 
-		BufferLocker<void> getLocker(BufferLockMode::Enum mode = BufferLockMode::ReadWrite) {
+		BufferLocker<void> getLocker(BufferUsage::Enum mode = BufferUsage::ReadWrite) {
 			return BufferLocker<void>(this, mode);
 		}
 
@@ -142,7 +142,7 @@ namespace xe {
 	typedef std::unique_ptr<Buffer> BufferPtr;
 	
 	template<typename PointerType>
-	inline BufferLocker<PointerType>::BufferLocker(Buffer *buffer, BufferLockMode::Enum mode_) : mode(mode_) {
+	inline BufferLocker<PointerType>::BufferLocker(Buffer *buffer, BufferUsage::Enum mode_) : mode(mode_) {
 		this->buffer = buffer;
 		this->pointer = reinterpret_cast<PointerType*>(this->buffer->lock(mode_));
 	}
@@ -163,7 +163,7 @@ namespace xe {
 	}
 
     template<typename PointerType>
-    const BufferLockMode::Enum BufferLocker<PointerType>::getLockMode() const {
+    const BufferUsage::Enum BufferLocker<PointerType>::getLockMode() const {
         return mode;
     }
     
@@ -189,8 +189,8 @@ namespace xe {
 	}
     
     template<typename PointerType>
-    const BufferLockMode::Enum BufferLockerConst<PointerType>::getLockMode() const {
-        return BufferLockMode::Read;
+    const BufferUsage::Enum BufferLockerConst<PointerType>::getLockMode() const {
+        return BufferUsage::Read;
     }
 }
 

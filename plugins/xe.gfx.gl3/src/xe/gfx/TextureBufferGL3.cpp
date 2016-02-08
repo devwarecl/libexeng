@@ -71,10 +71,10 @@ namespace xe { namespace gfx { namespace gl3 {
         return cache.getSize();
     }
     
-    void* TextureBufferGL3::lock(BufferLockMode::Enum mode) {
+    void* TextureBufferGL3::lock(BufferUsage::Enum mode) {
 		void *cache_ptr = cache.lock(mode);
 
-		if (mode&BufferLockMode::Read) {
+		if (mode&BufferUsage::Read) {
 			this->cache_ptr = cache_ptr;
 		}
 

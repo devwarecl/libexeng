@@ -17,7 +17,6 @@ namespace xe { namespace cm {
         virtual void link() = 0;
         
         virtual bool isLinked() const = 0;
-        virtual std::string getName() = 0;
     };
     
     typedef std::unique_ptr<Program> ProgramPtr;

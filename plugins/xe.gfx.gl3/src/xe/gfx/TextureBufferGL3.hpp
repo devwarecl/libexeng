@@ -26,7 +26,7 @@ namespace xe { namespace gfx { namespace gl3 {
         
 		virtual int getSize() const override;
 
-        virtual void* lock(BufferLockMode::Enum mode) override;
+        virtual void* lock(BufferUsage::Enum mode) override;
 
 		virtual void unlock() override;
 

@@ -13,7 +13,7 @@ namespace xe { namespace cm {
 
     class BufferCL : public Buffer {
     public:
-        explicit BufferCL(cl::CommandQueue *queue, const int cache_size);
+        explicit BufferCL(cl::CommandQueue *queue, cl::Context &context, const int cache_size);
     
         virtual ~BufferCL();
 
@@ -21,18 +21,28 @@ namespace xe { namespace cm {
 
 		virtual int getSize() const override;
 
-        virtual void* lock(BufferLockMode::Enum mode) override;
+        virtual void* lock(BufferUsage::Enum mode) override;
 
 		virtual void unlock() override;
 
 		virtual const void* lock() const override;
 
 		virtual void unlock() const override;
+        
+        virtual TypeInfo getTypeInfo() const override;
 
+        cl::Buffer& getWrapped() {
+            return buffer;
+        }
+        
+        const cl::Buffer& getWrapped() const {
+            return buffer;
+        }
+        
     private:
         cl::Buffer buffer;
         cl::CommandQueue *queue = nullptr;
-        xe::HeapBuffer cache;
+        mutable xe::HeapBuffer cache;
         void* cache_ptr = nullptr;
         int cache_size = 0;
     };
