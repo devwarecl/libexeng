@@ -53,14 +53,12 @@ namespace xe { namespace cm {
     }
     
     KernelPtr ContextCL::createKernel(const Program* program, const std::string &kernel_name) {
-		/*
         KernelPtr kernel = std::make_unique<KernelCL> (
-            &static_cast<const ProgramCL*>(program)->getWrapped(),
+            static_cast<const ProgramCL*>(program)->getWrapped(),
             kernel_name
         );
         
         return kernel;
-		*/
     }
     
     QueuePtr ContextCL::createQueue() {
