@@ -7,22 +7,21 @@
 #include <CL/cl-xe.hpp>
 #include <xe/cm/Platform.hpp>
 
+#include "DeviceCL.hpp"
+
 namespace xe { namespace cm {
 
     class PlatformCL : public Platform {
     public:
-        PlatformCL();
+        explicit PlatformCL(cl::Platform &platform);
 
         ~PlatformCL();
 
-        virtual DevicePtr createDevice() override;
-
-        virtual DevicePtr createDevice(const DeviceInfo &info) override;
-        
-        virtual std::vector<DeviceInfo> enumerateDevices() const override;
+        virtual std::vector<Device*> enumerateDevices() override;
 
     private:
         cl::Platform platform;
+        std::vector<DeviceCL> devices;        
     };
 }}
 

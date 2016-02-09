@@ -12,12 +12,8 @@ namespace xe { namespace cm {
     class EXENGAPI Platform {
     public:
         virtual ~Platform() {}
-                
-        virtual DevicePtr createDevice() = 0;
-
-        virtual DevicePtr createDevice(const DeviceInfo &info) = 0;
         
-        virtual std::vector<DeviceInfo> enumerateDevices() const = 0;
+        virtual std::vector<Device*> enumerateDevices() = 0;
     };
 
     typedef std::unique_ptr<Platform> PlatformPtr;

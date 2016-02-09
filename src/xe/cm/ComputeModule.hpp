@@ -16,11 +16,7 @@ namespace xe { namespace cm {
     public:
         virtual ~ComputeModule();
 
-        virtual std::vector<const PlatformInfo*> enumeratePlatforms() const = 0;
-
-        virtual PlatformPtr createPlatform(const PlatformInfo *info) = 0;
-
-        virtual PlatformPtr createPlatform() = 0;
+        virtual std::vector<Platform*> enumeratePlatforms() = 0;
     };
     
     typedef std::unique_ptr<ComputeModule> ComputeModulePtr;

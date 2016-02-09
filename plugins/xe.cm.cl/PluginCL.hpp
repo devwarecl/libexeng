@@ -6,9 +6,15 @@
 
 #include <xe/sys/Plugin.hpp>
 
+#include "ComputeModuleFactoryCL.hpp"
+
 namespace xe { namespace cm {
     class PluginCL : public xe::sys::Plugin {
 	public:
+        PluginCL();
+        
+        ~PluginCL();
+	
 		virtual std::string getName() const override;
 
         virtual std::string getDescription() const override;
@@ -18,6 +24,9 @@ namespace xe { namespace cm {
         virtual void initialize(Core *core) override;
 
         virtual void terminate() override;
+        
+     private:
+        ComputeModuleFactoryCL factory;
 	};
 }}
 

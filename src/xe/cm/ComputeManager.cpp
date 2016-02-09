@@ -28,6 +28,7 @@ namespace xe { namespace cm {
 
         for (auto pair : this->impl->factories) {
             computeModule = pair.second->create();
+            break;
         }
 
 		return computeModule;

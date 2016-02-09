@@ -4,13 +4,11 @@
 
 namespace xe { namespace cm {
     
-    DeviceCL::DeviceCL(cl::Platform &platform_) : platform(platform_) {
-        
+    DeviceCL::DeviceCL(cl::Platform &platform_, cl::Device &device_) 
+    : platform(platform_), device(device_) {
     }
     
-    DeviceCL::~DeviceCL() {
-        
-    }
+    DeviceCL::~DeviceCL() {}
     
     DeviceInfo DeviceCL::getInfo() {
         return {"OpenCL", "Vendor"};

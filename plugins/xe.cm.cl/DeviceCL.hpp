@@ -11,7 +11,7 @@ namespace xe { namespace cm {
 
     class DeviceCL : public Device {
     public:
-        DeviceCL(cl::Platform &platform);
+        DeviceCL(cl::Platform &platform, cl::Device &device);
         
         ~DeviceCL();
         

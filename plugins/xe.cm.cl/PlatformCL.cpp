@@ -3,23 +3,27 @@
 #include "DeviceCL.hpp"
 
 namespace xe { namespace cm {
-    PlatformCL::PlatformCL() {
-    }
-
-    PlatformCL::~PlatformCL() {
-    }
-
-    DevicePtr PlatformCL::createDevice() {
-        return DevicePtr();
-    }
-
-    DevicePtr PlatformCL::createDevice(const DeviceInfo &info) {
-        return DevicePtr();
-    }
+    PlatformCL::PlatformCL(cl::Platform &platform) {
+        this->platform = platform;
         
-    std::vector<DeviceInfo> PlatformCL::enumerateDevices() const {
-        std::vector<DeviceInfo> infos;
+        std::vector<cl::Device> devices;
+        
+        this->platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
+        
+        for (cl::Device& device : devices) {
+            this->devices.push_back(DeviceCL(platform, device));
+        }
+    }
 
-        return infos;
+    PlatformCL::~PlatformCL() {}
+   
+    std::vector<Device*> PlatformCL::enumerateDevices() {
+        std::vector<Device*> result;
+        
+        for (DeviceCL device : devices) {
+            result.push_back(&device);
+        }
+        
+        return result;
     }
 }}

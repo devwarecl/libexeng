@@ -9,6 +9,7 @@
 #include <xe/gfx/Mesh.hpp>
 #include <xe/gfx/TextureManager.hpp>
 #include <xe/cm/ComputeManager.hpp>
+#include <xe/cm/ComputeModule.hpp>
 #include <xe.main/Main.hpp>
 
 namespace demo {
@@ -86,7 +87,18 @@ namespace demo {
 class ComputeApplication : public xe::fw::Application {
 public:
     virtual int run(int argc, char **argv) override {
+        xe::cm::ComputeModulePtr module = this->getComputeManager()->createComputeModule();
+        
+        auto platforms = module->enumeratePlatforms();
 
+        std::cout << "Found " << platforms.size() << " platform(s)." << std::endl;
+        
+        for (xe::cm::Platform *platform : platforms) {
+            auto devices = platform->enumerateDevices();
+        
+            std::cout << "Found " << devices.size() << " device(s)." << std::endl;
+        }
+        
         return 0;
     }
 };

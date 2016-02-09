@@ -7,6 +7,8 @@
 #include <CL/cl-xe.hpp>
 #include <xe/cm/ComputeModule.hpp>
 
+#include "PlatformCL.hpp"
+
 namespace xe { namespace cm {
     class ComputeModuleCL : public ComputeModule {
     public:
@@ -14,14 +16,10 @@ namespace xe { namespace cm {
         
         ~ComputeModuleCL();
         
-        virtual std::vector<const PlatformInfo*> enumeratePlatforms() const override;
-
-        virtual PlatformPtr createPlatform(const PlatformInfo *info) override;
-
-        virtual PlatformPtr createPlatform() override;
+        virtual std::vector<Platform*> enumeratePlatforms() override;
 
     private:
-        std::vector<const PlatformInfo*> platforms;
+        std::vector<PlatformCL> platforms;
     };
 }}
 
