@@ -8,6 +8,7 @@
 #include <xe/gfx/Vertex.hpp>
 #include <xe/gfx/Mesh.hpp>
 #include <xe/gfx/TextureManager.hpp>
+#include <xe/cm/ComputeManager.hpp>
 #include <xe.main/Main.hpp>
 
 namespace demo {
@@ -82,8 +83,16 @@ namespace demo {
 	};
 }
 
+class ComputeApplication : public xe::fw::Application {
+public:
+    virtual int run(int argc, char **argv) override {
+
+        return 0;
+    }
+};
+
 namespace xe { namespace main {
 	int main(int argc, char** argv) {
-		return xe::fw::Application::execute<demo::DemoApplication>(argc, argv);
+		return xe::fw::Application::execute<ComputeApplication>(argc, argv);
 	}
 }}

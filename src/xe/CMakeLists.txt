@@ -50,6 +50,8 @@ set (ComputeFiles_hpp
     cm/ComputeModuleFactory.hpp
     cm/Context.hpp
     cm/ContextOptions.hpp
+	cm/Platform.hpp
+	cm/PlatformInfo.hpp
     cm/Program.hpp
     cm/ProgramModule.hpp
     cm/Kernel.hpp

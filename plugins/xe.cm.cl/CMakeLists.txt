@@ -9,6 +9,7 @@ add_definitions(-DCL_USE_DEPRECATED_OPENCL_1_1_APIS)
 set (xe_cm_cl_src
 	ComputeModuleCL.cpp ComputeModuleCL.hpp 
 	ComputeModuleFactoryCL.cpp ComputeModuleFactoryCL.hpp 
+	PlatformCL.cpp PlatformCL.hpp 
 	BufferCL.cpp BufferCL.hpp 
 	KernelCL.cpp KernelCL.hpp 
 	PluginCL.cpp PluginCL.hpp 
