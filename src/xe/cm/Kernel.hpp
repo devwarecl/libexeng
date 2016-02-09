@@ -16,10 +16,12 @@ namespace xe { namespace cm {
         virtual void setArg(const int index, const Buffer *buffer) = 0;        
         virtual void setArg(const int index, const int size, const void *data) = 0;
         
+        /*
         template<typename BasicType>
         void setArg(const int index, BasicType value) {
             this->setArg(index, sizeof(BasicType), &value);
         }
+        */
     };
     
     typedef std::unique_ptr<Kernel> KernelPtr;

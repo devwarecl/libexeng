@@ -6,21 +6,15 @@
 
 namespace xe { namespace cm {
 
-    KernelCL::KernelCL(const cl::Program &program_, const std::string &kernel_name) : program(program_) {
-        cl::Kernel kernel = cl::Kernel(program, kernel_name.c_str());
-        
-        this->kernel = kernel;
+    KernelCL::KernelCL(const cl::Program &program_, const std::string &kernel_name) {
+        program = program_;
+        kernel = cl::Kernel(program, kernel_name.c_str());
     }
     
     KernelCL::~KernelCL() {}
 
     void KernelCL::setArg(const int index, const Buffer *buffer) {
-        if (buffer->getTypeInfo() == TypeId<BufferCL>()) {
-            kernel.setArg(0, static_cast<const BufferCL *>(buffer)->getWrapped());
-            
-        } else {
-            EXENG_THROW_EXCEPTION("Invalid buffer");
-        }
+        kernel.setArg(index, static_cast<const BufferCL *>(buffer)->getWrapped());
     }
 
     void KernelCL::setArg(const int index, const int size, const void *data) {

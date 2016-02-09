@@ -11,7 +11,7 @@ namespace xe { namespace cm {
 
     class DeviceCL : public Device {
     public:
-        DeviceCL(cl::Platform &platform, cl::Device &device);
+        DeviceCL(const cl::Platform &platform, const cl::Device &device);
         
         ~DeviceCL();
         
@@ -28,7 +28,7 @@ namespace xe { namespace cm {
         }
         
     private:
-        cl::Platform &platform;
+        cl::Platform platform;
         cl::Device device;
     };    
 }}

@@ -8,6 +8,7 @@ namespace xe { namespace cm {
         ProgramPtr program = this->createProgram();
         
         program->add(std::move(module));
+        program->link();
         
         return program;
     }

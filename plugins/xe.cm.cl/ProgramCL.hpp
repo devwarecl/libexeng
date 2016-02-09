@@ -14,7 +14,7 @@ namespace xe { namespace cm {
 
     class ProgramCL : public Program {
     public:
-        explicit ProgramCL(cl::Context &context);
+        explicit ProgramCL(const cl::Context &context, const cl::Device &device);
         virtual ~ProgramCL();
         
         virtual void add(ProgramModulePtr module) override;
@@ -31,7 +31,8 @@ namespace xe { namespace cm {
         }
         
     private:
-        cl::Context &context;
+        cl::Device device;
+        cl::Context context;
         cl::Program program;
         std::vector<std::string> modules;
     };

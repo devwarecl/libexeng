@@ -4,8 +4,10 @@
 
 namespace xe { namespace cm {
     
-    DeviceCL::DeviceCL(cl::Platform &platform_, cl::Device &device_) 
-        : platform(platform_), device(device_) {}
+    DeviceCL::DeviceCL(const cl::Platform &platform_, const cl::Device &device_) {
+        this->platform = platform_;
+        this->device = device_;
+    }
     
     DeviceCL::~DeviceCL() {}
     
@@ -14,7 +16,12 @@ namespace xe { namespace cm {
     }
     
     ContextPtr DeviceCL::createContext() {
-        ContextPtr context = std::make_unique<ContextCL>(device, nullptr);
+        cl_context_properties properties[] = {
+            CL_CONTEXT_PLATFORM, (cl_context_properties)platform(),
+            0, 0
+        };
+        
+        ContextPtr context = std::make_unique<ContextCL>(device, properties);
         
         return context;
     }

@@ -11,12 +11,9 @@
 
 namespace xe { namespace cm {
 
-    ContextCL::ContextCL(cl::Device &device_, cl_context_properties *properties) 
-        : device(device_) {
-        
-		cl_int errCode = 0;
-
-        cl::Context context = cl::Context(device, properties, nullptr, nullptr, &errCode);
+    ContextCL::ContextCL(const cl::Device &device_, cl_context_properties *properties) {
+        this->device = device_;
+        this->context = cl::Context(device, properties);
     }
     
     ContextCL::~ContextCL() {}
@@ -47,7 +44,7 @@ namespace xe { namespace cm {
     }
     
     ProgramPtr ContextCL::createProgram() {
-        ProgramPtr program = std::make_unique<ProgramCL>(context);
+        ProgramPtr program = std::make_unique<ProgramCL>(context, device);
         
         return program;
     }

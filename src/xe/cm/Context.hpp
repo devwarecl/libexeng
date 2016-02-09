@@ -37,6 +37,8 @@ namespace xe { namespace cm {
                 program->add(std::move(module));
             }
             
+            program->link();
+            
             return program;
         }
         

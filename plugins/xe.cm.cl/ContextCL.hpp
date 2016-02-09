@@ -11,7 +11,7 @@ namespace xe { namespace cm {
 
     class ContextCL : public Context {
     public:
-        ContextCL(cl::Device &device, cl_context_properties *properties);
+        ContextCL(const cl::Device &device, cl_context_properties *properties);
         
         ~ContextCL();
         
@@ -36,7 +36,7 @@ namespace xe { namespace cm {
         }
         
     private:
-        cl::Device &device;
+        cl::Device device;
         cl::Context context;
     };    
 }}

@@ -20,12 +20,16 @@ namespace xe { namespace cm {
         virtual void setArg(const int index, const int size, const void *data) override;
 
     public:
-        cl::Kernel& getHandle() {
+        cl::Kernel& getWrapped() {
+            return kernel;
+        }
+        
+        const cl::Kernel& getWrapped() const {
             return kernel;
         }
 
     private:
-        const cl::Program &program;
+        cl::Program program;
         cl::Kernel kernel;
     };
 }}

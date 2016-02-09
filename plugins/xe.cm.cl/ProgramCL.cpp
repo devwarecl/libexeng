@@ -1,8 +1,13 @@
 
 #include "ProgramCL.hpp"
 
+#include <xe/Exception.hpp>
+
 namespace xe { namespace cm {
-    ProgramCL::ProgramCL(cl::Context &context_) : context(context_) {}
+    ProgramCL::ProgramCL(const cl::Context &context_, const cl::Device &device_) {
+        device = device_;
+        context = context_;
+    }
 
     ProgramCL::~ProgramCL() {}
 
@@ -14,16 +19,23 @@ namespace xe { namespace cm {
     }
     
     void ProgramCL::link() {
-		cl::Program::Sources sources;
-		for (const std::string &module : modules) {
-			sources.push_back({module.c_str(), module.size()});
-		}
-
-        cl::Program program = cl::Program(context, sources);
-        
-        program.build();
-        
-        this->program = program;
+    
+        cl::Program program;
+    
+        try {
+            cl::Program::Sources sources;
+            for (const std::string &module : modules) {
+                sources.push_back({module.c_str(), module.size()});
+            }
+    
+            program = cl::Program(context, sources);
+            program.build();
+            
+            this->program = program;
+            
+        } catch (const std::exception &exp) {
+            EXENG_THROW_EXCEPTION(program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device));
+        }
     }
     
     bool ProgramCL::isLinked() const {

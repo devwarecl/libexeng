@@ -14,6 +14,10 @@ namespace xe { namespace cm {
 
         virtual ~QueueCL();
 
+        virtual void enqueueKernel(const Kernel *kernel, const int size, const int local, const int offset) override;
+
+        virtual void enqueueKernel(const Kernel *kernel, const Vector2i &size, const Vector2i &local, const Vector2i &offset) override;
+
         virtual void enqueueKernel(const Kernel *kernel, const Vector3i &size, const Vector3i &local, const Vector3i &offset) override;
         
         virtual void enqueueReadBuffer(const Buffer *buffer, const int offset, const int readSize, void* data) override;

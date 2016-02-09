@@ -13,7 +13,7 @@ namespace xe { namespace cm {
 
     class PlatformCL : public Platform {
     public:
-        explicit PlatformCL(cl::Platform &platform);
+        explicit PlatformCL(const cl::Platform &platform);
 
         ~PlatformCL();
 

@@ -85,7 +85,7 @@ namespace demo {
 }
 
 std::string program_src = R"(
-    __kernel void add(__write_only int* out, __read_only int* in1, __read_only int* in2) {
+    __kernel void add(__global __write_only int* out, __global __read_only int* in1, __global __read_only int* in2) {
         const int i = get_global_id(0);
         out[i] = in1[i] + in2[i];
     }
@@ -152,7 +152,7 @@ public:
         kernel_add->setArg(2, in2.get());
         
         // execute kernel
-        queue->enqueueKernel(kernel_add.get(), xe::Vector3i{SIZE}, xe::Vector3i{0}, xe::Vector3i{0});
+        queue->enqueueKernel(kernel_add.get(), SIZE, 0, 0);
         
         // read back the results
         queue->enqueueReadBuffer(out.get(), 0, ARRAY_SIZE, out_array);
