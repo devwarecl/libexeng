@@ -27,6 +27,8 @@ namespace xe { namespace cm {
         
         ProgramPtr createProgram(ProgramModulePtr module);
         
+        ProgramPtr createProgram(const std::string &source);
+        
         template<typename ProgramModuleCollection>
         ProgramPtr createProgram(ProgramModuleCollection collection) {
             ProgramPtr program = this->createProgram();

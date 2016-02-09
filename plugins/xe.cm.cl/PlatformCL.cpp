@@ -20,7 +20,7 @@ namespace xe { namespace cm {
     std::vector<Device*> PlatformCL::enumerateDevices() {
         std::vector<Device*> result;
         
-        for (DeviceCL device : devices) {
+        for (DeviceCL &device : devices) {
             result.push_back(&device);
         }
         

@@ -11,4 +11,8 @@ namespace xe { namespace cm {
         
         return program;
     }
+    
+    ProgramPtr Context::createProgram(const std::string &source) {
+        return this->createProgram(this->createProgramModule(source));
+    }
 }}
