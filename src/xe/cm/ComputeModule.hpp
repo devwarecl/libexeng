@@ -12,6 +12,13 @@
 #include <xe/cm/PlatformInfo.hpp>
 
 namespace xe { namespace cm {    
+
+    /**
+     * @brief Compute platform software interface.
+     * 
+     * The compute module is a software interface to a grid-based computing API, like DirectCompute or OpenCL.
+     * 
+     */
     class EXENGAPI ComputeModule {
     public:
         virtual ~ComputeModule();

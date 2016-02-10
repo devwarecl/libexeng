@@ -146,13 +146,13 @@ public:
         xe::BufferPtr in1 = context->createBuffer(queue.get(), ARRAY_SIZE, in1_array);
         xe::BufferPtr in2 = context->createBuffer(queue.get(), ARRAY_SIZE, in2_array);
         
-        // prepare execution kernel
+        // prepare execution of the kernel
         kernel_add->setArg(0, out.get());
         kernel_add->setArg(1, in1.get());
         kernel_add->setArg(2, in2.get());
         
         // execute kernel
-        queue->enqueueKernel(kernel_add.get(), SIZE, 0, 0);
+        queue->enqueueKernel(kernel_add.get(), SIZE);
         
         // read back the results
         queue->enqueueReadBuffer(out.get(), 0, ARRAY_SIZE, out_array);

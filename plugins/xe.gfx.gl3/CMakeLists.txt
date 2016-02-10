@@ -24,6 +24,7 @@ SET (GL3Files
 	src/xe/gfx/GL3.hpp 
 	src/xe/gfx/gl_core_3_3.h                src/xe/gfx/gl_core_3_3.c
 	src/xe/gfx/PluginGL3.hpp                src/xe/gfx/PluginGL3.cpp
+	src/xe/gfx/Context.hpp                  src/xe/gfx/Context.cpp
 )
 
 SOURCE_GROUP (\\ FILES ${GL3Files})

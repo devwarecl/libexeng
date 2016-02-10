@@ -35,7 +35,7 @@
 #include <xe/gfx/ModernModule.hpp>
 #include <xe/gfx/LegacyModule.hpp>
 #include <xe/gfx/Material2.hpp>
-#include <xe/cm/ComputeModule.hpp>
+#include <xe/cm/Forward.hpp>
 
 namespace xe { namespace gfx {
 
@@ -57,6 +57,23 @@ namespace xe { namespace gfx {
         enum Enum { Window, Fullscreen };
     };
 
+    /**
+     * @brief The used graphics API backend.
+     */
+    struct GraphicsBackend : public Enum {
+        enum Enum {
+            Unknown,
+            OpenGL_Legacy,
+            OpenGL_Core,
+            OpenGL_ES_1,
+            OpenGL_ES_2,
+            OpenGL_ES_3,
+            Direct3D_9,
+            Direct3D_10,
+            Software
+        };
+    };
+    
     /**
     * @brief Encapsulate a display mode.
     */
@@ -275,22 +292,20 @@ namespace xe { namespace gfx {
 		/**
 		 * @brief Create a GPU dependent material.
 		 * 
-		 * This material *maybe* stored in GPU memory.
+		 * This material *may be* stored in GPU memory.
 		 */
 		virtual Material2Ptr createMaterial(const MaterialFormat2 *format);
         
-        /**
-         * @brief Get the current valid compute module. 
-         * 
-         * The compute module is a software interface to a grid-based computing API, like DirectCompute or OpenCL.
-         * This module is associated to the current GraphicsDriver, so its buffer resources are shared between both 
-         * modules.
-         * 
-         * Return 'nullptr' if no compute module is asocciated with this graphics driver.
+        /** 
+         * @brief Get the underlying graphics backend identification
          */
-        virtual xe::cm::ComputeModule* getComputeModule() {
-            return nullptr;
-        }
+        virtual GraphicsBackend::Enum getBackend() const = 0;
+
+        /**
+         * @brief Get the graphics backend dependent,
+         * @return 
+         */        
+        virtual std::uint64_t getHandle() const = 0;
     };
 
 	typedef std::unique_ptr<GraphicsDriver> GraphicsDriverPtr;

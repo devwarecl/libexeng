@@ -60,8 +60,6 @@ namespace xe { namespace gfx { namespace gl3 {
 		}
 
         // Configure and create the context
-        auto context = std::make_unique<GL3Context>();
-
         GLFWmonitor *monitor = nullptr;
         
         switch (displayMode.status) {
@@ -79,12 +77,13 @@ namespace xe { namespace gfx { namespace gl3 {
         int width = displayMode.size.width;
         int height = displayMode.size.height;
         
-        context->window = ::glfwCreateWindow(width, height, "exeng-graphics-gl3 Window", monitor, NULL);
-        if (context->window == nullptr) {
-			EXENG_THROW_EXCEPTION("GraphicsDriverGL3::GraphicsDriverGL3: Cannot create a GLFW Window.");
+        context = Context(::glfwCreateWindow(width, height, "exeng-graphics-gl3 Window", monitor, NULL));
+        
+        if (context.getWindow() == nullptr) {
+			EXENG_THROW_EXCEPTION("GraphicsDriverGL3::GraphicsDriverGL3: Cann't create a GLFW Window.");
         }
         
-        ::glfwMakeContextCurrent(context->window);
+        ::glfwMakeContextCurrent(context.getWindow());
         
         // Initialize the OpenGL 3 core functions
         ::ogl_LoadFunctions();
@@ -96,8 +95,8 @@ namespace xe { namespace gfx { namespace gl3 {
 		// ::glClearDepth(1.0f);
 
 		// Link the current input manager
-		::glfwSetWindowUserPointer(context->window, this);
-		this->inputManager.setWindow(context->window); 
+		::glfwSetWindowUserPointer(context.getWindow(), this);
+		this->inputManager.setWindow(context.getWindow()); 
 
         // Hold all the default objects
 		this->context = std::move(context);
@@ -116,7 +115,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			this->initialized = false;
         }
 
-		this->context.reset(nullptr);
+		this->context.~Context();
     }
 
     bool GraphicsDriverGL3::isInitialized() const {
@@ -171,7 +170,7 @@ namespace xe { namespace gfx { namespace gl3 {
         }
 #endif
         ::glFinish();
-        ::glfwSwapBuffers(this->context->window);
+        ::glfwSwapBuffers(this->context.getWindow());
         
         this->renderingFrame = false;
         
@@ -556,5 +555,9 @@ namespace xe { namespace gfx { namespace gl3 {
 
 	ModernModule* GraphicsDriverGL3::getModernModule() {
 		return this;
+	}
+	
+	std::uint64_t GraphicsDriverGL3::getHandle() const {
+        return context.getHandle();
 	}
 }}}

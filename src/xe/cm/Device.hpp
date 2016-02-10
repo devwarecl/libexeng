@@ -8,6 +8,7 @@
 #include <xe/Object.hpp>
 #include <xe/cm/Context.hpp>
 #include <xe/cm/DeviceInfo.hpp>
+#include <xe/gfx/Forward.hpp>
 
 namespace xe { namespace cm {
 
@@ -18,6 +19,8 @@ namespace xe { namespace cm {
         virtual DeviceInfo getInfo() = 0;
         
         virtual ContextPtr createContext() = 0;
+        
+        virtual ContextPtr createContext(xe::gfx::GraphicsDriver *driver) = 0;
     };
 
     typedef std::unique_ptr<Device> DevicePtr;

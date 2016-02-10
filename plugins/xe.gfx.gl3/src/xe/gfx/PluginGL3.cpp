@@ -18,6 +18,7 @@
 #include <xe/Core.hpp>
 #include <xe/Exception.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
+#include <GLFW/glfw3.h>
 
 namespace xe { namespace gfx { namespace gl3 {
     PluginGL3::PluginGL3() {
@@ -45,6 +46,10 @@ namespace xe { namespace gfx { namespace gl3 {
 			EXENG_THROW_EXCEPTION("Can't initialize the plugin if already been initialized.");
         } 
 
+        if (!::glfwInit()) {
+            EXENG_THROW_EXCEPTION("Error during the initialization of the GLFW3 library.");
+        }
+        
         this->root = root;
         this->root->getGraphicsManager()->addDriverFactory(this->factory.get());
     }
@@ -56,6 +61,8 @@ namespace xe { namespace gfx { namespace gl3 {
 
         this->root->getGraphicsManager()->removeDriverFactory(this->factory.get());
         this->root = nullptr;
+        
+        ::glfwTerminate();
     }
 
     PluginGL3 *currentPlugin = nullptr;

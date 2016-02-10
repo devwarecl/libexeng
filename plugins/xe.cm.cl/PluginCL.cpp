@@ -22,11 +22,14 @@ namespace xe { namespace cm {
         return {1, 0, 0, 0};
     }
 
-    void PluginCL::initialize(Core *core) {
+    void PluginCL::initialize(Core *core_) {
+        core = core_;
         core->getComputeManager()->addFactory(&factory);
     }
 
-    void PluginCL::terminate() {}
+    void PluginCL::terminate() {
+        core->getComputeManager()->removeFactory(&factory);
+    }
 }}
 
 

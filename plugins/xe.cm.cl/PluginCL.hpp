@@ -26,6 +26,7 @@ namespace xe { namespace cm {
         virtual void terminate() override;
         
      private:
+        Core *core = nullptr;
         ComputeModuleFactoryCL factory;
 	};
 }}

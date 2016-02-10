@@ -24,27 +24,13 @@
 #include <xe/gfx/GraphicsDriverBase.hpp>
 #include <xe/gfx/VertexFormat.hpp>
 
+#include "Context.hpp"
 #include "InputManagerGLFW.hpp"
 #include "BufferGL3.hpp"
 #include "MeshSubsetGL3.hpp"
 #include "ShaderProgramGL3.hpp"
 
 namespace xe { namespace gfx { namespace gl3 {
-
-    struct GL3Context {
-        GLFWwindow *window = nullptr;
-
-        inline GL3Context()  {
-            if (!::glfwInit()) {
-                throw std::runtime_error("GL3Context::GL3Context -> GLFW initialization error.");
-            }
-        }
-
-        inline ~GL3Context() {
-            ::glfwDestroyWindow(window);
-            ::glfwTerminate();
-        }
-    };
     
     class ShaderProgramGL3;
 
@@ -113,9 +99,15 @@ namespace xe { namespace gfx { namespace gl3 {
 			return &this->inputManager;
 		}
 
+        virtual GraphicsBackend::Enum getBackend() const override {
+            return GraphicsBackend::OpenGL_Core;
+        }
+        
+        virtual std::uint64_t getHandle() const override;
+        
     public:
         inline const GLFWwindow* getGLFWwindow() const {
-            return this->context->window;
+            return context.getWindow();
         }
         
     private:
@@ -130,7 +122,7 @@ namespace xe { namespace gfx { namespace gl3 {
         void postRenderMaterial(const Material *material);
 
     private:
-        std::unique_ptr<GL3Context> context;
+        Context context;
         
         const ShaderProgramGL3 *shaderProgram = nullptr;
         const BufferGL3 *vertexBuffer = nullptr;

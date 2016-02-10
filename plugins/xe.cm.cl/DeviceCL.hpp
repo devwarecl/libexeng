@@ -19,6 +19,8 @@ namespace xe { namespace cm {
         
         virtual ContextPtr createContext() override;
 
+        virtual ContextPtr createContext(xe::gfx::GraphicsDriver *driver) override;
+
         cl::Device& getWrapped() {
             return device;
         }
