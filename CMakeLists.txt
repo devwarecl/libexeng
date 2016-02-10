@@ -10,6 +10,7 @@ OPTION (XE_GFX_FI "Enable FreeImage-based image loader implementation" OFF)
 OPTION (XE_GFX_LWO "Enable mesh loading from LWO files" OFF)
 OPTION (XE_SG_XML "Enable scene loading from XML files" OFF)
 OPTION (XE_CM_CL "Enable OpenCL computing module" OFF)
+OPTION (XE_GFX_ASSIMP "Enable Assimp mesh loader plugin" OFF)
 
 OPTION (XE_RT "Enable scene rendering trough Ray Tracing" OFF)
 OPTION (XE_TESTING "Enable unit testings" OFF)
@@ -101,4 +102,8 @@ ENDIF()
 
 IF(XE_CM_CL)
 	ADD_SUBDIRECTORY (plugins/xe.cm.cl)
+ENDIF()
+
+IF(XE_GFX_ASSIMP)
+	ADD_SUBDIRECTORY (plugins/xe.gfx.assimp)
 ENDIF()
