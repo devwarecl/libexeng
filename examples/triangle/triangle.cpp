@@ -44,18 +44,30 @@ public:
     xe::gfx::MaterialPtr createMaterial() {
         auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
         
-        material
-        
+		material->setShaderProgram(shader.get());
+		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("emission", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("shininess", 1.0f);
+
         return material;
     }
     
     xe::gfx::ShaderProgramPtr createProgram() {
-        
-        
+
+		std::string vshader_src = R"(
+#version 330
+
+
+
+		)";
+		
+        return xe::gfx::ShaderProgramPtr();
     }
     
-    xe::gfx::MeshSubset createSubset() {
-        return xe::gfx::MeshSubset();
+    xe::gfx::MeshSubsetPtr createSubset() {
+        return xe::gfx::MeshSubsetPtr();
     }
     
     void initialize() {
@@ -66,8 +78,8 @@ public:
         materialFormat = createMaterialFormat();
         
         subset = createSubset();
+		shader = createProgram();
         material = createMaterial();
-        shader = createSubset();
     }
     
     virtual int run(int argc, char **argv) override {
@@ -96,8 +108,7 @@ private:
     
     xe::gfx::GraphicsDriverPtr graphicsDriver;
     xe::gfx::VertexFormat vertexFormat;
-    xe::gfx::MaterialFormat materialFormat
-    ;
+    xe::gfx::MaterialFormat materialFormat;
     xe::gfx::MeshSubsetPtr subset;
     xe::gfx::MaterialPtr material;
     
