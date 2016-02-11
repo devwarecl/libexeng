@@ -107,7 +107,7 @@ namespace xe { namespace gfx { namespace gl3 {
         
     public:
         inline const GLFWwindow* getGLFWwindow() const {
-            return context.getWindow();
+            return context.window;
         }
         
     private:

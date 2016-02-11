@@ -151,7 +151,7 @@ namespace xe { namespace gfx {
         /**
          * @brief Start the rendering of a new frame, clearing the previous one
          */
-        virtual void beginFrame(const Vector4f &color, ClearFlags::Flags flags) = 0;
+        virtual void beginFrame(const Vector4f &color, ClearFlags::Flags flags=ClearFlags::ColorDepth) = 0;
         
         /**
          * @brief Flip the backbuffer and the front buffer

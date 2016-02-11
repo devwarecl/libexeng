@@ -83,6 +83,9 @@ IF (XE_RT)
     ADD_SUBDIRECTORY (src/xe.rt)
 ENDIF ()
 
+# Add example programs
+add_subdirectory(examples/triangle)
+
 # Engine plugins
 IF(XE_GFX_GL3)
 	ADD_SUBDIRECTORY (plugins/xe.gfx.gl3)

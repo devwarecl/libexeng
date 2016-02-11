@@ -177,6 +177,6 @@ private:
 
 namespace xe { namespace main {
 	int main(int argc, char** argv) {
-		return xe::fw::Application::execute<ComputeApplication>(argc, argv);
+		return xe::fw::Application::execute<demo::DemoApplication>(argc, argv);
 	}
 }}

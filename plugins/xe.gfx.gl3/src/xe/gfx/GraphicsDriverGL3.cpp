@@ -77,13 +77,13 @@ namespace xe { namespace gfx { namespace gl3 {
         int width = displayMode.size.width;
         int height = displayMode.size.height;
         
-        context = Context(::glfwCreateWindow(width, height, "exeng-graphics-gl3 Window", monitor, NULL));
+        GLFWwindow *window = ::glfwCreateWindow(width, height, "exeng-graphics-gl3 Window", monitor, NULL);
         
-        if (context.getWindow() == nullptr) {
+        if (!window) {
 			EXENG_THROW_EXCEPTION("GraphicsDriverGL3::GraphicsDriverGL3: Cann't create a GLFW Window.");
         }
         
-        ::glfwMakeContextCurrent(context.getWindow());
+        ::glfwMakeContextCurrent(window);
         
         // Initialize the OpenGL 3 core functions
         ::ogl_LoadFunctions();
@@ -95,11 +95,11 @@ namespace xe { namespace gfx { namespace gl3 {
 		// ::glClearDepth(1.0f);
 
 		// Link the current input manager
-		::glfwSetWindowUserPointer(context.getWindow(), this);
-		this->inputManager.setWindow(context.getWindow()); 
+		::glfwSetWindowUserPointer(window, this);
+		this->inputManager.setWindow(window); 
 
         // Hold all the default objects
-		this->context = std::move(context);
+        this->context.window = window;
         this->displayMode = displayMode;
         this->initialized = true;
 		
@@ -170,7 +170,7 @@ namespace xe { namespace gfx { namespace gl3 {
         }
 #endif
         ::glFinish();
-        ::glfwSwapBuffers(this->context.getWindow());
+        ::glfwSwapBuffers(context.window);
         
         this->renderingFrame = false;
         
