@@ -71,11 +71,11 @@ namespace xe { namespace gfx { namespace gl3 {
         
         virtual DisplayMode getDisplayMode() const override;
         
-        virtual std::unique_ptr<Shader> createShader( ShaderType::Enum type ) override;
+        virtual ShaderPtr createShader( ShaderType::Enum type ) override;
         
-        virtual std::unique_ptr<ShaderProgram> createShaderProgram( ) override;
+        virtual ShaderProgramPtr createShaderProgram( ) override;
         
-        virtual std::unique_ptr<MeshSubset> createMeshSubset(std::vector<std::unique_ptr<Buffer>> vertexBuffers, std::unique_ptr<Buffer> indexBuffer, const VertexFormat &format) override;
+        virtual MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format, BufferPtr indexBuffer, IndexFormat::Enum iformat) override;
 
         virtual void setMeshSubset(const MeshSubset *meshSubset) override;
         

@@ -52,7 +52,7 @@ namespace demo {
 
 			auto vbuffer = this->graphicsDriver->createVertexBuffer(vertices);
 
-			auto meshSubset = this->graphicsDriver->createMeshSubset(std::move(vbuffer), xe::BufferPtr(nullptr), xe::gfx::StandardVertex::getFormat());
+			auto meshSubset = this->graphicsDriver->createMeshSubset(std::move(vbuffer), xe::gfx::StandardVertex::getFormat());
 			auto mesh = std::make_unique<xe::gfx::Mesh>(std::move(meshSubset));
 		}
 

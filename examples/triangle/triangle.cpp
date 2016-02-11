@@ -56,18 +56,69 @@ public:
     
     xe::gfx::ShaderProgramPtr createProgram() {
 
-		std::string vshader_src = R"(
+		std::string vshader_src = 
+R"(#version 330
+layout(location=0) in vec3 coord;
+layout(location=1) in vec3 normal;
+layout(location=2) in vec2 tex_coord;
+
+uniform mat4 mvp;
+
+out vec3 n;
+out vec2 uv;
+
+void main() {
+	gl_Position = vec4(coord, 1.0f) * mvp;
+	n = normal;
+	uv = tex_coord;
+})";
+
+		std::string pshader_src = 
+R"(
 #version 330
 
+layout(location=0) in vec2 uv;
+layout(location=1) in vec3 n;
 
+out vec4 color;
 
-		)";
-		
-        return xe::gfx::ShaderProgramPtr();
+uniform sampler2D tex_sampler;
+
+void main() {
+	color = texture(tex_sampler, uv);
+)";
+		std::list<xe::gfx::ShaderSource> sources = {
+			{xe::gfx::ShaderType::Vertex, vshader_src},
+			{xe::gfx::ShaderType::Fragment, pshader_src}
+		};
+
+		return graphicsDriver->getModernModule()->createShaderProgram(sources);
     }
     
     xe::gfx::MeshSubsetPtr createSubset() {
-        return xe::gfx::MeshSubsetPtr();
+
+		// vertex data
+		xe::gfx::StandardVertex v1, v2, v3, v4, v5, v6;
+		v1.coord = { -1.0f, -1.0f, 0.0f };	v1.normal = { 0.0f, 0.0f, -1.0f }; v1.texCoord = { 0.0f, 1.0f };
+		v2.coord = {  0.0f,  1.0f, 0.0f };	v2.normal = { 0.0f, 0.0f, -1.0f }; v2.texCoord = { 0.0f, 0.0f };
+		v3.coord = {  1.0f, -1.0f, 0.0f };	v3.normal = { 0.0f, 0.0f, -1.0f }; v3.texCoord = { 1.0f, 1.0f };
+		v4.coord = { -1.0f, -1.0f, 0.0f };	v4.normal = { 0.0f, 0.0f, -1.0f }; v4.texCoord = { 0.0f, 1.0f };
+		v5.coord = { 0.0f,  1.0f, 0.0f };	v5.normal = { 0.0f, 0.0f, -1.0f }; v5.texCoord = { 0.0f, 0.0f };
+		v6.coord = { 1.0f, -1.0f, 0.0f };	v6.normal = { 0.0f, 0.0f, -1.0f }; v6.texCoord = { 1.0f, 1.0f };
+		
+		std::vector<xe::gfx::StandardVertex> vertices = {v1, v2, v3, v4, v5, v6};
+
+		// index data
+		std::vector<int> indices = {0, 1, 2, 4, 3, 5};
+
+		// create vertex and index buffers
+		auto vbuffer = graphicsDriver->createVertexBuffer(vertices);
+		auto ibuffer = graphicsDriver->createIndexBuffer(indices);
+
+		// create the triangle meshsubset
+		auto subset = graphicsDriver->createMeshSubset({std::move(vbuffer)}, xe::gfx::StandardVertex::getFormat(), std::move(ibuffer), xe::gfx::IndexFormat::Index32);
+
+        return subset;
     }
     
     void initialize() {

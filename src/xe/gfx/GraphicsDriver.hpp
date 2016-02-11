@@ -207,24 +207,17 @@ namespace xe { namespace gfx {
 
 			return this->createIndexBuffer(bufferSize, bufferData);
 		}
-		
-        inline MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format) {
-            BufferPtr indexBuffer;
 
-            return this->createMeshSubset(std::move(vertexBuffers), std::move(indexBuffer), format);
-        }
+        MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, const VertexFormat &format);
 
-        inline MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, BufferPtr indexBuffer, const VertexFormat &format) {
-            std::vector<BufferPtr> vertexBuffers;
-            vertexBuffers.push_back(std::move(vertexBuffer));
+		MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, const VertexFormat &format, BufferPtr ibuffer, IndexFormat::Enum iformat);
 
-            return this->createMeshSubset(std::move(vertexBuffers), std::move(indexBuffer), format);
-        }
+		MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat &vformat);
 
         /**
          * @brief Create a new mesh subset object.
          */
-        virtual MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vertexBuffers, BufferPtr indexBuffer, const VertexFormat &format) = 0;
+        virtual MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat &vformat, BufferPtr ibuffer, IndexFormat::Enum iformat) = 0;
 
         /**
          * @brief Bound the specified MeshSubset object.

@@ -56,7 +56,7 @@ namespace xe { namespace gfx {
 
 			auto vbuffer = driver->createVertexBuffer(vsize, nullptr);
 			auto ibuffer = driver->createIndexBuffer(isize, nullptr);
-			auto subset = driver->createMeshSubset(std::move(vbuffer), std::move(ibuffer), *vformat);
+			auto subset = driver->createMeshSubset(std::move(vbuffer), *vformat, std::move(ibuffer), iformat);
 
 			generator.generate(subset.get());
 			transformer.transform(subset.get(), transformation);

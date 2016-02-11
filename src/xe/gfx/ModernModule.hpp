@@ -15,6 +15,9 @@ namespace xe { namespace gfx {
 	struct ShaderSource {
 		xe::gfx::ShaderType::Enum type = xe::gfx::ShaderType::Vertex;
 		std::string source;
+
+		ShaderSource() {}
+		ShaderSource(xe::gfx::ShaderType::Enum type_, std::string source_) : type(type_), source(source_) {}
 	};
 
 	class EXENGAPI ModernModule {

@@ -14,9 +14,38 @@
 #include "GraphicsDriver.hpp"
 
 namespace xe { namespace gfx {
+
 	GraphicsDriver::~GraphicsDriver() {}
     
-    Material2Ptr GraphicsDriver::createMaterial(const MaterialFormat2 *) {
+	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(BufferPtr vertexBuffer, const VertexFormat &format) {
+		std::vector<BufferPtr> vertexBuffers;
+
+		vertexBuffers.push_back(std::move(vertexBuffer));
+
+		BufferPtr ibuffer;
+		return this->createMeshSubset (
+			std::move(vertexBuffers), 
+			format, 
+			std::move(ibuffer), 
+			IndexFormat::Unknown
+		);
+
+	}
+
+	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(BufferPtr vertexBuffer, const VertexFormat &format, BufferPtr ibuffer, IndexFormat::Enum iformat) {
+		std::vector<BufferPtr> vertexBuffers;
+
+		vertexBuffers.push_back(std::move(vertexBuffer));
+
+		return this->createMeshSubset(std::move(vertexBuffers), format, std::move(ibuffer), iformat);
+	}
+
+	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat &vformat) {
+		BufferPtr ibuffer;
+		return this->createMeshSubset(std::move(vbuffers), vformat, std::move(ibuffer), IndexFormat::Unknown);
+	}
+
+	Material2Ptr GraphicsDriver::createMaterial(const MaterialFormat2 *) {
         return Material2Ptr();
     }
 }}
