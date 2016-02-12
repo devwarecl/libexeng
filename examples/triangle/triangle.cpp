@@ -77,8 +77,8 @@ void main() {
 R"(
 #version 330
 
-layout(location=0) in vec2 uv;
-layout(location=1) in vec3 n;
+in vec2 uv;
+in vec3 n;
 
 out vec4 color;
 
@@ -86,13 +86,16 @@ uniform sampler2D tex_sampler;
 
 void main() {
 	color = texture(tex_sampler, uv);
-)";
+})";
 		std::list<xe::gfx::ShaderSource> sources = {
 			{xe::gfx::ShaderType::Vertex, vshader_src},
 			{xe::gfx::ShaderType::Fragment, pshader_src}
 		};
 
-		return graphicsDriver->getModernModule()->createShaderProgram(sources);
+		auto modernModule = graphicsDriver->getModernModule();
+		auto program = modernModule->createShaderProgram(sources);
+
+		return program;
     }
     
     xe::gfx::MeshSubsetPtr createSubset() {
@@ -135,6 +138,8 @@ void main() {
     
     virtual int run(int argc, char **argv) override {
         
+		this->initialize();
+
         inputManager = graphicsDriver->getInputManager();
         
         auto keyboardStatus = inputManager->getKeyboard()->getStatus();

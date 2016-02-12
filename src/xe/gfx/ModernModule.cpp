@@ -57,13 +57,20 @@ namespace xe { namespace gfx {
 	}
 
 	ShaderProgramPtr ModernModule::createShaderProgram(const std::list<ShaderSource> &shaderSources) {
-		ShaderProgramPtr shaderProgram;
+		ShaderProgramPtr shaderProgram = this->createShaderProgram();
 
-		// create the shader objects
+		std::list<ShaderPtr> shaders;
+
+		// compile shaders
 		for (const ShaderSource &source : shaderSources) {
-			ShaderPtr shader = this->createShader(source.type, source.source);
-			shader->compile();
+			auto shader = this->createShader(source.type, source.source);
 
+			shader->compile();
+			shaders.push_back(std::move(shader));
+		}
+
+		// link the program
+		for (ShaderPtr &shader : shaders) {
 			shaderProgram->addShader(shader.get());
 		}
 

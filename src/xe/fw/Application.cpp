@@ -45,7 +45,6 @@ namespace xe { namespace fw {
 
 	Application::~Application() {}
 
-    /*
     int Application::execute(Application &app, int argc, char** argv) {
         int exitCode = 0;
         
@@ -59,9 +58,10 @@ namespace xe { namespace fw {
         
         return exitCode;
     }
-    */
     
+	/*
     int Application::execute(Application &app, int argc, char** argv) {
         return app.run(argc, argv);
     }
+	*/
 }}
