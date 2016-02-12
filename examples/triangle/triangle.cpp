@@ -102,12 +102,12 @@ void main() {
 
 		// vertex data
 		xe::gfx::StandardVertex v1, v2, v3, v4, v5, v6;
-		v1.coord = { -1.0f, -1.0f, 0.0f };	v1.normal = { 0.0f, 0.0f, -1.0f }; v1.texCoord = { 0.0f, 1.0f };
-		v2.coord = {  0.0f,  1.0f, 0.0f };	v2.normal = { 0.0f, 0.0f, -1.0f }; v2.texCoord = { 0.0f, 0.0f };
-		v3.coord = {  1.0f, -1.0f, 0.0f };	v3.normal = { 0.0f, 0.0f, -1.0f }; v3.texCoord = { 1.0f, 1.0f };
-		v4.coord = { -1.0f, -1.0f, 0.0f };	v4.normal = { 0.0f, 0.0f, -1.0f }; v4.texCoord = { 0.0f, 1.0f };
-		v5.coord = { 0.0f,  1.0f, 0.0f };	v5.normal = { 0.0f, 0.0f, -1.0f }; v5.texCoord = { 0.0f, 0.0f };
-		v6.coord = { 1.0f, -1.0f, 0.0f };	v6.normal = { 0.0f, 0.0f, -1.0f }; v6.texCoord = { 1.0f, 1.0f };
+		v1.coord = { -0.5f, -0.5f, 0.0f };	v1.normal = { 0.0f, 0.0f, -1.0f }; v1.texCoord = { 0.0f, 1.0f };
+		v2.coord = {  0.0f,  0.5f, 0.0f };	v2.normal = { 0.0f, 0.0f, -1.0f }; v2.texCoord = { 0.0f, 0.0f };
+		v3.coord = {  0.5f, -0.5f, 0.0f };	v3.normal = { 0.0f, 0.0f, -1.0f }; v3.texCoord = { 1.0f, 1.0f };
+		v4.coord = { -0.5f, -0.5f, 0.0f };	v4.normal = { 0.0f, 0.0f, 1.0f }; v4.texCoord = { 0.0f, 1.0f };
+		v5.coord = { 0.0f,  0.5f, 0.0f };	v5.normal = { 0.0f, 0.0f, 1.0f }; v5.texCoord = { 0.0f, 0.0f };
+		v6.coord = { 0.5f, -0.5f, 0.0f };	v6.normal = { 0.0f, 0.0f, 1.0f }; v6.texCoord = { 1.0f, 1.0f };
 		
 		std::vector<xe::gfx::StandardVertex> vertices = {v1, v2, v3, v4, v5, v6};
 
@@ -146,13 +146,18 @@ void main() {
         
         bool done = false;
         
+		xe::Matrix4f mvp = xe::identity<float, 4>();
+
         while(!done) {
             inputManager->poll();
             
             done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
-            
+            graphicsDriver->setMaterial(material.get());
+			graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
+			graphicsDriver->setMeshSubset(subset.get());
+			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
             graphicsDriver->endFrame();
         }
         

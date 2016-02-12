@@ -108,8 +108,8 @@ namespace xe { namespace gfx {
 	template <int index, typename Attrib, typename ...Attribs>
 	struct VertexFormatConstructor {
 		static void construct(std::vector<VertexField> &fields) {
-			VertexFormatConstructor<index - 1, Attribs...>::construct(fields);
 			fields.push_back(VertexField(Attrib::attrib, Attrib::size, Attrib::dataType));
+			VertexFormatConstructor<index - 1, Attribs...>::construct(fields);
 		}
 	};
 
@@ -129,8 +129,6 @@ namespace xe { namespace gfx {
 
 		static VertexFormat getFormat() {
 			std::vector<VertexField> fields;
-
-			fields.resize(sizeof...(VertexAttribs));
 
 			VertexFormatConstructor <
 				sizeof...(VertexAttribs), 
