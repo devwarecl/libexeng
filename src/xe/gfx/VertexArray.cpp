@@ -13,7 +13,7 @@ namespace xe { namespace gfx {
 	}
 
 	const int VertexArray::computeOffset(const int index, const VertexAttrib::Enum attrib) const {
-		const int attribOffset = this->format->getAttribOffset(attrib);
+ 		const int attribOffset = this->format->getAttribOffset(attrib);
 
 		if (attribOffset == VertexFormat::InvalidOffset) {
 			return VertexFormat::InvalidOffset;

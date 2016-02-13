@@ -27,8 +27,7 @@ namespace xe { namespace gfx {
 	// Generate raw vertex format.
 	// Only supports float32 datatype for now.
 	void BoxGenerator::fillVertexBuffer(Buffer *buffer, const VertexFormat *format) {
-		auto tempBuffer = std::make_unique<HeapBuffer>(buffer->getSize());
-		auto locker = tempBuffer->getLocker<void>();
+		auto locker = buffer->getLocker(BufferUsage::Write);
 
 		VertexArray array(locker.getPointer(), format);
 
@@ -66,23 +65,34 @@ namespace xe { namespace gfx {
 			{rad(-90.0f), {1.0f, 0.0f, 0.0}}
 		};
 		
-		for (int i=1; i<BOX_FACE_COUNT; i++) {
-			Matrix4f rotationMatrix = rotate(rotation[i].angle, rotation[i].axis);
+		for (int i=0; i<BOX_FACE_COUNT; i++) {
+
+            const float angle = rotation[i].angle;
+            const auto axis = rotation[i].axis;
+
+			Matrix4f rotationMatrix = rotate(angle, axis);
 
 			for (int j=0; j<BOX_VERTEX_PER_FACE_COUNT; j++) {
 				
-				Vector4f vertexPosition = transform(rotationMatrix, position[i]);
+				Vector4f vertexPosition = transform(rotationMatrix, position[j]);
 				Vector4f vertexNormal	= transform(rotationMatrix, normal);
 
 				const int vertexIndex = i*BOX_VERTEX_PER_FACE_COUNT + j;
+
+#if defined(EXENG_DEBUG)
+                std::cout << vertexIndex << " -> [" << vertexPosition << "], [" << vertexNormal << "], [" << texCoord[j] << "]" << std::endl;
+#endif
 
 				array.setValue(vertexIndex, VertexAttrib::Position, vertexPosition);
 				array.setValue(vertexIndex, VertexAttrib::Normal, vertexNormal);
 				array.setValue(vertexIndex, VertexAttrib::TexCoord, texCoord[j]);
 			}
+            std::cout << std::endl;
 		}
 
-		buffer->write(locker.getPointer());
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
 	}
 	
 	void BoxGenerator::fillIndexBuffer(Buffer *buffer, IndexFormat::Enum indexFormat) {

@@ -3,6 +3,9 @@
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
 #include <xe/gfx/Vertex.hpp>
+#include <xe/gfx/Mesh.hpp>
+#include <xe/gfx/MeshSubset.hpp>
+#include <xe/gfx/MeshManager.hpp>
 
 class TextureApplication : public xe::Application {
 public:
@@ -104,32 +107,23 @@ void main() {
 		return program;
     }
     
-    xe::gfx::MeshSubsetPtr createSubset() {
+    xe::gfx::Mesh* createMesh() {
+        xe::gfx::Mesh* mesh = this->getMeshManager()->generateBoxMesh (
+            "box",
+            graphicsDriver.get(), 
+            &vertexFormat,
+            xe::gfx::IndexFormat::Index32,
+            {0.0f, 0.0f, 0.0f},
+            {1.0f, 1.0f, 1.0f}
+        );
 
-		// vertex data
-		xe::gfx::StandardVertex v1, v2, v3, v4, v5, v6;
-		v1.coord = { -1.5f, -1.5f, 0.0f };	v1.normal = { 0.0f, 0.0f, -1.0f }; v1.texCoord = { 0.0f, 1.0f };
-		v2.coord = {  0.0f,  1.5f, 0.0f };	v2.normal = { 0.0f, 0.0f, -1.0f }; v2.texCoord = { 0.0f, 0.0f };
-		v3.coord = {  1.5f, -1.5f, 0.0f };	v3.normal = { 0.0f, 0.0f, -1.0f }; v3.texCoord = { 1.0f, 1.0f };
-		v4.coord = { -1.5f, -1.5f, 0.0f };	v4.normal = { 0.0f, 0.0f,  1.0f }; v4.texCoord = { 0.0f, 1.0f };
-		v5.coord = {  0.0f,  1.5f, 0.0f };	v5.normal = { 0.0f, 0.0f,  1.0f }; v5.texCoord = { 0.0f, 0.0f };
-		v6.coord = {  1.5f, -1.5f, 0.0f };	v6.normal = { 0.0f, 0.0f,  1.0f }; v6.texCoord = { 1.0f, 1.0f };
-		
-		std::vector<xe::gfx::StandardVertex> vertices = {v1, v2, v3, v4, v5, v6};
+        for (int i=0; i<mesh->getSubsetCount(); i++) {
+            mesh->getSubset(i)->setMaterial(material.get());
+        }
 
-		// index data
-		std::vector<int> indices = {0, 1, 2, 4, 3, 5};
-
-		// create vertex and index buffers
-		auto vbuffer = graphicsDriver->createVertexBuffer(vertices);
-		auto ibuffer = graphicsDriver->createIndexBuffer(indices);
-
-		// create the triangle meshsubset
-		auto subset = graphicsDriver->createMeshSubset({std::move(vbuffer)}, xe::gfx::StandardVertex::getFormat(), std::move(ibuffer), xe::gfx::IndexFormat::Index32);
-
-        return subset;
+        return mesh;
     }
-    
+
     void initialize() {
         graphicsDriver = this->createGraphicsDriver();
         graphicsDriver->initialize();
@@ -137,9 +131,9 @@ void main() {
         vertexFormat = createVertexFormat();
         materialFormat = createMaterialFormat();
         
-        subset = createSubset();
 		shader = createProgram();
         material = createMaterial();
+        mesh = createMesh();
     }
     
     virtual int run(int argc, char **argv) override {
@@ -173,23 +167,33 @@ void main() {
             done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
-            graphicsDriver->setMaterial(material.get());
-			graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
-			graphicsDriver->setMeshSubset(subset.get());
-			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
+            
+            this->renderMesh(this->mesh, "mvp", mvp);
+			
             graphicsDriver->endFrame();
         }
         
         return 0;
     }
     
+    void renderMesh(const xe::gfx::Mesh *mesh, const std::string &param, const xe::Matrix4f &mvp) {
+        for (int i=0; i<mesh->getSubsetCount(); i++) {
+            const xe::gfx::MeshSubset *subset = mesh->getSubset(i);
+
+            graphicsDriver->setMaterial(subset->getMaterial());
+            graphicsDriver->getModernModule()->setProgramGlobal(param, mvp);
+            graphicsDriver->setMeshSubset(subset);
+            graphicsDriver->render(subset->getPrimitive(), subset->getVertexCount());
+        }
+    }
+
 private:
     xe::input2::IInputManager *inputManager = nullptr;
     
     xe::gfx::GraphicsDriverPtr graphicsDriver;
     xe::gfx::VertexFormat vertexFormat;
     xe::gfx::MaterialFormat materialFormat;
-    xe::gfx::MeshSubsetPtr subset;
+    xe::gfx::Mesh* mesh = nullptr;
     xe::gfx::MaterialPtr material;
     
     xe::gfx::ShaderProgramPtr shader;

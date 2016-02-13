@@ -349,7 +349,7 @@ namespace xe {
 		friend std::ostream& operator<< (std::ostream &os, const Vector<Type, Size> &v) 
 		{
 		    for(int i=0; i<Size; ++i) {
-				os << std::fixed << std::setprecision(8) << v[i];
+				os << std::fixed << std::setprecision(2) << v[i];
         
 				if (i+1 != Size) {
 					os << ", ";

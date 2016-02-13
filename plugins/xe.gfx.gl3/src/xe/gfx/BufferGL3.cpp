@@ -3,6 +3,7 @@
 #include "BufferStatusGL3.hpp"
 #include "DebugGL3.hpp"
 #include <stdexcept>
+#include <iostream>
 
 namespace xe { namespace gfx { namespace gl3 {
 
@@ -29,19 +30,56 @@ namespace xe { namespace gfx { namespace gl3 {
 	}
 
     void* BufferGL3::lock(BufferUsage::Enum mode) {
-        return nullptr;
+        void *result_cache_ptr = cacheBuffer->lock(mode);
+
+        if (mode&BufferUsage::Write) {
+            cache_ptr = result_cache_ptr;
+
+        } else {
+            cache_ptr = nullptr;
+        }
+
+        return result_cache_ptr;
     }
 
     void BufferGL3::unlock() {
-        
+        if (cache_ptr) {
+            ::glBindBuffer(this->target, this->bufferId);
+		    ::glBufferSubData(this->target, 0, cacheBuffer->getSize(), cache_ptr);
+		    ::glBindBuffer(this->target, 0);
+
+            // display vertex data
+
+#if defined(EXENG_DEBUG)
+            std::cout << std::endl;
+
+            std::cout << std::endl;
+            float *values = (float *)cache_ptr;
+            const int value_count = cacheBuffer->getSize() / 4;
+
+            for (int i=0; i<value_count; i++) {
+                std::cout << values[i] << ", ";
+
+                if ( (i+1) % 8 == 0) {
+                    std::cout << std::endl;
+                }
+            }
+#endif
+
+            cache_ptr = nullptr;
+
+            GL3_CHECK();
+        }
+
+        return cacheBuffer->unlock();
     }
 
     const void* BufferGL3::lock() const {
-        return nullptr;
+        return cacheBuffer->lock();
     }
 
     void BufferGL3::unlock() const {
-        
+        cacheBuffer->unlock();
     }
 
 	int BufferGL3::getSize() const {
