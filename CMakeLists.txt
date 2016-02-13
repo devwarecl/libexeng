@@ -85,6 +85,7 @@ ENDIF ()
 
 # Add example programs
 add_subdirectory(examples/triangle)
+add_subdirectory(examples/texture)
 
 # Engine plugins
 IF(XE_GFX_GL3)
