@@ -2,6 +2,7 @@
 #include <xe/Application.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
+#include <xe/gfx/ImageManager.hpp>
 #include <xe/gfx/Vertex.hpp>
 #include <xe/gfx/Mesh.hpp>
 #include <xe/gfx/MeshSubset.hpp>
@@ -47,6 +48,7 @@ public:
     xe::gfx::MaterialPtr createMaterial() {
         auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
         
+        material->getLayer(0)->setTexture(texture.get());
 		material->setShaderProgram(shader.get());
 		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
@@ -94,7 +96,7 @@ uniform float shininess;
 uniform sampler2D tex_sampler;
 
 void main() {
-	color = /*texture(tex_sampler, uv) * */ambient;
+	color = texture(tex_sampler, uv) /* ambient*/;
 })";
 		std::list<xe::gfx::ShaderSource> sources = {
 			{xe::gfx::ShaderType::Vertex, vshader_src},
@@ -124,6 +126,14 @@ void main() {
         return mesh;
     }
 
+    xe::gfx::TexturePtr createTexture() {
+        auto toolkit = this->getGraphicsManager()->getImageToolkit();
+        auto image = toolkit->getImage("C:\\Users\\fapablaza\\Desktop\\Projects\\libexeng\\media\\puppy.jpg");
+        auto texture = graphicsDriver->createTexture(image);
+        
+        return texture;
+    }
+
     void initialize() {
         graphicsDriver = this->createGraphicsDriver();
         graphicsDriver->initialize();
@@ -132,6 +142,7 @@ void main() {
         materialFormat = createMaterialFormat();
         
 		shader = createProgram();
+        texture = createTexture();
         material = createMaterial();
         mesh = createMesh();
     }
@@ -195,7 +206,8 @@ private:
     xe::gfx::MaterialFormat materialFormat;
     xe::gfx::Mesh* mesh = nullptr;
     xe::gfx::MaterialPtr material;
-    
+    xe::gfx::TexturePtr texture;
+
     xe::gfx::ShaderProgramPtr shader;
 };
 
