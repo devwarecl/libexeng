@@ -843,9 +843,9 @@ namespace xe {
     }
     
     template<typename Type>
-    Matrix<Type, 4, 4> perspective(Type fov, Type aspect, Type znear, Type zfar)
+    Matrix<Type, 4, 4> perspective(Type fov_radians, Type aspect, Type znear, Type zfar)
     {
-        Type f = Type(1) / std::tan(fov / Type(2));
+        Type f = Type(1) / std::tan(fov_radians / Type(2));
         // Type zdiff = zfar - znear;	// Reverse the projection (far objects appear in front of those near)
 		Type zdiff = znear - zfar;
         
