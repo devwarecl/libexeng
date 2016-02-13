@@ -12,6 +12,8 @@ set (BaseFiles_hpp
 	ProductManager.hpp ProductManagerImpl.hpp
 	ISerializable.hpp Timer.hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp
+	Main.hpp                Main.inl
+	Application.hpp         GraphicsApplication.hpp 
 )
 
 set (BaseFiles_cpp Enum.cpp Object.cpp 
@@ -19,6 +21,7 @@ set (BaseFiles_cpp Enum.cpp Object.cpp
     Buffer.cpp HeapBuffer.cpp StaticBuffer.cpp
     Resource.cpp ResourceLoader.cpp ResourceManager.cpp 
     ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp Exception.cpp
+	Application.cpp GraphicsApplication.cpp
 )
 set (BaseFiles ${BaseFiles_hpp} ${BaseFiles_cpp})
 
@@ -29,15 +32,6 @@ set (IoFiles ${IoFiles_hpp} ${IoFiles_hpp})
 set (AudioFiles_cpp sfx/AudioBuffer.cpp sfx/Listener.cpp sfx/Source.cpp)
 set (AudioFiles_hpp sfx/AudioBuffer.hpp sfx/Listener.hpp sfx/Source.hpp)
 set (AudioFiles ${AudioFiles_hpp} ${AudioFiles_cpp})
-
-set (FrameworkFiles_cpp
-	fw/Application.cpp fw/GraphicsApplication.cpp
-)
-set (FrameworkFiles_hpp 
-	fw/Main.hpp                fw/Main.inl
-	fw/Application.hpp         fw/GraphicsApplication.hpp 
-)
-set (FrameworkFiles ${FrameworkFiles_hpp} ${FrameworkFiles_cpp})
 
 set (ComputeFiles_hpp
     cm/Forward.hpp
@@ -257,7 +251,6 @@ add_library (xe SHARED
     ${BaseFiles}
     ${IoFiles}
     ${AudioFiles}
-    ${FrameworkFiles}
     ${ComputeFiles}
     ${GraphicsFiles}
     ${InputFiles}
@@ -272,7 +265,6 @@ SET_PROPERTY (TARGET xe PROPERTY CXX_STANDARD 14)
 SOURCE_GROUP(\\			FILES ${BaseFiles})
 SOURCE_GROUP(io         FILES ${IoFiles})
 SOURCE_GROUP(sfx      	FILES ${AudioFiles})
-SOURCE_GROUP(fw			FILES ${FrameworkFiles})
 SOURCE_GROUP(cm			FILES ${ComputeFiles})
 SOURCE_GROUP(gfx   		FILES ${GraphicsFiles})
 SOURCE_GROUP(input      FILES ${InputFiles})

@@ -1,4 +1,4 @@
 
-namespace xe { namespace main {
+namespace xe {
 	extern int main(int argc, char** argv);
-}}
+}

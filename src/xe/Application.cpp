@@ -16,7 +16,7 @@
 #include <xe/sys/PluginManager.hpp>
 #include <xe/util/MessageBox.hpp>
 
-namespace xe { namespace fw {
+namespace xe {
 	using xe::util::MessageBox;
 	using xe::util::MessageBoxIcon;
 
@@ -64,4 +64,4 @@ namespace xe { namespace fw {
         return app.run(argc, argv);
     }
 	*/
-}}
+}

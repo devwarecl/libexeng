@@ -1,7 +1,7 @@
 
 #include <memory>
 
-#include <xe/fw/Application.hpp>
+#include <xe/Application.hpp>
 #include <xe/sys/Plugin.hpp>
 #include <xe/sys/PluginManager.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
@@ -13,7 +13,7 @@
 #include <xe.main/Main.hpp>
 
 namespace demo {
-	class DemoApplication : public xe::fw::Application {
+	class DemoApplication : public xe::Application {
 	public:
 		DemoApplication() {
 			// display all available graphics drivers
@@ -91,7 +91,7 @@ std::string program_src = R"(
     }
 )";
 
-class ComputeApplication : public xe::fw::Application {
+class ComputeApplication : public xe::Application {
 public:
     
     ComputeApplication() {
@@ -175,8 +175,8 @@ private:
     xe::cm::KernelPtr kernel_add;
 };
 
-namespace xe { namespace main {
+namespace xe { 
 	int main(int argc, char** argv) {
-		return xe::fw::Application::execute<demo::DemoApplication>(argc, argv);
+		return xe::Application::execute<demo::DemoApplication>(argc, argv);
 	}
-}}
+}

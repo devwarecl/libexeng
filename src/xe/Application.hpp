@@ -17,7 +17,7 @@
 #include <xe/Enum.hpp>
 #include <xe/Core.hpp>
 
-namespace xe { namespace fw {
+namespace xe {
     
     /**
      * @brief Basic application framework
@@ -50,6 +50,6 @@ namespace xe { namespace fw {
 			return Application::execute(app, argc, argv);
 		}
     };
-}}
+}
 
 #endif  // __EXENG_FRAMEWORK_APPLICATION_HPP__

@@ -1,10 +1,10 @@
 
-#include <xe/fw/Application.hpp>
+#include <xe/Application.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
 #include <xe/gfx/Vertex.hpp>
 
-class TextureApplication : public xe::fw::Application {
+class TextureApplication : public xe::Application {
 public:
     
     xe::gfx::GraphicsDriverPtr createGraphicsDriver() {
@@ -196,5 +196,5 @@ private:
 };
 
 int main(int argc, char **argv) {
-    return xe::fw::Application::execute<TextureApplication>(argc, argv);
+    return xe::Application::execute<TextureApplication>(argc, argv);
 }
