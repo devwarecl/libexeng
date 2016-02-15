@@ -14,6 +14,8 @@ set (BaseFiles_hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp
 	Main.hpp                Main.inl
 	Application.hpp         GraphicsApplication.hpp 
+	
+	Struct.hpp			
 )
 
 set (BaseFiles_cpp Enum.cpp Object.cpp 
@@ -22,6 +24,8 @@ set (BaseFiles_cpp Enum.cpp Object.cpp
     Resource.cpp ResourceLoader.cpp ResourceManager.cpp 
     ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp Exception.cpp
 	Application.cpp GraphicsApplication.cpp
+
+	Struct.cpp
 )
 set (BaseFiles ${BaseFiles_hpp} ${BaseFiles_cpp})
 
@@ -80,6 +84,8 @@ set (GraphicsFiles_hpp
 	gfx/ImageLoader.hpp 
     gfx/Material.hpp 
     gfx/Material2.hpp 
+	gfx/MaterialFormat2.hpp 
+	gfx/MaterialBatch.hpp 
     gfx/PixelFormat.hpp          
 	gfx/VertexFormat.hpp 
 	gfx/VertexArray.hpp 
@@ -115,6 +121,8 @@ set (GraphicsFiles_cpp
 	gfx/ImageLoader.cpp 
     gfx/Material.cpp 
     gfx/Material2.cpp
+	gfx/MaterialFormat2.cpp 
+	gfx/MaterialBatch.cpp 
     gfx/PixelFormat.cpp 
     gfx/Vertex.cpp
     gfx/VertexFormat.cpp
@@ -262,16 +270,16 @@ add_library (xe SHARED
 
 SET_PROPERTY (TARGET xe PROPERTY CXX_STANDARD 14)
 
-SOURCE_GROUP(\\			FILES ${BaseFiles})
-SOURCE_GROUP(io         FILES ${IoFiles})
-SOURCE_GROUP(sfx      	FILES ${AudioFiles})
-SOURCE_GROUP(cm			FILES ${ComputeFiles})
-SOURCE_GROUP(gfx   		FILES ${GraphicsFiles})
-SOURCE_GROUP(input      FILES ${InputFiles})
-SOURCE_GROUP(input2     FILES ${Input2Files})
-SOURCE_GROUP(sg 		FILES ${ScenegraphFiles})
-SOURCE_GROUP(sys	    FILES ${SystemFiles})
-SOURCE_GROUP(util		FILES ${UtilFiles})
+source_group(\\			FILES ${BaseFiles})
+source_group(io         FILES ${IoFiles})
+source_group(sfx      	FILES ${AudioFiles})
+source_group(cm			FILES ${ComputeFiles})
+source_group(gfx   		FILES ${GraphicsFiles})
+source_group(input      FILES ${InputFiles})
+source_group(input2     FILES ${Input2Files})
+source_group(sg 		FILES ${ScenegraphFiles})
+source_group(sys	    FILES ${SystemFiles})
+source_group(util		FILES ${UtilFiles})
 
 TARGET_LINK_LIBRARIES(xe ${UNIX_LIBRARIES} xmlpp ${Boost_LIBRARIES} ${LIBXML2_LIBRARIES})
 

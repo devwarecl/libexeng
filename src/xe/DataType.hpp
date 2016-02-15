@@ -24,6 +24,7 @@
     template<> struct DataTypeTraits<BasicType> {           \
         typedef BasicType Type;                             \
         static const DataType::Enum Enum = DataTypeEnum;	\
+		static const int count = 0;							\
     }
 
 namespace xe {
@@ -31,11 +32,8 @@ namespace xe {
     /**
      * @brief Basic data type enumeration.
      */
-    struct DataType : public Enum 
-	{
-        enum Kind {
-            Int, Float
-        };
+    struct DataType : public Enum {
+        enum Kind { Int, Float };
         
         enum Enum {
             Unknown,
@@ -44,64 +42,53 @@ namespace xe {
             Float16, Float32 
         }; 
         
-		static bool isSigned(DataType::Enum dt);
+		static bool isSigned(DataType::Enum dt)  {
+			switch (dt) {
+				case DataType::UInt8:
+				case DataType::UInt16:
+				case DataType::UInt32:
+					return false;
 
-		static DataType::Kind getKind(DataType::Enum dataType);
+				default:
+					return true;
+			}
+		}
 
-		static int getSize(DataType::Enum dataType);
+		static DataType::Kind getKind(DataType::Enum dataType)  {
+			switch (dataType) {
+				case DataType::Float16: 
+				case DataType::Float32: 
+					return DataType::Float;
+
+				default:
+					return DataType::Int;
+			}
+		}
+
+		static int getSize(DataType::Enum dataType)  {
+			switch (dataType) {
+				case DataType::UInt8:
+				case DataType::Int8:
+					return 1;
+
+				case DataType::UInt16:
+				case DataType::Int16:
+				case DataType::Float16:
+					return 2;
+
+				case DataType::UInt32:
+				case DataType::Int32:
+				case DataType::Float32:
+					return 4;
+
+				default:
+					return 0;
+			}
+		}
         
         template<typename BasicType>
         static bool isEqual(DataType::Enum dataType);
     };
-    
-	/* Implementation */
-
-	inline bool DataType::isSigned(DataType::Enum dt) 
-	{
-		switch (dt) {
-			case DataType::UInt8:
-			case DataType::UInt16:
-			case DataType::UInt32:
-				return false;
-
-			default:
-				return true;
-		}
-	}
-
-	inline DataType::Kind DataType::getKind(DataType::Enum dataType) 
-	{
-		switch (dataType) {
-			case DataType::Float16: 
-			case DataType::Float32: 
-				return DataType::Float;
-
-			default:
-				return DataType::Int;
-		}
-	}
-
-	inline int DataType::getSize(DataType::Enum dataType)
-	{
-		switch (dataType) {
-			case DataType::UInt8:
-			case DataType::Int8:
-				return 1;
-
-			case DataType::UInt16:
-			case DataType::Int16:
-			case DataType::Float16:
-				return 2;
-
-			case DataType::UInt32:
-			case DataType::Int32:
-			case DataType::Float32:
-				return 4;
-
-			default:
-				return -1;
-		}
-	}
     
     template<typename BasicType> struct DataTypeTraits;
     EXENG_DATA_TYPE_TRAITS(std::uint8_t , DataType::UInt8);

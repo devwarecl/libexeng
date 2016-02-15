@@ -1,8 +1,8 @@
 
 #pragma once
 
-#ifndef __xe_gfx_material2_hpp__
-#define __xe_gfx_material2_hpp__
+#ifndef __xe_gfx_materialformat2_hpp__
+#define __xe_gfx_materialformat2_hpp__
 
 #include <array>
 #include <cassert>
@@ -76,32 +76,6 @@ namespace xe { namespace gfx {
         std::array<MaterialAttribDesc2, AttribCount> attribs;
         int size = 0;
     };
-    
-    class EXENGAPI Material2 : public Object {
-    public:
-        virtual ~Material2();
-        
-        virtual Buffer* getBuffer() = 0;
-        virtual const Buffer* getBuffer() const = 0;
-        
-        virtual ShaderProgram* getShaderProgram() = 0;
-        virtual const ShaderProgram* getShaderProgram() const = 0;
-        
-        virtual void setShaderProgram(ShaderProgram* program) = 0;
-        
-        virtual Texture *getTexture() = 0;
-        virtual const Texture *getTexture() const = 0;
-        
-        virtual void setTexture(Texture* texture) = 0;
-        
-        virtual Texture *getTexture(const int index) = 0;
-        virtual const Texture *getTexture(const int index) const = 0;
-        virtual void setTexture(const int index, Texture* texture) = 0;
-        
-        virtual const int getTextureCount() const = 0;
-    };
-    
-    typedef std::unique_ptr<Material2> Material2Ptr;
 }}
 
 #endif 

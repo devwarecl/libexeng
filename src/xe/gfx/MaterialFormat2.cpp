@@ -3,5 +3,5 @@
 #include <cassert>
 
 namespace xe { namespace gfx {
-	Material2::~Material2() {}
+	
 }}

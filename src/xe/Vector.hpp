@@ -20,8 +20,8 @@
 #include <cmath>
 #include <cstring>
 
-#include "Common.hpp"
-#include "DataType.hpp"
+#include <xe/Common.hpp>
+#include <xe/DataType.hpp>
 
 #if defined(EXENG_DEBUG)
 #include <stdexcept>
