@@ -21,11 +21,9 @@
 namespace xe { namespace gfx { namespace gl3 {
 
     void checkGLError(const char *file, int line) {
-		return;
+		GLenum err = ::glGetError();
 
-        GLenum err = ::glGetError();
-
-		if (err!=GL_NO_ERROR) {
+		if (err != GL_NO_ERROR) {
             std::string error;
 			
             switch(err) {

@@ -144,8 +144,6 @@ namespace xe { namespace gfx { namespace gl3 {
 		assert(this->vertexArrayId);
 
 		::glDeleteVertexArrays(1, &this->vertexArrayId);
-
-		GL3_CHECK();
     }
 
     TypeInfo MeshSubsetGL3::getTypeInfo() const {

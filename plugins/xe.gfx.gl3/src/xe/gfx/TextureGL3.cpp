@@ -50,21 +50,25 @@ namespace xe { namespace gfx { namespace gl3 {
 		::glGenTextures(1, &textureId);
 		::glBindTexture(textureTarget, textureId);
 		
+        GL3_CHECK();
+
 		assert(textureId != 0);
 
 		if (textureTarget == GL_TEXTURE_1D) {
-			::glTexImage1D(textureTarget, 0, internalFormat, size.x, 0, internalFormat, dataType, data);
+			::glTexImage1D(textureTarget, 0, internalFormat, size.x, 0, internalFormat, dataType, nullptr);
 
 		} else if (textureTarget == GL_TEXTURE_2D) {
-			::glTexImage2D(textureTarget, 0, internalFormat, size.x, size.y, 0, internalFormat, dataType, data);
+			::glTexImage2D(textureTarget, 0, internalFormat, size.x, size.y, 0, internalFormat, dataType, nullptr);
 
 		} else if (textureTarget == GL_TEXTURE_3D) {
-			::glTexImage3D(textureTarget, 0, internalFormat, size.x, size.y, size.z, 0, internalFormat, dataType, data);
+			::glTexImage3D(textureTarget, 0, internalFormat, size.x, size.y, size.z, 0, internalFormat, dataType, nullptr);
 
 		} else {
 			assert(false);
 		}
-		
+
+        GL3_CHECK();
+
         ::glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         ::glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		::glTexParameteri(textureTarget, GL_TEXTURE_BASE_LEVEL, 0);
@@ -79,26 +83,13 @@ namespace xe { namespace gfx { namespace gl3 {
 		this->textureId = textureId;
 		this->textureTarget = textureTarget;
 		this->internalFormat = internalFormat;
+        this->size = size;
 
-		// Determine true size
-		xe::Vector3i tex_size = {1, 1, 1};
+        ::glBindTexture(textureTarget, 0);
 
-		::glGetTexLevelParameteriv(textureTarget, 0, GL_TEXTURE_WIDTH, &tex_size.x);
-
-		if (textureTarget==GL_TEXTURE_3D || textureTarget==GL_TEXTURE_2D) {
-			::glGetTexLevelParameteriv(textureTarget, 0, GL_TEXTURE_HEIGHT, &tex_size.y);
-		}
-
-		if (textureTarget==GL_TEXTURE_3D) {
-			::glGetTexLevelParameteriv(textureTarget, 0, GL_TEXTURE_DEPTH, &tex_size.z);
-		}
-
-		this->size = tex_size;
-
-		::glBindTexture(textureTarget, 0);
-
-		// download the texture cache
+		// sync the internal texture buffer with the current texture
 		buffer.setTexture(this);
+        buffer.write(data);
 
 		GL3_CHECK();
 	}

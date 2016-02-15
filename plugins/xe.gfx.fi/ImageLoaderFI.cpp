@@ -8,9 +8,11 @@ namespace xe { namespace gfx {
 
 	ImageLoaderFI::ImageLoaderFI() {
 		::FreeImage_Initialise();
+        manager.addLoader(this);
 	}
 
 	ImageLoaderFI::~ImageLoaderFI() {
+        manager.removeLoader(this);
 		::FreeImage_DeInitialise();
 	}
 
@@ -19,7 +21,7 @@ namespace xe { namespace gfx {
 	}
 
 	const Image* ImageLoaderFI::getImage(const std::string &uri) const {
-		return nullptr;
+		return const_cast<ImageLoaderFI*>(this)->manager.getProduct(uri);
 	}
 
 	ImagePtr ImageLoaderFI::load(const std::string &uri) {

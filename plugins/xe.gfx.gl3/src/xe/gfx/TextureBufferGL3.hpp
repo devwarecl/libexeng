@@ -39,13 +39,6 @@ namespace xe { namespace gfx { namespace gl3 {
 		}
 
     private:
-		// read data from texture to cache
-        void download();
-
-		// write data to texture from cache
-		void upload();
-        
-    private:
         TextureGL3 *texture = nullptr;
 		void* cache_ptr = nullptr;
         HeapBuffer cache;

@@ -236,21 +236,7 @@ namespace xe { namespace gfx {
 		virtual TexturePtr createTexture(const Vector3i& size, PixelFormat::Enum format, const void *data = nullptr) = 0;
 		virtual TexturePtr createTextureCube(const Vector2i& size, PixelFormat::Enum format, const void *data = nullptr) = 0;
         
-		virtual TexturePtr createTexture(const Image *image) {
-			if (image->getType() == ImageType::Img2D) {
-				Vector2i size = image->getSize();
-                
-                auto locker = image->getBuffer()->getLocker();
-                
-				return this->createTexture (
-					size, 
-					image->getFormat(), 
-					locker.getPointer()
-				);
-			} else {
-				return nullptr;
-			}
-		}
+		virtual TexturePtr createTexture(const Image *image);
 
         /**
          * @brief Set the area of the screen that can be rendered

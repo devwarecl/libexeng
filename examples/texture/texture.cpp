@@ -87,16 +87,18 @@ in vec2 uv;
 
 out vec4 color;
 
+uniform sampler2D tex_sampler;
+
 uniform vec4 ambient;
 uniform vec4 diffuse;
 uniform vec4 specular;
 uniform vec4 emissive;
 uniform float shininess;
 
-uniform sampler2D tex_sampler;
-
 void main() {
-	color = texture(tex_sampler, uv) /* ambient*/;
+    // color = vec4(uv, 0.0f, 1.0f);
+    // color = vec4(n, 1.0f);
+	color = texture(tex_sampler, uv);
 })";
 		std::list<xe::gfx::ShaderSource> sources = {
 			{xe::gfx::ShaderType::Vertex, vshader_src},

@@ -80,7 +80,7 @@ namespace xe { namespace gfx {
 				const int vertexIndex = i*BOX_VERTEX_PER_FACE_COUNT + j;
 
 #if defined(EXENG_DEBUG)
-                std::cout << vertexIndex << " -> [" << vertexPosition << "], [" << vertexNormal << "], [" << texCoord[j] << "]" << std::endl;
+                std::cout << vertexIndex << ":[" << vertexPosition << "], [" << vertexNormal << "], [" << texCoord[j] << "]" << std::endl;
 #endif
 
 				array.setValue(vertexIndex, VertexAttrib::Position, vertexPosition);

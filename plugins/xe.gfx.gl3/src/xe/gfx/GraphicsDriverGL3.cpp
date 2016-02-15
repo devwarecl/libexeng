@@ -387,6 +387,13 @@ namespace xe { namespace gfx { namespace gl3 {
     void GraphicsDriverGL3::preRenderMaterial(const Material *material) {
         assert(material != nullptr);
         
+        // set the shader program state
+        auto shaderProgram = static_cast<const ShaderProgramGL3 *>(material->getShaderProgram());
+        
+        GLint programId = shaderProgram->getProgramId();
+
+        ::glUseProgram(programId);
+
         // set the texture state
         for(int i=0; i<material->getLayerCount(); ++i) {
             const MaterialLayer *layer = material->getLayer(i);
@@ -396,17 +403,21 @@ namespace xe { namespace gfx { namespace gl3 {
                 GLenum textureType = convTextureType(texture->getType());
                 GLenum textureId = texture->getTextureId();
                 
+                GLuint textureLocation = ::glGetUniformLocation(programId, "tex_sampler");
+                GL3_CHECK();
+
+                ::glUniform1i(textureLocation, i);
+                GL3_CHECK();
+
                 ::glActiveTexture(GL_TEXTURE0 + i);
+                GL3_CHECK();
+
                 ::glBindTexture(textureType, textureId);
             }
         }
         
-        // set the shader program state
-        const ShaderProgramGL3 *shaderProgram = static_cast<const ShaderProgramGL3 *>(material->getShaderProgram());
-        
-        GLint programId = shaderProgram->getProgramId();
-        ::glUseProgram(programId);
-        
+        GL3_CHECK();
+
         if (material->getFormat()) {
             // Set material attributes
             const MaterialFormat *materialFormat = material->getFormat();

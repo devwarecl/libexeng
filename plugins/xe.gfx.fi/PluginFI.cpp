@@ -21,16 +21,19 @@ namespace xe { namespace gfx {
 			return Version(1, 0, 0, 0);
 		}
 
-        virtual void initialize(Core *core) override {
-			this->imageLoader = std::make_unique<ImageLoaderFI>();
+        virtual void initialize(Core *core_) override {
+            core = core_;
+			imageLoader = std::make_unique<ImageLoaderFI>();
 			core->getGraphicsManager()->setImageToolkit(this->imageLoader.get());
 		}
 
         virtual void terminate() override {
+            core->getGraphicsManager()->setImageToolkit(nullptr);
 			this->imageLoader.reset();
 		}
 
 	private:
+        Core *core = nullptr;
 		std::unique_ptr<ImageLoaderFI> imageLoader;
 	};
 }}

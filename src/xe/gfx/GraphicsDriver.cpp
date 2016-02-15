@@ -48,4 +48,22 @@ namespace xe { namespace gfx {
 	Material2Ptr GraphicsDriver::createMaterial(const MaterialFormat2 *) {
         return Material2Ptr();
     }
+
+    TexturePtr GraphicsDriver::createTexture(const Image *image) {
+        assert(image);
+
+		if (image->getType() == ImageType::Img2D) {
+			Vector2i size = image->getSize();
+                
+            auto locker = image->getBuffer()->getLocker();
+                
+			return this->createTexture (
+				size, 
+				image->getFormat(), 
+				locker.getPointer()
+			);
+		} else {
+			return nullptr;
+		}
+	}
 }}

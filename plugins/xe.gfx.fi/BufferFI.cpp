@@ -17,14 +17,40 @@ namespace xe { namespace gfx {
 	}
 
     void* BufferFI::lock(BufferUsage::Enum mode) {
+#if defined(EXENG_DEBUG)
+        std::uint8_t* pixels = ::FreeImage_GetBits(image->getBitmap());
+
+        for (int i=0; i<120; i++) {
+            std::cout << pixels[i];
+
+            if ((i+1)%12) {
+                std::cout << std::endl;
+            }
+        }
+#endif
+
         return ::FreeImage_GetBits(image->getBitmap());
     }
 
     void BufferFI::unlock() {}
 
     const void* BufferFI::lock() const {
+#if defined(EXENG_DEBUG)
+        std::uint8_t* pixels = ::FreeImage_GetBits(image->getBitmap());
+
+        for (int i=0; i<120; i++) {
+            std::cout << int(pixels[i]) << ", ";
+
+            if ((i+1)%12 == 0) {
+                std::cout << std::endl;
+            }
+        }
+#endif
+
         return ::FreeImage_GetBits(image->getBitmap());
     }
 
-    void BufferFI::unlock() const {}
+    void BufferFI::unlock() const {
+        const_cast<BufferFI*>(this)->unlock();
+    }
 }}

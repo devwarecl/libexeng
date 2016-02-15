@@ -40,7 +40,7 @@ namespace xe { namespace gfx { namespace gl3 {
 
     inline GLenum convFormat(PixelFormat::Enum format) {
 		switch (format) {
-			case PixelFormat::R8G8B8:	return GL_RG8;
+			case PixelFormat::R8G8B8:	return GL_RGB;
 			case PixelFormat::R8G8B8A8:	return GL_RGBA;
 			default: return GL_FALSE;
 		}
