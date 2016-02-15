@@ -192,6 +192,13 @@ namespace xe { namespace gfx {
 
 			return indexCount;
 		}
+
+        std::unique_ptr<MeshSubset> clone() const {
+            return std::unique_ptr<MeshSubset>(this->cloneImpl());
+        }
+
+    protected:
+        virtual MeshSubset* cloneImpl() const override = 0;
     };
     
 	typedef std::unique_ptr<MeshSubset> MeshSubsetPtr;

@@ -16,6 +16,7 @@
 #define __EXENG_OBJECT_HPP__
 
 #include <string>
+#include <memory>
 #include <xe/Config.hpp>
 #include <xe/TypeInfo.hpp>
 
@@ -48,9 +49,9 @@ namespace xe {
         virtual bool isClonable() const;
         
 		/**
-		 * @brief Get a exact copy of the object attributes. 
+		 * @brief Get a exact copy of the object internal data. 
 		 */
-		virtual Object* clone() const;
+		std::unique_ptr<Object> clone() const;
 
 		/**
 		 * @brief Check if two given objects are equal.
@@ -94,6 +95,9 @@ namespace xe {
          * unsupported (Object::isDeserializable returns false).
          */
         virtual void deserialize(const xe::io::Stream *inStream);
+
+    protected:
+        virtual Object* cloneImpl() const;
 	};
 }
 

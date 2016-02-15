@@ -30,14 +30,12 @@ namespace xe {
 #endif
 	}
 
-
 	Object::~Object() {
 #if defined (EXENG_DEBUG)
 		// std::cout << "Destroying object (currentCount: " << count << ")(type: " << this->toString() << ")" << std::endl;
 		--count;
 #endif
 	}
-
 
 	std::string	Object::toString() const {
 		// By default, convert the direction address to a string
@@ -48,43 +46,36 @@ namespace xe {
 		return ss.str();
 	}
 
-	
 	bool Object::equals(const Object &other) const {
 		return this == &other;
 	}
 
-    
 	TypeInfo Object::getTypeInfo() const {
 		return TypeId<Object>();
 	}
-	
 	
 	bool Object::isClonable() const {
         return false;
     }
     
-    
-    Object* Object::clone() const {
-        throw std::logic_error("Object::clone is not implemented.");
+    std::unique_ptr<Object> Object::clone() const {
+        return std::unique_ptr<Object>(this->cloneImpl());
     }
-    
     
     bool Object::isSerializable() const {
         return false;
     }
 
     
-    void Object::serialize(xe::io::Stream *outStream) const {
-        throw std::logic_error("Object::serialize must be implemented.");
-    }
+    void Object::serialize(xe::io::Stream *outStream) const {}
 
-    
     bool Object::isDeserializable() const {
         return false;
     }
 
-    
-    void Object::deserialize(const xe::io::Stream *inStream) {
-        throw std::logic_error("Object::deserialize must be implemented.");
+    void Object::deserialize(const xe::io::Stream *inStream) {}
+
+    Object* Object::cloneImpl() const {
+        return nullptr;
     }
 }

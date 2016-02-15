@@ -8,6 +8,10 @@ namespace xe { namespace gfx { namespace gl3 {
 
 	const std::string errMessage = "MeshSubsetGL3::MeshSubsetGL3 -> The vertex buffer vector must contain at least one element.";
 	
+    MeshSubsetGL3::MeshSubsetGL3(const MeshSubsetGL3& other) {
+
+    }
+
     MeshSubsetGL3::MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format) {
 #if defined(EXENG_DEBUG)
         if (vertexBuffers.size() == 0) {
@@ -62,56 +66,9 @@ namespace xe { namespace gfx { namespace gl3 {
         ::glBindVertexArray(this->vertexArrayId);
 
 		if (!multiBuffer) {
-			int baseAttrib = 0;
-			int offset = 0;
-
-			const auto buffer = static_cast<BufferGL3*>(this->getBuffer(0));
-			const GLenum bufferTarget = buffer->getTarget();
-			const GLuint bufferId = buffer->getBufferId();
-
-			::glBindBuffer(bufferTarget, bufferId);
-
-			for (const VertexField& field : format.fields) {
-				if (field.attribute == VertexAttrib::Unused) {
-					break;
-				}
-				
-				const DataType::Enum dataTypeKey = field.dataType;
-				const GLenum dataType = convDataType(dataTypeKey);
-				const void *data = reinterpret_cast<const void*>(offset);
-
-				::glEnableVertexAttribArray(baseAttrib);
-				::glVertexAttribPointer(baseAttrib, field.count, dataType, GL_FALSE, format.getSize(), data);
-            
-				offset += field.count * DataType::getSize(dataTypeKey);
-				++baseAttrib;
-			}
-
-			GL3_CHECK();
+            this->constructImpl_Single();
 		} else {
-			int baseAttrib = 0;
-
-			for (const VertexField& field : format.fields) {
-				if (field.attribute == VertexAttrib::Unused) {
-					break;
-				}
-				
-				const auto buffer = static_cast<BufferGL3*>(this->getBuffer(baseAttrib));
-				const GLenum bufferTarget = buffer->getTarget();
-				const GLuint bufferId = buffer->getBufferId();
-
-				::glBindBuffer(bufferTarget, bufferId);
-
-				const DataType::Enum dataTypeKey = field.dataType;
-				const GLenum dataType = convDataType(dataTypeKey);
-				
-				::glEnableVertexAttribArray(baseAttrib);
-				::glVertexAttribPointer(baseAttrib, field.count, dataType, GL_FALSE, 0, nullptr);
-				
-				++baseAttrib;
-			}
-
-			GL3_CHECK();
+            this->constructImpl_Multi();
 		}
 
 		if (this->indexBuffer) {
@@ -146,9 +103,70 @@ namespace xe { namespace gfx { namespace gl3 {
 		::glDeleteVertexArrays(1, &this->vertexArrayId);
     }
 
+    void MeshSubsetGL3::constructImpl_Single() {
+        int baseAttrib = 0;
+	    int offset = 0;
+
+        const VertexFormat &format = this->getFormat();
+	    const auto buffer = static_cast<BufferGL3*>(this->getBuffer(0));
+	    const GLenum bufferTarget = buffer->getTarget();
+	    const GLuint bufferId = buffer->getBufferId();
+
+	    ::glBindBuffer(bufferTarget, bufferId);
+
+	    for (const VertexField& field : format.fields) {
+		    if (field.attribute == VertexAttrib::Unused) {
+			    break;
+		    }
+				
+		    const DataType::Enum dataTypeKey = field.dataType;
+		    const GLenum dataType = convDataType(dataTypeKey);
+		    const void *data = reinterpret_cast<const void*>(offset);
+
+		    ::glEnableVertexAttribArray(baseAttrib);
+		    ::glVertexAttribPointer(baseAttrib, field.count, dataType, GL_FALSE, format.getSize(), data);
+            
+		    offset += field.count * DataType::getSize(dataTypeKey);
+		    ++baseAttrib;
+	    }
+
+	    GL3_CHECK();
+    }
+
+    void MeshSubsetGL3::constructImpl_Multi() {
+        int baseAttrib = 0;
+        const VertexFormat &format = this->getFormat();
+
+		for (const VertexField& field : format.fields) {
+			if (field.attribute == VertexAttrib::Unused) {
+				break;
+			}
+				
+			const auto buffer = static_cast<BufferGL3*>(this->getBuffer(baseAttrib));
+			const GLenum bufferTarget = buffer->getTarget();
+			const GLuint bufferId = buffer->getBufferId();
+
+			::glBindBuffer(bufferTarget, bufferId);
+
+			const DataType::Enum dataTypeKey = field.dataType;
+			const GLenum dataType = convDataType(dataTypeKey);
+				
+			::glEnableVertexAttribArray(baseAttrib);
+			::glVertexAttribPointer(baseAttrib, field.count, dataType, GL_FALSE, 0, nullptr);
+				
+			++baseAttrib;
+		}
+
+		GL3_CHECK();
+    }
+
     TypeInfo MeshSubsetGL3::getTypeInfo() const {
 		assert(this);
 
         return TypeId<MeshSubsetGL3>();
+    }
+
+    MeshSubsetGL3* MeshSubsetGL3::cloneImpl() const {
+        return new MeshSubsetGL3(*this);
     }
 }}}
