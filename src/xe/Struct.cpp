@@ -1,6 +1,7 @@
 
 #include <cassert>
 #include <vector>
+#include <cstring>
 #include "Struct.hpp"
 
 namespace xe {

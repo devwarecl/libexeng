@@ -4,7 +4,7 @@ PROJECT (libexeng)
 CMAKE_MINIMUM_REQUIRED (VERSION 3.0)
 
 # Engine options
-OPTION (XE_GFX_GL3 "Enable OpenGL 3 graphics driver" OFF)
+OPTION (XE_GFX_GL "Enable OpenGL graphics driver" OFF)
 OPTION (XE_GFX_D3D "Enable Direct3D graphics driver" OFF)
 OPTION (XE_GFX_FI "Enable FreeImage-based image loader implementation" OFF)
 OPTION (XE_GFX_LWO "Enable mesh loading from LWO files" OFF)
@@ -88,8 +88,8 @@ add_subdirectory(examples/triangle)
 add_subdirectory(examples/texture)
 
 # Engine plugins
-IF(XE_GFX_GL3)
-	ADD_SUBDIRECTORY (plugins/xe.gfx.gl3)
+IF(XE_GFX_GL)
+	ADD_SUBDIRECTORY (plugins/xe.gfx.gl)
 ENDIF ()
 
 IF(XE_SG_XML)

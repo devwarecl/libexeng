@@ -125,7 +125,10 @@ void main() {
 		auto ibuffer = graphicsDriver->createIndexBuffer(indices);
 
 		// create the triangle meshsubset
-		auto subset = graphicsDriver->createMeshSubset({std::move(vbuffer)}, xe::gfx::StandardVertex::getFormat(), std::move(ibuffer), xe::gfx::IndexFormat::Index32);
+		auto subset = graphicsDriver->createMeshSubset (
+            std::move(vbuffer),  xe::gfx::StandardVertex::getFormat(), 
+            std::move(ibuffer),  xe::gfx::IndexFormat::Index32
+        );
 
         return subset;
     }
