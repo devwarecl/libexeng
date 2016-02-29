@@ -11,7 +11,7 @@ set (BaseFiles_hpp
 	# Product.hpp ProductLoader.hpp 
 	ProductManager.hpp ProductManagerImpl.hpp
 	ISerializable.hpp Timer.hpp
-    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp
+    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp
 	Main.hpp                Main.inl
 	Application.hpp         GraphicsApplication.hpp 
 	

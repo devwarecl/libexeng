@@ -61,6 +61,34 @@ public:
         return material;
     }
     
+    xe::gfx::MaterialPtr createMaterial2() {
+        auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
+        
+        material->getLayer(0)->setTexture(texture2.get());
+		material->setShaderProgram(shader.get());
+		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("emission", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("shininess", 1.0f);
+
+        return material;
+    }
+
+    xe::gfx::MaterialPtr createMaterial3() {
+        auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
+        
+        material->getLayer(0)->setTexture(texture3.get());
+		material->setShaderProgram(shader.get());
+		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("emission", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material->setAttribute("shininess", 1.0f);
+
+        return material;
+    }
+
     xe::gfx::ShaderProgramPtr createProgram() {
 
 		std::string vshader_src = 
@@ -128,12 +156,16 @@ void main() {
         auto subset2 = createBoxMesh();
         xe::gfx::transform(subset2.get(), xe::scale<float, 4>({0.5f, 1.5f, 0.5f}));
         xe::gfx::transform(subset2.get(), xe::translate<float>({0.0f, 0.25f, 0.0f}));
-        subset2->setMaterial(material.get());
+        subset2->setMaterial(material2.get());
+
+        auto subset3 = createBoxMesh();
+        xe::gfx::transform(subset3.get(), xe::translate<float>({1.0f, 0.25f, 0.0f}));
+        subset3->setMaterial(material3.get());
         
         std::vector<xe::gfx::MeshSubsetPtr> subsets;
-        
         subsets.push_back(std::move(subset1));
         subsets.push_back(std::move(subset2));
+        subsets.push_back(std::move(subset3));
 
         return std::make_unique<xe::gfx::Mesh>(std::move(subsets));
     }
@@ -141,6 +173,22 @@ void main() {
     xe::gfx::TexturePtr createTexture() {
         auto toolkit = this->getGraphicsManager()->getImageToolkit();
         auto image = toolkit->getImage("C:\\Users\\fapablaza\\Desktop\\Projects\\libexeng\\media\\puppy.jpg");
+        auto texture = graphicsDriver->createTexture(image);
+        
+        return texture;
+    }
+
+    xe::gfx::TexturePtr createTexture2() {
+        auto toolkit = this->getGraphicsManager()->getImageToolkit();
+        auto image = toolkit->getImage("C:\\Users\\fapablaza\\Desktop\\Projects\\libexeng\\media\\metal126.jpg");
+        auto texture = graphicsDriver->createTexture(image);
+        
+        return texture;
+    }
+
+    xe::gfx::TexturePtr createTexture3() {
+        auto toolkit = this->getGraphicsManager()->getImageToolkit();
+        auto image = toolkit->getImage("C:\\Users\\fapablaza\\Desktop\\Projects\\libexeng\\media\\tiles_ctf05b.jpg");
         auto texture = graphicsDriver->createTexture(image);
         
         return texture;
@@ -155,7 +203,11 @@ void main() {
         
 		shader = createProgram();
         texture = createTexture();
+        texture2 = createTexture2();
+        texture3 = createTexture3();
         material = createMaterial();
+        material2 = createMaterial2();
+        material3 = createMaterial3();
         mesh = createMesh();
     }
     
@@ -218,7 +270,11 @@ private:
     xe::gfx::MaterialFormat materialFormat;
     xe::gfx::MeshPtr mesh = nullptr;
     xe::gfx::MaterialPtr material;
+    xe::gfx::MaterialPtr material2;
+    xe::gfx::MaterialPtr material3;
     xe::gfx::TexturePtr texture;
+    xe::gfx::TexturePtr texture2;
+    xe::gfx::TexturePtr texture3;
 
     xe::gfx::ShaderProgramPtr shader;
 };
