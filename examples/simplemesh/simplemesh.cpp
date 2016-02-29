@@ -120,23 +120,22 @@ void main() {
     }
 
     xe::gfx::MeshPtr createMesh() {
-        auto subset = createBoxMesh();
+        auto subset1 = createBoxMesh();
+        xe::gfx::transform(subset1.get(), xe::scale<float, 4>({2.0f, 0.5f, 2.0f}));
+        xe::gfx::transform(subset1.get(), xe::translate<float>({0.0f, -0.25f, 0.0f}));
+        subset1->setMaterial(material.get());
 
-        subset->setMaterial(material.get());
-
-        // std::vector<xe::gfx::MeshSubsetPtr> subsets;
-
-        // subsets.push_back(createBoxMesh());
+        auto subset2 = createBoxMesh();
+        xe::gfx::transform(subset2.get(), xe::scale<float, 4>({0.5f, 1.5f, 0.5f}));
+        xe::gfx::transform(subset2.get(), xe::translate<float>({0.0f, 0.25f, 0.0f}));
+        subset2->setMaterial(material.get());
         
-        // xe::gfx::transform(subsets[0].get(), xe::scale<float, 4>({4.0f, 1.0f, 4.0f}));
+        std::vector<xe::gfx::MeshSubsetPtr> subsets;
+        
+        subsets.push_back(std::move(subset1));
+        subsets.push_back(std::move(subset2));
 
-        // auto mesh = std::make_unique<xe::gfx::Mesh>(std::move(subsets));
-
-        // for (int i=0; i<mesh->getSubsetCount(); i++) {
-        //    mesh->getSubset(i)->setMaterial(material.get());
-        // }
-
-        return std::make_unique<xe::gfx::Mesh>(std::move(subset));
+        return std::make_unique<xe::gfx::Mesh>(std::move(subsets));
     }
 
     xe::gfx::TexturePtr createTexture() {
@@ -180,7 +179,7 @@ void main() {
                 angle -= 360.0f;
             }
 
-            xe::Vector3f position(0.0f, 2.0f, -1.0f);
+            xe::Vector3f position(0.0f, 1.0f, -2.0f);
             xe::Vector3f look_point(0.0f, 0.0f, 0.0f);
             xe::Vector3f up_direction(0.0f, 1.0f, 0.0f);
 
