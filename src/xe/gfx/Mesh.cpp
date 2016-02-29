@@ -179,19 +179,19 @@ namespace xe { namespace gfx {
         Primitive::Enum type = subset->getPrimitive();
         Buffer *vertexBuffer = subset->getBuffer(0);
         
-        VertexFormat vertexFormat = subset->getFormat();
+        const VertexFormat *vertexFormat = subset->getFormat();
 
 		auto locker = vertexBuffer->getLocker<void>();
 
         const void* vertexData = locker.getPointer();
         
-        int vertexOffset = vertexFormat.getAttribOffset(VertexAttrib::Position);
-        int vertexStride = vertexFormat.getSize();
+        int vertexOffset = vertexFormat->getAttribOffset(VertexAttrib::Position);
+        int vertexStride = vertexFormat->getSize();
         
         // TODO: Handle properly the vertex format
         IntersectInfo info;
         
-        int triangleCount = getTriangleCount(vertexBuffer->getSize() / vertexFormat.getSize(), subset->getPrimitive());
+        int triangleCount = getTriangleCount(vertexBuffer->getSize() / vertexFormat->getSize(), subset->getPrimitive());
         
         for (int triangleIndex=0; triangleIndex<triangleCount; triangleIndex++) {
             IntersectInfo localInfo;

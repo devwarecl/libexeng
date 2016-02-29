@@ -12,8 +12,8 @@ namespace xe { namespace gfx { namespace gl3 {
     public:        
         MeshSubsetGL3(const MeshSubsetGL3& subset);
 
-        MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format);
-		MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format, BufferPtr indexBuffer, IndexFormat::Enum indexFormat);
+        MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat *format);
+		MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat *format, BufferPtr indexBuffer, IndexFormat::Enum indexFormat);
 
         virtual ~MeshSubsetGL3();
 
@@ -35,7 +35,7 @@ namespace xe { namespace gfx { namespace gl3 {
         void constructImpl_Single();
         void constructImpl_Multi();
 
-		void initializeVertexArray(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format);
+		void initializeVertexArray(std::vector<BufferPtr> vertexBuffers, const VertexFormat *format);
 		void initializeIndexArray(BufferPtr vertexBuffers, IndexFormat::Enum indexFormat);
 
     protected:

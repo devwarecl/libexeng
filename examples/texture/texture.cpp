@@ -112,20 +112,22 @@ void main() {
     }
     
     xe::gfx::Mesh* createMesh() {
-        xe::gfx::Mesh* mesh = this->getMeshManager()->generateBoxMesh (
-            "box",
-            graphicsDriver.get(), 
-            &vertexFormat,
-            xe::gfx::IndexFormat::Index32,
-            {0.0f, 0.0f, 0.0f},
-            {1.0f, 1.0f, 1.0f}
-        );
+        return nullptr;
 
-        for (int i=0; i<mesh->getSubsetCount(); i++) {
-            mesh->getSubset(i)->setMaterial(material.get());
-        }
+        //xe::gfx::Mesh* mesh = this->getMeshManager()->generateBoxMesh (
+        //    "box",
+        //    graphicsDriver.get(), 
+        //    &vertexFormat,
+        //    xe::gfx::IndexFormat::Index32,
+        //    {0.0f, 0.0f, 0.0f},
+        //    {1.0f, 1.0f, 1.0f}
+        //);
 
-        return mesh;
+        //for (int i=0; i<mesh->getSubsetCount(); i++) {
+        //    mesh->getSubset(i)->setMaterial(material.get());
+        //}
+
+        //return mesh;
     }
 
     xe::gfx::TexturePtr createTexture() {

@@ -75,7 +75,7 @@ namespace xe { namespace gfx { namespace gl3 {
         
         virtual ShaderProgramPtr createShaderProgram( ) override;
         
-        virtual MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format, BufferPtr indexBuffer, IndexFormat::Enum iformat) override;
+        virtual MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat *format, BufferPtr indexBuffer, IndexFormat::Enum iformat) override;
 
         virtual void setMeshSubset(const MeshSubset *meshSubset) override;
         

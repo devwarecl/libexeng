@@ -17,7 +17,7 @@ namespace xe { namespace gfx {
 
 	GraphicsDriver::~GraphicsDriver() {}
     
-	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(BufferPtr vertexBuffer, const VertexFormat &format) {
+	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(BufferPtr vertexBuffer, const VertexFormat *format) {
 		std::vector<BufferPtr> vertexBuffers;
 
 		vertexBuffers.push_back(std::move(vertexBuffer));
@@ -32,7 +32,7 @@ namespace xe { namespace gfx {
 
 	}
 
-	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(BufferPtr vertexBuffer, const VertexFormat &format, BufferPtr ibuffer, IndexFormat::Enum iformat) {
+	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(BufferPtr vertexBuffer, const VertexFormat *format, BufferPtr ibuffer, IndexFormat::Enum iformat) {
 		std::vector<BufferPtr> vertexBuffers;
 
 		vertexBuffers.push_back(std::move(vertexBuffer));
@@ -40,12 +40,12 @@ namespace xe { namespace gfx {
 		return this->createMeshSubset(std::move(vertexBuffers), format, std::move(ibuffer), iformat);
 	}
 
-	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat &vformat) {
+	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat *vformat) {
 		BufferPtr ibuffer;
 		return this->createMeshSubset(std::move(vbuffers), vformat, std::move(ibuffer), IndexFormat::Unknown);
 	}
 
-	Material2Ptr GraphicsDriver::createMaterial(const MaterialFormat2 *) {
+	Material2Ptr GraphicsDriver::createMaterial(const MaterialFormat2 * /*format*/) {
         return Material2Ptr();
     }
 

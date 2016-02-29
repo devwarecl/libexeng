@@ -1,10 +1,16 @@
 
 #include <xe/Application.hpp>
+#include <xe/gfx/Algorithm.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
+#include <xe/gfx/ImageManager.hpp>
 #include <xe/gfx/Vertex.hpp>
+#include <xe/gfx/Mesh.hpp>
+#include <xe/gfx/MeshSubset.hpp>
+#include <xe/gfx/MeshManager.hpp>
+#include <xe/gfx/MeshSubsetGeneratorBox.hpp>
 
-class TriangleApplication : public xe::Application {
+class SimpleMeshApplication : public xe::Application {
 public:
     
     xe::gfx::GraphicsDriverPtr createGraphicsDriver() {
@@ -44,8 +50,9 @@ public:
     xe::gfx::MaterialPtr createMaterial() {
         auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
         
+        material->getLayer(0)->setTexture(texture.get());
 		material->setShaderProgram(shader.get());
-		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 0.0f, 1.0f));
+		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("emission", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
@@ -82,16 +89,18 @@ in vec2 uv;
 
 out vec4 color;
 
+uniform sampler2D tex_sampler;
+
 uniform vec4 ambient;
 uniform vec4 diffuse;
 uniform vec4 specular;
 uniform vec4 emissive;
 uniform float shininess;
 
-uniform sampler2D tex_sampler;
-
 void main() {
-	color = /*texture(tex_sampler, uv) * */ambient;
+    // color = vec4(uv, 0.0f, 1.0f);
+    // color = vec4(n, 1.0f);
+	color = texture(tex_sampler, uv);
 })";
 		std::list<xe::gfx::ShaderSource> sources = {
 			{xe::gfx::ShaderType::Vertex, vshader_src},
@@ -104,35 +113,37 @@ void main() {
 		return program;
     }
     
-    xe::gfx::MeshSubsetPtr createSubset() {
+    xe::gfx::MeshSubsetPtr createBoxMesh() {
+        xe::gfx::MeshSubsetGeneratorBox boxgen(graphicsDriver.get());
 
-		// vertex data
-		xe::gfx::StandardVertex v1, v2, v3, v4, v5, v6;
-		v1.coord = { -1.5f, -1.5f, 0.0f };	v1.normal = { 0.0f, 0.0f, -1.0f }; v1.texCoord = { 0.0f, 1.0f };
-		v2.coord = {  0.0f,  1.5f, 0.0f };	v2.normal = { 0.0f, 0.0f, -1.0f }; v2.texCoord = { 0.0f, 0.0f };
-		v3.coord = {  1.5f, -1.5f, 0.0f };	v3.normal = { 0.0f, 0.0f, -1.0f }; v3.texCoord = { 1.0f, 1.0f };
-		v4.coord = { -1.5f, -1.5f, 0.0f };	v4.normal = { 0.0f, 0.0f,  1.0f }; v4.texCoord = { 0.0f, 1.0f };
-		v5.coord = {  0.0f,  1.5f, 0.0f };	v5.normal = { 0.0f, 0.0f,  1.0f }; v5.texCoord = { 0.0f, 0.0f };
-		v6.coord = {  1.5f, -1.5f, 0.0f };	v6.normal = { 0.0f, 0.0f,  1.0f }; v6.texCoord = { 1.0f, 1.0f };
-		
-		std::vector<xe::gfx::StandardVertex> vertices = {v1, v2, v3, v4, v5, v6};
-
-		// index data
-		std::vector<int> indices = {0, 1, 2, 4, 3, 5};
-
-		// create vertex and index buffers
-		auto vbuffer = graphicsDriver->createVertexBuffer(vertices);
-		auto ibuffer = graphicsDriver->createIndexBuffer(indices);
-
-		// create the triangle meshsubset
-		auto subset = graphicsDriver->createMeshSubset (
-            std::move(vbuffer),  &vertexFormat, 
-            std::move(ibuffer),  xe::gfx::IndexFormat::Index32
-        );
-
-        return subset;
+        return boxgen.generate({&vertexFormat});
     }
-    
+
+    xe::gfx::MeshPtr createMesh() {
+
+        std::vector<xe::gfx::MeshSubsetPtr> subsets;
+
+        subsets.push_back(createBoxMesh());
+        
+        // xe::gfx::transform(subsets[0].get(), xe::scale<float, 4>({4.0f, 1.0f, 4.0f}));
+
+        auto mesh = std::make_unique<xe::gfx::Mesh>(std::move(subsets));
+
+        for (int i=0; i<mesh->getSubsetCount(); i++) {
+            mesh->getSubset(i)->setMaterial(material.get());
+        }
+
+        return mesh;
+    }
+
+    xe::gfx::TexturePtr createTexture() {
+        auto toolkit = this->getGraphicsManager()->getImageToolkit();
+        auto image = toolkit->getImage("C:\\Users\\fapablaza\\Desktop\\Projects\\libexeng\\media\\puppy.jpg");
+        auto texture = graphicsDriver->createTexture(image);
+        
+        return texture;
+    }
+
     void initialize() {
         graphicsDriver = this->createGraphicsDriver();
         graphicsDriver->initialize();
@@ -140,9 +151,10 @@ void main() {
         vertexFormat = createVertexFormat();
         materialFormat = createMaterialFormat();
         
-        subset = createSubset();
 		shader = createProgram();
+        texture = createTexture();
         material = createMaterial();
+        mesh = createMesh();
     }
     
     virtual int run(int argc, char **argv) override {
@@ -176,28 +188,39 @@ void main() {
             done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
-            graphicsDriver->setMaterial(material.get());
-			graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
-			graphicsDriver->setMeshSubset(subset.get());
-			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
+            
+            this->renderMesh(mesh.get(), "mvp", mvp);
+			
             graphicsDriver->endFrame();
         }
         
         return 0;
     }
     
+    void renderMesh(const xe::gfx::Mesh *mesh, const std::string &param, const xe::Matrix4f &mvp) {
+        for (int i=0; i<mesh->getSubsetCount(); i++) {
+            const xe::gfx::MeshSubset *subset = mesh->getSubset(i);
+
+            graphicsDriver->setMaterial(subset->getMaterial());
+            graphicsDriver->getModernModule()->setProgramGlobal(param, mvp);
+            graphicsDriver->setMeshSubset(subset);
+            graphicsDriver->render(subset->getPrimitive(), subset->getVertexCount());
+        }
+    }
+
 private:
     xe::input2::IInputManager *inputManager = nullptr;
     
     xe::gfx::GraphicsDriverPtr graphicsDriver;
     xe::gfx::VertexFormat vertexFormat;
     xe::gfx::MaterialFormat materialFormat;
-    xe::gfx::MeshSubsetPtr subset;
+    xe::gfx::MeshPtr mesh = nullptr;
     xe::gfx::MaterialPtr material;
-    
+    xe::gfx::TexturePtr texture;
+
     xe::gfx::ShaderProgramPtr shader;
 };
 
 int main(int argc, char **argv) {
-    return xe::Application::execute<TriangleApplication>(argc, argv);
+    return xe::Application::execute<SimpleMeshApplication>(argc, argv);
 }

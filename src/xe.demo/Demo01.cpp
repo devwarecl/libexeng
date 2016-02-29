@@ -52,7 +52,9 @@ namespace demo {
 
 			auto vbuffer = this->graphicsDriver->createVertexBuffer(vertices);
 
-			auto meshSubset = this->graphicsDriver->createMeshSubset(std::move(vbuffer), xe::gfx::StandardVertex::getFormat());
+            format = xe::gfx::StandardVertex::getFormat();
+
+			auto meshSubset = this->graphicsDriver->createMeshSubset(std::move(vbuffer), &format);
 			auto mesh = std::make_unique<xe::gfx::Mesh>(std::move(meshSubset));
 		}
 
@@ -79,6 +81,7 @@ namespace demo {
 
 	private:
 		xe::gfx::GraphicsDriverPtr graphicsDriver;
+        xe::gfx::VertexFormat format;
 
 		bool done = false;
 	};

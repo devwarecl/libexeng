@@ -460,7 +460,7 @@ namespace xe { namespace gfx { namespace gl3 {
         GL3_CHECK();
     }
 
-    MeshSubsetPtr GraphicsDriverGL3::createMeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format, BufferPtr indexBuffer, IndexFormat::Enum iformat) {
+    MeshSubsetPtr GraphicsDriverGL3::createMeshSubset(std::vector<BufferPtr> vertexBuffers, const VertexFormat *format, BufferPtr indexBuffer, IndexFormat::Enum iformat) {
 		MeshSubsetPtr subset;
 
 		subset = std::make_unique<MeshSubsetGL3>(std::move(vertexBuffers), format, std::move(indexBuffer), iformat);

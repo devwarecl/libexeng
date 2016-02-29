@@ -156,7 +156,7 @@ namespace xe { namespace gfx {
     public:
         virtual ~MeshSubset();
 
-        virtual VertexFormat getFormat() const = 0;
+        virtual const VertexFormat* getFormat() const = 0;
         virtual IndexFormat::Enum getIndexFormat() const = 0;
 
         virtual int getBufferCount() const = 0;
@@ -183,7 +183,7 @@ namespace xe { namespace gfx {
 		}
 
 		int getVertexCount() const {
-			return this->getSize() / this->getFormat().getSize();
+			return this->getSize() / this->getFormat()->getSize();
 		}
 
 		int getIndexCount() const {

@@ -12,7 +12,7 @@ namespace xe { namespace gfx {
     class MeshSubsetBase : public MeshSubset {
     public:
 		MeshSubsetBase() {}
-        virtual VertexFormat getFormat() const override;
+        virtual const VertexFormat* getFormat() const override;
         virtual IndexFormat::Enum getIndexFormat() const override;
 
         virtual int getBufferCount() const override;
@@ -33,7 +33,7 @@ namespace xe { namespace gfx {
 
         std::vector<BufferImplPtr> buffers;
         BufferImplPtr indexBuffer;
-        VertexFormat vertexFormat;
+        const VertexFormat *vertexFormat = nullptr;
         IndexFormat::Enum indexFormat = IndexFormat::Unknown;
         Primitive::Enum primitiveType = Primitive::TriangleList;
         const Material *material = nullptr;
@@ -75,7 +75,7 @@ namespace xe { namespace gfx {
     }
 
 	template<typename BufferImpl>
-    inline VertexFormat MeshSubsetBase<BufferImpl>::getFormat() const {
+    inline const VertexFormat* MeshSubsetBase<BufferImpl>::getFormat() const {
 		assert(this);
 
         return this->vertexFormat;

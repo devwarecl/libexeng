@@ -25,6 +25,8 @@
 #include <xe/gfx/VertexFormat.hpp>
 #include <xe/gfx/IndexFormat.hpp>
 #include <xe/gfx/Forward.hpp>
+#include <xe/gfx/MeshSubset.hpp>
+#include <xe/gfx/Mesh.hpp>
 
 namespace xe { namespace gfx {
     /**
@@ -61,15 +63,25 @@ namespace xe { namespace gfx {
          */
         Mesh* getMesh(const std::string &id);
 
-		/**
-		 * @brief Generate a box shaped mesh
-		 */
-		Mesh* generateBoxMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size);
+        /**
+         * @brief 
+         */
+        Mesh* getMesh(const std::string &id, MeshSubsetPtr subset);
 
         /**
-		 * @brief Generate a rectangle mesh (for two-dimensional rendering)
-		 */
-        Mesh* generateScreenMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat);
+         * @brief 
+         */
+        Mesh* getMesh(const std::string &id, std::vector<MeshSubsetPtr> subsets);
+
+		// **
+		// * @brief Generate a box shaped mesh
+		// */
+		//Mesh* generateBoxMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size);
+
+  //      /**
+		// * @brief Generate a rectangle mesh (for two-dimensional rendering)
+		// */
+  //      Mesh* generateScreenMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat);
 
     private:
         struct Private;

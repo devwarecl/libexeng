@@ -98,8 +98,7 @@ set (GraphicsFiles_hpp
 	gfx/Forward.hpp        
     gfx/MeshSubset.hpp			
     gfx/MeshSubsetBase.hpp	
-	gfx/MeshSubsetTransformer.hpp	
-	gfx/MeshSubsetGenerator.hpp	
+	gfx/Algorithm.hpp
 	gfx/Mesh.hpp
     gfx/MeshManager.hpp
     gfx/MeshLoader.hpp
@@ -111,6 +110,9 @@ set (GraphicsFiles_hpp
 	gfx/TextureLoader.hpp
 	gfx/MaterialLibrary.hpp
 	gfx/ShaderLibrary.hpp 
+	gfx/MeshSubsetGenerator.hpp
+	gfx/MeshSubsetGeneratorPlane.hpp
+	gfx/MeshSubsetGeneratorBox.hpp
 )
 
 set (GraphicsFiles_cpp
@@ -133,8 +135,7 @@ set (GraphicsFiles_cpp
     gfx/Shader.cpp
     gfx/ShaderProgram.cpp
     gfx/MeshSubset.cpp
-	gfx/MeshSubsetTransformer.cpp
-	gfx/MeshSubsetGenerator.cpp
+	gfx/Algorithm.cpp
 	gfx/Mesh.cpp
     gfx/MeshManager.cpp
     gfx/MeshLoader.cpp
@@ -144,6 +145,9 @@ set (GraphicsFiles_cpp
 	gfx/ModernModule.cpp
 	gfx/MaterialLibrary.cpp
 	gfx/ShaderLibrary.cpp
+	gfx/MeshSubsetGenerator.cpp
+	gfx/MeshSubsetGeneratorPlane.cpp
+	gfx/MeshSubsetGeneratorBox.cpp
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 

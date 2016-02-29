@@ -171,7 +171,7 @@ namespace xe { namespace gfx {
         /**
          * @brief Create a new hardware-based vertex buffer. 
          */
-        virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data) = 0;
+        virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data = nullptr) = 0;
         
 		template<typename Type>
 		BufferPtr createVertexBuffer(const std::vector<Type> &vertices) 
@@ -191,7 +191,7 @@ namespace xe { namespace gfx {
         /**
          * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
          */
-        virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data) = 0;
+        virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data = nullptr) = 0;
 
 		BufferPtr createIndexBuffer(Buffer *buffer) {
             BufferLocker<void> locker(buffer, BufferUsage::Read);
@@ -208,16 +208,16 @@ namespace xe { namespace gfx {
 			return this->createIndexBuffer(bufferSize, bufferData);
 		}
 
-        MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, const VertexFormat &format);
+        MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, const VertexFormat *format);
 
-		MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, const VertexFormat &format, BufferPtr ibuffer, IndexFormat::Enum iformat);
+		MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, const VertexFormat *format, BufferPtr ibuffer, IndexFormat::Enum iformat);
 
-		MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat &vformat);
+		MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat *vformat);
 
         /**
          * @brief Create a new mesh subset object.
          */
-        virtual MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat &vformat, BufferPtr ibuffer, IndexFormat::Enum iformat) = 0;
+        virtual MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat *vformat, BufferPtr ibuffer, IndexFormat::Enum iformat) = 0;
 
         /**
          * @brief Bound the specified MeshSubset object.

@@ -26,7 +26,7 @@
 #include <xe/Vector.hpp>
 #include <xe/ProductManagerImpl.hpp>
 #include <xe/gfx/MeshSubsetGenerator.hpp>
-#include <xe/gfx/MeshSubsetTransformer.hpp>
+#include <xe/gfx/Algorithm.hpp>
 #include <xe/gfx/MeshLoader.hpp>
 #include <xe/gfx/Mesh.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
@@ -46,23 +46,23 @@ namespace xe { namespace gfx {
 			return meshPtr;
 		}
 
-		template<typename Generator>
-		MeshPtr generateMesh(GraphicsDriver *driver, const VertexFormat* vformat, const IndexFormat::Enum iformat, const Matrix4f &transformation) {
-			Generator generator;
-			MeshSubsetTransformer transformer;
+		//template<typename Generator>
+		//MeshPtr generateMesh(GraphicsDriver *driver, const VertexFormat* vformat, const IndexFormat::Enum iformat, const Matrix4f &transformation) {
+		//	Generator generator;
 
-			const int vsize = generator.getVertexBufferSize(vformat);
-			const int isize = generator.getIndexBufferSize(iformat);
+		//	const int vsize = generator.getVertexBufferSize(vformat);
+		//	const int isize = generator.getIndexBufferSize(iformat);
 
-			auto vbuffer = driver->createVertexBuffer(vsize, nullptr);
-			auto ibuffer = driver->createIndexBuffer(isize, nullptr);
-			auto subset = driver->createMeshSubset(std::move(vbuffer), *vformat, std::move(ibuffer), iformat);
+		//	auto vbuffer = driver->createVertexBuffer(vsize, nullptr);
+		//	auto ibuffer = driver->createIndexBuffer(isize, nullptr);
+		//	auto subset = driver->createMeshSubset(std::move(vbuffer), *vformat, std::move(ibuffer), iformat);
 
-			generator.generate(subset.get());
-			transformer.transform(subset.get(), transformation);
+		//	generator.generate(subset.get());
 
-			return std::make_unique<Mesh>(std::move(subset));
-		}
+		//	transformer.transform(subset.get(), transformation);
+
+		//	return std::make_unique<Mesh>(std::move(subset));
+		//}
     };
     
     MeshManager::MeshManager() {
@@ -91,34 +91,45 @@ namespace xe { namespace gfx {
 		return this->impl->manager.getProduct(filename);
     }
 
-	Mesh* MeshManager::generateBoxMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size) {
-		assert(this->impl != nullptr);
+//	Mesh* MeshManager::generateBoxMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size) {
+//		assert(this->impl != nullptr);
+//
+//#if defined(EXENG_DEBUG)
+//		if (this->impl->manager.existProduct(id)) {
+//			throw std::runtime_error("The mesh id '" + id + "' is already used.");
+//		}
+//#endif	
+//		Matrix4f transformation = scale<float, 4>(size) * translate<float>(center);
+//
+//		MeshPtr mesh = this->impl->generateMesh<BoxGenerator>(driver, vertexFormat, indexFormat, transformation);
+//
+//		return this->impl->storeMesh(id, std::move(mesh));
+//	}
+//	
+//    Mesh* MeshManager::generateScreenMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat) {
+//        assert(this->impl != nullptr);
+//
+//#if defined(EXENG_DEBUG)
+//		if (this->impl->manager.existProduct(id)) {
+//			throw std::runtime_error("The mesh id '" + id + "' is already used.");
+//		}
+//#endif	
+//
+//		Matrix4f transformation = translate<float>({0.5f, 0.5f, 0.0f});
+//		MeshPtr mesh = this->impl->generateMesh<RectGenerator>(driver, vertexFormat, indexFormat, transformation);
+//
+//		return this->impl->storeMesh(id, std::move(mesh));
+//    }
+//
+    Mesh* MeshManager::getMesh(const std::string &id, MeshSubsetPtr subset) {
+        auto mesh = std::make_unique<Mesh>(std::move(subset));
 
-#if defined(EXENG_DEBUG)
-		if (this->impl->manager.existProduct(id)) {
-			throw std::runtime_error("The mesh id '" + id + "' is already used.");
-		}
-#endif	
-		Matrix4f transformation = scale<float, 4>(size) * translate<float>(center);
+        return this->impl->storeMesh(id, std::move(mesh));
+    }
 
-		MeshPtr mesh = this->impl->generateMesh<BoxGenerator>(driver, vertexFormat, indexFormat, transformation);
+    Mesh* MeshManager::getMesh(const std::string &id, std::vector<MeshSubsetPtr> subsets) {
+        auto mesh = std::make_unique<Mesh>(std::move(subsets));
 
-		return this->impl->storeMesh(id, std::move(mesh));
-	}
-	
-    Mesh* MeshManager::generateScreenMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat) {
-        assert(this->impl != nullptr);
-
-#if defined(EXENG_DEBUG)
-		if (this->impl->manager.existProduct(id)) {
-			throw std::runtime_error("The mesh id '" + id + "' is already used.");
-		}
-#endif	
-
-		Matrix4f transformation = translate<float>({0.5f, 0.5f, 0.0f});
-
-		MeshPtr mesh = this->impl->generateMesh<RectGenerator>(driver, vertexFormat, indexFormat, transformation);
-
-		return this->impl->storeMesh(id, std::move(mesh));
+        return this->impl->storeMesh(id, std::move(mesh));
     }
 }}

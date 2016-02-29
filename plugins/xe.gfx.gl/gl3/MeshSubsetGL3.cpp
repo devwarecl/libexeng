@@ -12,7 +12,7 @@ namespace xe { namespace gfx { namespace gl3 {
 
     }
 
-    MeshSubsetGL3::MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format) {
+    MeshSubsetGL3::MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat *format) {
 #if defined(EXENG_DEBUG)
         if (vertexBuffers.size() == 0) {
             throw std::runtime_error(errMessage);
@@ -22,7 +22,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		this->construct();
     }
 
-	MeshSubsetGL3::MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format, BufferPtr indexBuffer, IndexFormat::Enum indexFormat) {
+	MeshSubsetGL3::MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat *format, BufferPtr indexBuffer, IndexFormat::Enum indexFormat) {
 #if defined(EXENG_DEBUG)
         if (vertexBuffers.size() == 0) {
             throw std::runtime_error(errMessage);
@@ -33,7 +33,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		this->construct();
 	}
 
-	void MeshSubsetGL3::initializeVertexArray(std::vector<BufferPtr> vertexBuffers, const VertexFormat &format) {
+	void MeshSubsetGL3::initializeVertexArray(std::vector<BufferPtr> vertexBuffers, const VertexFormat *format) {
 		assert(this);
 
 		for (auto &vbuffer : vertexBuffers) {
@@ -58,7 +58,7 @@ namespace xe { namespace gfx { namespace gl3 {
 	void MeshSubsetGL3::construct() {
 		assert(this);
 
-		const VertexFormat format = this->getFormat();
+		const VertexFormat *format = this->getFormat();
 
 		const bool multiBuffer = (this->buffers.size() > 1);
 
@@ -107,14 +107,14 @@ namespace xe { namespace gfx { namespace gl3 {
         int baseAttrib = 0;
 	    int offset = 0;
 
-        const VertexFormat &format = this->getFormat();
+        const VertexFormat *format = this->getFormat();
 	    const auto buffer = static_cast<BufferGL3*>(this->getBuffer(0));
 	    const GLenum bufferTarget = buffer->getTarget();
 	    const GLuint bufferId = buffer->getBufferId();
 
 	    ::glBindBuffer(bufferTarget, bufferId);
 
-	    for (const VertexField& field : format.fields) {
+	    for (const VertexField& field : format->fields) {
 		    if (field.attribute == VertexAttrib::Unused) {
 			    break;
 		    }
@@ -124,7 +124,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		    const void *data = reinterpret_cast<const void*>(offset);
 
 		    ::glEnableVertexAttribArray(baseAttrib);
-		    ::glVertexAttribPointer(baseAttrib, field.count, dataType, GL_FALSE, format.getSize(), data);
+		    ::glVertexAttribPointer(baseAttrib, field.count, dataType, GL_FALSE, format->getSize(), data);
             
 		    offset += field.count * DataType::getSize(dataTypeKey);
 		    ++baseAttrib;
@@ -135,9 +135,9 @@ namespace xe { namespace gfx { namespace gl3 {
 
     void MeshSubsetGL3::constructImpl_Multi() {
         int baseAttrib = 0;
-        const VertexFormat &format = this->getFormat();
+        const VertexFormat *format = this->getFormat();
 
-		for (const VertexField& field : format.fields) {
+		for (const VertexField& field : format->fields) {
 			if (field.attribute == VertexAttrib::Unused) {
 				break;
 			}

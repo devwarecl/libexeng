@@ -1,60 +1,67 @@
 
 #pragma once
 
-#ifndef __exeng_graphics_meshsubsetgenerator_hpp__
-#define __exeng_graphics_meshsubsetgenerator_hpp__
+#ifndef __xe_gfx_meshsubsetgenerator_hpp__
+#define __xe_gfx_meshsubsetgenerator_hpp__
 
 #include <xe/Config.hpp>
-#include <xe/gfx/VertexFormat.hpp>
+#include <xe/Buffer.hpp>
+#include <xe/Matrix.hpp>
+#include <xe/Vector.hpp>
+#include <xe/gfx/Forward.hpp>
 #include <xe/gfx/IndexFormat.hpp>
-
-namespace xe {
-	class EXENGAPI Buffer;
-}
+#include <xe/gfx/VertexFormat.hpp>
+#include <xe/gfx/MeshSubset.hpp>
 
 namespace xe { namespace gfx {
+    
+    /**
+     * @brief Structure for future generator.
+     */
+    struct EXENGAPI MeshSubsetGeneratorParams {
+        const VertexFormat *format = nullptr;
+        IndexFormat::Enum iformat = IndexFormat::Enum::Index32;
+        int slices = 1;
+        int stacks = 1;
 
-	class EXENGAPI VertexBuffer;
-	class EXENGAPI MeshSubset;
-	
-	class EXENGAPI MeshSubsetGenerator {
-	public:
-		virtual ~MeshSubsetGenerator() {}
+        MeshSubsetGeneratorParams ( 
+            const VertexFormat *format, 
+            IndexFormat::Enum iformat = IndexFormat::Enum::Index32,
+            int slices = 1,
+            int stacks = 1) {
+            
+            this->format = format;
+            this->iformat = iformat;
+            this->slices = slices;
+            this->stacks = stacks;
+        }
+    };
 
-		virtual int getVertexBufferSize(const VertexFormat *format) const = 0;
+    /**
+     * @brief Base class for all SubsetGenerator derived class.
+     */
+    class EXENGAPI MeshSubsetGenerator {
+    public:
+        explicit MeshSubsetGenerator(GraphicsDriver *driver);
 
-		virtual int getIndexBufferSize(const IndexFormat::Enum format) const = 0;
+        virtual ~MeshSubsetGenerator();
 
-		virtual void generate(MeshSubset *subset) = 0;
-	};
-	
-	class EXENGAPI BoxGenerator : public MeshSubsetGenerator {
-	public:
-		virtual int getVertexBufferSize(const VertexFormat *format) const override;
+        MeshSubsetPtr generate(const MeshSubsetGeneratorParams &params);
 
-		virtual int getIndexBufferSize(const IndexFormat::Enum format) const override;
+        GraphicsDriver* getGraphicsDriver();
 
-		virtual void generate(MeshSubset *subset) override;
+        const GraphicsDriver* getGraphicsDriver() const;
 
-	private:
-		void fillVertexBuffer(Buffer *buffer, const VertexFormat *format);
+    protected:
+        virtual int getBufferSize(const MeshSubsetGeneratorParams &params) const = 0;
+        virtual int getIBufferSize(const MeshSubsetGeneratorParams &params) const = 0;
 
-		void fillIndexBuffer(Buffer *buffer, IndexFormat::Enum indexFormat);
-	};
+        virtual void fillBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const = 0;
+        virtual void fillIBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const = 0;
 
-	class EXENGAPI RectGenerator : public MeshSubsetGenerator {
-	public:
-		virtual int getVertexBufferSize(const VertexFormat *format) const override;
-
-		virtual int getIndexBufferSize(const IndexFormat::Enum format) const override;
-
-		virtual void generate(MeshSubset *subset) override;
-
-	private:
-		void fillVertices(Buffer *buffer, const VertexFormat *format);
-
-		void fillIndices(Buffer *buffer, IndexFormat::Enum indexFormat);
-	};
+    protected:
+        GraphicsDriver *driver = nullptr;
+    };
 }}
 
 #endif	
