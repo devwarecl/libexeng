@@ -14,11 +14,11 @@ namespace xe { namespace gfx {
         virtual ~MeshSubsetGeneratorBox();
 
     protected:
-        virtual int getBufferSize(const MeshSubsetGeneratorParams &params) const override;
-        virtual int getIBufferSize(const MeshSubsetGeneratorParams &params) const override;
+        virtual int getVertexBufferSize(const MeshSubsetGeneratorParams &params) const override;
+        virtual int getIndexBufferSize(const MeshSubsetGeneratorParams &params) const override;
 
-        virtual void fillBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const override;
-        virtual void fillIBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const override;
+        virtual void generateVertexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const override;
+        virtual void generateIndexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const override;
     };
 }}
 

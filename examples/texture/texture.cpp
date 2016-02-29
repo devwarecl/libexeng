@@ -7,6 +7,7 @@
 #include <xe/gfx/Mesh.hpp>
 #include <xe/gfx/MeshSubset.hpp>
 #include <xe/gfx/MeshManager.hpp>
+#include <xe/gfx/MeshSubsetGeneratorBox.hpp>
 
 class TextureApplication : public xe::Application {
 public:
@@ -111,23 +112,30 @@ void main() {
 		return program;
     }
     
-    xe::gfx::Mesh* createMesh() {
-        return nullptr;
+    //xe::gfx::Mesh* createMesh() {
+    //    xe::gfx::Mesh* mesh = this->getMeshManager()->generateBoxMesh (
+    //        "box",
+    //        graphicsDriver.get(), 
+    //        &vertexFormat,
+    //        xe::gfx::IndexFormat::Index32,
+    //        {0.0f, 0.0f, 0.0f},
+    //        {1.0f, 1.0f, 1.0f}
+    //    );
+    //
+    //    for (int i=0; i<mesh->getSubsetCount(); i++) {
+    //        mesh->getSubset(i)->setMaterial(material.get());
+    //    }
+    //
+    //    return mesh;
+    //}
 
-        //xe::gfx::Mesh* mesh = this->getMeshManager()->generateBoxMesh (
-        //    "box",
-        //    graphicsDriver.get(), 
-        //    &vertexFormat,
-        //    xe::gfx::IndexFormat::Index32,
-        //    {0.0f, 0.0f, 0.0f},
-        //    {1.0f, 1.0f, 1.0f}
-        //);
+    xe::gfx::MeshSubsetPtr createBoxSubset(const xe::gfx::Material *material) {
+        xe::gfx::MeshSubsetGeneratorBox boxgen(graphicsDriver.get());
+        xe::gfx::MeshSubsetPtr subset = boxgen.generate({&vertexFormat, xe::gfx::IndexFormat::Index32});
 
-        //for (int i=0; i<mesh->getSubsetCount(); i++) {
-        //    mesh->getSubset(i)->setMaterial(material.get());
-        //}
+        subset->setMaterial(material);
 
-        //return mesh;
+        return subset;
     }
 
     xe::gfx::TexturePtr createTexture() {
@@ -148,7 +156,7 @@ void main() {
 		shader = createProgram();
         texture = createTexture();
         material = createMaterial();
-        mesh = createMesh();
+        subset = createBoxSubset(material.get());
     }
     
     virtual int run(int argc, char **argv) override {
@@ -183,23 +191,15 @@ void main() {
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
             
-            this->renderMesh(this->mesh, "mvp", mvp);
+            graphicsDriver->setMaterial(subset->getMaterial());
+            graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
+            graphicsDriver->setMeshSubset(subset.get());
+            graphicsDriver->render(subset->getPrimitive(), subset->getVertexCount());
 			
             graphicsDriver->endFrame();
         }
         
         return 0;
-    }
-    
-    void renderMesh(const xe::gfx::Mesh *mesh, const std::string &param, const xe::Matrix4f &mvp) {
-        for (int i=0; i<mesh->getSubsetCount(); i++) {
-            const xe::gfx::MeshSubset *subset = mesh->getSubset(i);
-
-            graphicsDriver->setMaterial(subset->getMaterial());
-            graphicsDriver->getModernModule()->setProgramGlobal(param, mvp);
-            graphicsDriver->setMeshSubset(subset);
-            graphicsDriver->render(subset->getPrimitive(), subset->getVertexCount());
-        }
     }
 
 private:
@@ -208,7 +208,7 @@ private:
     xe::gfx::GraphicsDriverPtr graphicsDriver;
     xe::gfx::VertexFormat vertexFormat;
     xe::gfx::MaterialFormat materialFormat;
-    xe::gfx::Mesh* mesh = nullptr;
+    xe::gfx::MeshSubsetPtr subset;
     xe::gfx::MaterialPtr material;
     xe::gfx::TexturePtr texture;
 

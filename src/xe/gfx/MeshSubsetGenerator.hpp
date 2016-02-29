@@ -53,11 +53,11 @@ namespace xe { namespace gfx {
         const GraphicsDriver* getGraphicsDriver() const;
 
     protected:
-        virtual int getBufferSize(const MeshSubsetGeneratorParams &params) const = 0;
-        virtual int getIBufferSize(const MeshSubsetGeneratorParams &params) const = 0;
+        virtual int getVertexBufferSize(const MeshSubsetGeneratorParams &params) const = 0;
+        virtual int getIndexBufferSize(const MeshSubsetGeneratorParams &params) const = 0;
 
-        virtual void fillBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const = 0;
-        virtual void fillIBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const = 0;
+        virtual void generateVertexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const = 0;
+        virtual void generateIndexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const = 0;
 
     protected:
         GraphicsDriver *driver = nullptr;

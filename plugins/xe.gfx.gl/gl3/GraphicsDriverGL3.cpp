@@ -213,8 +213,6 @@ namespace xe { namespace gfx { namespace gl3 {
 		xe::gfx::gl3::checkMeshSubsetBinding(this->meshSubset);
 #endif
 
-		char buffer[65536] = {0};
-
         GL3_CHECK();
     }
     

@@ -7,7 +7,7 @@ namespace xe { namespace gfx {
 
     MeshSubsetGeneratorPlane::MeshSubsetGeneratorPlane(GraphicsDriver *driver) : MeshSubsetGenerator(driver) {}
 
-    int MeshSubsetGeneratorPlane::getBufferSize(const MeshSubsetGeneratorParams &params) const {
+    int MeshSubsetGeneratorPlane::getVertexBufferSize(const MeshSubsetGeneratorParams &params) const {
         assert(params.format && params.format->getSize() > 0);
         assert(params.slices == 1);
         assert(params.stacks == 1);
@@ -15,7 +15,7 @@ namespace xe { namespace gfx {
         return 4 * params.format->getSize();
     }
 
-    int MeshSubsetGeneratorPlane::getIBufferSize(const MeshSubsetGeneratorParams &params) const {
+    int MeshSubsetGeneratorPlane::getIndexBufferSize(const MeshSubsetGeneratorParams &params) const {
         assert(params.iformat == IndexFormat::Index32);
         assert(params.slices == 1);
         assert(params.stacks == 1);
@@ -23,7 +23,7 @@ namespace xe { namespace gfx {
         return 6 * IndexFormat::getSize(params.iformat);
     }
 
-    void MeshSubsetGeneratorPlane::fillBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
+    void MeshSubsetGeneratorPlane::generateVertexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
         assert(buffer);
         assert(params.format->getSize() > 0);
         assert(params.slices == 1);
@@ -53,7 +53,7 @@ namespace xe { namespace gfx {
 		}
     }
 
-    void MeshSubsetGeneratorPlane::fillIBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
+    void MeshSubsetGeneratorPlane::generateIndexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
         assert(buffer);
         assert(params.iformat == IndexFormat::Index32);
         assert(params.slices == 1);

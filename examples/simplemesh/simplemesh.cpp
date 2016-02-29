@@ -120,20 +120,23 @@ void main() {
     }
 
     xe::gfx::MeshPtr createMesh() {
+        auto subset = createBoxMesh();
 
-        std::vector<xe::gfx::MeshSubsetPtr> subsets;
+        subset->setMaterial(material.get());
 
-        subsets.push_back(createBoxMesh());
+        // std::vector<xe::gfx::MeshSubsetPtr> subsets;
+
+        // subsets.push_back(createBoxMesh());
         
         // xe::gfx::transform(subsets[0].get(), xe::scale<float, 4>({4.0f, 1.0f, 4.0f}));
 
-        auto mesh = std::make_unique<xe::gfx::Mesh>(std::move(subsets));
+        // auto mesh = std::make_unique<xe::gfx::Mesh>(std::move(subsets));
 
-        for (int i=0; i<mesh->getSubsetCount(); i++) {
-            mesh->getSubset(i)->setMaterial(material.get());
-        }
+        // for (int i=0; i<mesh->getSubsetCount(); i++) {
+        //    mesh->getSubset(i)->setMaterial(material.get());
+        // }
 
-        return mesh;
+        return std::make_unique<xe::gfx::Mesh>(std::move(subset));
     }
 
     xe::gfx::TexturePtr createTexture() {
@@ -168,9 +171,11 @@ void main() {
         bool done = false;
         float angle = 0.0f;
 
-        while(!done) {
+        while (!done) {
             inputManager->poll();
             
+            done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
+
             if (++angle > 360.0f) {
                 angle -= 360.0f;
             }
@@ -184,8 +189,6 @@ void main() {
             xe::Matrix4f model = xe::rotatey<float>(xe::rad(angle));
 
             xe::Matrix4f mvp = proj * view * model;
-                
-            done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
             

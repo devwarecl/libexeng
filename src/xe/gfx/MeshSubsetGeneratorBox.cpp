@@ -22,15 +22,15 @@ namespace xe { namespace gfx {
 
     MeshSubsetGeneratorBox::~MeshSubsetGeneratorBox() {}
 
-    int MeshSubsetGeneratorBox::getBufferSize(const MeshSubsetGeneratorParams &params) const {
+    int MeshSubsetGeneratorBox::getVertexBufferSize(const MeshSubsetGeneratorParams &params) const {
         return BOX_VERTEX_COUNT * params.format->getSize();
     }
 
-    int MeshSubsetGeneratorBox::getIBufferSize(const MeshSubsetGeneratorParams &params) const {
+    int MeshSubsetGeneratorBox::getIndexBufferSize(const MeshSubsetGeneratorParams &params) const {
         return 3 * BOX_TRIANGLE_PER_FACE_COUNT * BOX_FACE_COUNT * IndexFormat::getSize(params.iformat);
     }
 
-    void MeshSubsetGeneratorBox::fillBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
+    void MeshSubsetGeneratorBox::generateVertexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
         assert(buffer);
         assert(params.format && params.format->getSize() > 0);
         assert(params.slices == 1);
@@ -90,11 +90,17 @@ namespace xe { namespace gfx {
 				array.setValue(vertexIndex, VertexAttrib::Position, vertexPosition);
 				array.setValue(vertexIndex, VertexAttrib::Normal, vertexNormal);
 				array.setValue(vertexIndex, VertexAttrib::TexCoord, texCoord[j]);
+
+#if defined(EXENG_DEBUG)
+                std::cout << "[" << vertexPosition << "], [" << vertexNormal << "], [" << texCoord[j] << "]" << std::endl;
+#endif
 			}
 		}
+
+        std::cout << std::endl;
     }
 
-    void MeshSubsetGeneratorBox::fillIBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
+    void MeshSubsetGeneratorBox::generateIndexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
         assert(buffer);
         assert(params.iformat == IndexFormat::Index32);
         assert(params.slices == 1);

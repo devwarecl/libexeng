@@ -45,24 +45,6 @@ namespace xe { namespace gfx {
 
 			return meshPtr;
 		}
-
-		//template<typename Generator>
-		//MeshPtr generateMesh(GraphicsDriver *driver, const VertexFormat* vformat, const IndexFormat::Enum iformat, const Matrix4f &transformation) {
-		//	Generator generator;
-
-		//	const int vsize = generator.getVertexBufferSize(vformat);
-		//	const int isize = generator.getIndexBufferSize(iformat);
-
-		//	auto vbuffer = driver->createVertexBuffer(vsize, nullptr);
-		//	auto ibuffer = driver->createIndexBuffer(isize, nullptr);
-		//	auto subset = driver->createMeshSubset(std::move(vbuffer), *vformat, std::move(ibuffer), iformat);
-
-		//	generator.generate(subset.get());
-
-		//	transformer.transform(subset.get(), transformation);
-
-		//	return std::make_unique<Mesh>(std::move(subset));
-		//}
     };
     
     MeshManager::MeshManager() {
@@ -91,36 +73,6 @@ namespace xe { namespace gfx {
 		return this->impl->manager.getProduct(filename);
     }
 
-//	Mesh* MeshManager::generateBoxMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size) {
-//		assert(this->impl != nullptr);
-//
-//#if defined(EXENG_DEBUG)
-//		if (this->impl->manager.existProduct(id)) {
-//			throw std::runtime_error("The mesh id '" + id + "' is already used.");
-//		}
-//#endif	
-//		Matrix4f transformation = scale<float, 4>(size) * translate<float>(center);
-//
-//		MeshPtr mesh = this->impl->generateMesh<BoxGenerator>(driver, vertexFormat, indexFormat, transformation);
-//
-//		return this->impl->storeMesh(id, std::move(mesh));
-//	}
-//	
-//    Mesh* MeshManager::generateScreenMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat) {
-//        assert(this->impl != nullptr);
-//
-//#if defined(EXENG_DEBUG)
-//		if (this->impl->manager.existProduct(id)) {
-//			throw std::runtime_error("The mesh id '" + id + "' is already used.");
-//		}
-//#endif	
-//
-//		Matrix4f transformation = translate<float>({0.5f, 0.5f, 0.0f});
-//		MeshPtr mesh = this->impl->generateMesh<RectGenerator>(driver, vertexFormat, indexFormat, transformation);
-//
-//		return this->impl->storeMesh(id, std::move(mesh));
-//    }
-//
     Mesh* MeshManager::getMesh(const std::string &id, MeshSubsetPtr subset) {
         auto mesh = std::make_unique<Mesh>(std::move(subset));
 
