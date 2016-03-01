@@ -475,6 +475,11 @@ namespace xe {
 		return t*v2 + v1*(Type(1) - t);
 	}
 
+    template<typename Type, typename Scalar>
+    Type lerp(const Type &v1, const Type &v2, Scalar t) {
+        return t*v2 + v1*(Scalar(1) - t);
+    }
+
 	template<typename Type, int Size>
     Vector<Type, Size> hermite (
 		const Vector<Type, Size>& V1, const Vector<Type, Size>& T1, 

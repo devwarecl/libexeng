@@ -12,7 +12,7 @@ namespace xe { namespace gfx {
         assert(params.slices == 1);
         assert(params.stacks == 1);
 
-        return 4 * params.format->getSize();
+        return 4 * params.format->getSize() * params.slices * params.slices;
     }
 
     int MeshSubsetGeneratorPlane::getIndexBufferSize(const MeshSubsetGeneratorParams &params) const {
@@ -32,6 +32,23 @@ namespace xe { namespace gfx {
     	auto locker = buffer->getLocker();
 		
 		VertexArray array(locker.getPointer(), params.format);
+
+        const float left = -0.5f;
+        const float right = 0.5f;
+
+        for (int i=0; i<params.slices; i++) {
+            float ti = static_cast<float>(i) / static_cast<float>(params.slices - 1);
+
+            for (int j=0; j<params.stacks; j++) {
+                float tj = static_cast<float>(j) / static_cast<float>(params.stacks - 1);
+
+                xe::Vector4f position (
+                    xe::lerp(-0.5f, 0.5f, tj),
+                    xe::lerp(-0.5f, 0.5f, ti),
+                    0.0f, 1.0f    
+                );
+            }
+        }
 
 		Vector4f position[] = {
 			{ 0.5f,   0.5f,  0.5f, 1.0f}, 
