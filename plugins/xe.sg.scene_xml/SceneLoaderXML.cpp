@@ -1,7 +1,9 @@
 
 #include <list>
+#include <xe/Core.hpp>
 #include <xe/sys/Plugin.hpp>
 #include <xe/sg/SceneLoader.hpp>
+#include <xe/sg/SceneManager.hpp>
 
 #include "xmlpp/Document.hpp"
 
@@ -494,14 +496,19 @@ namespace xe { namespace sg {
 		}
 
         virtual void initialize(Core *core) override {
-			this->sceneLoaderXML = std::make_unique<SceneLoaderXML>(core);
+			this->core = core;
+
+			sceneLoaderXML = std::make_unique<SceneLoaderXML>(core);
+			core->getSceneManager()->addSceneLoader(sceneLoaderXML.get());
 		}
 
         virtual void terminate() override {
+			core->getSceneManager()->removeSceneLoader(sceneLoaderXML.get());
 			this->sceneLoaderXML.reset();
 		}
 
 	private:
+		Core *core = nullptr;
 		std::unique_ptr<SceneLoaderXML> sceneLoaderXML;
 	};
 }}

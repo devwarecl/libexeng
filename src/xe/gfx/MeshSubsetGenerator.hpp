@@ -25,7 +25,7 @@ namespace xe { namespace gfx {
         int stacks = 1;
 
         MeshSubsetGeneratorParams ( 
-            const VertexFormat *format, 
+            const VertexFormat *format = nullptr, 
             IndexFormat::Enum iformat = IndexFormat::Enum::Index32,
             int slices = 1,
             int stacks = 1) {

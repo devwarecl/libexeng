@@ -9,26 +9,20 @@ namespace xe { namespace gfx {
 
     int MeshSubsetGeneratorPlane::getVertexBufferSize(const MeshSubsetGeneratorParams &params) const {
         assert(params.format && params.format->getSize() > 0);
-        assert(params.slices == 1);
-        assert(params.stacks == 1);
-
+        
         return 4 * params.format->getSize() * params.slices * params.slices;
     }
 
     int MeshSubsetGeneratorPlane::getIndexBufferSize(const MeshSubsetGeneratorParams &params) const {
         assert(params.iformat == IndexFormat::Index32);
-        assert(params.slices == 1);
-        assert(params.stacks == 1);
-
-        return 6 * IndexFormat::getSize(params.iformat);
+        
+        return 6 * IndexFormat::getSize(params.iformat) * params.slices * params.stacks;
     }
 
     void MeshSubsetGeneratorPlane::generateVertexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
         assert(buffer);
         assert(params.format->getSize() > 0);
-        assert(params.slices == 1);
-        assert(params.stacks == 1);
-
+        
     	auto locker = buffer->getLocker();
 		
 		VertexArray array(locker.getPointer(), params.format);
@@ -36,51 +30,69 @@ namespace xe { namespace gfx {
         const float left = -0.5f;
         const float right = 0.5f;
 
-        for (int i=0; i<params.slices; i++) {
-            float ti = static_cast<float>(i) / static_cast<float>(params.slices - 1);
+		int vertexIndex = 0;
 
-            for (int j=0; j<params.stacks; j++) {
-                float tj = static_cast<float>(j) / static_cast<float>(params.stacks - 1);
+		// generate vertex data
+        for (int i=0; i<params.slices + 1; i++) {
+            float ti = static_cast<float>(i) / static_cast<float>(params.slices);
 
+            for (int j=0; j<params.stacks + 1; j++) {
+                float tj = static_cast<float>(j) / static_cast<float>(params.stacks);
+
+				// generate position
                 xe::Vector4f position (
                     xe::lerp(-0.5f, 0.5f, tj),
-                    xe::lerp(-0.5f, 0.5f, ti),
+                    xe::lerp(0.5f, -0.5f, ti),
                     0.0f, 1.0f    
                 );
+				array.setValue(vertexIndex, VertexAttrib::Position, position);
+
+				// generate normal
+				if (params.format->hasAttrib(VertexAttrib::Normal)) {
+					xe::Vector4f normal = {0.0f, 0.0f, -1.0f, 0.0f};
+					array.setValue(vertexIndex, VertexAttrib::TexCoord, normal);
+				}
+
+				// generate texture coords
+				if (params.format->hasAttrib(VertexAttrib::TexCoord)) {
+					xe::Vector4f tex_coord (
+						xe::lerp( 0.0f, 1.0f, tj),
+						xe::lerp( 1.0f, 0.0f, ti),
+						0.0f, 1.0f    
+					);
+
+					array.setValue(vertexIndex, VertexAttrib::TexCoord, tex_coord);
+				}
+
+				vertexIndex++;
             }
         }
-
-		Vector4f position[] = {
-			{ 0.5f,   0.5f,  0.5f, 1.0f}, 
-			{-0.5f,   0.5f,  0.5f, 1.0f}, 
-			{ 0.5f,  -0.5f,  0.5f, 1.0f}, 
-			{-0.5f,  -0.5f,  0.5f, 1.0f} 
-		};
-
-		Vector4f texCoord[] = {
-			{0.0f, 1.0f, 0.0f, 1.0},
-			{1.0f, 1.0f, 0.0f, 1.0},
-			{0.0f, 0.0f, 0.0f, 1.0},
-			{1.0f, 0.0f, 0.0f, 1.0}
-		};
-
-		for (int i=0; i<4; i++) {
-			array.setValue(i, VertexAttrib::Position, position[i]);
-			array.setValue(i, VertexAttrib::TexCoord, texCoord[i]);
-		}
+		//ewzzzzzzzz
     }
 
     void MeshSubsetGeneratorPlane::generateIndexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
         assert(buffer);
         assert(params.iformat == IndexFormat::Index32);
-        assert(params.slices == 1);
-        assert(params.stacks == 1);
 
-        int indices[] = {
-			0 + 0,  0 + 1,  0 + 2,      
-			0 + 1,  0 + 3,  0 + 2
-		};
+		std::vector<int> indices;
 
-		buffer->write(indices);    
+		for (int i=0; i<params.slices; i++) {
+			for (int j=0; j<params.stacks; j++) {
+				const int p0 = (i + 0) + (j + 0) * (params.slices + 1);
+				const int p1 = (i + 1) + (j + 0) * (params.slices + 1);
+				const int p2 = (i + 0) + (j + 1) * (params.slices + 1);
+				const int p3 = (i + 1) + (j + 1) * (params.slices + 1);
+
+				indices.push_back(p0);
+				indices.push_back(p1);
+				indices.push_back(p2);
+
+				indices.push_back(p1);
+				indices.push_back(p3);
+				indices.push_back(p2);
+			}
+		}
+
+		buffer->write(indices.data());
     }
 }}

@@ -87,6 +87,7 @@ ENDIF ()
 add_subdirectory(examples/triangle)
 add_subdirectory(examples/texture)
 add_subdirectory(examples/simplemesh)
+add_subdirectory(examples/geogen)
 
 # Engine plugins
 IF(XE_GFX_GL)

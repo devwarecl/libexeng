@@ -1,10 +1,12 @@
 
 #include <xe/Application.hpp>
+#include <xe/Timer.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
 #include <xe/gfx/Vertex.hpp>
+#include <xe/gfx/MeshSubsetGeneratorPlane.hpp>
 
-class TriangleApplication : public xe::Application {
+class GeogenApplication : public xe::Application {
 public:
     xe::gfx::GraphicsDriverPtr createGraphicsDriver() {
         // display all available graphics drivers
@@ -104,32 +106,15 @@ void main() {
     }
     
     xe::gfx::MeshSubsetPtr createSubset() {
+		xe::gfx::MeshSubsetGeneratorPlane generator(this->graphicsDriver.get());
+		xe::gfx::MeshSubsetGeneratorParams params;
 
-		// vertex data
-		xe::gfx::StandardVertex v1, v2, v3, v4, v5, v6;
-		v1.coord = { -1.5f, -1.5f, 0.0f };	v1.normal = { 0.0f, 0.0f, -1.0f }; v1.texCoord = { 0.0f, 1.0f };
-		v2.coord = {  0.0f,  1.5f, 0.0f };	v2.normal = { 0.0f, 0.0f, -1.0f }; v2.texCoord = { 0.0f, 0.0f };
-		v3.coord = {  1.5f, -1.5f, 0.0f };	v3.normal = { 0.0f, 0.0f, -1.0f }; v3.texCoord = { 1.0f, 1.0f };
-		v4.coord = { -1.5f, -1.5f, 0.0f };	v4.normal = { 0.0f, 0.0f,  1.0f }; v4.texCoord = { 0.0f, 1.0f };
-		v5.coord = {  0.0f,  1.5f, 0.0f };	v5.normal = { 0.0f, 0.0f,  1.0f }; v5.texCoord = { 0.0f, 0.0f };
-		v6.coord = {  1.5f, -1.5f, 0.0f };	v6.normal = { 0.0f, 0.0f,  1.0f }; v6.texCoord = { 1.0f, 1.0f };
-		
-		std::vector<xe::gfx::StandardVertex> vertices = {v1, v2, v3, v4, v5, v6};
+		params.format = &vertexFormat;
+		params.iformat = xe::gfx::IndexFormat::Index32;
+		params.slices = 4;
+		params.stacks = 4;
 
-		// index data
-		std::vector<int> indices = {0, 1, 2, 4, 3, 5};
-
-		// create vertex and index buffers
-		auto vbuffer = graphicsDriver->createVertexBuffer(vertices);
-		auto ibuffer = graphicsDriver->createIndexBuffer(indices);
-
-		// create the triangle meshsubset
-		auto subset = graphicsDriver->createMeshSubset (
-            std::move(vbuffer),  &vertexFormat, 
-            std::move(ibuffer),  xe::gfx::IndexFormat::Index32
-        );
-
-        return subset;
+		return generator.generate(params);
     }
     
     void initialize() {
@@ -155,11 +140,18 @@ void main() {
         bool done = false;
         float angle = 0.0f;
 
-        while(!done) {
+		std::uint32_t lastTime = xe::Timer::getTime();
+
+        while (!done) {
+			float currentTime = (xe::Timer::getTime() - lastTime)/1000.0f;
+			lastTime = xe::Timer::getTime();
+
             inputManager->poll();
-            
-            if (++angle > 360.0f) {
-                angle -= 360.0f;
+  
+			angle += 90.0f * currentTime;
+
+            if (angle > 360.0f) {
+                angle = std::fmodf(angle, 360.0f);
             }
 
             xe::Vector3f position(0.0f, 2.0f, -1.0f);
@@ -178,7 +170,8 @@ void main() {
             graphicsDriver->setMaterial(material.get());
 			graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
 			graphicsDriver->setMeshSubset(subset.get());
-			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
+			graphicsDriver->render(xe::gfx::Primitive::LineStrip, 6);
+			// graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
             graphicsDriver->endFrame();
         }
         
@@ -198,5 +191,5 @@ private:
 };
 
 int main(int argc, char **argv) {
-    return xe::Application::execute<TriangleApplication>(argc, argv);
+    return xe::Application::execute<GeogenApplication>(argc, argv);
 }
