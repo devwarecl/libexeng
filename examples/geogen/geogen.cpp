@@ -5,6 +5,7 @@
 #include <xe/gfx/GraphicsManager.hpp>
 #include <xe/gfx/Vertex.hpp>
 #include <xe/gfx/MeshSubsetGeneratorPlane.hpp>
+#include <xe/gfx/MeshSubsetGeneratorBox.hpp>
 
 class GeogenApplication : public xe::Application {
 public:
@@ -106,13 +107,14 @@ void main() {
     }
     
     xe::gfx::MeshSubsetPtr createSubset() {
-		xe::gfx::MeshSubsetGeneratorPlane generator(this->graphicsDriver.get());
+		// xe::gfx::MeshSubsetGeneratorPlane generator(this->graphicsDriver.get());
+		xe::gfx::MeshSubsetGeneratorBox generator(this->graphicsDriver.get());
 		xe::gfx::MeshSubsetGeneratorParams params;
 
 		params.format = &vertexFormat;
 		params.iformat = xe::gfx::IndexFormat::Index32;
-		params.slices = 4;
-		params.stacks = 4;
+		params.slices = 2;
+		params.stacks = 2;
 
 		return generator.generate(params);
     }
@@ -163,15 +165,14 @@ void main() {
             xe::Matrix4f model = xe::rotatey<float>(xe::rad(angle));
 
             xe::Matrix4f mvp = proj * view * model;
-                
+            
             done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
             graphicsDriver->setMaterial(material.get());
 			graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
 			graphicsDriver->setMeshSubset(subset.get());
-			graphicsDriver->render(xe::gfx::Primitive::LineStrip, 6);
-			// graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
+			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
             graphicsDriver->endFrame();
         }
         

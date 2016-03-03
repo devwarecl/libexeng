@@ -7,7 +7,7 @@
 #include <xe/gfx/MeshSubsetGenerator.hpp>
 
 namespace xe { namespace gfx {
-    class EXENGAPI MeshSubsetGeneratorPlane: public MeshSubsetGenerator {
+    class EXENGAPI MeshSubsetGeneratorPlane : public MeshSubsetGenerator {
     public:
         explicit MeshSubsetGeneratorPlane(GraphicsDriver *driver);
 

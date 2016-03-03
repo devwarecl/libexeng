@@ -10,7 +10,7 @@ namespace xe { namespace gfx {
     int MeshSubsetGeneratorPlane::getVertexBufferSize(const MeshSubsetGeneratorParams &params) const {
         assert(params.format && params.format->getSize() > 0);
         
-        return 4 * params.format->getSize() * params.slices * params.slices;
+        return params.format->getSize() * (params.slices + 1) * (params.stacks + 1);
     }
 
     int MeshSubsetGeneratorPlane::getIndexBufferSize(const MeshSubsetGeneratorParams &params) const {
@@ -50,7 +50,7 @@ namespace xe { namespace gfx {
 				// generate normal
 				if (params.format->hasAttrib(VertexAttrib::Normal)) {
 					xe::Vector4f normal = {0.0f, 0.0f, -1.0f, 0.0f};
-					array.setValue(vertexIndex, VertexAttrib::TexCoord, normal);
+					array.setValue(vertexIndex, VertexAttrib::Normal, normal);
 				}
 
 				// generate texture coords

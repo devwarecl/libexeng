@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <vector>
 
-#include "../Vector.hpp"
-#include "VertexFormat.hpp"
+#include <xe/Vector.hpp>
+#include <xe/gfx/VertexFormat.hpp>
 
 namespace xe { namespace gfx {
 
