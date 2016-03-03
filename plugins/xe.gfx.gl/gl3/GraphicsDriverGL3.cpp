@@ -570,7 +570,11 @@ namespace xe { namespace gfx { namespace gl3 {
 		return this;
 	}
 	
-	std::uint64_t GraphicsDriverGL3::getHandle() const {
-        return context.getHandle();
+	intptr_t GraphicsDriverGL3::getGLContext() const {
+		return context.getGLContext();
+	}
+
+	intptr_t GraphicsDriverGL3::getOSContext() const {
+		return context.getOSContext();
 	}
 }}}

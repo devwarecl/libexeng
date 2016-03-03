@@ -272,7 +272,8 @@ add_library (xe SHARED
     ${UtilFiles}
 )
 
-SET_PROPERTY (TARGET xe PROPERTY CXX_STANDARD 14)
+
+set_property (TARGET xe PROPERTY CXX_STANDARD 14)
 
 source_group(\\			FILES ${BaseFiles})
 source_group(io         FILES ${IoFiles})

@@ -37,7 +37,7 @@ namespace xe { namespace gfx { namespace gl3 {
     /**
      * @brief GraphicsDriver implemented using OpenGL 3.x
      */
-    class GraphicsDriverGL3 : public GraphicsDriverBase, public ModernModule { 
+    class GraphicsDriverGL3 : public GraphicsDriverBase, public ModernModule, public OpenGLGraphicsBackend { 
     public:
         GraphicsDriverGL3();
         
@@ -102,9 +102,15 @@ namespace xe { namespace gfx { namespace gl3 {
         virtual GraphicsBackend::Enum getBackend() const override {
             return GraphicsBackend::OpenGL_Core;
         }
+
+        virtual const OpenGLGraphicsBackend* getOpenGLBackend() const override {
+			return this;
+		}
         
-        virtual std::uint64_t getHandle() const override;
-        
+		virtual intptr_t getGLContext() const override;
+
+		virtual intptr_t getOSContext() const override;
+
     public:
         inline const GLFWwindow* getGLFWwindow() const {
             return context.window;

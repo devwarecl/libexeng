@@ -14,7 +14,9 @@ namespace xe { namespace gfx { namespace gl3 {
         
         ~Context();
         
-        std::uint64_t getHandle() const;
+        intptr_t getGLContext() const;
+
+		intptr_t getOSContext() const;
         
         GLFWwindow *window = nullptr;
     };

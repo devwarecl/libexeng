@@ -110,6 +110,14 @@ namespace xe { namespace gfx {
 		}
     };
     
+	class EXENGAPI OpenGLGraphicsBackend {
+	public:
+		virtual ~OpenGLGraphicsBackend() {}
+
+		virtual intptr_t getGLContext() const = 0;
+		virtual intptr_t getOSContext() const = 0;
+	};
+
     /**
      * @brief Software interface to graphics hardware
      */
@@ -252,7 +260,7 @@ namespace xe { namespace gfx {
          * @brief Render a primitive using the supplied parameter values and the current state of the graphics driver
 		 * (current material and meshsubset).
          * @param primitive The primitive type.
-         * @param count The vertex count to utilize from the currently setter meshsubset.
+         * @param count The vertex count to utilize from the currently setted meshsubset.
          */
         virtual void render(Primitive::Enum primitive, int count) = 0;
 		
@@ -284,7 +292,7 @@ namespace xe { namespace gfx {
          * @brief Get the graphics backend dependent,
          * @return 
          */        
-        virtual std::uint64_t getHandle() const = 0;
+        virtual const OpenGLGraphicsBackend* getOpenGLBackend() const = 0;
     };
 
 	typedef std::unique_ptr<GraphicsDriver> GraphicsDriverPtr;

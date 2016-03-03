@@ -29,25 +29,37 @@
   #define GLFW_EXPOSE_NATIVE_WIN32
   #define GLFW_EXPOSE_NATIVE_WGL
   
-static std::uint64_t getHandle(GLFWwindow *window) {
-    std::uint64_t ctx = reinterpret_cast<std::uint64_t>(::glfwGetWGLContext(window));
+static intptr_t  getGLContext(GLFWwindow *window) {
+    intptr_t ctx = reinterpret_cast<intptr_t >(::glfwGetWGLContext(window));
     return ctx;
 }
-  
+
+static intptr_t getOSContext(GLFWwindow *window) {
+	return (intptr_t)::GetDC(::glfwGetWin32Window(window));
+}
+
 #elif defined(EXENG_UNIX)
   #define GLFW_EXPOSE_NATIVE_X11
   #define GLFW_EXPOSE_NATIVE_GLX
   
-static std::uint64_t getHandle(GLFWwindow *window) {
-    std::uint64_t ctx = reinterpret_cast<std::uint64_t>(::glfwGetGLXContext(window));
+static intptr_t  getGLContext(GLFWwindow *window) {
+    intptr_t  ctx = reinterpret_cast<std::uint64_t>(::glfwGetGLXContext(window));
     return ctx;
 }
-  
+
+static intptr_t getOSContext(GLFWwindow *window) {
+	return 0;
+}
+
 #elif defined(EXENG_MACOS)
 
 #else 
-static std::uint64_t getHandle(GLFWwindow *window) {
+static intptr_t getGLContext(GLFWwindow *window) {
     return 0;
+}
+
+static intptr_t getOSContext(GLFWwindow *window) {
+	return 0;
 }
 
 #endif 
@@ -63,8 +75,12 @@ namespace xe { namespace gfx { namespace gl3 {
             window = nullptr;
         }
     }
-    
-    std::uint64_t Context::getHandle() const {
-        return ::getHandle(window);
+
+    intptr_t Context::getGLContext() const {
+        return ::getGLContext(window);
     }
+
+	intptr_t Context::getOSContext() const {
+		return ::getOSContext(window);
+	}
 }}}
