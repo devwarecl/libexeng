@@ -1,5 +1,5 @@
 
-set (scene_src scene.cpp fshader.hpp fshader.cpp vshader.hpp vshader.cpp)
+set (scene_src scene.cpp fshader.hpp fshader.cpp vshader.hpp vshader.cpp SceneRenderer.hpp SceneRenderer.cpp)
 
 source_group(\\ FILES ${scene_src})
 
@@ -14,4 +14,3 @@ install (
 	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION lib
 )
-

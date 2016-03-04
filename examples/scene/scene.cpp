@@ -140,7 +140,7 @@ public:
             graphicsDriver->setMaterial(material.get());
 			graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
 			graphicsDriver->setMeshSubset(subset.get());
-			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
+			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 0);
             graphicsDriver->endFrame();
         }
         

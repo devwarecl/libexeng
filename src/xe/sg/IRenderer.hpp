@@ -17,6 +17,7 @@ namespace xe { namespace sg {
 		virtual void render(xe::sg::Light *) = 0;
 		virtual void render(xe::sg::Camera *) = 0;
 		virtual void render(xe::sg::Geometry *) = 0;
+		virtual void render(xe::gfx::Mesh *) = 0;
 	};
 }}
 

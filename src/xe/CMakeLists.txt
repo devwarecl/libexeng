@@ -207,6 +207,8 @@ set (ScenegraphFiles_cpp
 
 set (ScenegraphFiles_hpp
 	sg/Forward.hpp 
+	sg/IRenderable.hpp
+	sg/IRenderer.hpp
 	sg/ISceneRenderer.hpp
     sg/SceneNode.hpp      
     sg/Scene.hpp          
