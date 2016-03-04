@@ -84,6 +84,7 @@ IF (XE_RT)
 ENDIF ()
 
 # Add example programs
+add_subdirectory(examples/scene)
 add_subdirectory(examples/triangle)
 add_subdirectory(examples/texture)
 add_subdirectory(examples/simplemesh)

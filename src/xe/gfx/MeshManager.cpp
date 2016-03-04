@@ -84,4 +84,8 @@ namespace xe { namespace gfx {
 
         return this->impl->storeMesh(id, std::move(mesh));
     }
+
+	Mesh* MeshManager::getMesh(const std::string &id, MeshPtr mesh)  {
+		return this->impl->storeMesh(id, std::move(mesh));
+	}
 }}

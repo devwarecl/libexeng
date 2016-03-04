@@ -59,7 +59,7 @@ namespace xe { namespace gfx {
         void removeMeshLoader(MeshLoader *loader);
         
         /**
-         * @brief Load a mesh from the specified file.
+         * @brief Load a mesh from the specified file, or get the mesh from the specified id.
          */
         Mesh* getMesh(const std::string &id);
 
@@ -73,15 +73,10 @@ namespace xe { namespace gfx {
          */
         Mesh* getMesh(const std::string &id, std::vector<MeshSubsetPtr> subsets);
 
-		// **
-		// * @brief Generate a box shaped mesh
-		// */
-		//Mesh* generateBoxMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat, const Vector3f &center, const Vector3f &size);
-
-  //      /**
-		// * @brief Generate a rectangle mesh (for two-dimensional rendering)
-		// */
-  //      Mesh* generateScreenMesh(const std::string &id, GraphicsDriver *driver, const VertexFormat *vertexFormat, IndexFormat::Enum indexFormat);
+		/**
+		 * @brief Register a mesh with the specified id.
+		 */
+		Mesh* getMesh(const std::string &id, MeshPtr mesh);
 
     private:
         struct Private;
