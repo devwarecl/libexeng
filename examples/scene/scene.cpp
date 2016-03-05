@@ -52,7 +52,6 @@ public:
     xe::gfx::MaterialPtr createMaterial() {
         auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
         
-		material->setShaderProgram(shader.get());
 		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 0.0f, 1.0f));
 		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));

@@ -83,8 +83,8 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		virtual ModernModule* getModernModule() override;
 
-		inline const ShaderProgramGL3* getShaderProgram() const {
-			return static_cast<const ShaderProgramGL3*>(this->getMaterial()->getShaderProgram());
+		inline const ShaderProgram* getShaderProgram() const override {
+			return this->shaderProgram;
 		}
 
 		virtual void setProgramGlobal(const std::string &globalName, const Vector4f &value) override;
@@ -110,6 +110,10 @@ namespace xe { namespace gfx { namespace gl3 {
 		virtual intptr_t getGLContext() const override;
 
 		virtual intptr_t getOSContext() const override;
+
+		virtual void setShaderProgram(const ShaderProgram *program) override;
+
+		// virtual const ShaderProgram* getShaderProgram() const override;
 
     public:
         inline const GLFWwindow* getGLFWwindow() const {

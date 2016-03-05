@@ -275,7 +275,7 @@ namespace xe { namespace gfx {
 		virtual ModernModule* getModernModule() = 0;
 
 		virtual xe::input2::IInputManager* getInputManager() = 0;
-		
+
 		/**
 		 * @brief Create a GPU dependent material.
 		 * 

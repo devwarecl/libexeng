@@ -43,6 +43,10 @@ namespace xe { namespace gfx {
          */
         virtual ShaderProgramPtr createShaderProgram() = 0;
 		
+		virtual void setShaderProgram(const ShaderProgram *program) = 0;
+
+		virtual const ShaderProgram* getShaderProgram() const = 0;
+
 		/**
 		 * @brief Set the value of the specified global variable in the currently setted material's shader program.
 		 */

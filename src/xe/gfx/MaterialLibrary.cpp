@@ -29,12 +29,11 @@ namespace xe { namespace gfx {
 		return this->impl->format;
 	}
 
-	Material* MaterialLibrary::createMaterial(const std::string &name, const ShaderProgram *program) {
+	Material* MaterialLibrary::createMaterial(const std::string &name, const ShaderProgram *) {
 		Material *material = new Material(&this->impl->format);
 
 		material->setName(name);
-		material->setShaderProgram(program);
-
+		
 		this->impl->materials.push_back(MaterialPtr(material));
 
 		return material;

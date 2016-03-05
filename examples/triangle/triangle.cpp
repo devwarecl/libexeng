@@ -43,7 +43,6 @@ public:
     xe::gfx::MaterialPtr createMaterial() {
         auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
         
-		material->setShaderProgram(shader.get());
 		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 0.0f, 1.0f));
 		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
@@ -175,8 +174,9 @@ void main() {
             done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
-            graphicsDriver->setMaterial(material.get());
+			graphicsDriver->getModernModule()->setShaderProgram(shader.get());
 			graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
+			graphicsDriver->setMaterial(material.get());
 			graphicsDriver->setMeshSubset(subset.get());
 			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
             graphicsDriver->endFrame();

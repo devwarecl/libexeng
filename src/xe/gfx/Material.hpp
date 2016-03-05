@@ -169,10 +169,6 @@ namespace xe { namespace gfx {
             return value;
         }
         
-        void setShaderProgram(const ShaderProgram *shader);
-        
-        const ShaderProgram* getShaderProgram() const;
-        
         std::string getName() const;
         void setName(const std::string& name);
         

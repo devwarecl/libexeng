@@ -51,7 +51,6 @@ public:
         auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
         
         material->getLayer(0)->setTexture(texture.get());
-		material->setShaderProgram(shader.get());
 		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
@@ -65,7 +64,6 @@ public:
         auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
         
         material->getLayer(0)->setTexture(texture2.get());
-		material->setShaderProgram(shader.get());
 		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
@@ -79,7 +77,6 @@ public:
         auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
         
         material->getLayer(0)->setTexture(texture3.get());
-		material->setShaderProgram(shader.get());
 		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));

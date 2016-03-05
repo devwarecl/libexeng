@@ -248,26 +248,26 @@ namespace xe { namespace gfx { namespace gl3 {
         //     }
         // }
         
-        // Check for shader program info and status
-        if (material && material->getShaderProgram() != nullptr ) {
-            if ( material->getShaderProgram()->getTypeInfo() != TypeId<ShaderProgramGL3>() ) {
-                std::string msg;
-                
-                msg += "GraphicsDriverGL3::setMaterial: ";
-                msg += "Expected a shader program of type ShaderProgramGL3";
-                
-                EXENG_THROW_EXCEPTION(msg);
-            }
-            
-            if ( material->getShaderProgram()->isLinked() == false ) {
-                std::string msg;
-                
-                msg += "GraphicsDriverGL3::setMaterial: ";
-                msg += "The shader program must be linked by client code.";
-                
-                EXENG_THROW_EXCEPTION(msg);
-            }
-        }
+        //// Check for shader program info and status
+        //if (material && material->getShaderProgram() != nullptr ) {
+        //    if ( material->getShaderProgram()->getTypeInfo() != TypeId<ShaderProgramGL3>() ) {
+        //        std::string msg;
+        //        
+        //        msg += "GraphicsDriverGL3::setMaterial: ";
+        //        msg += "Expected a shader program of type ShaderProgramGL3";
+        //        
+        //        EXENG_THROW_EXCEPTION(msg);
+        //    }
+        //    
+        //    if ( material->getShaderProgram()->isLinked() == false ) {
+        //        std::string msg;
+        //        
+        //        msg += "GraphicsDriverGL3::setMaterial: ";
+        //        msg += "The shader program must be linked by client code.";
+        //        
+        //        EXENG_THROW_EXCEPTION(msg);
+        //    }
+        //}
 #endif
         if (this->material != nullptr && this->material != material) {
             this->postRenderMaterial(this->material);
@@ -385,12 +385,7 @@ namespace xe { namespace gfx { namespace gl3 {
     void GraphicsDriverGL3::preRenderMaterial(const Material *material) {
         assert(material != nullptr);
         
-        // set the shader program state
-        auto shaderProgram = static_cast<const ShaderProgramGL3 *>(material->getShaderProgram());
-        
-        GLint programId = shaderProgram->getProgramId();
-
-        ::glUseProgram(programId);
+		GLuint programId = this->shaderProgram->getProgramId();
 
         // set the texture state
         for(int i=0; i<material->getLayerCount(); ++i) {
@@ -472,12 +467,11 @@ namespace xe { namespace gfx { namespace gl3 {
 			EXENG_THROW_EXCEPTION("No current material bound.");
 		}
 
-		if (!this->getMaterial()->getShaderProgram()) {
+		if (!this->shaderProgram) {
 			EXENG_THROW_EXCEPTION("No current shader program bound.");
 		}
 #endif
-		const ShaderProgramGL3 *shaderProgram = this->getShaderProgram();
-
+		
 		int programId = shaderProgram->getProgramId();
 		int location = glGetUniformLocation(programId, globalName.c_str());
 
@@ -493,15 +487,10 @@ namespace xe { namespace gfx { namespace gl3 {
 
 	void GraphicsDriverGL3::setProgramGlobal(const std::string &globalName, const Matrix4f &value) {
 #if defined(EXENG_DEBUG)
-		if (!this->getMaterial()) {
-			EXENG_THROW_EXCEPTION("No current material bound.");
-		}
-
-		if (!this->getMaterial()->getShaderProgram()) {
+		if (!this->shaderProgram) {
 			EXENG_THROW_EXCEPTION("No current shader program bound.");
 		}
 #endif
-		const ShaderProgramGL3 *shaderProgram = this->getShaderProgram();
 
 		int programId = shaderProgram->getProgramId();
 		int location = glGetUniformLocation(programId, globalName.c_str());
@@ -522,11 +511,10 @@ namespace xe { namespace gfx { namespace gl3 {
 			EXENG_THROW_EXCEPTION("No current material bound.");
 		}
 
-		if (!this->getMaterial()->getShaderProgram()) {
+		if (!this->shaderProgram) {
 			EXENG_THROW_EXCEPTION("No current shader program bound.");
 		}
 #endif
-		const ShaderProgramGL3 *shaderProgram = this->getShaderProgram();
 
 		int programId = shaderProgram->getProgramId();
 		int location = index;
@@ -547,11 +535,10 @@ namespace xe { namespace gfx { namespace gl3 {
 			EXENG_THROW_EXCEPTION("No current material bound.");
 		}
 
-		if (!this->getMaterial()->getShaderProgram()) {
+		if (!this->getShaderProgram()) {
 			EXENG_THROW_EXCEPTION("No current shader program bound.");
 		}
 #endif
-		const ShaderProgramGL3 *shaderProgram = this->getShaderProgram();
 
 		int programId = shaderProgram->getProgramId();
 		int location = index;
@@ -576,5 +563,13 @@ namespace xe { namespace gfx { namespace gl3 {
 
 	intptr_t GraphicsDriverGL3::getOSContext() const {
 		return context.getOSContext();
+	}
+
+	void GraphicsDriverGL3::setShaderProgram(const ShaderProgram *program) {
+		this->shaderProgram = static_cast<const ShaderProgramGL3*>(program);
+        
+        GLint programId = shaderProgram->getProgramId();
+
+        ::glUseProgram(programId);
 	}
 }}}

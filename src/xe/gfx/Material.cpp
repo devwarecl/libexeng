@@ -221,18 +221,6 @@ namespace xe { namespace gfx {
 		return LayerCount;
 	}
 
-	void Material::setShaderProgram(const ShaderProgram *shader) {
-		assert(this->impl != nullptr);
-    
-		this->impl->shaderProgram = shader;
-	}
-
-	const ShaderProgram* Material::getShaderProgram() const {
-		assert(this->impl != nullptr);
-    
-		return this->impl->shaderProgram;
-	}
-
 	bool Material::checkTextureType(const TypeInfo &textureTypeInfo) const {
 		assert(this->impl != nullptr);
     

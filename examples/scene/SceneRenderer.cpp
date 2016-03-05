@@ -33,6 +33,8 @@ void SceneRenderer::setRenderer(xe::sg::IRenderer* renderer) {
 }
 
 void SceneRenderer::renderScene(xe::sg::Camera*) {
+	assert(scene);
+
 	transformStack.reset(xe::identity<float, 4>());
 
 	this->renderNode(this->getScene()->getRootNode());
@@ -43,11 +45,13 @@ void SceneRenderer::renderNode(xe::sg::SceneNode* node) {
 
 	transformStack.push(node->getTransform());
 
-	// TODO: Add transformation matrix logic to the renderer here
 	xe::sg::IRenderable *renderable = node->getRenderable();
+	xe::sg::IRenderer *renderer = this->getRenderer();
+
+	renderer->setTransformation(transformStack.top());
 
 	if (renderable) {
-		renderable->renderWith(this->getRenderer());
+		renderable->renderWith(renderer);
 	}
 
 	for (int i=0; i<node->getChildCount(); i++) {
