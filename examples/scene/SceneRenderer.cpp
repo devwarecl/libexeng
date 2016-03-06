@@ -48,7 +48,7 @@ void SceneRenderer::renderNode(xe::sg::SceneNode* node) {
 	xe::sg::IRenderable *renderable = node->getRenderable();
 	xe::sg::IRenderer *renderer = this->getRenderer();
 
-	renderer->setTransformation(transformStack.top());
+	renderer->setModel(transformStack.top());
 
 	if (renderable) {
 		renderable->renderWith(renderer);

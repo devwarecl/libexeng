@@ -19,7 +19,7 @@ namespace xe { namespace sg {
 		virtual void render(xe::sg::Geometry *) = 0;
 		virtual void render(xe::gfx::Mesh *) = 0;
 
-		virtual void setTransformation(const xe::Matrix4f &) = 0;
+		virtual void setModel(const xe::Matrix4f &) = 0;
 	};
 }}
 
