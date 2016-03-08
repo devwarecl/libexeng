@@ -27,7 +27,6 @@
 namespace xe { namespace sg {
     using namespace xe;
     using namespace xe::gfx;
-    using namespace xe::sg;
 
     struct Scene::Private {
         Vector4f backColor = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -74,16 +73,6 @@ namespace xe { namespace sg {
     Vector4f Scene::getBackColor() const {
         assert(this->impl != nullptr);
         return this->impl->backColor;
-    }
-
-    Camera* Scene::createCamera() {
-        assert(this->impl != nullptr);
-
-        Camera* camera = new Camera();
-
-        this->impl->cameras.push_back(std::unique_ptr<Camera>(camera));
-
-        return camera;
     }
 
     Light* Scene::createLight() {

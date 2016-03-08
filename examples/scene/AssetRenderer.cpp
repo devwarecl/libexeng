@@ -11,6 +11,14 @@ AssetRenderer::AssetRenderer(xe::gfx::GraphicsDriver *driver_) : driver(driver_)
 	assert(driver->getModernModule()->getShaderProgram());
 }
 
+void AssetRenderer::beginFrame(const xe::Vector4f &color) {
+	driver->beginFrame(color);
+}
+
+void AssetRenderer::endFrame() {
+	driver->endFrame();
+}
+
 void AssetRenderer::render(xe::sg::Light *light) {
 	assert(light);
 
@@ -23,15 +31,12 @@ void AssetRenderer::render(xe::sg::Light *light) {
 void AssetRenderer::render(xe::sg::Camera *camera) {
 	assert(camera);
 
-	// TODO: compute projection matrix
-	proj = xe::identity<float, 4>();
+	xe::Rectf viewport = camera->getViewport();
+	driver->setViewport(viewport);
 
-	// compute view matrix
-	view = xe::lookat (
-		camera->getPosition(),
-		camera->getLookAt(),
-		camera->getUp()
-	);
+	proj = camera->computeProj();
+	view = camera->computeView();
+	auto module = driver->getModernModule();
 }
 
 void AssetRenderer::render(xe::sg::Geometry *geometry) {
@@ -40,7 +45,6 @@ void AssetRenderer::render(xe::sg::Geometry *geometry) {
 
 void AssetRenderer::render(xe::gfx::Mesh *mesh) {
 	assert(mesh);
-	assert(driver);
 
 	// set the current full transformation matrix
 	auto module = driver->getModernModule();

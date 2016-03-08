@@ -7,10 +7,7 @@
 #include <xe/sg/SceneRendererBase.hpp>
 
 namespace xe { namespace sg {
-	class SceneRenderer : public SceneRendererBase {
-	public:
 
-	};
 }}
 
 #endif

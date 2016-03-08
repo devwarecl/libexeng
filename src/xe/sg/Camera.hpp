@@ -15,76 +15,24 @@
 #define __EXENG_SCENEGRAPH_CAMERA_HPP__
 
 #include <xe/Object.hpp>
-#include <xe/Enum.hpp>
-#include <xe/Vector.hpp>
-#include <xe/Size.hpp>
+#include <xe/Matrix.hpp>
 #include <xe/Boundary.hpp>
-#include <xe/sg/SceneNodeData.hpp>
 #include <xe/sg/IRenderable.hpp>
 
 namespace xe { namespace sg {
-    /** 
-     * @brief 
-     */
-    struct CameraProjectionType : public Enum {
-        enum Enum {
-            Orthographic,
-            Perspective
-        };
-    };
-
     /**
-     * @brief CameraProjection
+     * @brief Camera interface
      */
-    struct CameraProjection {
-        Boxf box = Boxf(1.0);
-        CameraProjectionType::Enum type = CameraProjectionType::Orthographic;
-		
-        CameraProjection() {}
-		CameraProjection(const Boxf &box, CameraProjectionType::Enum type) {
-            this->box = box;
-            this->type = type;
-        }
-
-		static CameraProjection buildPerspectiveProj(float fov, float aspect, float znear, float zfar) {
-			Boxf box;
-
-			return {box, CameraProjectionType::Perspective};
-		}
-    };
-
-    /**
-     * @brief 
-     */
-    class EXENGAPI Camera : public IRenderable {
+    class EXENGAPI Camera : public Object, public IRenderable {
     public:
-        Camera();
         virtual ~Camera();
 
-        void setOrientation(const xe::Vector3f &pos, const xe::Vector3f& lookAt);
-        
-        void setPosition(const xe::Vector3f &position);
-        xe::Vector3f getPosition() const;
-        
-        void setLookAt(const xe::Vector3f &lookAt);
-        xe::Vector3f getLookAt() const;
-        
-        xe::Vector3f getUp() const;
-        void setUp(const xe::Vector3f &up);
-        
-        void setViewport(const xe::Rectf &viewport);
-        xe::Rectf getViewport() const;
-        
-        void setProjection(const CameraProjection &proj);
-        CameraProjection getProjection() const;
-        
-        const Vector3f* getData() const;
-        
-		virtual void renderWith(xe::sg::IRenderer *renderer) override;
+		virtual Matrix4f computeView() const = 0;
+		virtual Matrix4f computeProj() const = 0;
 
-    private:
-        struct Private;
-        Private *impl;
+		virtual Rectf getViewport() const = 0;
+
+		virtual void renderWith(xe::sg::IRenderer *renderer) override;
     };
 }}
 

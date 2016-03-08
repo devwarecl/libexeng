@@ -12,6 +12,9 @@ public:
 	explicit AssetRenderer(xe::gfx::GraphicsDriver *driver_);
 	virtual ~AssetRenderer() {}
 
+	virtual void beginFrame(const xe::Vector4f &color) override;
+	virtual void endFrame() override;
+
 	virtual void render(xe::sg::Light *light) override;
 	virtual void render(xe::sg::Camera *camera) override;
 	virtual void render(xe::sg::Geometry *geometry) override;
