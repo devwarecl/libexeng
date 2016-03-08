@@ -20,7 +20,7 @@ public:
 
 	virtual const xe::sg::Scene* getScene() const override;
 
-	virtual void renderScene(xe::sg::Camera* camera) override;
+	virtual void renderScene() override;
 
 public:
 	xe::sg::IRenderer* getRenderer();

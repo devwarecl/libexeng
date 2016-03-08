@@ -32,12 +32,14 @@ void SceneRenderer::setRenderer(xe::sg::IRenderer* renderer) {
 	this->renderer = renderer;
 }
 
-void SceneRenderer::renderScene(xe::sg::Camera*) {
+void SceneRenderer::renderScene() {
 	assert(scene);
 
 	transformStack.reset(xe::identity<float, 4>());
 
+	this->renderer->beginFrame(this->getScene()->getBackColor());
 	this->renderNode(this->getScene()->getRootNode());
+	this->renderer->endFrame();
 }
 
 void SceneRenderer::renderNode(xe::sg::SceneNode* node) {

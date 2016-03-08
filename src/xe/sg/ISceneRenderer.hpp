@@ -29,7 +29,7 @@ namespace xe { namespace sg {
 		virtual Scene* getScene() = 0;
 		virtual const Scene* getScene() const = 0;
 
-		virtual void renderScene(Camera* camera) = 0;
+		virtual void renderScene() = 0;
 	};
 
 	typedef std::unique_ptr<ISceneRenderer> SceneRendererPtr;
