@@ -59,7 +59,9 @@ namespace xe { namespace gfx {
          */
         const MeshSubset* getSubset(int index) const;
         
-        virtual TypeInfo getTypeInfo() const;
+        virtual TypeInfo getTypeInfo() const override;
+		
+		virtual void renderWith(xe::sg::IRenderer *renderer) override;
 
     private:
         struct Private;

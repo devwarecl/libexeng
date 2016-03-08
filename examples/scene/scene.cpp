@@ -4,11 +4,47 @@
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
 #include <xe/gfx/Vertex.hpp>
+#include <xe/gfx/Mesh.hpp>
 #include <xe/gfx/MeshSubsetGeneratorPlane.hpp>
 #include <xe/gfx/MeshSubsetGeneratorBox.hpp>
+#include <xe/sg/Scene.hpp>
+#include <xe/sg/Camera.hpp>
 
 #include "fshader.hpp"
 #include "vshader.hpp"
+#include "SceneRenderer.hpp"
+#include "RasterRenderer.hpp"
+
+class PerspectiveCamera : public xe::sg::Camera {
+public:
+	virtual ~PerspectiveCamera() {}
+
+	virtual xe::Matrix4f computeView() const {
+		return xe::lookat(position, lookat, up);
+		// return xe::identity<float, 4>();
+	}
+
+	virtual xe::Matrix4f computeProj() const {
+		return xe::perspective(fov, aspect, znear, zfar);
+		// return xe::identity<float, 4>();
+	}
+
+	virtual xe::Rectf getViewport() const override {
+		return viewport;
+	}
+
+public:
+	xe::Vector3f position = xe::Vector3f(0.0f, 1.5f, 3.5f);
+	xe::Vector3f lookat = xe::Vector3f(0.0f, 0.0f, 0.0f);
+	xe::Vector3f up = xe::Vector3f(0.0f, 1.0f, 0.0f);
+
+	float fov = xe::rad(60.0f);
+	float aspect = 1.3333f;
+	float znear = 0.1f;
+	float zfar = 100.0f;
+
+	xe::Rectf viewport;
+};
 
 /**
  * Scene graph example
@@ -73,29 +109,51 @@ public:
 		return program;
     }
     
-    xe::gfx::MeshSubsetPtr createSubset() {
-		// xe::gfx::MeshSubsetGeneratorPlane generator(this->graphicsDriver.get());
-		xe::gfx::MeshSubsetGeneratorBox generator(this->graphicsDriver.get());
+    xe::gfx::MeshPtr createMesh() {
 		xe::gfx::MeshSubsetGeneratorParams params;
-
 		params.format = &vertexFormat;
 		params.iformat = xe::gfx::IndexFormat::Index32;
 		params.slices = 2;
 		params.stacks = 2;
 
-		return generator.generate(params);
+		xe::gfx::MeshSubsetGeneratorBox generator(this->graphicsDriver.get());
+
+		auto subset = generator.generate(params);
+
+		subset->setMaterial(material.get());
+
+		return std::make_unique<xe::gfx::Mesh>(std::move(subset));
     }
     
+	xe::sg::ScenePtr createScene() {
+		auto scene = std::make_unique<xe::sg::Scene>();
+
+		scene->setBackColor({0.0f, 0.0f, 8.0f, 1.0f});
+
+		scene->getRootNode()->setRenderable(&camera);
+		scene->getRootNode()->addChild("boxNode")->setRenderable(mesh.get());
+
+		return scene;
+	}
+
     void initialize() {
         graphicsDriver = this->createGraphicsDriver();
         graphicsDriver->initialize();
-        
+        shader = createProgram();
+		graphicsDriver->getModernModule()->setShaderProgram(shader.get());
+
         vertexFormat = createVertexFormat();
         materialFormat = createMaterialFormat();
         
-        subset = createSubset();
-		shader = createProgram();
         material = createMaterial();
+		mesh = createMesh();
+		scene = createScene();
+
+		renderer = std::make_unique<RasterRenderer>(graphicsDriver.get());
+		sceneRenderer = std::make_unique<SceneRenderer>(renderer.get());
+		sceneRenderer->setScene(scene.get());
+
+		camera.viewport = xe::Rectf( xe::Vector2f(0.0f, 0.0f), xe::Vector2f(640.0f, 480.0f));
     }
     
     virtual int run(int argc, char **argv) override {
@@ -116,31 +174,12 @@ public:
 			lastTime = xe::Timer::getTime();
 
             inputManager->poll();
-  
-			angle += 90.0f * currentTime;
-
-            if (angle > 360.0f) {
-                angle = std::fmodf(angle, 360.0f);
-            }
-
-            xe::Vector3f position(0.0f, 2.0f, -1.0f);
-            xe::Vector3f look_point(0.0f, 0.0f, 0.0f);
-            xe::Vector3f up_direction(0.0f, 1.0f, 0.0f);
-
-            xe::Matrix4f proj = xe::perspective<float>(xe::rad(60.0f), 640.0f/480.0f, 0.1f, 1000.0f);
-            xe::Matrix4f view = xe::lookat<float>(position, look_point, up_direction);
+			
             xe::Matrix4f model = xe::rotatey<float>(xe::rad(angle));
 
-            xe::Matrix4f mvp = proj * view * model;
-            
             done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
-            
-            graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
-            graphicsDriver->setMaterial(material.get());
-			graphicsDriver->getModernModule()->setProgramMatrix("mvp", mvp);
-			graphicsDriver->setMeshSubset(subset.get());
-			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 0);
-            graphicsDriver->endFrame();
+
+			sceneRenderer->renderScene();
         }
         
         return 0;
@@ -148,14 +187,20 @@ public:
     
 private:
     xe::input2::IInputManager *inputManager = nullptr;
-    
+  
+	PerspectiveCamera camera;
+
     xe::gfx::GraphicsDriverPtr graphicsDriver;
     xe::gfx::VertexFormat vertexFormat;
     xe::gfx::MaterialFormat materialFormat;
-    xe::gfx::MeshSubsetPtr subset;
+    xe::gfx::MeshPtr mesh;
     xe::gfx::MaterialPtr material;
-    
     xe::gfx::ShaderProgramPtr shader;
+
+	xe::sg::ScenePtr scene;
+
+	xe::sg::ISceneRendererPtr sceneRenderer;
+	xe::sg::IRendererPtr renderer;
 };
 
 int main(int argc, char **argv) {

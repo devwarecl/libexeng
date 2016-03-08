@@ -34,6 +34,8 @@ namespace xe { namespace sg {
 
 		virtual void renderWith(xe::sg::IRenderer *renderer) override;
     };
+
+	typedef std::unique_ptr<Camera> CameraPtr;
 }}
 
 #endif // __EXENG_SCENEGRAPH_CAMERA_HPP__

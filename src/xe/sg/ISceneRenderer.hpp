@@ -32,7 +32,7 @@ namespace xe { namespace sg {
 		virtual void renderScene() = 0;
 	};
 
-	typedef std::unique_ptr<ISceneRenderer> SceneRendererPtr;
+	typedef std::unique_ptr<ISceneRenderer> ISceneRendererPtr;
 }}
 
 #endif // __EXENG_SCENEGRAPH_SCENERENDERER_HPP__

@@ -18,6 +18,7 @@
 #include <boost/checked_delete.hpp>
 #include <xe/Vector.hpp>
 #include <xe/gfx/VertexArray.hpp>
+#include <xe/sg/IRenderer.hpp>
 
 using namespace xe::sg;
 
@@ -321,4 +322,10 @@ namespace xe { namespace gfx {
 		assert(this->impl != nullptr);
         return TypeId<Mesh>();
     }
+
+	void Mesh::renderWith(xe::sg::IRenderer *renderer) {
+		assert(renderer);
+		
+		renderer->render(this);
+	}
 }}

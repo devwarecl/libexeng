@@ -290,6 +290,11 @@ namespace xe { namespace gfx {
          * @return 
          */        
         virtual const OpenGLGraphicsBackend* getOpenGLBackend() const = 0;
+
+		/**
+		 * @brief Render a mesh using the primitive rendering methods. Implementations can override this to offer improved performance.
+		 */
+		virtual void render(const xe::gfx::Mesh *mesh);
     };
 
 	typedef std::unique_ptr<GraphicsDriver> GraphicsDriverPtr;

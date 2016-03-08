@@ -13,6 +13,8 @@
 
 #include "GraphicsDriver.hpp"
 
+#include <xe/gfx/Mesh.hpp>
+
 namespace xe { namespace gfx {
 
 	GraphicsDriver::~GraphicsDriver() {}
@@ -64,6 +66,19 @@ namespace xe { namespace gfx {
 			);
 		} else {
 			return nullptr;
+		}
+	}
+
+	void GraphicsDriver::render(const xe::gfx::Mesh *mesh) {
+		assert(mesh);
+
+		for (int i=0; i<mesh->getSubsetCount(); i++) {
+			const xe::gfx::MeshSubset *subset = mesh->getSubset(i);
+			assert(subset);
+
+			this->setMaterial(subset->getMaterial());
+			this->setMeshSubset(subset);
+			this->render(subset->getPrimitive(), 0);
 		}
 	}
 }}

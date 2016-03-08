@@ -238,7 +238,6 @@ namespace xe {
             return result;
         }
 
-
         /**
          * @brief Documentacion pendiente.
          */
@@ -293,8 +292,11 @@ namespace xe {
     int Matrix<Type, RowCount, ColumnCount>::getIndex(int i, int j) const
     {
         assert(i < RowCount);
-        assert(i < ColumnCount);
+        assert(j < ColumnCount);
+		assert(i >= 0);
+        assert(j >= 0);
 
+		// return j*RowCount + i;
         return i*ColumnCount + j;
     }
 

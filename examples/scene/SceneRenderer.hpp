@@ -11,6 +11,7 @@
 class SceneRenderer : public xe::sg::ISceneRenderer {
 public:
 	SceneRenderer() {}
+	explicit SceneRenderer(xe::sg::IRenderer *renderer);
 	virtual ~SceneRenderer() {}
 
 public:

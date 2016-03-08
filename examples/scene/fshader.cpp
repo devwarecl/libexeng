@@ -19,12 +19,12 @@ uniform float shininess;
 uniform sampler2D tex_sampler;
 
 void main() {
+	// vec4 light_direction = normalize(vec4(0.0f, -1.0f, 0.25f, 0.0f));
+	// float factor = dot(light_direction, vec4(n, 1.0f));	
+	// color = /*texture(tex_sampler, uv) * */ambient * factor;
 
-	vec4 light_direction = normalize(vec4(0.0f, -1.0f, 0.25f, 0.0f));
-
-	float factor = dot(light_direction, vec4(n, 1.0f));	
-
-	color = /*texture(tex_sampler, uv) * */ambient * factor;
+	// color = ambient;
+	color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 )";

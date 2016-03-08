@@ -25,6 +25,8 @@ namespace xe { namespace sg {
 
 		virtual void setModel(const xe::Matrix4f &) = 0;
 	};
+
+	typedef std::unique_ptr<IRenderer> IRendererPtr;
 }}
 
 #endif 

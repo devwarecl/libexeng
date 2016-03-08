@@ -7,6 +7,10 @@
 #include <xe/sg/SceneNodeData.hpp>
 #include <xe/sg/IRenderable.hpp>
 
+SceneRenderer::SceneRenderer(xe::sg::IRenderer *renderer) {
+	this->setRenderer(renderer);
+}
+
 void SceneRenderer::setScene(xe::sg::Scene* scene) {
 	assert(scene);
 	this->scene = scene;
@@ -45,13 +49,14 @@ void SceneRenderer::renderScene() {
 void SceneRenderer::renderNode(xe::sg::SceneNode* node) {
 	assert(node);
 
+	std::cout << "SceneRenderer::renderNode(" << node->getName() << ")" << std::endl;
+
 	transformStack.push(node->getTransform());
 
-	xe::sg::IRenderable *renderable = node->getRenderable();
 	xe::sg::IRenderer *renderer = this->getRenderer();
-
 	renderer->setModel(transformStack.top());
 
+	xe::sg::IRenderable *renderable = node->getRenderable();
 	if (renderable) {
 		renderable->renderWith(renderer);
 	}

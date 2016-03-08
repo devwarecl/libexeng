@@ -22,14 +22,9 @@ public:
 
 	virtual void setModel(const xe::Matrix4f &transformation) override;
 
-protected:
-	xe::Matrix4f computeProjViewModel() const;
-
 private:
 	xe::gfx::GraphicsDriver *driver = nullptr;
-	xe::Matrix4f proj;
-	xe::Matrix4f view;
-	xe::Matrix4f model;
+	xe::gfx::ModernModule *programmableModule = nullptr;
 };
 
 #endif
