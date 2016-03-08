@@ -383,8 +383,9 @@ namespace xe { namespace gfx { namespace gl3 {
     }
     
     void GraphicsDriverGL3::preRenderMaterial(const Material *material) {
-        assert(material != nullptr);
-        
+        assert(material);
+		assert(shaderProgram);
+
 		GLuint programId = this->shaderProgram->getProgramId();
 
         // set the texture state

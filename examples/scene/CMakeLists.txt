@@ -1,5 +1,11 @@
 
-set (scene_src scene.cpp fshader.hpp fshader.cpp vshader.hpp vshader.cpp SceneRenderer.hpp SceneRenderer.cpp AssetRenderer.hpp AssetRenderer.cpp)
+set (scene_src 
+	scene.cpp 
+	fshader.hpp fshader.cpp 
+	vshader.hpp vshader.cpp 
+	SceneRenderer.hpp SceneRenderer.cpp 
+	AssetRenderer.hpp AssetRenderer.cpp
+)
 
 source_group(\\ FILES ${scene_src})
 

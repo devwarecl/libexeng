@@ -206,6 +206,8 @@ void main() {
         material2 = createMaterial2();
         material3 = createMaterial3();
         mesh = createMesh();
+
+		graphicsDriver->getModernModule()->setShaderProgram(shader.get());
     }
     
     virtual int run(int argc, char **argv) override {
