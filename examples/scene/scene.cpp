@@ -137,7 +137,7 @@ public:
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
             graphicsDriver->setMaterial(material.get());
-			graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
+			graphicsDriver->getModernModule()->setProgramMatrix("mvp", mvp);
 			graphicsDriver->setMeshSubset(subset.get());
 			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 0);
             graphicsDriver->endFrame();

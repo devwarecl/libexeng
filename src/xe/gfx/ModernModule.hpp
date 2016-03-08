@@ -1,10 +1,12 @@
 
+#pragma once
 
-#ifndef __EXENG_GRAPHICS_MODERNMODULE_HPP__
-#define __EXENG_GRAPHICS_MODERNMODULE_HPP__
+#ifndef __xe_gfx_programmablepipeline_hpp__
+#define __xe_gfx_programmablepipeline_hpp__
 
 #include <memory>
 #include <list>
+#include <vector>
 #include <xe/Vector.hpp>
 #include <xe/Matrix.hpp>
 #include <xe/gfx/Shader.hpp>
@@ -43,23 +45,63 @@ namespace xe { namespace gfx {
          */
         virtual ShaderProgramPtr createShaderProgram() = 0;
 		
+		/**
+         * @brief Set the current shader program with the specified one.
+         */
 		virtual void setShaderProgram(const ShaderProgram *program) = 0;
 
 		virtual const ShaderProgram* getShaderProgram() const = 0;
 
-		/**
-		 * @brief Set the value of the specified global variable in the currently setted material's shader program.
-		 */
-		virtual void setProgramGlobal(const std::string &globalName, const Vector4f &value) = 0;
+		virtual void setProgramParam(const std::string &name, const int count, const int dim, DataType::Enum dataType, const void *value) = 0;
 
-		/**
-		 * @brief Set the value of the specified global variable in the currently setted material's shader program.
-		 */
-		virtual void setProgramGlobal(const std::string &globalName, const Matrix4f &value) = 0;
+		template <typename Type>
+		void setProgramParam(const std::string &name, Type value) {
+			this->setProgramParam(name, 1, 1, DataTypeTraits<Type>::Enum, &value);
+		}
 
-		virtual void setProgramGlobal(const int index, const Vector4f &value) = 0;
+		template<typename Type, int Size>
+		void setProgramParam(const std::string &name, const Vector<Type, Size> &value) {
+			static_assert(Size >= 0, "");
+			static_assert(Size <= 4, "");
 
-		virtual void setProgramGlobal(const int index, const Matrix4f &value) = 0;
+			this->setProgramParam(name, 1, Size, DataTypeTraits<Type>::Enum, &value);
+		}
+
+		template<typename Type, int Size>
+		void setProgramParam(const std::string &name, const int count, const Vector<Type, Size> *values) {
+			static_assert(Size >= 0);
+			static_assert(Size <= 4);
+			assert(values);
+			assert(count > 0);
+
+			this->setProgramParam(name, count, Size, DataTypeTraits<Type>::Enum, values);
+		}
+
+		template<typename Type>
+		void setProgramParam(const std::string &name, const std::vector<Type> &values) {
+			assert(values.size() > 0);
+
+			this->setProgramParam(name, values.size(), 1, DataTypeTraits<Type>::Enum, values.data());
+		}
+
+		template<typename Type, int Size>
+		void setProgramParam(const std::string &name, const std::vector<Vector<Type, Size>> &values) {
+			static_assert(Size >= 0);
+			static_assert(Size <= 4);
+			assert(values.size() > 0);
+
+			this->setProgramParam(name, values.size(), Size, DataTypeTraits<Type>::Enum, values.data());
+		}
+		
+		virtual void setProgramMatrix(const std::string &name, const int count, const xe::Matrix4f *matrices) = 0;
+
+		void setProgramMatrix(const std::string &name, const xe::Matrix4f &matrix) {
+			this->setProgramMatrix(name, 1, &matrix);
+		}
+
+		void setProgramMatrix(const std::string &name, const std::vector<xe::Matrix4f> &matrices) {
+			this->setProgramMatrix(name, matrices.size(), matrices.data());
+		}
 
 		virtual ShaderProgramPtr createShaderProgram(const std::list<std::string> &vertexShaderSrcs, const std::list<std::string> &fragmentShaderSrcs);
 

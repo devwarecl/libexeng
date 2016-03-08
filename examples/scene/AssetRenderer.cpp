@@ -16,8 +16,8 @@ void AssetRenderer::render(xe::sg::Light *light) {
 
 	auto module = driver->getModernModule();
 
-	module->setProgramGlobal("light_position", light->getPosition());
-	// module->setProgramGlobal("light_range", light->getRange());
+	module->setProgramParam("light_position", light->getPosition());
+	module->setProgramParam("light_range", light->getRange());
 }
 
 void AssetRenderer::render(xe::sg::Camera *camera) {
@@ -45,7 +45,7 @@ void AssetRenderer::render(xe::gfx::Mesh *mesh) {
 	// set the current full transformation matrix
 	auto module = driver->getModernModule();
 
-	module->setProgramGlobal("mvp", this->computeProjViewModel());
+	module->setProgramMatrix("mvp", this->computeProjViewModel());
 
 	for (int i=0; i<mesh->getSubsetCount(); i++) {
 		xe::gfx::MeshSubset *subset = mesh->getSubset(i);

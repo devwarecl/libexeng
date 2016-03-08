@@ -21,15 +21,13 @@
 #include <xe/Object.hpp>
 #include <xe/Vector.hpp>
 #include <xe/DataType.hpp>
+#include <xe/gfx/Forward.hpp>
 
 #if defined(EXENG_DEBUG)
 #  include <sstream>
 #endif
 
 namespace xe { namespace gfx {
-
-    class EXENGAPI Texture;
-    class EXENGAPI ShaderProgram;
 
     /**
      * @brief Material Layer. Holds a texture, and associated state.
@@ -59,6 +57,16 @@ namespace xe { namespace gfx {
          */
         bool hasTexture() const;
         
+		/**
+		 * @brief Get the current name of the texture
+		 */
+		std::string getName() const;
+
+		/**
+		 * @brief Set the current name of the texture.
+		 */
+		void setName(const std::string &name);
+
     private:
         struct Private;
         Private *impl = nullptr;

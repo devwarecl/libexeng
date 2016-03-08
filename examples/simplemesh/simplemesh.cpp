@@ -253,7 +253,7 @@ void main() {
             const xe::gfx::MeshSubset *subset = mesh->getSubset(i);
 
             graphicsDriver->setMaterial(subset->getMaterial());
-            graphicsDriver->getModernModule()->setProgramGlobal(param, mvp);
+            graphicsDriver->getModernModule()->setProgramMatrix(param, mvp);
             graphicsDriver->setMeshSubset(subset);
             graphicsDriver->render(subset->getPrimitive(), subset->getVertexCount());
         }

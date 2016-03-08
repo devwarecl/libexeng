@@ -91,9 +91,6 @@ namespace xe { namespace gfx {
 		//! Fullscreen or window?
         DisplayStatus::Enum status = DisplayStatus::Window;        
         
-        //! Enable compute module?
-        bool enableCompute = false;
-        
 		DisplayMode() {}
 
         DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat) {

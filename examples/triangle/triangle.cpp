@@ -175,7 +175,7 @@ void main() {
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
 			graphicsDriver->getModernModule()->setShaderProgram(shader.get());
-			graphicsDriver->getModernModule()->setProgramGlobal("mvp", mvp);
+			graphicsDriver->getModernModule()->setProgramMatrix("mvp", mvp);
 			graphicsDriver->setMaterial(material.get());
 			graphicsDriver->setMeshSubset(subset.get());
 			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);

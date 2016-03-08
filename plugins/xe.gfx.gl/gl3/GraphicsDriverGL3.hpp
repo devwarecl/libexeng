@@ -87,13 +87,9 @@ namespace xe { namespace gfx { namespace gl3 {
 			return this->shaderProgram;
 		}
 
-		virtual void setProgramGlobal(const std::string &globalName, const Vector4f &value) override;
+		virtual void setProgramMatrix(const std::string &name, const int count, const xe::Matrix4f *matrices) override;
 
-		virtual void setProgramGlobal(const std::string &globalName, const Matrix4f &value) override;
-
-		virtual void setProgramGlobal(const int index, const Vector4f &value) override;
-
-		virtual void setProgramGlobal(const int index, const Matrix4f &value) override;
+		virtual void setProgramParam(const std::string &name, const int count, const int dim, DataType::Enum dataType, const void *value) override;
 
 		virtual InputManagerGLFW* getInputManager() override {
 			return &this->inputManager;

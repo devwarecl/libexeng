@@ -116,7 +116,7 @@ namespace xe { namespace sg {
 
 	inline void SceneRendererBase::setTransform(const Matrix4f &transform) {
 		if (this->driver->getModernModule()) {
-			this->driver->getModernModule()->setProgramGlobal("", transform);
+			this->driver->getModernModule()->setProgramMatrix("", transform);
 
 		} else if (this->driver->getLegacyModule()) {
 			this->driver->getLegacyModule()->setTransform(xe::gfx::Transform::World, transform);

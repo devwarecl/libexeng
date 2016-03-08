@@ -396,7 +396,7 @@ namespace xe { namespace gfx { namespace gl3 {
                 GLenum textureType = convTextureType(texture->getType());
                 GLenum textureId = texture->getTextureId();
                 
-                GLuint textureLocation = ::glGetUniformLocation(programId, "tex_sampler");
+                GLuint textureLocation = ::glGetUniformLocation(programId, layer->getName().c_str());
                 GL3_CHECK();
 
                 ::glUniform1i(textureLocation, i);
@@ -461,98 +461,6 @@ namespace xe { namespace gfx { namespace gl3 {
 		return subset;
     }
 
-	void GraphicsDriverGL3::setProgramGlobal(const std::string &globalName, const Vector4f &value) {
-#if defined(EXENG_DEBUG)
-		if (!this->getMaterial()) {
-			EXENG_THROW_EXCEPTION("No current material bound.");
-		}
-
-		if (!this->shaderProgram) {
-			EXENG_THROW_EXCEPTION("No current shader program bound.");
-		}
-#endif
-		
-		int programId = shaderProgram->getProgramId();
-		int location = glGetUniformLocation(programId, globalName.c_str());
-
-#if defined(EXENG_DEBUG)
-		if (location < 0) {
-			EXENG_THROW_EXCEPTION("The uniform variable '" + globalName + "' doesn't exist in the current program.");
-		}
-#endif
-		glUniform4fv(location, 1, value.getPtr());
-
-		GL3_CHECK();
-	}
-
-	void GraphicsDriverGL3::setProgramGlobal(const std::string &globalName, const Matrix4f &value) {
-#if defined(EXENG_DEBUG)
-		if (!this->shaderProgram) {
-			EXENG_THROW_EXCEPTION("No current shader program bound.");
-		}
-#endif
-
-		int programId = shaderProgram->getProgramId();
-		int location = glGetUniformLocation(programId, globalName.c_str());
-
-#if defined(EXENG_DEBUG)
-		if (location < 0) {
-			EXENG_THROW_EXCEPTION("The uniform variable '" + globalName + "' doesn't exist in the current program.");
-		}
-#endif
-		glUniformMatrix4fv(location, 1, GL_FALSE, value.getPtr());
-
-		GL3_CHECK();
-	}
-
-	void GraphicsDriverGL3::setProgramGlobal(const int index, const Vector4f &value) {
-#if defined(EXENG_DEBUG)
-		if (!this->getMaterial()) {
-			EXENG_THROW_EXCEPTION("No current material bound.");
-		}
-
-		if (!this->shaderProgram) {
-			EXENG_THROW_EXCEPTION("No current shader program bound.");
-		}
-#endif
-
-		int programId = shaderProgram->getProgramId();
-		int location = index;
-
-#if defined(EXENG_DEBUG)
-		if (location < 0) {
-			EXENG_THROW_EXCEPTION("The uniform index '" + std::to_string(index) + "' doesn't exist in the current program.");
-		}
-#endif
-		glUniform4fv(location, 1, value.getPtr());
-
-		GL3_CHECK();
-	}
-
-	void GraphicsDriverGL3::setProgramGlobal(const int index, const Matrix4f &value) {
-#if defined(EXENG_DEBUG)
-		if (!this->getMaterial()) {
-			EXENG_THROW_EXCEPTION("No current material bound.");
-		}
-
-		if (!this->getShaderProgram()) {
-			EXENG_THROW_EXCEPTION("No current shader program bound.");
-		}
-#endif
-
-		int programId = shaderProgram->getProgramId();
-		int location = index;
-
-#if defined(EXENG_DEBUG)
-		if (location < 0) {
-			EXENG_THROW_EXCEPTION("The uniform variable '" + std::to_string(index)  + "' doesn't exist in the current program.");
-		}
-#endif
-		glUniformMatrix4fv(location, 1, GL_FALSE, value.getPtr());
-
-		GL3_CHECK();
-	}
-
 	ModernModule* GraphicsDriverGL3::getModernModule() {
 		return this;
 	}
@@ -571,5 +479,67 @@ namespace xe { namespace gfx { namespace gl3 {
         GLint programId = shaderProgram->getProgramId();
 
         ::glUseProgram(programId);
+	}
+
+	void GraphicsDriverGL3::setProgramMatrix(const std::string &name, const int count, const xe::Matrix4f *matrices) {
+		assert(matrices);
+		assert(count > 0);
+		assert(shaderProgram);
+
+		int programId = shaderProgram->getProgramId();
+		int location = glGetUniformLocation(programId, name.c_str());
+
+#if defined(EXENG_DEBUG)
+		if (location < 0) {
+			EXENG_THROW_EXCEPTION("The uniform variable '" + name  + "' doesn't exist in the current program.");
+		}
+#endif
+		glUniformMatrix4fv(location, count, GL_FALSE, matrices->getPtr());
+
+		GL3_CHECK();
+	}
+
+	void GraphicsDriverGL3::setProgramParam(const std::string &name, const int count, const int dim, DataType::Enum dataType, const void *values) {
+		assert(values);
+		assert(count > 0);
+		assert(dim > 0);
+		assert(dim <= 4);
+		assert(dataType == DataType::Float32);
+		assert(dataType == DataType::Int32);
+		assert(shaderProgram);
+
+		int programId = shaderProgram->getProgramId();
+		int location = glGetUniformLocation(programId, name.c_str());
+
+#if defined(EXENG_DEBUG)
+		if (location < 0) {
+			EXENG_THROW_EXCEPTION("The uniform index '" + name + "' doesn't exist in the current program.");
+		}
+#endif
+
+		auto fvalues = static_cast<const GLfloat*>(values);
+		auto ivalues = static_cast<const GLint*>(values);
+
+		switch (dataType) {
+		case DataType::Float32:
+			switch (dim) {
+				case 1: glUniform1fv(location, count, fvalues); break;
+				case 2: glUniform2fv(location, count, fvalues); break;
+				case 3: glUniform3fv(location, count, fvalues); break;
+				case 4: glUniform4fv(location, count, fvalues); break;
+			}
+			break;
+
+		case DataType::Int32:
+			switch (dim) {
+				case 1: glUniform1iv(location, count, ivalues); break;
+				case 2: glUniform2iv(location, count, ivalues); break;
+				case 3: glUniform3iv(location, count, ivalues); break;
+				case 4: glUniform4iv(location, count, ivalues); break;
+			}
+			break;
+		}
+
+		GL3_CHECK();
 	}
 }}}

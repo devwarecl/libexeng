@@ -26,6 +26,7 @@
 namespace xe { namespace gfx {
 	struct MaterialLayer::Private {
 		Texture* texture = nullptr;
+		std::string name;
 	};
     
 	MaterialLayer::MaterialLayer() {
@@ -37,23 +38,35 @@ namespace xe { namespace gfx {
 	}
 
 	const Texture* MaterialLayer::getTexture() const {
-		assert(this->impl != nullptr);
+		assert(this->impl);
 		return this->impl->texture;
 	}
 
 	Texture* MaterialLayer::getTexture() {
-		assert(this->impl != nullptr);
+		assert(this->impl);
 		return this->impl->texture;
 	}
     
 	void MaterialLayer::setTexture(Texture* texture) {
-		assert(this->impl != nullptr);
+		assert(this->impl);
 		this->impl->texture = texture;
 	}
 
 	bool MaterialLayer::hasTexture() const {
-		assert(this->impl != nullptr);
+		assert(this->impl);
 		return this->impl->texture != nullptr;
+	}
+
+	std::string MaterialLayer::getName() const {
+		assert(this->impl);
+
+		return this->impl->name;
+	}
+
+	void MaterialLayer::setName(const std::string &name) {
+		assert(this->impl);
+
+		this->impl->name = name;
 	}
 }}
 
