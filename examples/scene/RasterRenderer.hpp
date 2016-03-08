@@ -1,16 +1,16 @@
 
 #pragma once
 
-#ifndef __assetrenderer_hpp__
-#define __assetrenderer_hpp__
+#ifndef __rasterrenderer_hpp__
+#define __rasterrenderer_hpp__
 
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/sg/IRenderer.hpp>
 
-class AssetRenderer : public xe::sg::IRenderer {
+class RasterRenderer : public xe::sg::IRenderer {
 public:
-	explicit AssetRenderer(xe::gfx::GraphicsDriver *driver_);
-	virtual ~AssetRenderer() {}
+	explicit RasterRenderer(xe::gfx::GraphicsDriver *driver_);
+	virtual ~RasterRenderer() {}
 
 	virtual void beginFrame(const xe::Vector4f &color) override;
 	virtual void endFrame() override;

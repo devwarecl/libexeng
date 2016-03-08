@@ -1,25 +1,25 @@
 
-#include "AssetRenderer.hpp"
+#include "RasterRenderer.hpp"
 
 #include <xe/gfx/Mesh.hpp>
 #include <xe/sg/Light.hpp>
 #include <xe/sg/Camera.hpp>
 
-AssetRenderer::AssetRenderer(xe::gfx::GraphicsDriver *driver_) : driver(driver_) {
+RasterRenderer::RasterRenderer(xe::gfx::GraphicsDriver *driver_) : driver(driver_) {
 	assert(driver);
 	assert(driver->getModernModule());
 	assert(driver->getModernModule()->getShaderProgram());
 }
 
-void AssetRenderer::beginFrame(const xe::Vector4f &color) {
+void RasterRenderer::beginFrame(const xe::Vector4f &color) {
 	driver->beginFrame(color);
 }
 
-void AssetRenderer::endFrame() {
+void RasterRenderer::endFrame() {
 	driver->endFrame();
 }
 
-void AssetRenderer::render(xe::sg::Light *light) {
+void RasterRenderer::render(xe::sg::Light *light) {
 	assert(light);
 
 	auto module = driver->getModernModule();
@@ -28,7 +28,7 @@ void AssetRenderer::render(xe::sg::Light *light) {
 	module->setProgramParam("light_range", light->getRange());
 }
 
-void AssetRenderer::render(xe::sg::Camera *camera) {
+void RasterRenderer::render(xe::sg::Camera *camera) {
 	assert(camera);
 
 	xe::Rectf viewport = camera->getViewport();
@@ -39,11 +39,11 @@ void AssetRenderer::render(xe::sg::Camera *camera) {
 	auto module = driver->getModernModule();
 }
 
-void AssetRenderer::render(xe::sg::Geometry *geometry) {
+void RasterRenderer::render(xe::sg::Geometry *geometry) {
 	assert(geometry);
 }
 
-void AssetRenderer::render(xe::gfx::Mesh *mesh) {
+void RasterRenderer::render(xe::gfx::Mesh *mesh) {
 	assert(mesh);
 
 	// set the current full transformation matrix
@@ -61,11 +61,11 @@ void AssetRenderer::render(xe::gfx::Mesh *mesh) {
 	}
 }
 
-xe::Matrix4f AssetRenderer::computeProjViewModel() const {
+xe::Matrix4f RasterRenderer::computeProjViewModel() const {
 	return proj * view * model;
 }
 
-void AssetRenderer::setModel(const xe::Matrix4f &transformation) {
+void RasterRenderer::setModel(const xe::Matrix4f &transformation) {
 	// set the current transformation matrix
 	model = transformation;
 }
