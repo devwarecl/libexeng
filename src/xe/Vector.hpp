@@ -33,6 +33,30 @@ namespace xe {
         Type data[size];
     };
 
+	template<typename Type> 
+    struct VectorBase<Type, 1> {
+        union {
+            Type data[1];
+            struct { Type x; };
+        };
+
+		void set(Type x) {
+            this->x = x;
+        }
+
+        void set(Type x, Type y) {
+            this->set(x);
+        }
+
+		void set(Type x, Type y, Type z) {
+             this->set(x);
+        }
+
+		 void set(Type x, Type y, Type z, Type w) {
+            this->set(x);
+        }
+    };
+
     template<typename Type> 
     struct VectorBase<Type, 2> {
         union {
@@ -105,26 +129,30 @@ namespace xe {
 
 		Vector() {}
 
-        explicit Vector(const Type *arrayValues)
-		{
+		Vector( const Vector<Type, Size - 1> &v, Type value) {
+			for (int i=0; i<Size-1; i++) {
+				data[i] = v[i];
+			}
+
+			data[Size-1] = value;
+		}
+
+        explicit Vector(const Type *arrayValues) {
 			this->set(arrayValues);
 		}
 
-        explicit Vector(Type value)
-		{
+        explicit Vector(Type value) {
 			this->set(value);
 		}
 
-        Vector(Type x, Type y)
-		{
+        Vector(Type x, Type y) {
 			this->set(Type());
 
 			this->x = x;
 			this->y = y;
 		}
 
-        Vector(Type x, Type y, Type z)
-		{
+        Vector(Type x, Type y, Type z) {
 			this->set(Type());
 
 			this->x = x;
@@ -132,8 +160,7 @@ namespace xe {
 			this->z = z;
 		}
 
-        Vector(Type x, Type y, Type z, Type w)
-		{
+        Vector(Type x, Type y, Type z, Type w) {
 			this->set(Type());
 
 			this->x = x;
@@ -142,8 +169,7 @@ namespace xe {
 			this->w = w;
 		}
 
-        void set(const Type *values)
-		{
+        void set(const Type *values) {
 #if defined(EXENG_DEBUG)
 			if (values == nullptr) {
 				throw std::runtime_error("Vector<Type, Size>::set: Input value is a null pointer.");
@@ -152,25 +178,21 @@ namespace xe {
 			std::memcpy(this->data, values, sizeof(Type)*Size);
 		}
 
-        void set(Type Value)
-		{
+        void set(Type Value) {
 			for(int i=0; i<Size; ++i) {
 				this->data[i] = Value;
 			}	
 		}
 
-        Type* getPtr()
-		{
+        Type* getPtr() {
 			return this->data;
 		}
 		
-        const Type* getPtr() const
-		{
+        const Type* getPtr() const {
 			return this->data;
 		}
 		
-        Type& operator[] (int index)
-		{
+        Type& operator[] (int index) {
 #if defined(EXENG_DEBUG)
 			if (index < 0 || index >= Size) {
 				throw std::runtime_error("Vector<Type, Size>::operator[]: Index out of bounds.");
@@ -179,8 +201,7 @@ namespace xe {
 			return this->data[index];
 		}
 
-        const Type& operator[] (int index) const
-		{
+        const Type& operator[] (int index) const {
 #if defined(EXENG_DEBUG)
 			if (index < 0 || index >= Size) {
 				throw std::runtime_error("Vector<Type, Size>::operator[]: Index out of bounds.");
@@ -189,8 +210,7 @@ namespace xe {
 			return this->data[index];
 		}
 
-        Vector operator+ (const Vector &rhs) const
-		{
+        Vector operator+ (const Vector &rhs) const {
 			Vector<Type, Size> result;
 
 			for(int i=0; i<Size; ++i) {
@@ -200,15 +220,13 @@ namespace xe {
 			return result;
 		}
 
-        Vector& operator+= (const Vector &rhs)
-		{
+        Vector& operator+= (const Vector &rhs) {
 			*this = *this + rhs;
 
 			return *this;
 		}
 
-        Vector operator- (const Vector &rhs) const
-		{
+        Vector operator- (const Vector &rhs) const {
 			Vector<Type, Size> result;
 
 			for(int i=0; i<Size; ++i) {
@@ -218,15 +236,13 @@ namespace xe {
 			return result;
 		}
 		
-        Vector& operator-= (const Vector &rhs)
-		{
+        Vector& operator-= (const Vector &rhs) {
 			*this = *this - rhs;
 
 			return *this;
 		}
 
-        Vector operator* (Type rhs) const
-		{
+        Vector operator* (Type rhs) const {
 			Vector<Type, Size> result;
 
 			for(int i=0; i<Size; ++i) {
@@ -236,21 +252,18 @@ namespace xe {
 			return result;
 		}
 
-        Vector& operator*= (Type rhs)
-		{
+        Vector& operator*= (Type rhs) {
 			*this = *this * rhs;
 
 			return *this;
 		}
 
         template<typename OtherType>
-        friend Vector<OtherType, Size> operator* (Type Number, const Vector& Other) 
-		{
+        friend Vector<OtherType, Size> operator* (Type Number, const Vector& Other)  {
             return Other*Number;
         }
     
-        Vector operator/ (Type rhs) const
-		{
+        Vector operator/ (Type rhs) const {
 			Vector<Type, Size> result;
 
 			for(int i=0; i<Size; ++i) {
@@ -260,15 +273,13 @@ namespace xe {
 			return result;
 		}
     
-        Vector& operator/= (Type rhs)
-		{
+        Vector& operator/= (Type rhs) {
 			*this = *this / rhs;
 
 			return *this;
 		}
 
-        Vector operator* (const Vector &rhs) const
-		{
+        Vector operator* (const Vector &rhs) const {
 			Vector<Type, Size> result;
 
 			for (int i=0; i<Size; ++i) {
@@ -278,15 +289,13 @@ namespace xe {
 			return result;
 		}
 
-        Vector& operator*= (const Vector &rhs)
-		{
+        Vector& operator*= (const Vector &rhs) {
 			*this = *this * rhs;
 
 			return *this;
 		}
 
-        Vector operator/ (const Vector &rhs) const
-		{
+        Vector operator/ (const Vector &rhs) const {
 			Vector<Type, Size> result;
 
 			for(int i=0; i<Size; ++i) {
@@ -296,36 +305,30 @@ namespace xe {
 			return result;
 		}
 
-        Vector& operator/= (const Vector rhs)
-		{
+        Vector& operator/= (const Vector rhs) {
 			*this = *this / rhs;
 
 			return *this;
 		}
 
-        Vector operator- () const
-		{
+        Vector operator- () const {
 			return Type(-1)* (*this);
 		}
 
-        bool operator== (const Vector &Other) const
-		{
+        bool operator== (const Vector &Other) const {
 			return arrayCompare<Type, Size>(this->data, Other.data);
 		}
 
-        bool operator!= (const Vector &Other) const
-		{
+        bool operator!= (const Vector &Other) const {
 			return !(*this == Other);
 		}
 
-        friend Vector<Type, Size> operator* (Type scalar, const Vector<Type, Size>& other) 
-		{
+        friend Vector<Type, Size> operator* (Type scalar, const Vector<Type, Size>& other)  {
             return other * scalar;
         }
         
         template<typename OtherType, int OtherSize>
-        operator Vector<OtherType, OtherSize>() const 
-		{
+        operator Vector<OtherType, OtherSize>() const  {
             Vector<OtherType, OtherSize> result(static_cast<OtherType>(0));
             int minSize = std::min(OtherSize, Size);
         
@@ -336,18 +339,15 @@ namespace xe {
             return result;
         }
     
-        bool isZero() const 
-		{
+        bool isZero() const  {
 			return *this == Vector<Type, Size>::zero();
 		}
 		
-        static Vector zero()
-		{
+        static Vector zero() {
 			return Vector<Type, Size>(Type());
 		}
 
-		friend std::ostream& operator<< (std::ostream &os, const Vector<Type, Size> &v) 
-		{
+		friend std::ostream& operator<< (std::ostream &os, const Vector<Type, Size> &v)  {
 		    for(int i=0; i<Size; ++i) {
 				os << std::fixed << std::setprecision(2) << v[i];
         
@@ -361,8 +361,7 @@ namespace xe {
     };
 
 	template<typename Type, int Size>
-    Type dot(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2) 
-	{
+    Type dot(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2)  {
 		Type result = static_cast<Type>(0);
 
 		for(int i=0; i<Size; ++i) {
@@ -373,8 +372,7 @@ namespace xe {
 	}
 
 	template<typename Type, int Size>
-    Vector<Type, Size> cross(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2) 
-	{
+    Vector<Type, Size> cross(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2) {
 		Vector<Type, Size> result = {
 			v1.y*v2.z - v1.z*v2.y, 
 			v1.z*v2.x - v1.x*v2.z, 
@@ -385,8 +383,7 @@ namespace xe {
 	}
 
 	template<typename Type, int Size>
-    Type dot(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2, const Vector<Type, Size> &v3) 
-	{
+    Type dot(const Vector<Type, Size> &v1, const Vector<Type, Size> &v2, const Vector<Type, Size> &v3)  {
 		return dot(v1, cross(v2, v3));
 	}
 

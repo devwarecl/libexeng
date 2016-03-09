@@ -7,191 +7,164 @@
 
 #include <boost/test/unit_test.hpp>
 
-template<typename Type, int RowCount, int ColumnCount>
-void zero(xe::Matrix2<Type, RowCount, ColumnCount> &out) {
-	for (int j=0; j<ColumnCount; j++) {
-		for (int i=0; i<RowCount; i++) {
-			out(i, j) = Type(0);
-		}
-	}
-}
+using xe::Matrix3f;
+using xe::Matrix4f;
+using xe::Vector4f;
 
-template<typename Type, int Count>
-void identity(xe::Matrix2<Type, Count, Count> &out) {
-	zero(out);
+struct MatrixFixture {
 
-	for (int i=0; i<Count; i++) {
-		out(i, i) = Type(1);
-	}
-}
+    Matrix3f subIdentity;
+    Matrix4f identity, zero;
+    Matrix4f matA, matB, aux,aux2;
+    Matrix4f matAddResult, matSubResult, matMulResult, matDivResult;
+    Matrix4f invMatA, invMatB, transMatA;
 
-template<typename Type, int Count>
-void scale(xe::Matrix2<Type, Count, Count> &out, const xe::Vector<Type, Count> &scale) {
-	zero(out);
-
-    for(int i=0; i<3; ++i) {
-        out(i, i) = scale[i];
+    float detA;
+    
+    MatrixFixture() {
+        this->subIdentity = xe::identity<float, 3>();
+        this->identity = xe::identity<float, 4>();
+        this->zero = xe::zero<float, 4, 4>();
+        
+        this->matA.setRow(0, Vector4f(1.0f, 2.0f, 1.0f, 0.0f));
+        this->matA.setRow(1, Vector4f(2.0f, 1.0f, -3.0f, -1.0f));
+        this->matA.setRow(2, Vector4f(-3.0f, 2.0f, 1.0f, 0.0f));
+        this->matA.setRow(3, Vector4f(2.0f, -1.0f, 0.0f, -1.0f));
+        
+        this->matB.setRow(0, Vector4f(-3.0f, 1.0f, 5.0f, 1.0f));
+        this->matB.setRow(1, Vector4f(1.0f, 2.0f, -1.0f, 1.0f));
+        this->matB.setRow(2, Vector4f(1.0f, 2.0f, 1.0f, -2.0f));
+        this->matB.setRow(3, Vector4f(1.0f, -1.0f, -3.0f, -1.0f));
+        
+        //Resultado de la suma
+        this->matAddResult.setRow(0, Vector4f(-2.0f,  3.0f,  6.0f,  1.0f));
+        this->matAddResult.setRow(1, Vector4f( 3.0f,  3.0f, -4.0f,  0.0f));
+        this->matAddResult.setRow(2, Vector4f(-2.0f,  4.0f,  2.0f, -2.0f));
+        this->matAddResult.setRow(3, Vector4f( 3.0f, -2.0f, -3.0f, -2.0f));
+        
+        //Resultado de la resta
+        this->matSubResult.setRow(0, Vector4f( 4.0f,  1.0f, -4.0f, -1.0f));
+        this->matSubResult.setRow(1, Vector4f( 1.0f, -1.0f, -2.0f, -2.0f));
+        this->matSubResult.setRow(2, Vector4f(-4.0f,  0.0f,  0.0f,  2.0f));
+        this->matSubResult.setRow(3, Vector4f( 1.0f,  0.0f,  3.0f,  0.0f));
+        
+        //Resultado de la multiplicacion
+        this->matMulResult.setRow(0, Vector4f(  0.0f,  7.0f,  4.0f,   1.0f));
+        this->matMulResult.setRow(1, Vector4f( -9.0f, -1.0f,  9.0f,  10.0f));
+        this->matMulResult.setRow(2, Vector4f( 12.0f,  3.0f, -16.0f, -3.0f));
+        this->matMulResult.setRow(3, Vector4f( -8.0f,  1.0f,  14.0f,  2.0f));
+        
+        //Matriz inversa
+        this->invMatA.setRow(0, Vector4f(0.25000f,  0.000f, -0.25000f,  0.000));
+        this->invMatA.setRow(1, Vector4f(0.28125f,  0.125f,  0.09375f, -0.125));
+        this->invMatA.setRow(2, Vector4f(0.18750f, -0.250f,  0.06250f,  0.250));
+        this->invMatA.setRow(3, Vector4f(0.21875f, -0.125f, -0.59375f, -0.875));
+        
+        //Resultado de la division
+        this->matDivResult.setRow(0, Vector4f(-1.0f, 2.0f, 0.f,  0.0f));
+        this->matDivResult.setRow(1, Vector4f( 2.0f, 0.0f, 3.0f, -1.0f));
+        this->matDivResult.setRow(2, Vector4f(-3.0f, 1.0f, 1.0f,  0.0f));
+        this->matDivResult.setRow(3, Vector4f( 2.0f, 1.0f, 0.0f,  1.0f));
+        
+        detA = -32;
     }
-        
-    return result;
-}
     
-template<typename Type>
-void translate(xe::Matrix2<Type, 4, 4> &out, const xe::Vector<Type, 4> &position) {
-	identity(out);
-
-	for (int i=0; i<4; i++) {
-		out(i, 3) = position[i];
-	}
-}
-    
-template<typename Type>
-void rotatex(xe::Matrix2<Type, 4, 4> &out, const Type radians) {
-	identity(out);
-
-    Type cos = std::cos(radians);
-    Type sin = std::sin(radians);
-        
-    out(1, 1) = cos;
-    out(2, 2) = cos;
-    out(2, 1) = -sin;
-    out(1, 2) = sin;
-}
-    
-template<typename Type>
-void rotatey(xe::Matrix2<Type, 4, 4> &out, const Type radians) {
-    identity(out);
-        
-    Type cos = std::cos(radians);
-    Type sin = std::sin(radians);
-        
-    out(0, 0) = cos;
-    out(2, 2) = cos;
-    out(2, 0) = -sin;
-    out(0, 2) = sin;
-}
-    
-template<typename Type>
-void rotatez(xe::Matrix2<Type, 4, 4> &out, const Type radians) {
-    identity(out);
-        
-    Type cos = std::cos(radians);
-    Type sin = std::sin(radians);
-        
-    out(0, 0) = cos;
-    out(1, 1) = cos;
-    out(1, 0) = sin;
-    out(0, 1) = -sin;
-}
-
-template<typename Type>
-void rotate(xe::Matrix2<Type, 4, 4> &out, Type radians, const xe::Vector<Type, 3> &Axis) {
-    Type Cos = std::cos(radians);
-    Type Sin = std::sin(radians);
-        
-    xe::Vector<Type, 3> U(Axis), V(normalize(Axis));
-    
-	xe::Matrix2<Type, 3, 3> MatS;
-	xe::Matrix2<Type, 3, 3> MatUut;
-	xe::Matrix2<Type, 3, 3> MatId;
-
-	zero(MatS);
-	zero(MatUut);
-	identity(MatId);
-    
-    //Iniciar S
-    MatS.get(0, 1) = -V.z;
-    MatS.get(1, 0) = V.z;
-    
-    MatS.get(0, 2) = V.y;
-    MatS.get(2, 0) = -V.y;
-    
-    MatS.get(1, 2) = -V.x;
-    MatS.get(2, 1) = V.x;
-
-    //Iniciar u*ut
-    MatUut.get(0, 0) = V.x * V.x;
-    MatUut.get(1, 0) = V.y * V.x;
-    MatUut.get(2, 0) = V.z * V.x;
-    
-    MatUut.get(0, 1) = V.x * V.y;
-    MatUut.get(1, 1) = V.y * V.y;
-    MatUut.get(2, 1) = V.z * V.y;
-        
-    MatUut.get(0, 2) = V.x * V.z;
-    MatUut.get(1, 2) = V.y * V.z;
-    MatUut.get(2, 2) = V.z * V.z;
-        
-    auto tempResult = MatUut + Cos * (MatId - MatUut) + Sin * MatS;
-    
-	identity(out);
-
-    for (int i=0; i<3; ++i) {
-        for (int j=0; j<3; ++j) {
-            out(i, j) = tempResult(i, j);
-        }
-    }
-}
-
-template<typename Type, int RowCount, int ColumnCount>
-void increased(xe::Matrix2<Type, RowCount, ColumnCount> &out) {
-	Type current = 0;
-
-	for (int j=0; j<ColumnCount; j++) {
-		for (int i=0; i<RowCount; i++) {
-			out(i, j) = ++current;
-		}
-	}
-}
-
-struct MatrixTestFixture {
-	xe::Matrix2f m1, m2, m3;
-	xe::Matrix4f m4, m5;
-
-	MatrixTestFixture() {
-		zero(m1);
-		identity(m2);
-		increased(m3);
-
-		rotate(m4, xe::rad(60.0f), xe::Vector3f(1.0f, 1.0f, 1.0f));
-		rotate(m5, xe::rad(-60.0f), xe::Vector3f(1.0f, 1.0f, 1.0f));
-	}
+    ~MatrixFixture() { }
 };
 
-BOOST_FIXTURE_TEST_CASE(MatrixTest, MatrixTestFixture) 
+
+BOOST_FIXTURE_TEST_CASE(TestMatrix, MatrixFixture)
 {
-	// check accessors
-	BOOST_CHECK_EQUAL(m1(0, 0), 0.0f);
-	BOOST_CHECK_EQUAL(m1(1, 0), 0.0f);
-	BOOST_CHECK_EQUAL(m1(0, 1), 0.0f);
-	BOOST_CHECK_EQUAL(m1(1, 1), 0.0f);
+    // matrix element retrieval by function paramenters
+    BOOST_CHECK_EQUAL(matA.get(0, 0), 1.0f);
+    BOOST_CHECK_EQUAL(matA.get(0, 1), 2.0f);
+    BOOST_CHECK_EQUAL(matA.get(0, 2), 1.0f);
+    BOOST_CHECK_EQUAL(matA.get(0, 3), 0.0f);
+        
+    BOOST_CHECK_EQUAL(matA.get(1, 0), 2.0f);
+    BOOST_CHECK_EQUAL(matA.get(1, 1), 1.0f);
+    BOOST_CHECK_EQUAL(matA.get(1, 2), -3.0f);
+    BOOST_CHECK_EQUAL(matA.get(1, 3), -1.0f);
+        
+    BOOST_CHECK_EQUAL(matA.get(2, 0), -3.0f);
+    BOOST_CHECK_EQUAL(matA.get(2, 1), 2.0f);
+    BOOST_CHECK_EQUAL(matA.get(2, 2), 1.0f);
+    BOOST_CHECK_EQUAL(matA.get(2, 3), 0.0f);
+        
+    BOOST_CHECK_EQUAL(matA.get(3, 0), 2.0f);
+    BOOST_CHECK_EQUAL(matA.get(3, 1), -1.0f);
+    BOOST_CHECK_EQUAL(matA.get(3, 2), 0.0f);
+    BOOST_CHECK_EQUAL(matA.get(3, 3), -1.0f);
+        
+    // matrix element retrieval by template paramenters
+    BOOST_CHECK_EQUAL( (matA.get<0, 0>()), 1.0f);
+    BOOST_CHECK_EQUAL( (matA.get<0, 1>()), 2.0f);
+    BOOST_CHECK_EQUAL( (matA.get<0, 2>()), 1.0f);
+    BOOST_CHECK_EQUAL( (matA.get<0, 3>()), 0.0f);
+        
+    BOOST_CHECK_EQUAL( (matA.get<1, 0>()), 2.0f);
+    BOOST_CHECK_EQUAL( (matA.get<1, 1>()), 1.0f);
+    BOOST_CHECK_EQUAL( (matA.get<1, 2>()), -3.0f);
+    BOOST_CHECK_EQUAL( (matA.get<1, 3>()), -1.0f);
+        
+    BOOST_CHECK_EQUAL( (matA.get<2, 0>()), -3.0f);
+    BOOST_CHECK_EQUAL( (matA.get<2, 1>()), 2.0f);
+    BOOST_CHECK_EQUAL( (matA.get<2, 2>()), 1.0f);
+    BOOST_CHECK_EQUAL( (matA.get<2, 3>()), 0.0f);
+        
+    BOOST_CHECK_EQUAL( (matA.get<3, 0>()), 2.0f);
+    BOOST_CHECK_EQUAL( (matA.get<3, 1>()), -1.0f);
+    BOOST_CHECK_EQUAL( (matA.get<3, 2>()), 0.0f);
+    BOOST_CHECK_EQUAL( (matA.get<3, 3>()), -1.0f);
+        
+    // matrix row vectors
+    BOOST_CHECK_EQUAL(matA.getRow(0), Vector4f(1.0f, 2.0f, 1.0f, 0.0f));
+    BOOST_CHECK_EQUAL(matA.getRow(1), Vector4f(2.0f, 1.0f, -3.0f, -1.0f));
+    BOOST_CHECK_EQUAL(matA.getRow(2), Vector4f(-3.0f, 2.0f, 1.0f, 0.0f));
+    BOOST_CHECK_EQUAL(matA.getRow(3), Vector4f(2.0f, -1.0f, 0.0f, -1.0f));
+        
+    // matrix column vectors
+    BOOST_CHECK_EQUAL(matA.getColumn(0), Vector4f(1.0f, 2.0f, -3.0f, 2.0f));
+    BOOST_CHECK_EQUAL(matA.getColumn(1), Vector4f(2.0f, 1.0f, 2.0f, -1.0f));
+    BOOST_CHECK_EQUAL(matA.getColumn(2), Vector4f(1.0f, -3.0f, 1.0f, 0.0f));
+    BOOST_CHECK_EQUAL(matA.getColumn(3), Vector4f(0.0f, -1.0f, 0.0f, -1.0f));
+        
+    // matrix direct comparison
+    BOOST_CHECK(matA != matB);
+        
+    // matrix scale
+    BOOST_CHECK_EQUAL(matA * -1.0f, -matA);
+    BOOST_CHECK_EQUAL(matA * -1.0f, -1.0f * matA);
+    BOOST_CHECK_EQUAL(matA * 1.0f, matA);
+        
+    // matrix adition 
+    BOOST_CHECK_EQUAL(matAddResult, matA + matB);
+    BOOST_CHECK_EQUAL(matSubResult, matA - matB);
+        
+    aux = matA; aux += matB;
+    BOOST_CHECK_EQUAL(matAddResult, aux);
+        
+    aux = matA; aux -= matB;
+    BOOST_CHECK_EQUAL(matSubResult, aux);
+        
+    // submatrix
+    BOOST_CHECK_EQUAL(subIdentity, identity.getSubMatrix(0, 0) );
+        
+    // matrix determinant
+    BOOST_CHECK_EQUAL( abs(identity), 1.0f );
+    BOOST_CHECK_EQUAL( abs(matA), detA );
+        
+    //matrix multiply
+    BOOST_CHECK_EQUAL(matMulResult, matA * matB);
+    BOOST_CHECK_EQUAL(matMulResult, ((aux = this->matA) *= matB));
+    
+	BOOST_CHECK_EQUAL(identity, identity * identity);
 
-	BOOST_CHECK_EQUAL(m2(0, 0), 1.0f);
-	BOOST_CHECK_EQUAL(m2(1, 0), 0.0f);
-	BOOST_CHECK_EQUAL(m2(0, 1), 0.0f);
-	BOOST_CHECK_EQUAL(m2(1, 1), 1.0f);
+	BOOST_CHECK_EQUAL(matA, matA * identity);
+	BOOST_CHECK_EQUAL(matA, identity * matA);
 
-	BOOST_CHECK_EQUAL(m3(0, 0), 1.0f);
-	BOOST_CHECK_EQUAL(m3(1, 0), 2.0f);
-	BOOST_CHECK_EQUAL(m3(0, 1), 3.0f);
-	BOOST_CHECK_EQUAL(m3(1, 1), 4.0f);
+    //inverse matrix
+    aux = inverse(this->matA);
 
-	// check matrix comparisons
-	BOOST_CHECK_NE(m1, m2);
-	BOOST_CHECK_NE(m2, m3);
-	BOOST_CHECK_NE(m1, m3);
-	BOOST_CHECK_EQUAL(m1, m1);
-	BOOST_CHECK_EQUAL(m2, m2);
-	BOOST_CHECK_EQUAL(m3, m3);
-
-	// check matrix basic operations
-	BOOST_CHECK_EQUAL(m1*m1, m1);
-	BOOST_CHECK_EQUAL(m2*m2, m2);
-	BOOST_CHECK_NE(m3*m3, m3);
-
-	BOOST_CHECK_EQUAL(m2 + m2 - m1, (m2 + m1) * 2.0f);
-
-	// check matrix inverse and rotation
-	BOOST_CHECK_EQUAL(m4, m4);
-	BOOST_CHECK_EQUAL(inverse(m4), m5);
+    BOOST_CHECK_EQUAL( invMatA, aux );
 }
