@@ -13,6 +13,8 @@
  */
 
 
+#if 0
+
 #ifndef __EXENG_MATRIX_HPP__
 #define __EXENG_MATRIX_HPP__
 
@@ -978,3 +980,7 @@ namespace xe {
 }
 
 #endif	//__EXENG_MATRIX_HPP__
+
+#endif
+
+#include <xe/Matrix2.hpp>

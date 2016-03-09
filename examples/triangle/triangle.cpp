@@ -60,20 +60,20 @@ layout(location=0) in vec3 coord;
 layout(location=1) in vec3 normal;
 layout(location=2) in vec2 tex_coord;
 
-// uniform mat4 model;
-// uniform mat4 view;
-// uniform mat4 proj;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 proj;
 
-uniform mat4 mvp;
+// uniform mat4 mvp;
 
 out vec3 n;
 out vec2 uv;
 
 void main() {
 
-	// mat4 mvp = model * view * proj;
+	mat4 mvp = proj * view * model;
 
-	gl_Position = vec4(coord, 1.0f) * mvp;
+	gl_Position = mvp * vec4(coord, 1.0f);
 	n = normal;
 	uv = tex_coord;
 })";
@@ -176,16 +176,16 @@ void main() {
             xe::Matrix4f view = xe::lookat<float>(position, look_point, up_direction);
             xe::Matrix4f model = xe::rotatey<float>(xe::rad(angle));
 
-            xe::Matrix4f mvp = model * view * proj;
+            xe::Matrix4f mvp = proj * view * model;
             
             done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
             
             graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
 			graphicsDriver->getModernModule()->setShaderProgram(shader.get());
-			graphicsDriver->getModernModule()->setProgramMatrix("mvp", mvp);
-			// graphicsDriver->getModernModule()->setProgramMatrix("proj", proj);
-			// graphicsDriver->getModernModule()->setProgramMatrix("view", view);
-			// graphicsDriver->getModernModule()->setProgramMatrix("model", model);
+			// graphicsDriver->getModernModule()->setProgramMatrix("mvp", mvp);
+			graphicsDriver->getModernModule()->setProgramMatrix("proj", proj);
+			graphicsDriver->getModernModule()->setProgramMatrix("view", view);
+			graphicsDriver->getModernModule()->setProgramMatrix("model", model);
 			graphicsDriver->setMaterial(material.get());
 			graphicsDriver->setMeshSubset(subset.get());
 			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);

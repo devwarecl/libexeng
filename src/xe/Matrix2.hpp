@@ -117,6 +117,14 @@ namespace xe {
 
 		}
 
+		Type* getPtr() {
+			return values;
+		}
+
+		const Type* getPtr() const {
+			return values;
+		}
+
 		// operators
 		friend std::ostream& operator<< (std::ostream &os, const Matrix2<Type, RowCount, ColumnCount>& Other) {
 			os << std::endl;

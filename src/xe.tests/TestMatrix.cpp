@@ -10,6 +10,7 @@
 using xe::Matrix3f;
 using xe::Matrix4f;
 using xe::Vector4f;
+using xe::Vector3f;
 
 struct MatrixFixture {
 
@@ -166,5 +167,13 @@ BOOST_FIXTURE_TEST_CASE(TestMatrix, MatrixFixture)
     //inverse matrix
     aux = inverse(this->matA);
 
-    BOOST_CHECK_EQUAL( invMatA, aux );
+	BOOST_CHECK_EQUAL( invMatA, aux );
+
+	// vector transformation
+	Matrix4f translation = xe::translate<float>({1.0f, 1.0f, 1.0f});
+	Vector3f position1 = {0.0f, -1.0f, 0.0f};
+	Vector3f position2_1 = {1.0f,  0.0f, 1.0f};
+	Vector3f position2_2 = xe::transform<float, 4>(translation, position1);
+	
+	BOOST_CHECK_EQUAL(position2_1, position2_2);
 }
