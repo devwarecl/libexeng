@@ -131,7 +131,9 @@ public:
 		scene->setBackColor({0.0f, 0.0f, 8.0f, 1.0f});
 
 		scene->getRootNode()->setRenderable(&camera);
-		scene->getRootNode()->addChild("boxNode")->setRenderable(mesh.get());
+
+		boxNode = scene->getRootNode()->addChild("boxNode");
+		boxNode->setRenderable(mesh.get());
 
 		return scene;
 	}
@@ -170,15 +172,41 @@ public:
 		std::uint32_t lastTime = xe::Timer::getTime();
 
         while (!done) {
+			// update time
 			float currentTime = (xe::Timer::getTime() - lastTime)/1000.0f;
 			lastTime = xe::Timer::getTime();
 
+			// process input
             inputManager->poll();
+			done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
+
+			// update camera position
+			if (keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyLeft)) {
+				camera.lookat.x -= 10.0f * currentTime;
+				camera.position.x -= 10.0f * currentTime;
+			}
+
+			if (keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyRight)) {
+				camera.lookat.x += 10.0f * currentTime;
+				camera.position.x += 10.0f * currentTime;
+			}
+
+			if (keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyUp)) {
+				camera.lookat.z += 10.0f * currentTime;
+				camera.position.z += 10.0f * currentTime;
+			}
+
+			if (keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyDown)) {
+				camera.lookat.z -= 10.0f * currentTime;
+				camera.position.z -= 10.0f * currentTime;
+			}
 			
-            xe::Matrix4f model = xe::rotatey<float>(xe::rad(angle));
+			// update scene node
+			angle += 60.0f * currentTime;
+            xe::Matrix4f model = xe::rotatex<float>(xe::rad(angle)) * xe::rotatey<float>(xe::rad(angle)) * xe::rotatez<float>(xe::rad(angle));
+			boxNode->setTransform(model);
 
-            done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
-
+			// render the scene
 			sceneRenderer->renderScene();
         }
         
@@ -198,6 +226,7 @@ private:
     xe::gfx::ShaderProgramPtr shader;
 
 	xe::sg::ScenePtr scene;
+	xe::sg::SceneNode *boxNode = nullptr;
 
 	xe::sg::ISceneRendererPtr sceneRenderer;
 	xe::sg::IRendererPtr renderer;

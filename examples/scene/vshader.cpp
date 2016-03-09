@@ -15,9 +15,9 @@ out vec3 n;
 out vec2 uv;
 
 void main() {
-	mat4 mvp = model * view * proj;
+	mat4 mvp = proj * view * model;
 
-	gl_Position = vec4(coord, 1.0f) * mvp;
-	n = vec3(vec4(normal, 1.0f) * mvp);
+	gl_Position = mvp * vec4(coord, 1.0f);
+	n = vec3(mvp * vec4(normal, 1.0f));
 	uv = tex_coord;
 })";
