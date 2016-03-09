@@ -148,8 +148,7 @@ namespace xe {
          * @brief Read olny accessor (for const objects)
          */
         const Type& operator() (int i, int j) const;
-    
-    
+		
         /**
          * @brief 
          */

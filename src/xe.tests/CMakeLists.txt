@@ -5,6 +5,7 @@ SET (BaseFiles
     TestScenegraph.cpp 
 	TestMeshSubset.cpp 
 	TestBuffer.cpp
+	TestMatrix.cpp
 )
 
 SOURCE_GROUP (\\ FILES ${BaseFiles})
