@@ -13,7 +13,7 @@ set (BaseFiles_hpp
 	ISerializable.hpp Timer.hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp Matrix2.hpp
 	Main.hpp                Main.inl
-	Application.hpp         GraphicsApplication.hpp 
+	Application.hpp         ApplicationRT.hpp 
 	
 	Struct.hpp			
 )
@@ -23,7 +23,7 @@ set (BaseFiles_cpp Enum.cpp Object.cpp
     Buffer.cpp HeapBuffer.cpp StaticBuffer.cpp
     Resource.cpp ResourceLoader.cpp ResourceManager.cpp 
     ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp Exception.cpp
-	Application.cpp GraphicsApplication.cpp
+	Application.cpp ApplicationRT.cpp
 
 	Struct.cpp
 )

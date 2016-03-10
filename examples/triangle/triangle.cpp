@@ -1,11 +1,69 @@
 
-#include <xe/Application.hpp>
+#include <xe/ApplicationRT.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/gfx/GraphicsManager.hpp>
 #include <xe/gfx/Vertex.hpp>
 
-class TriangleApplication : public xe::Application {
+class TriangleApplication : public xe::ApplicationRT {
 public:
+	virtual void initialize() override {
+		// initialize graphics
+		graphicsDriver = this->createGraphicsDriver();
+        graphicsDriver->initialize();
+        
+        vertexFormat = createVertexFormat();
+        materialFormat = createMaterialFormat();
+        
+        subset = createSubset();
+		shader = createProgram();
+        material = createMaterial();
+
+		// initialize input manager
+		inputManager = graphicsDriver->getInputManager();
+		keyboardStatus = inputManager->getKeyboard()->getStatus();
+
+		running = true;
+	}
+
+	virtual void terminate() override {}
+
+	virtual void doEvents() override {
+		inputManager->poll();
+		running = keyboardStatus->isKeyReleased(xe::input2::KeyCode::KeyEsc);
+	}
+
+	virtual void update(const float seconds) override {
+
+		if ( (angle += 60.0f*seconds) > 360.0f ) {
+            angle -= 360.0f;
+        }
+
+        xe::Vector3f position(0.0f, 2.0f, -1.0f);
+        xe::Vector3f look_point(0.0f, 0.0f, 0.0f);
+        xe::Vector3f up_direction(0.0f, 1.0f, 0.0f);
+
+        xe::Matrix4f proj = xe::perspective<float>(xe::rad(60.0f), 640.0f/480.0f, 0.1f, 1000.0f);
+        xe::Matrix4f view = xe::lookat<float>(position, look_point, up_direction);
+        xe::Matrix4f model = xe::rotatey<float>(xe::rad(angle));
+
+        mvp = proj * view * model;
+	}
+
+	virtual void render() override {
+		graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
+		graphicsDriver->getModernModule()->setShaderProgram(shader.get());
+		graphicsDriver->getModernModule()->setProgramMatrix("mvp", mvp);
+		graphicsDriver->setMaterial(material.get());
+		graphicsDriver->setMeshSubset(subset.get());
+		graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
+        graphicsDriver->endFrame();
+	}
+
+	virtual bool isRunning() const override {
+		return running;
+	}
+
+private:
     xe::gfx::GraphicsDriverPtr createGraphicsDriver() {
         // display all available graphics drivers
         auto driverInfos = this->getGraphicsManager()->getAvailableDrivers();
@@ -60,19 +118,12 @@ layout(location=0) in vec3 coord;
 layout(location=1) in vec3 normal;
 layout(location=2) in vec2 tex_coord;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 proj;
-
-// uniform mat4 mvp;
+uniform mat4 mvp;
 
 out vec3 n;
 out vec2 uv;
 
 void main() {
-
-	mat4 mvp = proj * view * model;
-
 	gl_Position = mvp * vec4(coord, 1.0f);
 	n = normal;
 	uv = tex_coord;
@@ -138,65 +189,10 @@ void main() {
         return subset;
     }
     
-    void initialize() {
-        graphicsDriver = this->createGraphicsDriver();
-        graphicsDriver->initialize();
-        
-        vertexFormat = createVertexFormat();
-        materialFormat = createMaterialFormat();
-        
-        subset = createSubset();
-		shader = createProgram();
-        material = createMaterial();
-    }
-    
-    virtual int run(int argc, char **argv) override {
-        
-		this->initialize();
-
-        inputManager = graphicsDriver->getInputManager();
-        
-        auto keyboardStatus = inputManager->getKeyboard()->getStatus();
-        
-        bool done = false;
-        float angle = 0.0f;
-
-        while(!done) {
-            inputManager->poll();
-            
-            if (++angle > 360.0f) {
-                angle -= 360.0f;
-            }
-
-            xe::Vector3f position(0.0f, 2.0f, -1.0f);
-            xe::Vector3f look_point(0.0f, 0.0f, 0.0f);
-            xe::Vector3f up_direction(0.0f, 1.0f, 0.0f);
-
-            xe::Matrix4f proj = xe::perspective<float>(xe::rad(60.0f), 640.0f/480.0f, 0.1f, 1000.0f);
-            xe::Matrix4f view = xe::lookat<float>(position, look_point, up_direction);
-            xe::Matrix4f model = xe::rotatey<float>(xe::rad(angle));
-
-            xe::Matrix4f mvp = proj * view * model;
-            
-            done = keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEsc);
-            
-            graphicsDriver->beginFrame({0.0f, 0.0f, 1.0f, 1.0f}, xe::gfx::ClearFlags::ColorDepth);
-			graphicsDriver->getModernModule()->setShaderProgram(shader.get());
-			// graphicsDriver->getModernModule()->setProgramMatrix("mvp", mvp);
-			graphicsDriver->getModernModule()->setProgramMatrix("proj", proj);
-			graphicsDriver->getModernModule()->setProgramMatrix("view", view);
-			graphicsDriver->getModernModule()->setProgramMatrix("model", model);
-			graphicsDriver->setMaterial(material.get());
-			graphicsDriver->setMeshSubset(subset.get());
-			graphicsDriver->render(xe::gfx::Primitive::TriangleList, 6);
-            graphicsDriver->endFrame();
-        }
-        
-        return 0;
-    }
-    
 private:
+	bool running = false;
     xe::input2::IInputManager *inputManager = nullptr;
+	xe::input2::KeyboardStatus *keyboardStatus = nullptr;
     
     xe::gfx::GraphicsDriverPtr graphicsDriver;
     xe::gfx::VertexFormat vertexFormat;
@@ -205,6 +201,8 @@ private:
     xe::gfx::MaterialPtr material;
     
     xe::gfx::ShaderProgramPtr shader;
+	xe::Matrix4f mvp;
+	float angle = 0.0f;
 };
 
 int main(int argc, char **argv) {

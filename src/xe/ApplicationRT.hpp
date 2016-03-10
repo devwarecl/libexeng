@@ -23,12 +23,15 @@ namespace xe {
         
         virtual int run(int argc, char **argv) override;
 
-		virtual void initialize(int argc, char **argv) = 0;
+	protected:
+		virtual void initialize() = 0;
 		virtual void terminate() = 0;
 
 		virtual void doEvents() = 0;
 		virtual void update(const float seconds) = 0;
 		virtual void render() = 0;
+
+		virtual bool isRunning() const = 0;
     };
 }
 

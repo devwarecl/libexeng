@@ -4,13 +4,13 @@
 #include <xe/Timer.hpp>
 
 namespace xe {
-
 	int ApplicationRT::run(int argc, char **argv) {
 		std::uint32_t last_time = xe::Timer::getTime();
 
-		this->initialize(argc, argv);
+		this->initialize();
 
-		while (true) {
+		while (this->isRunning()) {
+			// compute time for this frame
 			float seconds = (xe::Timer::getTime() - last_time) * 0.0001f;
 
 			last_time = xe::Timer::getTime();
@@ -21,6 +21,8 @@ namespace xe {
 		}
 
 		this->terminate();
+
+		return 0;
 	}
 }
 
