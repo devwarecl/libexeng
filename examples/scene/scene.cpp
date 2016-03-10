@@ -190,13 +190,13 @@ public:
 			}
 
 			if (keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyUp)) {
-				camera.lookat.z += 10.0f * currentTime;
-				camera.position.z += 10.0f * currentTime;
+				camera.lookat.z -= 10.0f * currentTime;
+				camera.position.z -= 10.0f * currentTime;
 			}
 
 			if (keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyDown)) {
-				camera.lookat.z -= 10.0f * currentTime;
-				camera.position.z -= 10.0f * currentTime;
+				camera.lookat.z += 10.0f * currentTime;
+				camera.position.z += 10.0f * currentTime;
 			}
 			
 			// update scene node
