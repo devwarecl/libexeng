@@ -1,18 +1,18 @@
 
 #pragma once 
 
-#ifndef __xe_scene_scenerenderer_hpp__
-#define __xe_scene_scenerenderer_hpp__
+#ifndef __xe_sg_scenerenderergeneric_hpp__
+#define __xe_sg_scenerenderergeneric_hpp__
 
 #include <xe/sg/IRenderer.hpp>
 #include <xe/sg/ISceneRenderer.hpp>
 #include <xe/sg/TransformationStack.hpp>
 
-class SceneRenderer : public xe::sg::ISceneRenderer {
+class SceneRendererGeneric : public xe::sg::ISceneRenderer {
 public:
-	SceneRenderer() {}
-	explicit SceneRenderer(xe::sg::IRenderer *renderer);
-	virtual ~SceneRenderer() {}
+	SceneRendererGeneric() {}
+	explicit SceneRendererGeneric(xe::sg::IRenderer *renderer);
+	virtual ~SceneRendererGeneric() {}
 
 public:
 	virtual void setScene(xe::sg::Scene* scene) override;
@@ -31,12 +31,11 @@ public:
 	void setRenderer(xe::sg::IRenderer* renderer);
 
 protected:
-	void renderNode(xe::sg::SceneNode* node);
+	void renderNode(xe::sg::TransformationStack *transformStack, xe::sg::SceneNode* node);
 
 private:
 	xe::sg::Scene* scene = nullptr;
 	xe::sg::IRenderer* renderer = nullptr;
-	xe::sg::TransformationStack transformStack;
 };
 
 #endif

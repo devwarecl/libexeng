@@ -12,7 +12,7 @@
 
 #include "fshader.hpp"
 #include "vshader.hpp"
-#include "SceneRenderer.hpp"
+#include "SceneRendererGeneric.hpp"
 #include "RasterRenderer.hpp"
 
 class PerspectiveCamera : public xe::sg::Camera {
@@ -37,7 +37,7 @@ public:
 	xe::Vector3f up = xe::Vector3f(0.0f, 1.0f, 0.0f);
 
 	float fov = xe::rad(60.0f);
-	float aspect = 1.3333f;
+	float aspect = 4.0f/3.0f;
 	float znear = 0.1f;
 	float zfar = 100.0f;
 
@@ -122,7 +122,7 @@ public:
 
 		return std::make_unique<xe::gfx::Mesh>(std::move(subset));
     }
-    
+
 	xe::sg::ScenePtr createScene() {
 		auto scene = std::make_unique<xe::sg::Scene>();
 
@@ -150,7 +150,7 @@ public:
 		scene = createScene();
 
 		renderer = std::make_unique<RasterRenderer>(graphicsDriver.get());
-		sceneRenderer = std::make_unique<SceneRenderer>(renderer.get());
+		sceneRenderer = std::make_unique<SceneRendererGeneric>(renderer.get());
 		sceneRenderer->setScene(scene.get());
 
 		camera.viewport = xe::Rectf( xe::Vector2f(0.0f, 0.0f), xe::Vector2f(640.0f, 480.0f));

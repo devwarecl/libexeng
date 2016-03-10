@@ -15,14 +15,14 @@ RasterRenderer::RasterRenderer(xe::gfx::GraphicsDriver *driver_) : driver(driver
 }
 
 void RasterRenderer::beginFrame(const xe::Vector4f &color) {
-	std::cout << "RasterRenderer::beginFrame()" << std::endl;
+	// std::cout << "RasterRenderer::beginFrame()" << std::endl;
 
 	driver->beginFrame(color);
 }
 
 void RasterRenderer::endFrame() {
-	std::cout << "RasterRenderer::endFrame()" << std::endl;
-	std::cout << std::endl;
+	// std::cout << "RasterRenderer::endFrame()" << std::endl;
+	// std::cout << std::endl;
 
 	driver->endFrame();
 }
@@ -30,7 +30,7 @@ void RasterRenderer::endFrame() {
 void RasterRenderer::render(xe::sg::Light *light) {
 	assert(light);
 
-	std::cout << "RasterRenderer::render(Light)" << std::endl;
+	// std::cout << "RasterRenderer::render(Light)" << std::endl;
 
 	programmableModule->setProgramParam("light_position", light->getPosition());
 	programmableModule->setProgramParam("light_range", light->getRange());
@@ -39,15 +39,15 @@ void RasterRenderer::render(xe::sg::Light *light) {
 void RasterRenderer::render(xe::sg::Camera *camera) {
 	assert(camera);
 
-	std::cout << "RasterRenderer::render(Camera)" << std::endl;
+	// std::cout << "RasterRenderer::render(Camera)" << std::endl;
 
 	// driver->setViewport(camera->getViewport());
 	
 	xe::Matrix4f proj = camera->computeProj();
 	xe::Matrix4f view = camera->computeView();
 
-	std::cout << proj << std::endl;
-	std::cout << view << std::endl;
+	// std::cout << proj << std::endl;
+	// std::cout << view << std::endl;
 
 	programmableModule->setProgramMatrix("proj", proj);
 	programmableModule->setProgramMatrix("view", view);
@@ -60,14 +60,14 @@ void RasterRenderer::render(xe::sg::Geometry *geometry) {
 void RasterRenderer::render(xe::gfx::Mesh *mesh) {
 	assert(mesh);
 
-	std::cout << "RasterRenderer::render(Mesh)" << std::endl;
+	// std::cout << "RasterRenderer::render(Mesh)" << std::endl;
 	
 	driver->render(mesh);
 }
 
 void RasterRenderer::setModel(const xe::Matrix4f &transformation) {
-	std::cout << "RasterRenderer::setModel()" << std::endl;
-	std::cout << transformation << std::endl;
+	// std::cout << "RasterRenderer::setModel()" << std::endl;
+	// std::cout << transformation << std::endl;
 
 	programmableModule->setProgramMatrix("model", transformation);
 }
