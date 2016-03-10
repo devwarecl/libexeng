@@ -8,11 +8,11 @@
 #include <xe/gfx/MeshSubsetGeneratorPlane.hpp>
 #include <xe/gfx/MeshSubsetGeneratorBox.hpp>
 #include <xe/sg/Scene.hpp>
+#include <xe/sg/SceneRendererGeneric.hpp>
 #include <xe/sg/Camera.hpp>
 
 #include "fshader.hpp"
 #include "vshader.hpp"
-#include "SceneRendererGeneric.hpp"
 #include "RasterRenderer.hpp"
 
 class PerspectiveCamera : public xe::sg::Camera {
@@ -150,7 +150,7 @@ public:
 		scene = createScene();
 
 		renderer = std::make_unique<RasterRenderer>(graphicsDriver.get());
-		sceneRenderer = std::make_unique<SceneRendererGeneric>(renderer.get());
+		sceneRenderer = std::make_unique<xe::sg::SceneRendererGeneric>(renderer.get());
 		sceneRenderer->setScene(scene.get());
 
 		camera.viewport = xe::Rectf( xe::Vector2f(0.0f, 0.0f), xe::Vector2f(640.0f, 480.0f));

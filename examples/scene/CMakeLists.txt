@@ -3,7 +3,6 @@ set (scene_src
 	scene.cpp 
 	fshader.hpp fshader.cpp 
 	vshader.hpp vshader.cpp 
-	SceneRendererGeneric.hpp SceneRendererGeneric.cpp 
 	RasterRenderer.hpp RasterRenderer.cpp
 )
 
