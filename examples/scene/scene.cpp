@@ -21,12 +21,10 @@ public:
 
 	virtual xe::Matrix4f computeView() const {
 		return xe::lookat(position, lookat, up);
-		// return xe::identity<float, 4>();
 	}
 
 	virtual xe::Matrix4f computeProj() const {
 		return xe::perspective(fov, aspect, znear, zfar);
-		// return xe::identity<float, 4>();
 	}
 
 	virtual xe::Rectf getViewport() const override {

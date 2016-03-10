@@ -8,7 +8,8 @@ namespace xe { namespace input2 {
 	struct KeyStatus {
 		enum Enum {
 			Release,
-			Press
+			Press,
+			Unknown
 		};
 	};
 }}
