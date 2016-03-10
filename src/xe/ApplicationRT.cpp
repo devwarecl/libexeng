@@ -1,3 +1,29 @@
+
+#include "ApplicationRT.hpp"
+
+#include <xe/Timer.hpp>
+
+namespace xe {
+
+	int ApplicationRT::run(int argc, char **argv) {
+		std::uint32_t last_time = xe::Timer::getTime();
+
+		this->initialize(argc, argv);
+
+		while (true) {
+			float seconds = (xe::Timer::getTime() - last_time) * 0.0001f;
+
+			last_time = xe::Timer::getTime();
+
+			this->doEvents();
+			this->update(seconds);
+			this->render();
+		}
+
+		this->terminate();
+	}
+}
+
 //
 //#include "GraphicsApplication.hpp"
 //
@@ -12,6 +38,18 @@
 //#include <xe/gfx/Mesh.hpp>
 //#include <xe/gfx/MeshManager.hpp>
 //#include <xe/sg/SceneRendererGeneric.hpp>
+/*
+#include <xe/gfx/GraphicsDriver.hpp>
+#include <xe/gfx/ShaderLibrary.hpp>
+#include <xe/gfx/MaterialLibrary.hpp>
+#include <xe/gfx/Mesh.hpp>
+#include <xe/sg/Scene.hpp>
+#include <xe/sg/AssetsLibrary.hpp>
+#include <xe/sg/GeometryLibrary.hpp>
+#include <xe/sg/SceneRenderer.hpp>
+*/
+
+
 //
 //#include "xmlpp/Document.hpp"
 //
