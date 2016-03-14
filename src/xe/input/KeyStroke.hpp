@@ -4,8 +4,8 @@
 #ifndef __xe_input2_ed_keystroke_hpp__
 #define __xe_input2_ed_keystroke_hpp__
 
-#include <xe/input2/KeyCode.hpp>
-#include <xe/input2/KeyStatus.hpp>
+#include <xe/input/KeyCode.hpp>
+#include <xe/input/KeyStatus.hpp>
 
 namespace xe { namespace input2 {
 	struct KeyStroke {

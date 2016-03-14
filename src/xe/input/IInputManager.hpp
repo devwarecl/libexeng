@@ -5,8 +5,8 @@
 #define __xe_input2_iinputmanager_hpp__
 
 #include <xe/Config.hpp>
-#include <xe/input2/IKeyboard.hpp>
-#include <xe/input2/IMouse.hpp>
+#include <xe/input/IKeyboard.hpp>
+#include <xe/input/IMouse.hpp>
 
 namespace xe { namespace input2 {
 	class EXENGAPI IInputManager {

@@ -5,8 +5,8 @@
 #define __xe_gfx_inputmanagerglfw_hpp__
 
 #include <memory>
-#include <xe/input2/IInputManager.hpp>
-#include <xe/input2/Event.hpp>
+#include <xe/input/IInputManager.hpp>
+#include <xe/input/Event.hpp>
 
 #include "GL3.hpp"
 #include <GLFW/glfw3.h>

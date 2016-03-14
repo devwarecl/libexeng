@@ -3,8 +3,8 @@
 #include <xe/Enum.hpp>
 #include <xe/Config.hpp>
 #include <xe/Vector.hpp>
-#include <xe/input2/IInputDevice.hpp>
-#include <xe/input2/KeyStatus.hpp>
+#include <xe/input/IInputDevice.hpp>
+#include <xe/input/KeyStatus.hpp>
 
 namespace xe { namespace input2 {
 

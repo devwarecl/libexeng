@@ -93,7 +93,6 @@ set (GraphicsFiles_hpp
 	gfx/Mesh.hpp
     gfx/MeshManager.hpp
     gfx/MeshLoader.hpp
-	gfx/PixelType.hpp		
 	gfx/TextureManager.hpp
 	gfx/TextureLoader.hpp
 	gfx/TextureLoaderImage.hpp
@@ -144,41 +143,27 @@ set (GraphicsFiles_cpp
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 
-set (InputFiles_cpp
-    input/IEventRaiser.cpp
-    input/IEventHandler.cpp
-    input/InputData.cpp 
-    input/EventData.cpp 
-)
 set (InputFiles_hpp
-    input/IEventRaiser.hpp    
-    input/IEventHandler.hpp   
-    input/InputData.hpp       
-    input/EventData.hpp       
+	input/Event.hpp 
+	input/IEvent.hpp 
+	input/IEventHandler.hpp 
+	input/IInputDevice.hpp 
+	input/IInputManager.hpp 
+	input/IKeyboard.hpp 
+	input/IMouse.hpp 
+	input/InputManager.hpp 
+	input/KeyboardStatus.hpp 
+	input/KeyCode.hpp 
+	input/KeyStatus.hpp 
+	input/KeyStroke.hpp 
 )
+
+set (InputFiles_cpp
+	input/InputManager.cpp 
+	input/KeyboardStatus.cpp 
+)
+
 set (InputFiles ${InputFiles_hpp} ${InputFiles_cpp})
-
-set (Input2Files_hpp
-	input2/Event.hpp 
-	input2/IEvent.hpp 
-	input2/IEventHandler.hpp 
-	input2/IInputDevice.hpp 
-	input2/IInputManager.hpp 
-	input2/IKeyboard.hpp 
-	input2/IMouse.hpp 
-	input2/InputManager.hpp 
-	input2/KeyboardStatus.hpp 
-	input2/KeyCode.hpp 
-	input2/KeyStatus.hpp 
-	input2/KeyStroke.hpp 
-)
-
-set (Input2Files_cpp
-	input2/InputManager.cpp 
-	input2/KeyboardStatus.cpp 
-)
-
-set (Input2Files ${Input2Files_hpp} ${Input2Files_cpp})
 
 set (ScenegraphFiles_cpp
 	sg/Renderable.cpp
@@ -258,7 +243,6 @@ add_library (xe SHARED
     ${ComputeFiles}
     ${GraphicsFiles}
     ${InputFiles}
-	${Input2Files}
     ${ScenegraphFiles}
     ${SystemFiles}
     ${UtilFiles}
@@ -272,7 +256,6 @@ source_group(sfx      	FILES ${AudioFiles})
 source_group(cm			FILES ${ComputeFiles})
 source_group(gfx   		FILES ${GraphicsFiles})
 source_group(input      FILES ${InputFiles})
-source_group(input2     FILES ${Input2Files})
 source_group(sg 		FILES ${ScenegraphFiles})
 source_group(sys	    FILES ${SystemFiles})
 source_group(util		FILES ${UtilFiles})
@@ -293,7 +276,6 @@ INSTALL (FILES ${FrameworkFiles_hpp}	DESTINATION include/xe/fw)
 INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/xe/cm)
 INSTALL (FILES ${GraphicsFiles_hpp}		DESTINATION include/xe/gfx)
 INSTALL (FILES ${InputFiles_hpp}		DESTINATION include/xe/input)
-INSTALL (FILES ${Input2Files_hpp}		DESTINATION include/xe/input2)
 INSTALL (FILES ${ScenegraphFiles_hpp}	DESTINATION include/xe/sg)
 INSTALL (FILES ${SystemFiles_hpp}		DESTINATION include/xe/sys)
 INSTALL (FILES ${UtilFiles_hpp}			DESTINATION include/xe/util)

@@ -7,8 +7,8 @@
 #include <array>
 #include <algorithm>
 #include <xe/Config.hpp>
-#include <xe/input2/KeyStatus.hpp>
-#include <xe/input2/KeyCode.hpp>
+#include <xe/input/KeyStatus.hpp>
+#include <xe/input/KeyCode.hpp>
 
 namespace xe { namespace input2 {
 	class EXENGAPI KeyboardStatus {

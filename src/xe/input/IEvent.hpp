@@ -4,7 +4,7 @@
 #ifndef __xe_input2_ievent_hpp__
 #define __xe_input2_ievent_hpp__
 
-#include <xe/input2/IEventHandler.hpp>
+#include <xe/input/IEventHandler.hpp>
 
 namespace xe { namespace input2 {
 	template<typename EventData>

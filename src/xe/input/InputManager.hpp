@@ -4,7 +4,7 @@
 #ifndef __xe_input2_inputmanager_hpp__
 #define __xe_input2_inputmanager_hpp__
 
-#include <xe/input2/IInputManager.hpp>
+#include <xe/input/IInputManager.hpp>
 
 namespace xe { namespace input2 {
 

@@ -23,7 +23,7 @@
 #include <xe/Vector.hpp>
 #include <xe/Matrix.hpp>
 #include <xe/Buffer.hpp>
-#include <xe/input2/IInputManager.hpp>
+#include <xe/input/IInputManager.hpp>
 #include <xe/gfx/Image.hpp>
 #include <xe/gfx/Material.hpp>
 #include <xe/gfx/PixelFormat.hpp>

@@ -1,14 +1,12 @@
 #pragma once
 
-#include <xe/input2/IEvent.hpp>
-
 #ifndef __xe_input2_event_hpp__
 #define __xe_input2_event_hpp__
 
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <xe/input2/IEvent.hpp>
+#include <xe/input/IEvent.hpp>
 
 namespace xe { namespace input2 {
 	template<typename EventData>

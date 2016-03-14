@@ -5,10 +5,10 @@
 #define __xe_input2_ikeyboard_hpp__
 
 #include <string>
-#include <xe/input2/IEvent.hpp>
-#include <xe/input2/IInputDevice.hpp>
-#include <xe/input2/KeyboardStatus.hpp>
-#include <xe/input2/KeyStroke.hpp>
+#include <xe/input/IEvent.hpp>
+#include <xe/input/IInputDevice.hpp>
+#include <xe/input/KeyboardStatus.hpp>
+#include <xe/input/KeyStroke.hpp>
 
 namespace xe { namespace input2 {
 

@@ -1,5 +1,5 @@
 
-#include <xe/input2/KeyboardStatus.hpp>
+#include <xe/input/KeyboardStatus.hpp>
 
 #include <cstring>
 

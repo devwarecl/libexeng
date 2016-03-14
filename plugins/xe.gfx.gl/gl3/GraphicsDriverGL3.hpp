@@ -19,7 +19,7 @@
 #include <exception>
 
 #include <GLFW/glfw3.h>
-#include <xe/input2/Event.hpp>
+#include <xe/input/Event.hpp>
 #include <xe/gfx/ShaderProgram.hpp>
 #include <xe/gfx/GraphicsDriverBase.hpp>
 #include <xe/gfx/VertexFormat.hpp>
