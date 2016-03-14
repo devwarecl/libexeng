@@ -7,13 +7,10 @@ set (BaseFiles_hpp
     Object.hpp Version.hpp Core.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
     HeapBuffer.hpp StaticBuffer.hpp 
-	Resource.hpp ResourceLoader.hpp ResourceManager.hpp 
-	# Product.hpp ProductLoader.hpp 
 	ProductManager.hpp ProductManagerImpl.hpp
-	ISerializable.hpp Timer.hpp
+	Timer.hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp
-	Main.hpp                Main.inl
-	Application.hpp         ApplicationRT.hpp 
+	Application.hpp ApplicationRT.hpp 
 	
 	Struct.hpp			
 )
@@ -21,17 +18,12 @@ set (BaseFiles_hpp
 set (BaseFiles_cpp Enum.cpp Object.cpp 
     Version.cpp  Core.cpp TypeInfo.cpp
     Buffer.cpp HeapBuffer.cpp StaticBuffer.cpp
-    Resource.cpp ResourceLoader.cpp ResourceManager.cpp 
-    ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp Exception.cpp
+    Timer_Win.cpp Timer_Unix.cpp Exception.cpp
 	Application.cpp ApplicationRT.cpp
 
 	Struct.cpp
 )
 set (BaseFiles ${BaseFiles_hpp} ${BaseFiles_cpp})
-
-set (IoFiles_cpp io/Stream.cpp io/Stream.inl io/StreamBuffer.cpp)
-set (IoFiles_hpp io/Stream.hpp               io/StreamBuffer.hpp)
-set (IoFiles ${IoFiles_hpp} ${IoFiles_hpp})
 
 set (AudioFiles_cpp sfx/AudioBuffer.cpp sfx/Listener.cpp sfx/Source.cpp)
 set (AudioFiles_hpp sfx/AudioBuffer.hpp sfx/Listener.hpp sfx/Source.hpp)
@@ -264,7 +256,6 @@ set (UtilFiles ${UtilFiles_hpp} ${UtilFiles_cpp})
 
 add_library (xe SHARED
     ${BaseFiles}
-    ${IoFiles}
     ${AudioFiles}
     ${ComputeFiles}
     ${GraphicsFiles}
@@ -279,7 +270,6 @@ add_library (xe SHARED
 set_property (TARGET xe PROPERTY CXX_STANDARD 14)
 
 source_group(\\			FILES ${BaseFiles})
-source_group(io         FILES ${IoFiles})
 source_group(sfx      	FILES ${AudioFiles})
 source_group(cm			FILES ${ComputeFiles})
 source_group(gfx   		FILES ${GraphicsFiles})
@@ -300,7 +290,6 @@ INSTALL (
 
 # INSTALL (FILES ExengConfig.cmake		DESTINATION lib/cmake/xe/)
 INSTALL (FILES ${BaseFiles_hpp}			DESTINATION include/xe)
-INSTALL (FILES ${IoFiles_hpp}			DESTINATION include/xe/io)
 INSTALL (FILES ${AudioFiles_hpp}		DESTINATION include/xe/sfx)
 INSTALL (FILES ${FrameworkFiles_hpp}	DESTINATION include/xe/fw)
 INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/xe/cm)

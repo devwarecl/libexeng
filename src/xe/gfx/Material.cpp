@@ -20,7 +20,6 @@
 
 #include <xe/Exception.hpp>
 #include <xe/gfx/Texture.hpp>
-#include <xe/io/Stream.hpp>
 #include <xe/HeapBuffer.hpp>
 
 namespace xe { namespace gfx {
