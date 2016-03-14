@@ -27,11 +27,23 @@ namespace xe { namespace gfx {
 			aiMaterial *aimaterial = aiscene->mMaterials[i];
 			aiString diffuseTextureId, specularTextureId, heightTextureId;
 
+			// extract material colors
+			aiColor3D colorAmbient, colorDiffuse, colorSpecular, colorEmissive;
+
+			aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, colorAmbient);
+			aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, colorDiffuse);
+			aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, colorSpecular);
+			// aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, colorEmissive);
+
 			// TODO: Consider other texture types
 			// TODO: Consider the material format
 			aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &diffuseTextureId);
 			aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &specularTextureId);
 			aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &heightTextureId);
+
+			material->setAttribute("ambient", xe::Vector4f(colorAmbient.r, colorAmbient.g, colorAmbient.b, 1.0f));
+			material->setAttribute("diffuse", xe::Vector4f(colorDiffuse.r, colorDiffuse.g, colorDiffuse.b, 1.0f));
+			material->setAttribute("specular", xe::Vector4f(colorSpecular.r, colorSpecular.g, colorSpecular.b, 1.0f));
 
 			material->getLayer(0)->setTexture( this->getTextureManager()->getTexture(diffuseTextureId.C_Str()) );
 			material->getLayer(1)->setTexture( this->getTextureManager()->getTexture(specularTextureId.C_Str()) );
