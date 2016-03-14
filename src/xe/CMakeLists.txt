@@ -11,8 +11,6 @@ set (BaseFiles_hpp
 	Timer.hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp
 	Application.hpp ApplicationRT.hpp 
-	
-	Struct.hpp			
 )
 
 set (BaseFiles_cpp Enum.cpp Object.cpp 
@@ -20,8 +18,6 @@ set (BaseFiles_cpp Enum.cpp Object.cpp
     Buffer.cpp HeapBuffer.cpp StaticBuffer.cpp
     Timer_Win.cpp Timer_Unix.cpp Exception.cpp
 	Application.cpp ApplicationRT.cpp
-
-	Struct.cpp
 )
 set (BaseFiles ${BaseFiles_hpp} ${BaseFiles_cpp})
 
@@ -75,9 +71,6 @@ set (GraphicsFiles_hpp
     gfx/Image.hpp                
 	gfx/ImageLoader.hpp 
     gfx/Material.hpp 
-    gfx/Material2.hpp 
-	gfx/MaterialFormat2.hpp 
-	gfx/MaterialBatch.hpp 
     gfx/PixelFormat.hpp          
 	gfx/VertexFormat.hpp 
 	gfx/VertexArray.hpp 
@@ -114,9 +107,6 @@ set (GraphicsFiles_cpp
     gfx/Image.cpp 
 	gfx/ImageLoader.cpp 
     gfx/Material.cpp 
-    gfx/Material2.cpp
-	gfx/MaterialFormat2.cpp 
-	gfx/MaterialBatch.cpp 
     gfx/PixelFormat.cpp 
     gfx/Vertex.cpp
     gfx/VertexFormat.cpp
