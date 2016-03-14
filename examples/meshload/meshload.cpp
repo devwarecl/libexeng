@@ -48,6 +48,12 @@ public:
  */
 class SceneApplication : public xe::Application {
 public:
+
+	virtual ~SceneApplication() {
+		this->getGraphicsManager()->getMeshManager()->cleanup();
+		this->getGraphicsManager()->getTextureManager()->cleanup();
+	}
+
     xe::gfx::GraphicsDriverPtr createGraphicsDriver() {
         // display all available graphics drivers
         auto driverInfos = this->getGraphicsManager()->getAvailableDrivers();

@@ -73,6 +73,10 @@ namespace xe {
 			return this->products.find(productId) != std::end(this->products);
 		}
 
+		virtual void cleanup() override {
+			products.clear();
+		}
+
 	private:
 		std::list<ProductLoader*> loaders;
 		std::map<std::string, std::unique_ptr<Product>> products;

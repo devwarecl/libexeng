@@ -139,4 +139,10 @@ namespace xe { namespace gfx {
 
         return getTexture(uri);
 	}
+
+	void TextureManager::cleanup() {
+		assert(impl);
+
+		impl->manager.cleanup();
+	}
 }}

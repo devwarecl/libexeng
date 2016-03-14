@@ -76,10 +76,12 @@ namespace xe {
     }
 
 	xe::sg::SceneManager* Core::getSceneManager() {
+		assert(impl);
 		return &impl->sceneManager;
 	}
 
     const xe::sg::SceneManager* Core::getSceneManager() const {
+		assert(impl);
 		return &impl->sceneManager;
 	}
 

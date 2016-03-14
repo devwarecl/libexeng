@@ -140,4 +140,10 @@ namespace xe { namespace gfx {
 		
 		return impl->textureManager;
 	}
+
+	void MeshManager::cleanup() {
+		assert(impl);
+
+		impl->manager.cleanup();
+	}
 }}

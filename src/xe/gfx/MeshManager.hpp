@@ -71,6 +71,8 @@ namespace xe { namespace gfx {
 
 		TextureManager * getTextureManager();
 
+		void cleanup();
+
     private:
         struct Private;
         Private *impl = nullptr;

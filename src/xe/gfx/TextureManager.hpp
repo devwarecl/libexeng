@@ -39,6 +39,8 @@ namespace xe { namespace gfx {
 
 		Texture* create(const std::string &uri, const Image *image);
 
+		void cleanup();
+
 	private:
 		struct Private;
 		Private *impl = nullptr;
