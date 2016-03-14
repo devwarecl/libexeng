@@ -191,14 +191,14 @@ set (Input2Files_cpp
 set (Input2Files ${Input2Files_hpp} ${Input2Files_cpp})
 
 set (ScenegraphFiles_cpp
-	sg/ISceneRenderer.cpp
+	sg/Renderable.cpp
+	sg/Renderer.cpp
     sg/SceneNode.cpp 
     sg/Scene.cpp
 	sg/SceneNodeAnimator.cpp
 	sg/SceneLoader.cpp
 	sg/SceneManager.cpp
 	sg/SceneRenderer.cpp
-	sg/SceneRendererBase.cpp
 	sg/SceneRendererGeneric.cpp
 	sg/SceneLoader.cpp
     sg/Camera.cpp 
@@ -210,9 +210,8 @@ set (ScenegraphFiles_cpp
 
 set (ScenegraphFiles_hpp
 	sg/Forward.hpp 
-	sg/IRenderable.hpp
-	sg/IRenderer.hpp
-	sg/ISceneRenderer.hpp
+	sg/Renderable.hpp
+	sg/Renderer.hpp
     sg/SceneNode.hpp      
     sg/Scene.hpp          
     sg/Camera.hpp         
@@ -228,7 +227,6 @@ set (ScenegraphFiles_hpp
     sg/Sphere.hpp
     sg/Triangle.hpp
 	sg/SceneRenderer.hpp
-	sg/SceneRendererBase.hpp
     sg/SceneRendererGeneric.hpp
 	sg/SceneLoader.hpp
 	sg/SceneManager.hpp

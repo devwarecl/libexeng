@@ -4,15 +4,15 @@
 #ifndef __xe_sg_scenerenderergeneric_hpp__
 #define __xe_sg_scenerenderergeneric_hpp__
 
-#include <xe/sg/IRenderer.hpp>
-#include <xe/sg/ISceneRenderer.hpp>
+#include <xe/sg/Renderer.hpp>
+#include <xe/sg/SceneRenderer.hpp>
 #include <xe/sg/TransformationStack.hpp>
 
 namespace xe { namespace sg {
-	class EXENGAPI SceneRendererGeneric : public xe::sg::ISceneRenderer {
+	class EXENGAPI SceneRendererGeneric : public xe::sg::SceneRenderer {
 	public:
 		SceneRendererGeneric() {}
-		explicit SceneRendererGeneric(xe::sg::IRenderer *renderer);
+		explicit SceneRendererGeneric(xe::sg::Renderer *renderer);
 		virtual ~SceneRendererGeneric() {}
 
 	public:
@@ -25,18 +25,18 @@ namespace xe { namespace sg {
 		virtual void renderScene() override;
 
 	public:
-		xe::sg::IRenderer* getRenderer();
+		xe::sg::Renderer* getRenderer();
 
-		const xe::sg::IRenderer* getRenderer() const;
+		const xe::sg::Renderer* getRenderer() const;
 
-		void setRenderer(xe::sg::IRenderer* renderer);
+		void setRenderer(xe::sg::Renderer* renderer);
 
 	protected:
 		void renderNode(xe::sg::TransformationStack *transformStack, xe::sg::SceneNode* node);
 
 	private:
 		xe::sg::Scene* scene = nullptr;
-		xe::sg::IRenderer* renderer = nullptr;
+		xe::sg::Renderer* renderer = nullptr;
 	};
 
 }}

@@ -11,9 +11,9 @@
 #include <xe/sg/Forward.hpp>
 
 namespace xe { namespace sg {
-	class EXENGAPI IRenderer {
+	class EXENGAPI Renderer {
 	public:
-		virtual ~IRenderer() {}
+		virtual ~Renderer() {}
 		
 		virtual void beginFrame(const xe::Vector4f &color) = 0;
 		virtual void endFrame() = 0;
@@ -26,7 +26,7 @@ namespace xe { namespace sg {
 		virtual void setModel(const xe::Matrix4f &) = 0;
 	};
 
-	typedef std::unique_ptr<IRenderer> IRendererPtr;
+	typedef std::unique_ptr<Renderer> RendererPtr;
 }}
 
 #endif 

@@ -16,7 +16,7 @@
 #include <xe/Vector.hpp>
 #include <xe/Enum.hpp>
 #include <xe/sg/SceneNodeData.hpp>
-#include <xe/sg/IRenderable.hpp>
+#include <xe/sg/Renderable.hpp>
 
 namespace xe { namespace sg {
     /**
@@ -30,7 +30,7 @@ namespace xe { namespace sg {
         };
     };
 
-    class EXENGAPI Light : public IRenderable {
+    class EXENGAPI Light : public Renderable {
         friend class Scene;
 
     public:
@@ -77,7 +77,7 @@ namespace xe { namespace sg {
          */
         float getRange() const;
 
-		virtual void renderWith(IRenderer *renderer);
+		virtual void renderWith(Renderer *renderer);
 
     private:
         struct Private;

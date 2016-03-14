@@ -17,7 +17,7 @@
 #include <memory>
 #include <xe/Boundary.hpp>
 #include <xe/sg/SceneNodeData.hpp>
-#include <xe/sg/IRenderable.hpp>
+#include <xe/sg/Renderable.hpp>
 
 namespace xe { namespace sg {
         
@@ -27,7 +27,7 @@ namespace xe { namespace sg {
 	/**
 	 * @brief Abstract Geometry class.
 	 */
-	class EXENGAPI Geometry : public IRenderable {
+	class EXENGAPI Geometry : public Renderable {
 	public:
 		virtual ~Geometry();
 
@@ -47,7 +47,7 @@ namespace xe { namespace sg {
 			
 		virtual TypeInfo getTypeInfo() const;
 
-		virtual void renderWith(xe::sg::IRenderer *renderer) override;
+		virtual void renderWith(xe::sg::Renderer *renderer) override;
 	};
 
 	typedef std::unique_ptr<Geometry> GeometryPtr;

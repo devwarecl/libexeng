@@ -5,9 +5,9 @@
 #define __rasterrenderer_hpp__
 
 #include <xe/gfx/GraphicsDriver.hpp>
-#include <xe/sg/IRenderer.hpp>
+#include <xe/sg/Renderer.hpp>
 
-class RasterRenderer : public xe::sg::IRenderer {
+class RasterRenderer : public xe::sg::Renderer {
 public:
 	explicit RasterRenderer(xe::gfx::GraphicsDriver *driver_);
 	virtual ~RasterRenderer() {}

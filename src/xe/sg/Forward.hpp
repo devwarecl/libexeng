@@ -7,7 +7,7 @@
 #include <xe/Config.hpp>
 
 namespace xe { namespace sg {
-	class EXENGAPI ISceneRenderer;
+	class EXENGAPI SceneRenderer;
 	
 	class EXENGAPI Scene;
 	class EXENGAPI SceneNode;
@@ -18,8 +18,8 @@ namespace xe { namespace sg {
 	class EXENGAPI Camera;
 	class EXENGAPI Light;
 
-	class EXENGAPI IRenderable;
-	class EXENGAPI IRenderer;
+	class EXENGAPI Renderable;
+	class EXENGAPI Renderer;
 }}
 
 #endif

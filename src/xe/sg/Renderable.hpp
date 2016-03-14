@@ -7,10 +7,10 @@
 #include <xe/sg/Forward.hpp>
 
 namespace xe { namespace sg {
-	class EXENGAPI IRenderable {
+	class EXENGAPI Renderable {
 	public:
-		virtual ~IRenderable() {}
-		virtual void renderWith(xe::sg::IRenderer *renderer) = 0;
+		virtual ~Renderable() {}
+		virtual void renderWith(xe::sg::Renderer *renderer) = 0;
 	};
 }}
 

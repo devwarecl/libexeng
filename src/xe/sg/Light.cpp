@@ -12,7 +12,7 @@
  */
 
 #include <xe/sg/Light.hpp>
-#include <xe/sg/IRenderer.hpp>
+#include <xe/sg/Renderer.hpp>
 
 #include <cassert>
 #include <boost/checked_delete.hpp>
@@ -91,7 +91,7 @@ namespace xe{ namespace sg {
         return this->impl->range;
     }
 
-	void Light::renderWith(IRenderer *renderer) {
+	void Light::renderWith(Renderer *renderer) {
 		renderer->render(this);
 	}
 }}

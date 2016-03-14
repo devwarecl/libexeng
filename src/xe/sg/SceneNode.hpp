@@ -81,11 +81,11 @@ namespace xe { namespace sg {
         
         void orphan();
         
-		void setRenderable(IRenderable *renderable);
+		void setRenderable(Renderable *renderable);
 
-		IRenderable* getRenderable();
+		Renderable* getRenderable();
 
-		const IRenderable* getRenderable() const;
+		const Renderable* getRenderable() const;
         
         const SceneNodes& getChilds() const;
         
