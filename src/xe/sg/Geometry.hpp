@@ -15,8 +15,8 @@
 #define __EXENG_SCENEGRAPH_GEOMETRY_HPP__
 
 #include <memory>
+#include <xe/Object.hpp>
 #include <xe/Boundary.hpp>
-#include <xe/sg/SceneNodeData.hpp>
 #include <xe/sg/Renderable.hpp>
 
 namespace xe { namespace sg {

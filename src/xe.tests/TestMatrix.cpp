@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <typeinfo>
 
-#include <xe/Matrix2.hpp>
+#include <xe/Matrix.hpp>
 
 #include <boost/test/unit_test.hpp>
 

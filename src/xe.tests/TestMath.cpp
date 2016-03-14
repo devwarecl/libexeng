@@ -2,7 +2,9 @@
 #include <iostream>
 #include <iomanip>
 #include <typeinfo>
-#include <xe/Exeng.hpp>
+#include <xe/Vector.hpp>
+#include <xe/Size.hpp>
+#include <xe/Boundary.hpp>
 
 #include <boost/test/unit_test.hpp>
 

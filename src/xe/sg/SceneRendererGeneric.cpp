@@ -4,7 +4,6 @@
 #include <cassert>
 #include <xe/sg/Scene.hpp>
 #include <xe/sg/SceneNode.hpp>
-#include <xe/sg/SceneNodeData.hpp>
 #include <xe/sg/Renderable.hpp>
 
 namespace xe { namespace sg {

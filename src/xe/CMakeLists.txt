@@ -3,7 +3,7 @@ ADD_DEFINITIONS(-DEXENG_BUILD)
 
 set (BaseFiles_hpp 
 	Forward.hpp
-    Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
+    DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
     Object.hpp Version.hpp Core.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
     HeapBuffer.hpp StaticBuffer.hpp 
@@ -11,7 +11,7 @@ set (BaseFiles_hpp
 	# Product.hpp ProductLoader.hpp 
 	ProductManager.hpp ProductManagerImpl.hpp
 	ISerializable.hpp Timer.hpp
-    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp Matrix2.hpp
+    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp
 	Main.hpp                Main.inl
 	Application.hpp         ApplicationRT.hpp 
 	

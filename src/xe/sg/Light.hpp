@@ -15,7 +15,6 @@
 
 #include <xe/Vector.hpp>
 #include <xe/Enum.hpp>
-#include <xe/sg/SceneNodeData.hpp>
 #include <xe/sg/Renderable.hpp>
 
 namespace xe { namespace sg {
