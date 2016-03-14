@@ -5,8 +5,7 @@
 #include <xe/gfx/GraphicsManager.hpp>
 #include <xe/gfx/Vertex.hpp>
 #include <xe/gfx/Mesh.hpp>
-#include <xe/gfx/MeshSubsetGeneratorPlane.hpp>
-#include <xe/gfx/MeshSubsetGeneratorBox.hpp>
+#include <xe/gfx/MaterialLibraryImpl.hpp>
 #include <xe/sg/Scene.hpp>
 #include <xe/sg/SceneRendererGeneric.hpp>
 #include <xe/sg/Camera.hpp>
@@ -107,38 +106,6 @@ public:
 		return program;
     }
     
-    /*xe::gfx::MeshPtr createMesh() {
-		xe::gfx::MeshSubsetGeneratorParams params;
-		params.format = &vertexFormat;
-		params.iformat = xe::gfx::IndexFormat::Index32;
-		params.slices = 2;
-		params.stacks = 2;
-
-		xe::gfx::MeshSubsetGeneratorBox generator(this->graphicsDriver.get());
-
-		auto subset = generator.generate(params);
-
-		subset->setMaterial(material.get());
-
-		return std::make_unique<xe::gfx::Mesh>(std::move(subset));
-    }*/
-
-	xe::gfx::MeshPtr createMesh() {
-		xe::gfx::MeshSubsetGeneratorParams params;
-		params.format = &vertexFormat;
-		params.iformat = xe::gfx::IndexFormat::Index32;
-		params.slices = 2;
-		params.stacks = 2;
-
-		xe::gfx::MeshSubsetGeneratorBox generator(this->graphicsDriver.get());
-
-		auto subset = generator.generate(params);
-
-		subset->setMaterial(material.get());
-
-		return std::make_unique<xe::gfx::Mesh>(std::move(subset));
-    }
-
 	xe::sg::ScenePtr createScene() {
 		auto scene = std::make_unique<xe::sg::Scene>();
 
@@ -147,7 +114,7 @@ public:
 		scene->getRootNode()->setRenderable(&camera);
 
 		boxNode = scene->getRootNode()->addChild("boxNode");
-		boxNode->setRenderable(mesh.get());
+		boxNode->setRenderable(mesh);
 
 		return scene;
 	}
@@ -161,8 +128,13 @@ public:
         vertexFormat = createVertexFormat();
         materialFormat = createMaterialFormat();
         
+		materialLibrary = std::make_unique<xe::gfx::MaterialLibraryImpl>(materialFormat);
+
+		this->getGraphicsManager()->getMeshManager()->setMaterialLibrary(materialLibrary.get());
+		this->getGraphicsManager()->getMeshManager()->setGraphicsDriver(graphicsDriver.get());
+
         material = createMaterial();
-		mesh = createMesh();
+		mesh = this->getGraphicsManager()->getMeshManager()->getMesh("C:\\Users\\fapablaza\\Desktop\\Projects\\libexeng\\media\\fences.blend");
 		scene = createScene();
 
 		renderer = std::make_unique<RasterRenderer>(graphicsDriver.get());
@@ -235,15 +207,17 @@ private:
     xe::gfx::GraphicsDriverPtr graphicsDriver;
     xe::gfx::VertexFormat vertexFormat;
     xe::gfx::MaterialFormat materialFormat;
-    xe::gfx::MeshPtr mesh;
+    xe::gfx::Mesh *mesh = nullptr;
     xe::gfx::MaterialPtr material;
     xe::gfx::ShaderProgramPtr shader;
+	xe::gfx::MaterialLibraryPtr materialLibrary;
 
 	xe::sg::ScenePtr scene;
 	xe::sg::SceneNode *boxNode = nullptr;
 
 	xe::sg::ISceneRendererPtr sceneRenderer;
 	xe::sg::IRendererPtr renderer;
+
 };
 
 int main(int argc, char **argv) {

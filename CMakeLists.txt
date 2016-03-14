@@ -90,6 +90,7 @@ add_subdirectory(examples/texture)
 add_subdirectory(examples/simplemesh)
 add_subdirectory(examples/geogen)
 add_subdirectory(examples/compute)
+add_subdirectory(examples/meshload)
 
 # Engine plugins
 IF(XE_GFX_GL)
