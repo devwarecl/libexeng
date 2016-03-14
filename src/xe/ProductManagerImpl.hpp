@@ -34,7 +34,8 @@ namespace xe {
 			*/
 
 			if (!fs::is_regular_file(path) || !fs::exists(path)) {
-				throw std::runtime_error("MeshManager::getMesh: Invalid file:'" + path.string() + "'");
+				return nullptr;
+				// throw std::runtime_error("MeshManager::getMesh: Invalid file:'" + path.string() + "'");
 			}
 
 			// try to load the resource using one of the available loaders

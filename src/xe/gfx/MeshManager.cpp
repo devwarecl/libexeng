@@ -63,6 +63,7 @@ namespace xe { namespace gfx {
 
 		loader->setGraphicsDriver(getGraphicsDriver());
 		loader->setMaterialLibrary(getMaterialLibrary());
+		loader->setTextureManager(getTextureManager());
 
         impl->manager.addLoader(loader);
     }
@@ -72,6 +73,7 @@ namespace xe { namespace gfx {
 
 		loader->setGraphicsDriver(nullptr);
 		loader->setMaterialLibrary(nullptr);
+		loader->setTextureManager(nullptr);
 
         impl->manager.removeLoader(loader);
     }

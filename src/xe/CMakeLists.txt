@@ -105,10 +105,12 @@ set (GraphicsFiles_hpp
 	gfx/PixelType.hpp		
 	gfx/TextureManager.hpp
 	gfx/TextureLoader.hpp
+	gfx/TextureLoaderImage.hpp
 	gfx/ModernModule.hpp
 	gfx/LegacyModule.hpp
 	gfx/TextureLoader.hpp
 	gfx/MaterialLibrary.hpp
+	gfx/MaterialLibraryImpl.hpp
 	gfx/ShaderLibrary.hpp 
 	gfx/MeshSubsetGenerator.hpp
 	gfx/MeshSubsetGeneratorPlane.hpp
@@ -141,6 +143,7 @@ set (GraphicsFiles_cpp
     gfx/MeshLoader.cpp
 	gfx/TextureManager.cpp
 	gfx/TextureLoader.cpp
+	gfx/TextureLoaderImage.cpp
 	gfx/LegacyModule.cpp
 	gfx/ModernModule.cpp
 	gfx/MaterialLibrary.cpp
