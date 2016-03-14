@@ -262,7 +262,6 @@ INSTALL (
 # INSTALL (FILES ExengConfig.cmake		DESTINATION lib/cmake/xe/)
 INSTALL (FILES ${BaseFiles_hpp}			DESTINATION include/xe)
 INSTALL (FILES ${AudioFiles_hpp}		DESTINATION include/xe/sfx)
-INSTALL (FILES ${FrameworkFiles_hpp}	DESTINATION include/xe/fw)
 INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/xe/cm)
 INSTALL (FILES ${GraphicsFiles_hpp}		DESTINATION include/xe/gfx)
 INSTALL (FILES ${InputFiles_hpp}		DESTINATION include/xe/input)
