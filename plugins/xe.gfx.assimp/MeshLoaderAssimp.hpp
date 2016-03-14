@@ -12,9 +12,9 @@
 
 namespace xe { namespace gfx {
 
-	class AssimpMeshLoader : public xe::gfx::MeshLoader {
+	class MeshLoaderAssimp : public xe::gfx::MeshLoader {
 	public:
-		virtual ~AssimpMeshLoader();
+		virtual ~MeshLoaderAssimp();
 
 		virtual bool isSupported(const std::string &id) override;
 

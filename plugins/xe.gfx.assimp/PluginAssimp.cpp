@@ -1,6 +1,10 @@
 
 #include "PluginAssimp.hpp"
 
+#include <xe/Core.hpp>
+#include <xe/gfx/GraphicsManager.hpp>
+#include <xe/gfx/MeshManager.hpp>
+
 namespace xe { namespace gfx {
 
     PluginAssimp::PluginAssimp() {}
@@ -21,10 +25,20 @@ namespace xe { namespace gfx {
     
     void PluginAssimp::initialize(Core *core_) {
         core = core_;
+		core->getGraphicsManager()->getMeshManager()->addMeshLoader(&meshLoader);
     }
     
     void PluginAssimp::terminate() {
-        
+        core->getGraphicsManager()->getMeshManager()->removeMeshLoader(&meshLoader);
     }
 }}
 
+
+#if defined (EXENG_WINDOWS)
+#  if defined (EXENG_64)
+#    pragma comment (linker, "/export:ExengGetPluginObject")
+#    undef EXENG_EXPORT
+#  endif
+#endif 
+
+EXENG_EXPORT_PLUGIN(xe::gfx::PluginAssimp);

@@ -10,13 +10,13 @@
 
 namespace xe { namespace gfx {
 
-	AssimpMeshLoader::~AssimpMeshLoader() {}
+	MeshLoaderAssimp::~MeshLoaderAssimp() {}
 
-	bool AssimpMeshLoader::isSupported(const std::string &id) {
+	bool MeshLoaderAssimp::isSupported(const std::string &id) {
 		return true;
 	}
 
-	std::vector<Material*> AssimpMeshLoader::loadMaterials(const aiScene *aiscene) {
+	std::vector<Material*> MeshLoaderAssimp::loadMaterials(const aiScene *aiscene) {
 		std::vector<Material*> materials;
 		
 		// MaterialFormat format = this->getMaterialLibrary()->getFormat();
@@ -43,7 +43,7 @@ namespace xe { namespace gfx {
 		return materials;
 	}
 
-	MeshPtr AssimpMeshLoader::load(const std::string &id) {
+	MeshPtr MeshLoaderAssimp::load(const std::string &id) {
 		Assimp::Importer importer;
 
 		auto *aiscene = importer.ReadFile(id, aiProcess_Triangulate);
