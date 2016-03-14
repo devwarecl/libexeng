@@ -1,9 +1,6 @@
 
 #include "MaterialLibrary.hpp"
 
-#include <map>
-#include <memory>
-#include <vector>
 #include <xe/Exception.hpp>
 
 namespace xe { namespace gfx {
@@ -13,7 +10,6 @@ namespace xe { namespace gfx {
 	//struct MaterialLibrary::Private {
 	//	MaterialVector materials;
 	//	MaterialFormat format;
-	//	const ShaderProgram *program = nullptr;
 	//};
 	//
 	//MaterialLibrary::MaterialLibrary(const MaterialFormat &format) {
