@@ -84,7 +84,6 @@ set (GraphicsFiles_hpp
     gfx/Vertex.hpp
     gfx/IndexFormat.hpp          
     gfx/Texture.hpp              
-    gfx/ColorFormat.hpp          
     gfx/Shader.hpp               
     gfx/ShaderProgram.hpp        
 	gfx/Forward.hpp        
@@ -125,7 +124,6 @@ set (GraphicsFiles_cpp
 	gfx/VertexArray.cpp
     gfx/IndexFormat.cpp
     gfx/Texture.cpp
-    gfx/ColorFormat.cpp
     gfx/Shader.cpp
     gfx/ShaderProgram.cpp
     gfx/MeshSubset.cpp
