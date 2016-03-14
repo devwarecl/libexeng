@@ -21,6 +21,8 @@
 #include <xe/Version.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/gfx/ImageLoader.hpp>
+#include <xe/gfx/TextureManager.hpp>
+#include <xe/gfx/MeshManager.hpp>
 
 namespace xe { namespace gfx {
     
@@ -125,6 +127,14 @@ namespace xe { namespace gfx {
 		 */
 		const ImageLoader* getImageToolkit() const;
 		
+		TextureManager* getTextureManager();
+
+		const TextureManager* getTextureManager() const;
+
+		MeshManager* getMeshManager();
+
+		const MeshManager* getMeshManager() const;
+
     private:
         struct Private;
         Private *impl = nullptr;

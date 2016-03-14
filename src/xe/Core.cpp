@@ -33,8 +33,6 @@ namespace xe {
 		xe::gfx::GraphicsManager graphicsManager;
 		xe::cm::ComputeManager computeManager;
 		xe::sys::PluginManager pluginManager;
-		xe::gfx::TextureManager textureManager;
-        xe::gfx::MeshManager meshManager;
 		xe::sg::SceneManager sceneManager;
     };
 
@@ -45,12 +43,12 @@ namespace xe {
         "found in the file LICENSE in this distribution\n";
     
     Core::Core() {
-		this->impl = new Core::Private();
-		this->impl->pluginManager.setCore(this);
+		impl = new Core::Private();
+		impl->pluginManager.setCore(this);
     }
 
     Core::~Core() {
-        boost::checked_delete(this->impl);
+        boost::checked_delete(impl);
     }
 
     Version Core::getVersion() const {
@@ -58,60 +56,40 @@ namespace xe {
     }
     
     PluginManager* Core::getPluginManager() {
-        assert(this->impl != nullptr);
-        return &this->impl->pluginManager;
+        assert(impl);
+        return &impl->pluginManager;
     }
 
     const PluginManager* Core::getPluginManager() const {
-        assert(this->impl != nullptr);
-        return &this->impl->pluginManager;
-    }
-
-    MeshManager* Core::getMeshManager() {
-        assert(this->impl != nullptr);
-        return &this->impl->meshManager;
-    }
-
-    const MeshManager* Core::getMeshManager() const {
-        assert(this->impl != nullptr);
-        return &this->impl->meshManager;
+        assert(impl);
+        return &impl->pluginManager;
     }
 
     GraphicsManager* Core::getGraphicsManager() {
-        assert(this->impl != nullptr);
-        return &this->impl->graphicsManager;
+        assert(impl);
+        return &impl->graphicsManager;
     }
 
     const GraphicsManager* Core::getGraphicsManager() const {
-        assert(this->impl != nullptr);
-        return &this->impl->graphicsManager;
-    }
-
-	xe::gfx::TextureManager* Core::getTextureManager() {
-        assert(this->impl != nullptr);
-        return &this->impl->textureManager;
-    }
-
-	const xe::gfx::TextureManager* Core::getTextureManager() const {
-        assert(this->impl != nullptr);
-        return &this->impl->textureManager;
+        assert(impl);
+        return &impl->graphicsManager;
     }
 
 	xe::sg::SceneManager* Core::getSceneManager() {
-		return &this->impl->sceneManager;
+		return &impl->sceneManager;
 	}
 
     const xe::sg::SceneManager* Core::getSceneManager() const {
-		return &this->impl->sceneManager;
+		return &impl->sceneManager;
 	}
 
 	xe::cm::ComputeManager* Core::getComputeManager() {
-		assert(this->impl != nullptr);
-		return &this->impl->computeManager;
+		assert(impl);
+		return &impl->computeManager;
 	}
 
 	const xe::cm::ComputeManager* Core::getComputeManager() const {
-		assert(this->impl != nullptr);
-		return &this->impl->computeManager;
+		assert(impl);
+		return &impl->computeManager;
 	}
 }

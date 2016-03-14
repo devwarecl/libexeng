@@ -9,28 +9,25 @@
 
 namespace xe { namespace gfx {
 	/**
-	 * @brief Manager class for material collections
+	 * @brief Material library interface
 	 */
 	class EXENGAPI MaterialLibrary {
 	public:
-		MaterialLibrary(const MaterialFormat &format);
 		virtual ~MaterialLibrary();
 
-		MaterialFormat getFormat() const;
+		// mandatory overridables
+	public:
+		virtual MaterialFormat getFormat() const = 0;
+		virtual Material* createMaterial(const std::string &name = "") = 0;
+		virtual Material* getMaterial(const int index) = 0;
+		virtual const Material* getMaterial(const int index) const = 0;
+		virtual const int getMaterialCount() const = 0;
 
-		Material* createMaterial(const std::string &name, const ShaderProgram *program=nullptr);
-
-		Material* getMaterial(const std::string &name);
-		Material* getMaterial(const int index);
-
-		const Material* getMaterial(const std::string &name) const;
-		const Material* getMaterial(const int index) const;
-		const int getMaterialCount() const;
-		const int getMaterialIndex(const Material *material) const;
-
-	private:
-		struct Private;
-		Private *impl = nullptr;
+		// optional overridables
+	public:
+		virtual const int getMaterialIndex(const Material *material) const;
+		virtual const Material* getMaterial(const std::string &name) const;
+		virtual Material* getMaterial(const std::string &name);
 	};
 
 	typedef std::unique_ptr<MaterialLibrary> MaterialLibraryPtr;

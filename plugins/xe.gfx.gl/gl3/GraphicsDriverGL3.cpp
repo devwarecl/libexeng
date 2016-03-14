@@ -396,8 +396,8 @@ namespace xe { namespace gfx { namespace gl3 {
                 const TextureGL3 *texture = static_cast<const TextureGL3*>(layer->getTexture());
                 GLenum textureType = convTextureType(texture->getType());
                 GLenum textureId = texture->getTextureId();
-                
-                GLuint textureLocation = ::glGetUniformLocation(programId, layer->getName().c_str());
+				
+                GLuint textureLocation = ::glGetUniformLocation(programId, material->getFormat()->getLayerName(i).c_str());
                 GL3_CHECK();
 
                 ::glUniform1i(textureLocation, i);

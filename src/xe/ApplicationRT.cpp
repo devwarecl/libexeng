@@ -2,8 +2,15 @@
 #include "ApplicationRT.hpp"
 
 #include <xe/Timer.hpp>
+#include <xe/Core.hpp>
+#include <xe/gfx/ImageLoader.hpp>
+#include <xe/gfx/ImageManager.hpp>
+#include <xe/gfx/GraphicsManager.hpp>
 
 namespace xe {
+
+	ApplicationRT::ApplicationRT() {}
+
 	int ApplicationRT::run(int argc, char **argv) {
 		std::uint32_t last_time = xe::Timer::getTime();
 

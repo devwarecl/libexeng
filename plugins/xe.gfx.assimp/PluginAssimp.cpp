@@ -8,15 +8,15 @@ namespace xe { namespace gfx {
     PluginAssimp::~PluginAssimp() {}
     
     std::string PluginAssimp::getName() const {
-        return "";
+        return "Assimp mesh loader";
     }
     
     std::string PluginAssimp::getDescription() const {
-        return "";
+        return "Mesh loader based on the Assimp library.";
     }
     
     Version PluginAssimp::getVersion() const {
-        return Version();
+        return Version(1, 0, 0, 1);
     }
     
     void PluginAssimp::initialize(Core *core_) {

@@ -2,10 +2,11 @@
 #ifndef __EXENG_GRAPHICS_TEXTURELOADER_HPP__
 #define __EXENG_GRAPHICS_TEXTURELOADER_HPP__
 
+#include <memory>
 #include <xe/gfx/Texture.hpp>
+#include <xe/gfx/Forward.hpp>
 
 namespace xe { namespace gfx {
-	class EXENGAPI GraphicsDriver;
 	class EXENGAPI TextureLoader {
 	public:
 		TextureLoader();
@@ -24,6 +25,8 @@ namespace xe { namespace gfx {
 	private:
 		GraphicsDriver *graphicsDriver = nullptr;
 	};
+
+	typedef std::unique_ptr<TextureLoader> TextureLoaderPtr;
 }}
 
 #endif 

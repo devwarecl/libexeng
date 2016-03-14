@@ -56,18 +56,6 @@ namespace xe { namespace gfx {
 		assert(this->impl);
 		return this->impl->texture != nullptr;
 	}
-
-	std::string MaterialLayer::getName() const {
-		assert(this->impl);
-
-		return this->impl->name;
-	}
-
-	void MaterialLayer::setName(const std::string &name) {
-		assert(this->impl);
-
-		this->impl->name = name;
-	}
 }}
 
 

@@ -27,6 +27,8 @@
 #include <xe/gfx/Forward.hpp>
 #include <xe/gfx/MeshSubset.hpp>
 #include <xe/gfx/Mesh.hpp>
+#include <xe/gfx/GraphicsDriver.hpp>
+#include <xe/gfx/TextureManager.hpp>
 
 namespace xe { namespace gfx {
     /**
@@ -37,17 +39,6 @@ namespace xe { namespace gfx {
         MeshManager();
         virtual ~MeshManager();
         
-		/**
-         * @brief Set the default location to search for mesh files when a non-full
-		 * path is given.
-         */
-		// void setPath(const std::string &path);
-
-		/**
-         * @brief Get the default location for mesh files.
-         */
-		// std::string getPath() const;
-
         /**
          * @brief Add a new mesh loader in the mesh manager.
          */
@@ -63,20 +54,22 @@ namespace xe { namespace gfx {
          */
         Mesh* getMesh(const std::string &id);
 
-        /**
-         * @brief 
-         */
-        Mesh* getMesh(const std::string &id, MeshSubsetPtr subset);
-
-        /**
-         * @brief 
-         */
-        Mesh* getMesh(const std::string &id, std::vector<MeshSubsetPtr> subsets);
-
 		/**
 		 * @brief Register a mesh with the specified id.
 		 */
 		Mesh* getMesh(const std::string &id, MeshPtr mesh);
+
+		void setGraphicsDriver(GraphicsDriver *driver);
+
+		GraphicsDriver* getGraphicsDriver() ;
+
+		void setMaterialLibrary(MaterialLibrary *library);
+
+		MaterialLibrary* getMaterialLibrary();
+
+		void setTextureManager(TextureManager *textureManager);
+
+		TextureManager * getTextureManager();
 
     private:
         struct Private;

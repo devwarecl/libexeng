@@ -13,6 +13,7 @@
 
 
 #include <xe/gfx/GraphicsManager.hpp>
+#include <xe/gfx/TextureLoaderImage.hpp>
 
 #include <stdexcept>
 #include <map>
@@ -22,38 +23,44 @@
 namespace xe { namespace gfx {
 
     struct GraphicsManager::Private {
-         std::map <GraphicsDriverInfo, IGraphicsDriverFactory*> factories;
+        std::map <GraphicsDriverInfo, IGraphicsDriverFactory*> factories;
 
-		 ImageLoader *imageLoader = nullptr;
+		TextureLoaderImage textureLoaderImage;
+		TextureManager textureManager;
+		MeshManager meshManager;
+		ImageLoader *imageLoader = nullptr;
     };
 
     GraphicsManager::GraphicsManager() {
-		this->impl = new GraphicsManager::Private();
+		impl = new GraphicsManager::Private();
+		
+		this->getTextureManager()->addLoader(&impl->textureLoaderImage);
+		this->getMeshManager()->setTextureManager(this->getTextureManager());
     }
 
     GraphicsManager::~GraphicsManager()  {
-        delete this->impl;
+        delete impl;
     }
 
     void GraphicsManager::addDriverFactory(IGraphicsDriverFactory* factory) {
-        assert( this->impl != nullptr );
+        assert(impl);
         
         if (factory == nullptr) {
             throw std::invalid_argument("GraphicsManager::addDriverFactory: the factory can't be null");
         }
         
         GraphicsDriverInfo driverInfo = factory->getDriverInfo();
-        this->impl->factories.insert({driverInfo, factory});
+        impl->factories.insert({driverInfo, factory});
     }
 
     void GraphicsManager::removeDriverFactory(IGraphicsDriverFactory* factory) {
-        assert( this->impl != nullptr );
+        assert(impl);
         
         if (factory == nullptr) {
             throw std::invalid_argument("GraphicsManager::addDriverFactory -> The factory can't be a null pointer.");
         }
 
-        auto &factories = this->impl->factories;
+        auto &factories = impl->factories;
         auto key = factory->getDriverInfo();
         auto pos = factories.find(key);
         
@@ -65,9 +72,9 @@ namespace xe { namespace gfx {
     }
     
     std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver() {
-        assert( this->impl != nullptr );
+        assert(impl);
         
-        for (auto element : this->impl->factories) {
+        for (auto element : impl->factories) {
             return element.second->create();
         }
         
@@ -75,9 +82,9 @@ namespace xe { namespace gfx {
     }
     
     std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver(const GraphicsDriverInfo &info) {
-        assert( this->impl != nullptr );
+        assert(impl);
         
-        auto &factories = this->impl->factories;
+        auto &factories = impl->factories;
         auto pos = factories.find(info);
         
         if (pos == factories.end()) {
@@ -88,11 +95,11 @@ namespace xe { namespace gfx {
     }
 
 	std::vector<GraphicsDriverInfo> GraphicsManager::getAvailableDrivers() const {
-		assert( this->impl != nullptr );
+		assert(impl);
 
 		std::vector<GraphicsDriverInfo> driverInfos;
 
-		for (auto driverIterator : this->impl->factories) {
+		for (auto driverIterator : impl->factories) {
 			driverInfos.push_back(driverIterator.first);
 		}
 
@@ -100,18 +107,45 @@ namespace xe { namespace gfx {
 	}
 
 	void GraphicsManager::setImageToolkit(ImageLoader* loader) {
-		if (loader && this->impl->imageLoader) {
-			throw std::runtime_error("GraphicsManager::setImageToolkit: We already have an imagetoolkit installed!");
-		}
+		assert(impl);
 
-		this->impl->imageLoader = loader;
+		impl->textureLoaderImage = TextureLoaderImage(loader);
+		impl->imageLoader = loader;
 	}
 
 	ImageLoader* GraphicsManager::getImageToolkit() {
-		return this->impl->imageLoader;
+		assert(impl);
+
+		return impl->imageLoader;
 	}
 
 	const ImageLoader* GraphicsManager::getImageToolkit() const {
-		return this->impl->imageLoader;
+		assert(impl);
+
+		return impl->imageLoader;
+	}
+
+	TextureManager* GraphicsManager::getTextureManager() {
+		assert(impl);
+
+		return &impl->textureManager;
+	}
+
+	const TextureManager* GraphicsManager::getTextureManager() const {
+		assert(impl);
+
+		return &impl->textureManager;
+	}
+
+	MeshManager* GraphicsManager::getMeshManager() {
+		assert(impl);
+
+		return &impl->meshManager;
+	}
+
+	const MeshManager* GraphicsManager::getMeshManager() const {
+		assert(impl);
+
+		return &impl->meshManager;
 	}
 }}

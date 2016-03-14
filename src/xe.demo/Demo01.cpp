@@ -35,8 +35,8 @@ namespace demo {
 		}
 
 		void initGeometry() {
-			xe::gfx::Image *image = this->getGraphicsManager()->getImageToolkit()->getImage("assets/test.png");
-			xe::gfx::Texture *texture = this->getTextureManager()->create("assets/test.png", image);
+			xe::gfx::Texture *texture = this->getGraphicsManager()->getTextureManager()->getTexture("assets/test.png");
+
 			xe::gfx::Material *material = nullptr;
 			
 			xe::gfx::StandardVertex v1, v2, v3, v4;

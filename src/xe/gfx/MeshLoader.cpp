@@ -34,4 +34,12 @@ namespace xe { namespace gfx {
 	MaterialLibrary* MeshLoader::getMaterialLibrary() {
 		return this->materialLibrary;
 	}
+
+	void MeshLoader::setTextureManager(TextureManager *textureManager) {
+		this->textureManager = textureManager;
+	}
+
+	TextureManager* MeshLoader::getTextureManager() {
+		return this->textureManager;
+	}
 }}

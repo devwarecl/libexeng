@@ -57,16 +57,6 @@ namespace xe { namespace gfx {
          */
         bool hasTexture() const;
         
-		/**
-		 * @brief Get the current name of the texture
-		 */
-		std::string getName() const;
-
-		/**
-		 * @brief Set the current name of the texture.
-		 */
-		void setName(const std::string &name);
-
     private:
         struct Private;
         Private *impl = nullptr;
@@ -92,6 +82,10 @@ namespace xe { namespace gfx {
         bool operator!= (const MaterialAttrib &other) const;
     };
     
+	struct MaterialLayerDesc {
+		std::string name;
+	};
+
     class MaterialFormat {
     public:
         MaterialFormat();
@@ -110,12 +104,15 @@ namespace xe { namespace gfx {
 
 		const MaterialAttrib* getAttrib(const std::string &name) const;
         
+		std::string getLayerName(const int index) const;
+
 		bool operator== (const MaterialFormat &other) const;
         
         bool operator!= (const MaterialFormat &other) const;
 		
     private:
         std::vector<MaterialAttrib> attribs;
+		std::vector<MaterialLayerDesc> layerdecs;
     };
     
     /**
@@ -316,8 +313,7 @@ namespace xe { namespace gfx {
         return -1;
     }
 
-    inline const MaterialAttrib* MaterialFormat::getAttrib(const std::string &name) const 
-    {
+    inline const MaterialAttrib* MaterialFormat::getAttrib(const std::string &name) const {
 #if defined (EXENG_DEBUG)
         const int index = this->getAttribIndex(name);
 
@@ -333,8 +329,7 @@ namespace xe { namespace gfx {
         return this->getAttrib(this->getAttribIndex(name));
     }
     
-    inline bool MaterialFormat::operator== (const MaterialFormat &other) const 
-    {
+    inline bool MaterialFormat::operator== (const MaterialFormat &other) const {
         if (this->getAttribCount() != other.getAttribCount()) {
             return false;
         }
@@ -348,9 +343,19 @@ namespace xe { namespace gfx {
         return true;
     }
 
-	inline bool MaterialFormat::operator!= (const MaterialFormat &other) const
-	{
+	inline bool MaterialFormat::operator!= (const MaterialFormat &other) const {
 		return !(*this == other);
+	}
+
+	inline std::string MaterialFormat::getLayerName(const int index) const {
+		assert(index >= 0);
+
+		if (index >= static_cast<int>(layerdecs.size())) {
+			return "";
+
+		} else {
+			return layerdecs[index].name;
+		}
 	}
 }}
 
