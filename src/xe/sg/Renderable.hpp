@@ -9,7 +9,7 @@
 namespace xe { namespace sg {
 	class EXENGAPI Renderable {
 	public:
-		virtual ~Renderable() {}
+		virtual ~Renderable();
 		virtual void renderWith(xe::sg::Renderer *renderer) = 0;
 	};
 }}

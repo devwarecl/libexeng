@@ -23,7 +23,7 @@ void main() {
 	float factor = dot(light_direction, vec4(n, 1.0f));	
 
 	// color = /*texture(tex_sampler, uv) * */ambient * factor;
-	color = ambient * factor;
+	color = diffuse * factor;
 	// color = ambient;	
 }
 

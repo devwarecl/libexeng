@@ -13,7 +13,7 @@
 namespace xe { namespace sg {
 	class EXENGAPI Renderer {
 	public:
-		virtual ~Renderer() {}
+		virtual ~Renderer();
 		
 		virtual void beginFrame(const xe::Vector4f &color) = 0;
 		virtual void endFrame() = 0;
