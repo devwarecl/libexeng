@@ -7,6 +7,7 @@
 #include <xe/gfx/MaterialLibraryImpl.hpp>
 #include <xe/gfx/MeshSubsetGeneratorBox.hpp>
 #include <xe/sg/SceneRendererGeneric.hpp>
+#include <xe/cm/ComputeManager.hpp>
 
 ComputeInteropApp::ComputeInteropApp() {}
 
@@ -44,6 +45,9 @@ void ComputeInteropApp::initialize() {
 
 	// attach the scene to the scene renderer
 	sceneRenderer->setScene(scene.get());
+
+	// create the Mesh Manipulator
+	meshManipulator = std::make_unique<MeshManipulator>(this->getComputeManager()->createComputeModule(), graphicsDriver.get());
 
 	running = true;
 }

@@ -13,6 +13,7 @@
 
 #include "PerspectiveCamera.hpp"
 #include "PhongRenderer.hpp"
+#include "MeshManipulator.hpp"
 
 class ComputeInteropApp : public xe::ApplicationRT {
 public:
@@ -41,6 +42,7 @@ private:
 	PerspectiveCamera camera;
 
 	std::unique_ptr<PhongRenderer> renderer;
+	std::unique_ptr<MeshManipulator> meshManipulator;
 
 	xe::sg::SceneRendererPtr sceneRenderer;
 	xe::gfx::MeshManager *meshManager = nullptr;

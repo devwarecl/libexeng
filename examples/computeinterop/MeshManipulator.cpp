@@ -10,10 +10,10 @@ std::string kernel_src = R"(
     }
 )";
 
-MeshManipulator::MeshManipulator(xe::cm::ComputeModulePtr computeModule, xe::gfx::GraphicsDriver *graphicsDriver) {
+MeshManipulator::MeshManipulator(xe::cm::ComputeModulePtr computeModule_, xe::gfx::GraphicsDriver *graphicsDriver) {
 	assert(graphicsDriver);
 
-	computeModule = std::move(computeModule);
+	computeModule = std::move(computeModule_);
 	
 	xe::cm::Device* device = this->findDevice();
 	assert(device);
@@ -27,7 +27,7 @@ MeshManipulator::MeshManipulator(xe::cm::ComputeModulePtr computeModule, xe::gfx
 MeshManipulator::~MeshManipulator() {}
 
 void MeshManipulator::manipulate(xe::gfx::Mesh *mesh) {
-	// assert(mesh);
+	assert(mesh);
 
 	// prepare test data
     const int SIZE = 10;
