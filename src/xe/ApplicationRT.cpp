@@ -18,7 +18,7 @@ namespace xe {
 
 		while (this->isRunning()) {
 			// compute time for this frame
-			float seconds = (xe::Timer::getTime() - last_time) * 0.0001f;
+			float seconds = (xe::Timer::getTime() - last_time) * 0.001f;
 
 			last_time = xe::Timer::getTime();
 
