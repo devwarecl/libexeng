@@ -78,6 +78,8 @@ namespace xe { namespace sg {
         SceneNode* removeChild(SceneNode* childRef);
 
         SceneNode* addChild(const std::string& name);
+
+		SceneNode* addChild(const Matrix4f &transformation, Renderable* renderable=nullptr);
         
         void orphan();
         

@@ -299,6 +299,15 @@ namespace xe { namespace sg {
         return this->addChild(childPtr);
     }
 
+	SceneNode* SceneNode::addChild(const Matrix4f &transformation, Renderable* renderable) {
+		SceneNode *child = this->addChild("");
+
+		child->setTransform(transformation);
+		child->setRenderable(renderable);
+
+		return child;
+	}
+
     void SceneNode::orphan() {
         assert(this->impl != nullptr);
         
