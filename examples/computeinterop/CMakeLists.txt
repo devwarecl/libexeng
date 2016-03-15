@@ -1,8 +1,9 @@
 
 set (computeinterop_src 
 	computeinterop.cpp
-	ComputeInteropApp.hpp
-	ComputeInteropApp.cpp
+	ComputeInteropApp.hpp	ComputeInteropApp.cpp
+	MeshManipulator.hpp		MeshManipulator.cpp
+	PhongRenderer.hpp		PhongRenderer.cpp
 )
 
 source_group(\\ FILES ${computeinterop_src})

@@ -1,90 +1,86 @@
 
 #include "ComputeInteropApp.hpp"
+#include "PhongRenderer.hpp"
 
-#include <xe/cm/ComputeManager.hpp>
+#include <xe/gfx/GraphicsManager.hpp>
+#include <xe/gfx/MeshManager.hpp>
+#include <xe/gfx/TextureManager.hpp>
+#include <xe/gfx/MaterialLibraryImpl.hpp>
+#include <xe/sg/SceneRendererGeneric.hpp>
 
-std::string program_src = R"(
-    __kernel void add(__global __write_only int* out, __global __read_only int* in1, __global __read_only int* in2) {
-        const int i = get_global_id(0);
-        out[i] = in1[i] + in2[i];
-    }
-)";
+ComputeInteropApplication::ComputeInteropApplication() {}
 
-ComputeInteropApplication::ComputeInteropApplication() {
-    compute = this->getComputeManager()->createComputeModule();
+ComputeInteropApplication::~ComputeInteropApplication() {}
+
+void ComputeInteropApplication::initialize() {
+	
+	// intialize graphics driver
+	graphicsDriver = this->createGraphicsDriver();
+	graphicsDriver->initialize();
+
+	// get input management interfaces
+	inputManager = graphicsDriver->getInputManager();
+	keyboardStatus = inputManager->getKeyboard()->getStatus();
+
+	// create renderer pipeline
+	renderer = std::make_unique<PhongRenderer>(graphicsDriver.get());
+
+	// create material library
+	materialLibrary = std::make_unique<xe::gfx::MaterialLibraryImpl>();
+	
+	// create scene renderer
+	sceneRenderer = std::make_unique<xe::sg::SceneRendererGeneric>(renderer.get());
+
+	// generate sample scene
+	scene = this->createScene();
+
+	// 
+	sceneRenderer->setScene(scene.get());
 }
-    
-xe::cm::Device* ComputeInteropApplication::findDevice() const {
-    xe::cm::Device *device = nullptr;
-    
-    // find device
-    auto platforms = compute->enumeratePlatforms();
 
-    std::cout << "Found " << platforms.size() << " platform(s)." << std::endl;
-        
-    for (xe::cm::Platform *platform : platforms) {
-        auto devices = platform->enumerateDevices();
-            
-        std::cout << "Found " << devices.size() << " device(s)." << std::endl;
-            
-        for (xe::cm::Device *device_ : devices) {
-            auto info = device_->getInfo();
-                
-            if (device_->getInfo().getType() == xe::cm::DeviceType::GPU) {
-
-				std::cout << "Using " << info.getName() << ", " << info.getVendor() << std::endl;
-
-                device = device_;
-				break;
-            }
-        }
-    }
-    
-	if (!device) {
-		std::cout << "No GPU device found!" << std::endl;
-	}
-
-    return device;
+void ComputeInteropApplication::terminate() {
+	this->getGraphicsManager()->getMeshManager()->cleanup();
+	this->getGraphicsManager()->getTextureManager()->cleanup();
 }
-    
-int ComputeInteropApplication::run(int argc, char **argv) {
-    xe::cm::Device *device = findDevice();
-        
-    // prepare host objects
-    context = device->createContext();
-    queue = context->createQueue();
-    program = context->createProgram(program_src);
-    kernel_add = context->createKernel(program.get(), "add");
-        
-    // prepare test data
-    const int SIZE = 10;
-    const int ARRAY_SIZE = SIZE * sizeof(int);
-        
-    int out_array[SIZE] = {};
-    int in1_array[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    int in2_array[] = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
-        
-    xe::BufferPtr out = context->createBuffer(queue.get(), ARRAY_SIZE, nullptr);
-    xe::BufferPtr in1 = context->createBuffer(queue.get(), ARRAY_SIZE, in1_array);
-    xe::BufferPtr in2 = context->createBuffer(queue.get(), ARRAY_SIZE, in2_array);
-        
-    // prepare execution of the kernel
-    kernel_add->setArg(0, out.get());
-    kernel_add->setArg(1, in1.get());
-    kernel_add->setArg(2, in2.get());
-        
-    // execute kernel
-    queue->enqueueKernel(kernel_add.get(), SIZE);
-        
-    // read back the results
-    queue->enqueueReadBuffer(out.get(), 0, ARRAY_SIZE, out_array);
-        
-    // show them in console
-    for (int value : out_array) {
-        std::cout << value << " ";
+
+void ComputeInteropApplication::doEvents() {
+	inputManager->poll();
+	running = keyboardStatus->isKeyReleased(xe::input2::KeyCode::KeyEsc);
+}
+
+void ComputeInteropApplication::update(const float seconds) {}
+
+void ComputeInteropApplication::render() {
+	sceneRenderer->renderScene();
+}
+
+bool ComputeInteropApplication::isRunning() const {
+	return running;
+}
+
+xe::gfx::GraphicsDriverPtr ComputeInteropApplication::createGraphicsDriver() {
+    // display all available graphics drivers
+    auto driverInfos = this->getGraphicsManager()->getAvailableDrivers();
+
+    if (driverInfos.size() == 0) {
+        std::cout << "No available graphics drivers!" << std::endl;
+        throw std::runtime_error("");
     }
         
-    std::cout << std::endl;
-        
-    return 0;
+    // select the first graphics driver
+    std::cout << "Available graphic drivers:" << std::endl;
+    for (const auto &driverInfo : driverInfos) {
+        std::cout << driverInfo.name << std::endl;
+    }
+
+    return this->getGraphicsManager()->createDriver(driverInfos[0]);
+}
+
+xe::sg::ScenePtr ComputeInteropApplication::createScene() {
+
+	auto scene = std::make_unique<xe::sg::Scene>();
+
+	scene->setBackColor({0.2f, 0.2f, 0.8f, 1.0f});
+
+	return scene;
 }

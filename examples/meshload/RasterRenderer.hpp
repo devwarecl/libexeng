@@ -5,6 +5,7 @@
 #define __rasterrenderer_hpp__
 
 #include <xe/gfx/GraphicsDriver.hpp>
+#include <xe/gfx/ModernModule.hpp>
 #include <xe/sg/Renderer.hpp>
 
 class RasterRenderer : public xe::sg::Renderer {
