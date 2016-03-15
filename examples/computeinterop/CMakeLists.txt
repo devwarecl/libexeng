@@ -4,6 +4,7 @@ set (computeinterop_src
 	ComputeInteropApp.hpp	ComputeInteropApp.cpp
 	MeshManipulator.hpp		MeshManipulator.cpp
 	PhongRenderer.hpp		PhongRenderer.cpp
+	PerspectiveCamera.hpp	PerspectiveCamera.cpp
 )
 
 source_group(\\ FILES ${computeinterop_src})

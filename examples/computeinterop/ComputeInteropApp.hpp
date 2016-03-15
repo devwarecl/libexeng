@@ -11,10 +11,13 @@
 #include <xe/sg/SceneRenderer.hpp>
 #include <xe/sg/Renderer.hpp>
 
-class ComputeInteropApplication : public xe::ApplicationRT {
+#include "PerspectiveCamera.hpp"
+#include "PhongRenderer.hpp"
+
+class ComputeInteropApp : public xe::ApplicationRT {
 public:
-	ComputeInteropApplication();
-	virtual ~ComputeInteropApplication();
+	ComputeInteropApp();
+	virtual ~ComputeInteropApp();
 
 	virtual void initialize() override;
 	virtual void terminate() override;
@@ -35,9 +38,13 @@ private:
 	xe::gfx::GraphicsDriverPtr graphicsDriver;
 	xe::gfx::MaterialLibraryPtr materialLibrary;
 	xe::sg::ScenePtr scene;
-	xe::sg::RendererPtr renderer;
-	xe::sg::SceneRendererPtr sceneRenderer;
+	PerspectiveCamera camera;
 
+	std::unique_ptr<PhongRenderer> renderer;
+
+	xe::sg::SceneRendererPtr sceneRenderer;
+	xe::gfx::MeshManager *meshManager = nullptr;
+	xe::gfx::TextureManager *textureManager = nullptr;
 	xe::input2::IInputManager *inputManager = nullptr;
 	xe::input2::KeyboardStatus *keyboardStatus = nullptr;
 };

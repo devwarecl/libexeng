@@ -26,8 +26,12 @@ PhongRenderer::PhongRenderer(xe::gfx::GraphicsDriver *graphicsDriver) {
         {"emission", xe::DataType::Float32, 4},
         {"shininess", xe::DataType::Float32, 1}
     };
-        
-	materialFormat = xe::gfx::MaterialFormat(attribs);
+    
+	std::vector<xe::gfx::MaterialLayerDesc> layerdescs = {
+		{"texture0"}
+	};
+
+	materialFormat = xe::gfx::MaterialFormat(attribs, layerdescs);
 
 	// create shader program
 	std::list<xe::gfx::ShaderSource> sources = {
@@ -83,6 +87,14 @@ void PhongRenderer::setModel(const xe::Matrix4f &transformation) {
 	programmableModule->setProgramMatrix("model", transformation);
 }
 
+const xe::gfx::VertexFormat* PhongRenderer::getVertexFormat() const {
+	return &vertexFormat;
+}
+
+const xe::gfx::MaterialFormat* PhongRenderer::getMaterialFormat() const {
+	return &materialFormat;
+}
+
 std::string fshader_src = 
 R"(
 #version 330
@@ -98,15 +110,13 @@ uniform vec4 specular;
 uniform vec4 emissive;
 uniform float shininess;
 
-uniform sampler2D tex_sampler;
+uniform sampler2D texture0;
 
 void main() {
 	vec4 light_direction = normalize(vec4(0.0f, -1.0f, 0.25f, 0.0f));
 	float factor = dot(light_direction, vec4(n, 1.0f));	
 
-	// color = /*texture(tex_sampler, uv) * */ambient * factor;
-	color = diffuse * factor;
-	// color = ambient;	
+	color = (texture(texture0, uv) * 0.5 + diffuse * 0.5) * factor;
 }
 )";
 
@@ -120,7 +130,6 @@ layout(location=2) in vec2 tex_coord;
 uniform mat4 proj;
 uniform mat4 view;
 uniform mat4 model;
-// uniform mat4 mvp;
 
 out vec3 n;
 out vec2 uv;
