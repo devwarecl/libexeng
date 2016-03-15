@@ -9,7 +9,7 @@ set (BaseFiles_hpp
     HeapBuffer.hpp StaticBuffer.hpp 
 	ProductManager.hpp ProductManagerImpl.hpp
 	Timer.hpp
-    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp
+    Common.hpp Boundary.hpp Matrix.hpp Vector.hpp Exception.hpp Quaternion.hpp
 	Application.hpp ApplicationRT.hpp 
 )
 

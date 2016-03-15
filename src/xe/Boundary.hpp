@@ -11,353 +11,178 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_MATH_BOUNDARY_HPP__
-#define __EXENG_MATH_BOUNDARY_HPP__
+#ifndef __xe_boundary_hpp__
+#define __xe_boundary_hpp__
 
-#include "Vector.hpp"
-#include "Size.hpp"
+#include <limits>
+#include <cassert>
+#include <xe/Vector.hpp>
 
 namespace xe { 
 
-    namespace detail {
-        /**
-         * @brief Compile-time power compute.
-         */
-        template<int Base, int Exp> struct Power {
+	template<typename Type, int Size>
+	class Boundary {
+	private:
+        template<int Base, int Exp> 
+		struct Power {
             enum { Value = Base * Power<Base, Exp - 1>::Value };
         };
     
-        template<int Base> struct Power<Base, 0> {
+        template<int Base> 
+		struct Power<Base, 0> {
             enum { Value = 1 };
         };
-    }
 
-    /**
-     * @brief Define una frontera alineada con los ejes espaciales, en cualquier dimension
-     * @tparam Type El tipo de datos para 
-     * @tparam Dimension
-     */
-    template<typename Type, int Dimension>
-    class Boundary {
-    public:
-        enum { PointCount = detail::Power<2, Dimension>::Value };
-    
-    public:
-        typedef Boundary<Type, Dimension>  BoundaryType;
-        typedef Vector<Type, Dimension>    VectorType;
-        typedef Size<Type, Dimension>      SizeType;
-        
-    public:
-        /**
-         * @brief Constructor por defecto
-         */
-        Boundary();
-        
-        /**
-         * @brief Initializa la frontera usando un mismo valor para el tamanio en todas las dimensiones.
-         * @param initialSize El tamanio.
-         */
-        explicit Boundary(Type initialSize);
-        
-        /**
-         * @brief Initializa la frontera con el tamanio indicado en todas las dimensiones
-         * @param initialSize El tamanio.
-         */
-        explicit Boundary(const SizeType& size);
-        
-        /**
-         * @brief
-         */
-        Boundary(const VectorType& minPoint, const VectorType& maxPoint);
-    
-        /**
-         * @brief
-         */
-        Boundary(const VectorType& minPoint, const SizeType& size);
-    
-        /**
-         * @brief
-         */
-        void set(Type initialSize);
-    
-        /**
-         * @brief
-         */
-        void set(const SizeType& size);
-    
-        /**
-         * @brief
-         */
-        void set(const VectorType& minPoint, const VectorType& maxPoint);
-    
-        /**
-         * @brief
-         */
-        void set(const VectorType& minPoint, const SizeType& size);
-    
-        /**
-         * @brief Devuelve el valor central de la frontera
-         * @returns El centro de la frontera
-         */
-        VectorType getCenter() const;
-    
-        /**
-         * @brief Establece el nuevo centro de la frontera.
-         * @param newCenter El nuevo centro de la frontera.
-         */
-        void setCenter(const VectorType& newCenter);
-    
-        /**
-         * @brief Devuelve el tamanio de la frontera
-         * @return El tamanio de la frontera, encapsulado como un Size.
-         */
-        SizeType getSize() const;
-        
-        /**
-         * @brief Devuelve un punto que se encuentra en una de las esquinas de la frontera.
-         * @return El punto que se encuentra en la esquina indicada
-         */
-        VectorType getEdge(int PointIndex) const;
-    
-        /**
-         * @brief Establece el tamanio de la frontera, sin cambiar su posicion espacial.
-         * @param newSize El nuevo tamanio de la frontera.
-         */
-        void setSize(const VectorType& newSize);
-    
-        /**
-         * @brief Comprueba si la frontera se intersecta con otra.
-         * @return Booleano, true si existe interseccion entre las fronteras, y false en caso contrario.
-         */
-        bool intersect(const BoundaryType& other) const;
+	public:
+		enum { PointCount = Power<2, Size>::Value };
 
-        /**
-         * @brief Comprueba si el punto indicado se encuentra dentro o en los confines de la frontera.
-         * @return Booleano, true si el punto esta dentro de la frontera, y false en caso contrario.
-         */
-        bool isInside(const VectorType& point) const;
+	public:
+		Boundary() {}
 
-	    /**
-         * @brief Check if the point is the interior of the boundary. Check using epsilon-based values
-         */
-	    bool isInside(const VectorType& point, Type epsilon) const;
+		Boundary(const Vector<Type, Size> &value1, const Vector<Type, Size> &value2) {
+			expand(value1);
+			expand(value2);
+		}
 
-        /**
-         * @brief Make bigger the boundary if the point doesn't be inside.
-         */
-        void expand(const VectorType& point);
+		template<typename ContainerType>
+		explicit Boundary(const ContainerType& values) {
+			for (const auto &value : values) {
+				expand(value);
+			}
+		}
 
-        /**
-         * @brief Make bigger the boundary if the point doesn't be inside.
-         */
-        void expand(const BoundaryType& other);
-    
-        /**
-         * @brief Get the min limit of the boundary.
-         * @return 
-         */
-        VectorType getMin() const;
-    
-        /**
-         * @brief Get the max limit of the boundary.
-         * @return 
-         */
-        VectorType getMax() const;
+		void expand(const Vector<Type, Size> &value) {
+			minEdge = minimize(minEdge, value);
+			maxEdge = maximize(maxEdge, value);
+		}
+
+		void expand(const Boundary<Type, Size>& other) {
+			expand(other.getMinEdge());
+			expand(other.getMaxEdge());
+		}
+
+		Vector<Type, Size> getMinEdge() const {
+			return minEdge;
+		}
+
+		Vector<Type, Size> getMaxEdge() const {
+			return maxEdge;
+		}
+
+		Vector<Type, Size> getSize() const {
+			assert(isValid());
+
+			return maxEdge - minEdge;
+		}
+
+		Vector<Type, Size> getCenter() const {
+			assert(isValid());
+
+			return minEdge + ((maxEdge - minEdge) / Type(2));
+		}
+
+		bool isValid() const {
+			for (int i=0; i<Size; i++) {
+				if (minEdge[i] > maxEdge[i]) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		bool isInside(const Vector<Type, Size> &point) const {
+			assert(isValid());
+
+			for(int i=0; i<Size; ++i) { 
+				Type value = point[i];
         
-        friend std::ostream& operator<< (std::ostream &os, const xe::Boundary<Type, Dimension>& Boundary)
-        {
-            return os << "Center: {" << Boundary.getCenter() << "}, Size: {" << Boundary.getSize() << "}";
+				if (value < minEdge[i]) {
+					return false;
+
+				} else if (value > maxEdge[i]) {
+					return false;
+				}
+			}
+    
+			return true;
+		}
+
+		bool operator== (const Boundary<Type, Size> &other) const {
+			if (minEdge != other.minEdge) {
+				return false;
+			}
+
+			if (maxEdge != other.maxEdge) {
+				return false;
+			}
+
+			return true;
+		}
+
+		bool operator!= (const Boundary<Type, Size> &other) const {
+			return ! (*this == other);
+		}
+
+		Vector<Type, Size> getEdge(int pointIndex) const {
+			assert(isValid());
+
+			const int LastPoint = Boundary<Type, Size>::PointCount-1;
+			const Vector<Type, Size> *edges = &minEdge;
+
+			switch (pointIndex) {
+				case 0:         return edges[0];
+				case LastPoint: return edges[1];
+        
+				default: {
+					Vector<Type, Size> point;
+					int remainder;
+					
+					for(int i=0; i<Size; ++i) {
+						remainder = pointIndex % 2;
+						pointIndex /= 2;
+                
+						point[i] = edges[remainder][i];
+					}
+            
+					return point;
+				}
+			}
+		}
+
+		bool doIntersect(const Boundary<Type, Size>& other) const {   
+			assert(isValid());
+
+			for(int i=0; i<Boundary<Type, Size>::PointCount; ++i) {
+				if (this->isInside(other.getEdge(i))) {
+					return true;
+				}
+			}
+    
+			return false;
+		}
+
+		bool intersect(const Boundary<Type, Size>& other) const {
+			assert(isValid());
+
+			return this->doIntersect(other) || other.doIntersect(*this);
+		}
+
+	public:
+		friend std::ostream& operator<< (std::ostream &os, const Boundary<Type, Size>& boundary) {
+            return os << "Center: {" << boundary.getCenter() << "}, Size: {" << boundary.getSize() << "}";
         }
-        
-    private:
-        bool doIntersect(const BoundaryType& other) const;
-    
-    private:
-        enum  { Min, Max };
-        VectorType edges[2];
-    };
-    
-    typedef Boundary<float, 3> Boxf;
-    typedef Boundary<int, 3> Boxi;
-    typedef Boundary<double, 3> Boxd;
+		
+	private:
+		Vector<Type, Size> minEdge = Vector<Type, Size>( std::numeric_limits<float>::max());
+		Vector<Type, Size> maxEdge = Vector<Type, Size>(-std::numeric_limits<float>::max());
+	};
 
     typedef Boundary<float, 2> Rectf;
     typedef Boundary<int, 2> Recti;
-    typedef Boundary<double, 2> Rectd;
+
+	typedef Boundary<float, 3> Boxf;
+    typedef Boundary<int, 3> Boxi;
 }
 
-
-namespace xe { 
-    template<typename Type, int Dimension>
-    Boundary<Type, Dimension>::Boundary() {
-        this->edges[0] = Vector<Type, Dimension>(-1);
-        this->edges[1] = Vector<Type, Dimension>(1);
-    }
-
-    template<typename Type, int Dimension>
-    Boundary<Type, Dimension>::Boundary(const Vector<Type, Dimension> &minPoint, const Vector<Type, Dimension> &maxPoint) {
-        this->set(minPoint, maxPoint);
-    }
-
-    template<typename Type, int Dimension>
-    Boundary<Type, Dimension>::Boundary(Type initialSize) {
-        this->set(initialSize);
-    }
-    
-    template<typename Type, int Dimension>
-    Boundary<Type, Dimension>::Boundary(const Size<Type, Dimension>& size) {
-        this->set(size);
-    }
-
-    template<typename Type, int Dimension>
-    Boundary<Type, Dimension>::Boundary(const Vector<Type, Dimension>& minPoint, const Size<Type, Dimension>& size) {
-        this->set(minPoint, size);
-    }
-
-    template<typename Type, int Dimension>
-    void Boundary<Type, Dimension>::set(Type initialSize) {
-        this->edges[Min].set(static_cast<Type>(0));
-        this->edges[Max].set(initialSize);
-    }
-
-    template<typename Type, int Dimension>
-    void Boundary<Type, Dimension>::set(const Size<Type, Dimension> &size) {
-        this->edges[Min].set(static_cast<Type>(0));
-        this->edges[Max].set(size.getPtr());
-    }
-
-    template<typename Type, int Dimension>
-    void Boundary<Type, Dimension>::set(const Vector<Type, Dimension> &minPoint, const Size<Type, Dimension> &size) {
-        this->edges[Min] = minPoint;
-        this->edges[Max] = minPoint + Vector<Type, Dimension>(size.getPtr());
-    }
-
-    template<typename Type, int Dimension>
-    void Boundary<Type, Dimension>::set(const Vector<Type, Dimension> &minPoint, const Vector<Type, Dimension> &maxPoint) {
-        this->edges[Min] = minPoint;
-        this->edges[Max] = maxPoint;
-    }
-
-    template<typename Type, int Dimension>
-    Vector<Type, Dimension> Boundary<Type, Dimension>::getCenter() const {
-        return this->edges[Min] + Vector<Type, Dimension>(this->getSize()) / static_cast<Type>(2);
-    }
-
-    template<typename Type, int Dimension>
-    void Boundary<Type, Dimension>::setCenter(const Vector<Type, Dimension>& newCenter) {
-        Vector<Type, Dimension> halfSize;
-		
-        halfSize = Vector<Type, Dimension>( this->getSize() ) / 2;
-		
-        this->set(-halfSize + newCenter, halfSize + newCenter);
-    }
-
-    //!Compute the hyper box size
-    template<typename Type, int Dimension>
-    Size<Type, Dimension> Boundary<Type, Dimension>::getSize() const {
-        auto vsize = this->edges[Max] - this->edges[Min];
-
-        return Size<Type, Dimension>(vsize);
-    }
-
-    //!Return the specified edge
-    template<typename Type, int Dimension>
-    Vector<Type, Dimension> Boundary<Type, Dimension>::getEdge(int PointIndex) const {
-        const int LastPoint = Boundary<Type, Dimension>::PointCount-1;
-
-        switch (PointIndex) {
-            case 0:         return this->edges[Min];
-            case LastPoint: return this->edges[Max]; 
-        
-            default: {
-                Vector<Type, Dimension> Result;
-                int Remainder;
-            
-                //Fill the result...
-                for(int i=0; i<Dimension; ++i) {
-                    Remainder = PointIndex % 2;
-                    PointIndex /= 2;
-                
-                    Result[i] = edges[Remainder][i];
-                }
-            
-                return Result;
-            }
-        }
-    }
-
-    template<typename Type, int Dimension>
-    void Boundary<Type, Dimension>::setSize(const Vector<Type, Dimension>& newSize) {
-        this->set(newSize,  this->getCenter());
-    }
-
-    template<typename Type, int Dimension>
-    bool Boundary<Type, Dimension>::doIntersect(const Boundary<Type, Dimension>& other) const {   
-        for(int i=0; i<Boundary<Type, Dimension>::PointCount; ++i) {
-            if ( this->isInside( other.getEdge(i) ) ) {
-                return true;
-            }
-        }
-    
-        return false;
-    }
-
-    template<typename Type, int Dimension>
-    bool Boundary<Type, Dimension>::intersect(const Boundary<Type, Dimension>& other) const {
-        return this->doIntersect(other) || other.doIntersect(*this);
-    }
-
-    template<typename Type, int Dimension>
-    bool Boundary<Type, Dimension>::isInside(const Vector<Type, Dimension>& point) const {
-        for(int i=0; i<Dimension; ++i) { 
-            Type value = point[i];
-        
-            if (value < this->edges[Min][i]) {
-                return false;
-            } else if (value > this->edges[Max][i]) {
-                return false;
-            }
-        }
-    
-        return true;
-    }
-
-    template<typename Type, int Dimension>
-    bool Boundary<Type, Dimension>::isInside(const Vector<Type, Dimension>& point, Type epsilon) const {
-        for(int i=0; i<Dimension; ++i) { 
-            Type value = point[i];
-        
-            if (value - epsilon < this->edges[Min][i]) {
-                return false;
-            } else if (value + epsilon > this->edges[Max][i]) {
-                return false;
-            }
-        }
-    
-        return true;
-    }
-
-    template<typename Type, int Dimension>
-    void Boundary<Type, Dimension>::expand(const Vector<Type, Dimension>& point) {
-        this->edges[Min] = maximize(this->edges[Min], point);
-        this->edges[Max] = minimize(this->edges[Max], point);
-    }
-
-    template<typename Type, int Dimension>
-    void Boundary<Type, Dimension>::expand(const Boundary<Type, Dimension>& boundary) {
-        this->expand(boundary.edges[0]);
-        this->expand(boundary.edges[1]);
-    }
-
-    template<typename Type, int Dimension>
-    inline Vector<Type, Dimension> Boundary<Type, Dimension>::getMin() const {
-        return this->edges[0];
-    }
-
-    template<typename Type, int Dimension>
-    inline Vector<Type, Dimension> Boundary<Type, Dimension>::getMax() const {
-        return this->edges[1];
-    }
-}
-
-#endif  //__EXENG_MATH_BOUNDARY_HPP__
+#endif 

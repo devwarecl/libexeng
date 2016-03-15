@@ -44,17 +44,14 @@ namespace xe { namespace gfx {
         Rectf viewport;
     };
 
-
-	inline GraphicsDriverBase::GraphicsDriverBase() {
-        this->viewport.set(0.0f);
-    }
+	inline GraphicsDriverBase::GraphicsDriverBase() {}
 
     inline const Material* GraphicsDriverBase::getMaterial() const {
-        return this->material;
+        return material;
     }
 
     inline Rectf GraphicsDriverBase::getViewport() const {
-        return this->viewport;
+        return viewport;
     }
 
     inline std::unique_ptr<Buffer> GraphicsDriverBase::createVertexBuffer(const std::int32_t size, const void* data)  {

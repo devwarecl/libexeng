@@ -1,7 +1,6 @@
 
 #include "TextureManager.hpp"
 
-#include <xe/Size.hpp>
 #include <xe/ProductManagerImpl.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
 

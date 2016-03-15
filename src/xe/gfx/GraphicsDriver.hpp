@@ -77,7 +77,7 @@ namespace xe { namespace gfx {
     */
     struct DisplayMode {
 		//! Width and height, in pixels.
-        Size2i size = Size2i(640, 480);
+        Vector2i size = Vector2i(640, 480);
 
 		//! Frame buffer colors.
 		Vector<std::uint8_t, 4> colorFormat = Vector<std::uint8_t, 4>(8, 8, 8, 8);
@@ -91,12 +91,12 @@ namespace xe { namespace gfx {
         
 		DisplayMode() {}
 
-        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat) {
+        DisplayMode(const Vector2i &size, const Vector<std::uint8_t, 4> &colorFormat) {
 			this->size = size;
 			this->colorFormat = colorFormat;
 		}
 
-        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status) {
+        DisplayMode(const Vector2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status) {
 			this->size = size;
 			this->colorFormat = colorFormat;
 			this->depthBits = depthBits;

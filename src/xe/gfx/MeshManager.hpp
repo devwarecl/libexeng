@@ -21,7 +21,6 @@
 
 #include <xe/Config.hpp>
 #include <xe/Vector.hpp>
-#include <xe/Size.hpp>
 #include <xe/gfx/VertexFormat.hpp>
 #include <xe/gfx/IndexFormat.hpp>
 #include <xe/gfx/Forward.hpp>
