@@ -6,14 +6,22 @@
 
 #include <string>
 #include <xe/Config.hpp>
+#include <xe/Enum.hpp>
 
 namespace xe { namespace cm {
+
+	struct DeviceType : public Enum {
+		enum Enum {
+			CPU = 1,
+			GPU = 2
+		};
+	};
 
     class EXENGAPI DeviceInfo {
 	public:
         DeviceInfo();
         
-        DeviceInfo(const std::string &name, const std::string &vendor);
+        DeviceInfo(const std::string &name, const std::string &vendor, DeviceType::Enum type);
 
 		~DeviceInfo();
         
@@ -23,6 +31,8 @@ namespace xe { namespace cm {
 		std::string getName() const;
 
 		std::string getVendor() const;
+
+		DeviceType::Enum getType() const;
 
 	private:
 		struct Private;

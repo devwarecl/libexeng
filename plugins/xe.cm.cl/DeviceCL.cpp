@@ -25,7 +25,16 @@ namespace xe { namespace cm {
     DeviceCL::~DeviceCL() {}
     
     DeviceInfo DeviceCL::getInfo() {
-        return {device.getInfo<CL_DEVICE_NAME>(), device.getInfo<CL_DEVICE_VENDOR>()};
+		auto deviceTypeCL = device.getInfo<CL_DEVICE_TYPE>();
+
+		DeviceType::Enum deviceType;
+
+		switch (deviceTypeCL) {
+			case CL_DEVICE_TYPE_CPU: deviceType = DeviceType::CPU; break;
+			case CL_DEVICE_TYPE_GPU: deviceType = DeviceType::GPU; break;
+		}
+
+        return {device.getInfo<CL_DEVICE_NAME>(), device.getInfo<CL_DEVICE_VENDOR>(), deviceType};
     }
     
     ContextPtr DeviceCL::createContext() {
