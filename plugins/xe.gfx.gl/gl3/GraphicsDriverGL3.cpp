@@ -475,11 +475,14 @@ namespace xe { namespace gfx { namespace gl3 {
 	}
 
 	void GraphicsDriverGL3::setShaderProgram(const ShaderProgram *program) {
-		this->shaderProgram = static_cast<const ShaderProgramGL3*>(program);
-        
-        GLint programId = shaderProgram->getProgramId();
-
-        ::glUseProgram(programId);
+		shaderProgram = static_cast<const ShaderProgramGL3*>(program);
+     
+		if (shaderProgram) {
+			GLint programId = shaderProgram->getProgramId();
+			::glUseProgram(programId);
+		} else {
+			::glUseProgram(0);
+		}
 	}
 
 	void GraphicsDriverGL3::setProgramMatrix(const std::string &name, const int count, const xe::Matrix4f *matrices) {
