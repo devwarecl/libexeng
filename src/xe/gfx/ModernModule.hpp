@@ -69,8 +69,8 @@ namespace xe { namespace gfx {
 
 		template<typename Type, int Size>
 		void setProgramParam(const std::string &name, const int count, const Vector<Type, Size> *values) {
-			static_assert(Size >= 0);
-			static_assert(Size <= 4);
+			static_assert(Size >= 0, "");
+			static_assert(Size <= 4, "");
 			assert(values);
 			assert(count > 0);
 
@@ -86,8 +86,8 @@ namespace xe { namespace gfx {
 
 		template<typename Type, int Size>
 		void setProgramParam(const std::string &name, const std::vector<Vector<Type, Size>> &values) {
-			static_assert(Size >= 0);
-			static_assert(Size <= 4);
+			static_assert(Size >= 0, "");
+			static_assert(Size <= 4, "");
 			assert(values.size() > 0);
 
 			this->setProgramParam(name, values.size(), Size, DataTypeTraits<Type>::Enum, values.data());

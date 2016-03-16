@@ -131,10 +131,10 @@ namespace xe {
 
 		Vector( const Vector<Type, Size - 1> &v, Type value) {
 			for (int i=0; i<Size-1; i++) {
-				data[i] = v[i];
+				VectorBase<Type, Size>::data[i] = v[i];
 			}
 
-			data[Size-1] = value;
+			VectorBase<Type, Size>::data[Size-1] = value;
 		}
 
         explicit Vector(const Type *arrayValues) {

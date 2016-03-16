@@ -37,7 +37,10 @@ namespace xe {
 		enum { PointCount = Power<2, Size>::Value };
 
 	public:
-		Boundary() {}
+		Boundary() {
+            minEdge = Vector<Type, Size>(std::numeric_limits<Type>::max());
+            maxEdge = Vector<Type, Size>(-std::numeric_limits<Type>::max());		
+		}
 
 		Boundary(const Vector<Type, Size> &value1, const Vector<Type, Size> &value2) {
 			expand(value1);
@@ -174,8 +177,8 @@ namespace xe {
         }
 		
 	private:
-		Vector<Type, Size> minEdge = Vector<Type, Size>( std::numeric_limits<float>::max());
-		Vector<Type, Size> maxEdge = Vector<Type, Size>(-std::numeric_limits<float>::max());
+		Vector<Type, Size> minEdge;
+		Vector<Type, Size> maxEdge;
 	};
 
     typedef Boundary<float, 2> Rectf;

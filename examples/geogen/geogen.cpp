@@ -152,7 +152,7 @@ void main() {
 			angle += 90.0f * currentTime;
 
             if (angle > 360.0f) {
-                angle = std::fmodf(angle, 360.0f);
+                angle = std::fmod(angle, 360.0f);
             }
 
             xe::Vector3f position(0.0f, 2.0f, -1.0f);

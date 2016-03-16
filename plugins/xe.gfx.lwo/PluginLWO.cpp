@@ -1,5 +1,6 @@
 
 #include <xe/Core.hpp>
+#include <xe/gfx/GraphicsManager.hpp>
 #include <xe/gfx/MeshManager.hpp>
 #include <xe/sys/Plugin.hpp>
 
@@ -24,7 +25,7 @@ namespace xe { namespace gfx {
         virtual void initialize(Core *core) override {
 			meshLoader = std::make_unique<MeshLoaderLWO>();
 
-			core->getMeshManager()->addMeshLoader(meshLoader.get());
+			core->getGraphicsManager()->getMeshManager()->addMeshLoader(meshLoader.get());
 		}
 
         virtual void terminate() override {

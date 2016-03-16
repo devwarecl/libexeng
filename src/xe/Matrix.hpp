@@ -262,18 +262,18 @@ namespace xe {
 		}
 
 	private:
-		template<typename Type, int Count>
+		template<typename Type_, int Count>
 		struct Determinant {
-			static Type compute(const Matrix2<Type, Count, Count> &m) {
-				Type factor = Type(1);
-				Type result = Type(0);
+			static Type_ compute(const Matrix2<Type_, Count, Count> &m) {
+				Type_ factor = Type_(1);
+				Type_ result = Type_(0);
                 
 				const int row = 0;
                 
 				for (int column=0; column<Count; ++column) {
-					factor = (column+1)%2 ? Type(-1) : Type(1);
+					factor = (column+1)%2 ? Type_(-1) : Type_(1);
 
-					Type subDet = abs(m.getSubMatrix(row, column));
+					Type_ subDet = abs(m.getSubMatrix(row, column));
 
 					result += factor * m.get(row, column) * subDet;
 				}
@@ -282,9 +282,9 @@ namespace xe {
 			}
 		};
 
-		template<typename Type>
-		struct Determinant<Type, 2> {
-			static Type compute(const Matrix2<Type, 2, 2> &m) {
+		template<typename Type_>
+		struct Determinant<Type_, 2> {
+			static Type_ compute(const Matrix2<Type_, 2, 2> &m) {
 				return m(0, 0)*m(1, 1) - m(1, 0)*m(0, 1);
 			}
 		};
