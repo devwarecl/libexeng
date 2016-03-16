@@ -49,6 +49,8 @@ namespace xe { namespace cm {
     }
     
     ContextPtr DeviceCL::createContext(xe::gfx::GraphicsDriver *driver) {
+		assert(driver);
+
         std::vector<cl_context_properties> properties = {
             CL_CONTEXT_PLATFORM, (cl_context_properties)platform()
         };

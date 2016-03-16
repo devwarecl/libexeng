@@ -76,14 +76,11 @@ xe::cm::Device* MeshManipulator::findDevice() const {
         for (xe::cm::Device *device_ : devices) {
             auto info = device_->getInfo();
             
-			if (device_->getInfo().getType() != xe::cm::DeviceType::GPU) {
-				continue;
+			if (info.getType() == xe::cm::DeviceType::GPU) {
+				std::cout << "Using " << info.getName() << ", " << info.getVendor() << std::endl;
+				device = device_;
+				break;
 			}
-
-			std::cout << "Using " << info.getName() << ", " << info.getVendor() << std::endl;
-
-            device = device_;
-			break;
         }
     }
     
