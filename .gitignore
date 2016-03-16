@@ -1,1 +1,3 @@
 build.vc14/*
+build/*
+CMakeLists.txt.user
