@@ -20,7 +20,6 @@
 
 #include <xe/Exception.hpp>
 #include <xe/gfx/Texture.hpp>
-#include <xe/io/Stream.hpp>
 #include <xe/HeapBuffer.hpp>
 
 namespace xe { namespace gfx {
@@ -30,43 +29,31 @@ namespace xe { namespace gfx {
 	};
     
 	MaterialLayer::MaterialLayer() {
-        this->impl = new MaterialLayer::Private();
+        impl = new MaterialLayer::Private();
     }
 
 	MaterialLayer::~MaterialLayer() {
-		boost::checked_delete(this->impl);
+		boost::checked_delete(impl);
 	}
 
 	const Texture* MaterialLayer::getTexture() const {
-		assert(this->impl);
-		return this->impl->texture;
+		assert(impl);
+		return impl->texture;
 	}
 
 	Texture* MaterialLayer::getTexture() {
-		assert(this->impl);
-		return this->impl->texture;
+		assert(impl);
+		return impl->texture;
 	}
     
 	void MaterialLayer::setTexture(Texture* texture) {
-		assert(this->impl);
-		this->impl->texture = texture;
+		assert(impl);
+		impl->texture = texture;
 	}
 
 	bool MaterialLayer::hasTexture() const {
-		assert(this->impl);
-		return this->impl->texture != nullptr;
-	}
-
-	std::string MaterialLayer::getName() const {
-		assert(this->impl);
-
-		return this->impl->name;
-	}
-
-	void MaterialLayer::setName(const std::string &name) {
-		assert(this->impl);
-
-		this->impl->name = name;
+		assert(impl);
+		return impl->texture != nullptr;
 	}
 }}
 
@@ -114,94 +101,94 @@ namespace xe { namespace gfx {
 		 */
 		void fill() 
 		{
-            BufferLocker<std::uint8_t> locker(this->buffer.get(), BufferUsage::Write);
+            BufferLocker<std::uint8_t> locker(buffer.get(), BufferUsage::Write);
             
 			std::uint8_t *bufferData = locker.getPointer();
 
-			for (int i=0; i<this->format->getAttribCount(); i++) {
-				const MaterialAttrib *attrib = this->format->getAttrib(i);
-				const int offset = this->format->getOffset(i);
+			for (int i=0; i<format->getAttribCount(); i++) {
+				const MaterialAttrib *attrib = format->getAttrib(i);
+				const int offset = format->getOffset(i);
 
-				this->fillBuffer(&bufferData[offset], attrib->dataType, attrib->dimension);
+				fillBuffer(&bufferData[offset], attrib->dataType, attrib->dimension);
 			}
 		}
 	};
     
 	Material::Material(const MaterialFormat *format) {
-        this->impl = new Material::Private();
+        impl = new Material::Private();
 
 		if (!format) {
 			EXENG_THROW_EXCEPTION("Format can't be a null pointer.");
 		}
 
-		this->impl->format = format;
-		this->impl->buffer = std::make_unique<HeapBuffer>(format->getSize());
-		this->impl->fill();
+		impl->format = format;
+		impl->buffer = std::make_unique<HeapBuffer>(format->getSize());
+		impl->fill();
     }
 
 	Material::Material(const MaterialFormat *format, const std::string &name) {
-        this->impl = new Material::Private();
+        impl = new Material::Private();
 
 		if (!format) {
 			EXENG_THROW_EXCEPTION("Format can't be a null pointer.");
 		}
 
-		this->impl->format = format;
-		this->impl->buffer = std::make_unique<HeapBuffer>(format->getSize());
-		this->impl->fill();
+		impl->format = format;
+		impl->buffer = std::make_unique<HeapBuffer>(format->getSize());
+		impl->fill();
         
-        this->setName(name);
+        setName(name);
     }
 	
 	Material::~Material() {
-		boost::checked_delete(this->impl);
+		boost::checked_delete(impl);
 	}
 	
 	void Material::setAttribute(const int index, const void* data, const int size) {
-        assert(this->impl);
+        assert(impl);
         
 #if defined(EXENG_DEBUG)
-        if (!this->getFormat()) {
+        if (!getFormat()) {
             throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
         }
 #endif
         
-        BufferLocker<std::uint8_t> locker(this->impl->buffer.get(), BufferUsage::Write);
+        BufferLocker<std::uint8_t> locker(impl->buffer.get(), BufferUsage::Write);
         
-        const int offset = this->getFormat()->getOffset(index);
+        const int offset = getFormat()->getOffset(index);
         std::uint8_t* materialData = locker.getPointer();
         
-        std::memcpy(materialData + offset, data, this->getFormat()->getAttrib(index)->getSize());
+        std::memcpy(materialData + offset, data, getFormat()->getAttrib(index)->getSize());
     }
         
     void Material::getAttribute(const int index, void* data, const int size) const {
-        assert(this->impl);
+        assert(impl);
 
 #if defined(EXENG_DEBUG)
-        if (!this->getFormat()) {
+        if (!getFormat()) {
             throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
         }
 #endif
-        BufferLockerConst<std::uint8_t> locker(this->impl->buffer.get());
+        BufferLockerConst<std::uint8_t> locker(impl->buffer.get());
         
-        const int offset = this->getFormat()->getOffset(index);
+        const int offset = getFormat()->getOffset(index);
         const std::uint8_t* materialData = locker.getPointer();
         
-        std::memcpy(data, materialData + offset, this->getFormat()->getAttrib(index)->getSize());
+        std::memcpy(data, materialData + offset, getFormat()->getAttrib(index)->getSize());
     }
 	
 	std::string Material::getName() const {
-		assert(this->impl != nullptr);
-		return this->impl->name;
+		assert(impl);
+		return impl->name;
 	}
 
 	void Material::setName(const std::string& name) {
-		assert(this->impl != nullptr);
-		this->impl->name = name;
+		assert(impl);
+		impl->name = name;
 	}
     
 	MaterialLayer* Material::getLayer(int index) {
-		assert(this->impl != nullptr);
+		assert(impl);
 
 #ifdef EXENG_DEBUG
 		if (index < 0 || index >= LayerCount) {
@@ -209,11 +196,11 @@ namespace xe { namespace gfx {
 		}
 #endif
 
-		return &this->impl->layers[index];
+		return &impl->layers[index];
 	}
 	
 	const MaterialLayer* Material::getLayer(int index) const {
-		assert(this->impl != nullptr);
+		assert(impl);
 
 #ifdef EXENG_DEBUG
 		if (index < 0 || index >= LayerCount) {
@@ -221,11 +208,11 @@ namespace xe { namespace gfx {
 		}
 #endif
 
-		return &this->impl->layers[index];
+		return &impl->layers[index];
 	}
 
 	TypeInfo Material::getTypeInfo() const {
-		assert(this->impl != nullptr);
+		assert(impl);
     
 		return TypeInfo(typeid(Material));
 	}
@@ -235,12 +222,12 @@ namespace xe { namespace gfx {
 	}
 
 	bool Material::checkTextureType(const TypeInfo &textureTypeInfo) const {
-		assert(this->impl != nullptr);
+		assert(impl);
     
 		const MaterialLayer *layer = nullptr;
     
-		for (int i=0; i<this->getLayerCount(); ++i ) {
-			layer = this->getLayer(i);
+		for (int i=0; i<getLayerCount(); ++i ) {
+			layer = getLayer(i);
         
 			if (layer->hasTexture() == true) {
 				if (layer->getTexture()->getTypeInfo() != textureTypeInfo) {
@@ -253,28 +240,28 @@ namespace xe { namespace gfx {
 	}
 	
 	const MaterialFormat* Material::getFormat() const {
-        assert(this->impl != nullptr);
+        assert(impl);
         
-        return this->impl->format;
+        return impl->format;
     }
 	
 	bool Material::isSerializable() const {
-        assert(this->impl != nullptr);
+        assert(impl);
         
         return false;
     }
     
     void Material::serialize(xe::io::Stream *out) const {
-        assert(this->impl != nullptr);
+        assert(impl);
     }
     
     bool Material::isDeserializable() const {
-        assert(this->impl != nullptr);
+        assert(impl);
         
         return false;
     }
     
     void Material::deserialize(const xe::io::Stream *inStream) {
-        assert(this->impl != nullptr);
+        assert(impl);
     }
 }}

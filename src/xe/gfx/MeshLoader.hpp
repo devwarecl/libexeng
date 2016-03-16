@@ -12,8 +12,8 @@
  */
 
 
-#ifndef __EXENG_SCENEGRAPH_IMESHLOADER_HPP__
-#define __EXENG_SCENEGRAPH_IMESHLOADER_HPP__
+#ifndef __xe_gfx_meshloader_hpp__
+#define __xe_gfx_meshloader_hpp__
 
 #include <xe/Config.hpp>
 #include <xe/gfx/Forward.hpp>
@@ -24,6 +24,7 @@
 namespace xe { namespace gfx {
     /**
      * @brief Mesh loader interface.
+	 * @todo Specify the desired vertex format
      */
     class EXENGAPI MeshLoader {
     public:
@@ -39,6 +40,10 @@ namespace xe { namespace gfx {
 
 		MaterialLibrary* getMaterialLibrary();
 
+		void setTextureManager(TextureManager *textureManager);
+
+		TextureManager* getTextureManager();
+
         /**
          * @brief Check if the specified filename extension is supported by the current loader.
          * @param filename Raw string to the filename to check. 
@@ -53,7 +58,8 @@ namespace xe { namespace gfx {
 	private:
 		GraphicsDriver *graphicsDriver = nullptr;
 		MaterialLibrary *materialLibrary = nullptr;
+		TextureManager *textureManager = nullptr;
     };
 }}
         
-#endif // __EXENG_SCENEGRAPH_IMESHLOADER_HPP__
+#endif

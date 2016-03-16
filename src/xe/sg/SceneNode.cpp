@@ -30,7 +30,7 @@ namespace xe { namespace sg {
         Matrix4f transform = identity<float, 4>();  //! Node transformation
         SceneNode* parentPtr = nullptr;				//! 
         SceneNodes childs;							//! Node childs
-        IRenderable *renderable = nullptr;			//! Private data
+        Renderable *renderable = nullptr;			//! Private data
         
         SceneNodesIterator getChild(const std::string &name) {
             auto &childs = this->childs;
@@ -299,6 +299,15 @@ namespace xe { namespace sg {
         return this->addChild(childPtr);
     }
 
+	SceneNode* SceneNode::addChild(const Matrix4f &transformation, Renderable* renderable) {
+		SceneNode *child = this->addChild("");
+
+		child->setTransform(transformation);
+		child->setRenderable(renderable);
+
+		return child;
+	}
+
     void SceneNode::orphan() {
         assert(this->impl != nullptr);
         
@@ -307,19 +316,19 @@ namespace xe { namespace sg {
         }
     }
 	
-	void SceneNode::setRenderable(IRenderable *renderable) {
+	void SceneNode::setRenderable(Renderable *renderable) {
 		assert(this->impl != nullptr);
 
 		this->impl->renderable = renderable;
 	}
 
-	IRenderable* SceneNode::getRenderable() {
+	Renderable* SceneNode::getRenderable() {
 		assert(this->impl != nullptr);
 
 		return this->impl->renderable;
 	}
 
-	const IRenderable* SceneNode::getRenderable() const {
+	const Renderable* SceneNode::getRenderable() const {
 		assert(this->impl != nullptr);
 
 		return this->impl->renderable;

@@ -4,12 +4,11 @@
 #include <cassert>
 #include <xe/sg/Scene.hpp>
 #include <xe/sg/SceneNode.hpp>
-#include <xe/sg/SceneNodeData.hpp>
-#include <xe/sg/IRenderable.hpp>
+#include <xe/sg/Renderable.hpp>
 
 namespace xe { namespace sg {
 
-	SceneRendererGeneric::SceneRendererGeneric(xe::sg::IRenderer *renderer) {
+	SceneRendererGeneric::SceneRendererGeneric(xe::sg::Renderer *renderer) {
 		this->setRenderer(renderer);
 	}
 
@@ -26,15 +25,15 @@ namespace xe { namespace sg {
 		return this->scene;
 	}
 
-	xe::sg::IRenderer* SceneRendererGeneric::getRenderer() {
+	xe::sg::Renderer* SceneRendererGeneric::getRenderer() {
 		return this->renderer;
 	}
 
-	const xe::sg::IRenderer* SceneRendererGeneric::getRenderer() const {
+	const xe::sg::Renderer* SceneRendererGeneric::getRenderer() const {
 		return this->renderer;
 	}
 
-	void SceneRendererGeneric::setRenderer(xe::sg::IRenderer* renderer) {
+	void SceneRendererGeneric::setRenderer(xe::sg::Renderer* renderer) {
 		this->renderer = renderer;
 	}
 
@@ -57,10 +56,10 @@ namespace xe { namespace sg {
 
 		transformStack->push(node->getTransform());
 
-		xe::sg::IRenderer *renderer = this->getRenderer();
+		xe::sg::Renderer *renderer = this->getRenderer();
 		renderer->setModel(transformStack->top());
 
-		xe::sg::IRenderable *renderable = node->getRenderable();
+		xe::sg::Renderable *renderable = node->getRenderable();
 		if (renderable) {
 			renderable->renderWith(renderer);
 		}

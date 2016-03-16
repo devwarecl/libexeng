@@ -23,7 +23,6 @@
 #include <xe/gfx/PixelFormat.hpp>
 #include <xe/gfx/Primitive.hpp>
 #include <xe/gfx/TextureType.hpp>
-#include <xe/gfx/ColorFormat.hpp>
 #include <xe/gfx/ShaderType.hpp>
 #include <xe/gfx/IndexFormat.hpp>
 

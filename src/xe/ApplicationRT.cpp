@@ -2,8 +2,15 @@
 #include "ApplicationRT.hpp"
 
 #include <xe/Timer.hpp>
+#include <xe/Core.hpp>
+#include <xe/gfx/ImageLoader.hpp>
+#include <xe/gfx/ImageManager.hpp>
+#include <xe/gfx/GraphicsManager.hpp>
 
 namespace xe {
+
+	ApplicationRT::ApplicationRT() {}
+
 	int ApplicationRT::run(int argc, char **argv) {
 		std::uint32_t last_time = xe::Timer::getTime();
 
@@ -11,7 +18,7 @@ namespace xe {
 
 		while (this->isRunning()) {
 			// compute time for this frame
-			float seconds = (xe::Timer::getTime() - last_time) * 0.0001f;
+			float seconds = (xe::Timer::getTime() - last_time) * 0.001f;
 
 			last_time = xe::Timer::getTime();
 

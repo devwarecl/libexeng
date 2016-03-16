@@ -23,7 +23,7 @@
 #include <xe/Vector.hpp>
 #include <xe/Matrix.hpp>
 #include <xe/Buffer.hpp>
-#include <xe/input2/IInputManager.hpp>
+#include <xe/input/IInputManager.hpp>
 #include <xe/gfx/Image.hpp>
 #include <xe/gfx/Material.hpp>
 #include <xe/gfx/PixelFormat.hpp>
@@ -34,8 +34,6 @@
 #include <xe/gfx/MeshSubset.hpp>
 #include <xe/gfx/ModernModule.hpp>
 #include <xe/gfx/LegacyModule.hpp>
-#include <xe/gfx/Material2.hpp>
-#include <xe/cm/Forward.hpp>
 
 namespace xe { namespace gfx {
 
@@ -79,7 +77,7 @@ namespace xe { namespace gfx {
     */
     struct DisplayMode {
 		//! Width and height, in pixels.
-        Size2i size = Size2i(640, 480);
+        Vector2i size = Vector2i(640, 480);
 
 		//! Frame buffer colors.
 		Vector<std::uint8_t, 4> colorFormat = Vector<std::uint8_t, 4>(8, 8, 8, 8);
@@ -93,12 +91,12 @@ namespace xe { namespace gfx {
         
 		DisplayMode() {}
 
-        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat) {
+        DisplayMode(const Vector2i &size, const Vector<std::uint8_t, 4> &colorFormat) {
 			this->size = size;
 			this->colorFormat = colorFormat;
 		}
 
-        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status) {
+        DisplayMode(const Vector2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status) {
 			this->size = size;
 			this->colorFormat = colorFormat;
 			this->depthBits = depthBits;
@@ -179,8 +177,7 @@ namespace xe { namespace gfx {
         virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data = nullptr) = 0;
         
 		template<typename Type>
-		BufferPtr createVertexBuffer(const std::vector<Type> &vertices) 
-		{
+		BufferPtr createVertexBuffer(const std::vector<Type> &vertices) {
 			const int bufferSize = sizeof(Type) * vertices.size();
 			const void *bufferData = vertices.data();
 
@@ -205,8 +202,7 @@ namespace xe { namespace gfx {
 		}
         
 		template<typename Type>
-		BufferPtr createIndexBuffer(const std::vector<Type> &indices) 
-		{
+		BufferPtr createIndexBuffer(const std::vector<Type> &indices) {
 			const int bufferSize = sizeof(Type) * indices.size();
 			const void *bufferData = indices.data();
 
@@ -272,13 +268,6 @@ namespace xe { namespace gfx {
 		virtual ModernModule* getModernModule() = 0;
 
 		virtual xe::input2::IInputManager* getInputManager() = 0;
-
-		/**
-		 * @brief Create a GPU dependent material.
-		 * 
-		 * This material *may be* stored in GPU memory.
-		 */
-		virtual Material2Ptr createMaterial(const MaterialFormat2 *format);
         
         /** 
          * @brief Get the underlying graphics backend identification

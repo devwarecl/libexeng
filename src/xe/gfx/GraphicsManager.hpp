@@ -21,6 +21,8 @@
 #include <xe/Version.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
 #include <xe/gfx/ImageLoader.hpp>
+#include <xe/gfx/TextureManager.hpp>
+#include <xe/gfx/MeshManager.hpp>
 
 namespace xe { namespace gfx {
     
@@ -95,13 +97,13 @@ namespace xe { namespace gfx {
          * @brief Create the best available graphics driver, from the current 
          * registered ones.
          */
-        std::unique_ptr<GraphicsDriver> createDriver();
+        GraphicsDriverPtr createDriver();
         
         /**
          * @brief Create the graphics driver corresponding with the
          * supplied driver desc.
          */
-        std::unique_ptr<GraphicsDriver> createDriver(const GraphicsDriverInfo &info);
+        GraphicsDriverPtr createDriver(const GraphicsDriverInfo &info);
 
 		/**
 		 * @brief Get available device descriptions.
@@ -125,6 +127,14 @@ namespace xe { namespace gfx {
 		 */
 		const ImageLoader* getImageToolkit() const;
 		
+		TextureManager* getTextureManager();
+
+		const TextureManager* getTextureManager() const;
+
+		MeshManager* getMeshManager();
+
+		const MeshManager* getMeshManager() const;
+
     private:
         struct Private;
         Private *impl = nullptr;

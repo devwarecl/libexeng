@@ -4,6 +4,8 @@
 
 #include <xe/sys/Plugin.hpp>
 
+#include "MeshLoaderAssimp.hpp"
+
 namespace xe { namespace gfx {
     
     class PluginAssimp : public xe::sys::Plugin {
@@ -24,6 +26,7 @@ namespace xe { namespace gfx {
         
     private:
         Core *core = nullptr;
+		MeshLoaderAssimp meshLoader;
     };
 }}
 

@@ -12,7 +12,7 @@
  */
 
 #include <xe/sg/Geometry.hpp>
-#include <xe/sg/IRenderer.hpp>
+#include <xe/sg/Renderer.hpp>
 
 namespace xe { namespace sg {
     Geometry::~Geometry() { }
@@ -21,7 +21,7 @@ namespace xe { namespace sg {
 		return TypeId<Geometry>();
 	}
 
-	void Geometry::renderWith(xe::sg::IRenderer *renderer) {
+	void Geometry::renderWith(xe::sg::Renderer *renderer) {
 		renderer->render(this);
 	}
 }}

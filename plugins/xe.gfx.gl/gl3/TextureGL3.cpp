@@ -89,7 +89,10 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		// sync the internal texture buffer with the current texture
 		buffer.setTexture(this);
-        buffer.write(data);
+
+		if (data) {
+			buffer.write(data);
+		}
 
 		GL3_CHECK();
 	}

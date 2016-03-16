@@ -2,7 +2,6 @@
 #ifndef __EXENG_GRAPHICS_INDEXFORMAT_HPP__
 #define __EXENG_GRAPHICS_INDEXFORMAT_HPP__
 
-#include <xe/Resource.hpp>
 #include <xe/Enum.hpp>
 
 #include <stdexcept>

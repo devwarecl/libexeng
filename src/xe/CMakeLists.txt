@@ -3,35 +3,23 @@ ADD_DEFINITIONS(-DEXENG_BUILD)
 
 set (BaseFiles_hpp 
 	Forward.hpp
-    Exeng.hpp DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
+    DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
     Object.hpp Version.hpp Core.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
     HeapBuffer.hpp StaticBuffer.hpp 
-	Resource.hpp ResourceLoader.hpp ResourceManager.hpp 
-	# Product.hpp ProductLoader.hpp 
 	ProductManager.hpp ProductManagerImpl.hpp
-	ISerializable.hpp Timer.hpp
-    Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp Matrix2.hpp
-	Main.hpp                Main.inl
-	Application.hpp         ApplicationRT.hpp 
-	
-	Struct.hpp			
+	Timer.hpp
+    Common.hpp Boundary.hpp Matrix.hpp Vector.hpp Exception.hpp Quaternion.hpp
+	Application.hpp ApplicationRT.hpp 
 )
 
 set (BaseFiles_cpp Enum.cpp Object.cpp 
     Version.cpp  Core.cpp TypeInfo.cpp
     Buffer.cpp HeapBuffer.cpp StaticBuffer.cpp
-    Resource.cpp ResourceLoader.cpp ResourceManager.cpp 
-    ISerializable.cpp Timer_Win.cpp Timer_Unix.cpp Exception.cpp
+    Timer_Win.cpp Timer_Unix.cpp Exception.cpp
 	Application.cpp ApplicationRT.cpp
-
-	Struct.cpp
 )
 set (BaseFiles ${BaseFiles_hpp} ${BaseFiles_cpp})
-
-set (IoFiles_cpp io/Stream.cpp io/Stream.inl io/StreamBuffer.cpp)
-set (IoFiles_hpp io/Stream.hpp               io/StreamBuffer.hpp)
-set (IoFiles ${IoFiles_hpp} ${IoFiles_hpp})
 
 set (AudioFiles_cpp sfx/AudioBuffer.cpp sfx/Listener.cpp sfx/Source.cpp)
 set (AudioFiles_hpp sfx/AudioBuffer.hpp sfx/Listener.hpp sfx/Source.hpp)
@@ -83,16 +71,12 @@ set (GraphicsFiles_hpp
     gfx/Image.hpp                
 	gfx/ImageLoader.hpp 
     gfx/Material.hpp 
-    gfx/Material2.hpp 
-	gfx/MaterialFormat2.hpp 
-	gfx/MaterialBatch.hpp 
     gfx/PixelFormat.hpp          
 	gfx/VertexFormat.hpp 
 	gfx/VertexArray.hpp 
     gfx/Vertex.hpp
     gfx/IndexFormat.hpp          
     gfx/Texture.hpp              
-    gfx/ColorFormat.hpp          
     gfx/Shader.hpp               
     gfx/ShaderProgram.hpp        
 	gfx/Forward.hpp        
@@ -102,13 +86,14 @@ set (GraphicsFiles_hpp
 	gfx/Mesh.hpp
     gfx/MeshManager.hpp
     gfx/MeshLoader.hpp
-	gfx/PixelType.hpp		
 	gfx/TextureManager.hpp
 	gfx/TextureLoader.hpp
+	gfx/TextureLoaderImage.hpp
 	gfx/ModernModule.hpp
 	gfx/LegacyModule.hpp
 	gfx/TextureLoader.hpp
 	gfx/MaterialLibrary.hpp
+	gfx/MaterialLibraryImpl.hpp
 	gfx/ShaderLibrary.hpp 
 	gfx/MeshSubsetGenerator.hpp
 	gfx/MeshSubsetGeneratorPlane.hpp
@@ -122,16 +107,12 @@ set (GraphicsFiles_cpp
     gfx/Image.cpp 
 	gfx/ImageLoader.cpp 
     gfx/Material.cpp 
-    gfx/Material2.cpp
-	gfx/MaterialFormat2.cpp 
-	gfx/MaterialBatch.cpp 
     gfx/PixelFormat.cpp 
     gfx/Vertex.cpp
     gfx/VertexFormat.cpp
 	gfx/VertexArray.cpp
     gfx/IndexFormat.cpp
     gfx/Texture.cpp
-    gfx/ColorFormat.cpp
     gfx/Shader.cpp
     gfx/ShaderProgram.cpp
     gfx/MeshSubset.cpp
@@ -141,6 +122,7 @@ set (GraphicsFiles_cpp
     gfx/MeshLoader.cpp
 	gfx/TextureManager.cpp
 	gfx/TextureLoader.cpp
+	gfx/TextureLoaderImage.cpp
 	gfx/LegacyModule.cpp
 	gfx/ModernModule.cpp
 	gfx/MaterialLibrary.cpp
@@ -151,51 +133,37 @@ set (GraphicsFiles_cpp
 )
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 
-set (InputFiles_cpp
-    input/IEventRaiser.cpp
-    input/IEventHandler.cpp
-    input/InputData.cpp 
-    input/EventData.cpp 
-)
 set (InputFiles_hpp
-    input/IEventRaiser.hpp    
-    input/IEventHandler.hpp   
-    input/InputData.hpp       
-    input/EventData.hpp       
+	input/Event.hpp 
+	input/IEvent.hpp 
+	input/IEventHandler.hpp 
+	input/IInputDevice.hpp 
+	input/IInputManager.hpp 
+	input/IKeyboard.hpp 
+	input/IMouse.hpp 
+	input/InputManager.hpp 
+	input/KeyboardStatus.hpp 
+	input/KeyCode.hpp 
+	input/KeyStatus.hpp 
+	input/KeyStroke.hpp 
 )
+
+set (InputFiles_cpp
+	input/InputManager.cpp 
+	input/KeyboardStatus.cpp 
+)
+
 set (InputFiles ${InputFiles_hpp} ${InputFiles_cpp})
 
-set (Input2Files_hpp
-	input2/Event.hpp 
-	input2/IEvent.hpp 
-	input2/IEventHandler.hpp 
-	input2/IInputDevice.hpp 
-	input2/IInputManager.hpp 
-	input2/IKeyboard.hpp 
-	input2/IMouse.hpp 
-	input2/InputManager.hpp 
-	input2/KeyboardStatus.hpp 
-	input2/KeyCode.hpp 
-	input2/KeyStatus.hpp 
-	input2/KeyStroke.hpp 
-)
-
-set (Input2Files_cpp
-	input2/InputManager.cpp 
-	input2/KeyboardStatus.cpp 
-)
-
-set (Input2Files ${Input2Files_hpp} ${Input2Files_cpp})
-
 set (ScenegraphFiles_cpp
-	sg/ISceneRenderer.cpp
+	sg/Renderable.cpp
+	sg/Renderer.cpp
     sg/SceneNode.cpp 
     sg/Scene.cpp
 	sg/SceneNodeAnimator.cpp
 	sg/SceneLoader.cpp
 	sg/SceneManager.cpp
 	sg/SceneRenderer.cpp
-	sg/SceneRendererBase.cpp
 	sg/SceneRendererGeneric.cpp
 	sg/SceneLoader.cpp
     sg/Camera.cpp 
@@ -207,9 +175,8 @@ set (ScenegraphFiles_cpp
 
 set (ScenegraphFiles_hpp
 	sg/Forward.hpp 
-	sg/IRenderable.hpp
-	sg/IRenderer.hpp
-	sg/ISceneRenderer.hpp
+	sg/Renderable.hpp
+	sg/Renderer.hpp
     sg/SceneNode.hpp      
     sg/Scene.hpp          
     sg/Camera.hpp         
@@ -225,7 +192,6 @@ set (ScenegraphFiles_hpp
     sg/Sphere.hpp
     sg/Triangle.hpp
 	sg/SceneRenderer.hpp
-	sg/SceneRendererBase.hpp
     sg/SceneRendererGeneric.hpp
 	sg/SceneLoader.hpp
 	sg/SceneManager.hpp
@@ -263,12 +229,10 @@ set (UtilFiles ${UtilFiles_hpp} ${UtilFiles_cpp})
 
 add_library (xe SHARED
     ${BaseFiles}
-    ${IoFiles}
     ${AudioFiles}
     ${ComputeFiles}
     ${GraphicsFiles}
     ${InputFiles}
-	${Input2Files}
     ${ScenegraphFiles}
     ${SystemFiles}
     ${UtilFiles}
@@ -278,12 +242,10 @@ add_library (xe SHARED
 set_property (TARGET xe PROPERTY CXX_STANDARD 14)
 
 source_group(\\			FILES ${BaseFiles})
-source_group(io         FILES ${IoFiles})
 source_group(sfx      	FILES ${AudioFiles})
 source_group(cm			FILES ${ComputeFiles})
 source_group(gfx   		FILES ${GraphicsFiles})
 source_group(input      FILES ${InputFiles})
-source_group(input2     FILES ${Input2Files})
 source_group(sg 		FILES ${ScenegraphFiles})
 source_group(sys	    FILES ${SystemFiles})
 source_group(util		FILES ${UtilFiles})
@@ -299,13 +261,10 @@ INSTALL (
 
 # INSTALL (FILES ExengConfig.cmake		DESTINATION lib/cmake/xe/)
 INSTALL (FILES ${BaseFiles_hpp}			DESTINATION include/xe)
-INSTALL (FILES ${IoFiles_hpp}			DESTINATION include/xe/io)
 INSTALL (FILES ${AudioFiles_hpp}		DESTINATION include/xe/sfx)
-INSTALL (FILES ${FrameworkFiles_hpp}	DESTINATION include/xe/fw)
 INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/xe/cm)
 INSTALL (FILES ${GraphicsFiles_hpp}		DESTINATION include/xe/gfx)
 INSTALL (FILES ${InputFiles_hpp}		DESTINATION include/xe/input)
-INSTALL (FILES ${Input2Files_hpp}		DESTINATION include/xe/input2)
 INSTALL (FILES ${ScenegraphFiles_hpp}	DESTINATION include/xe/sg)
 INSTALL (FILES ${SystemFiles_hpp}		DESTINATION include/xe/sys)
 INSTALL (FILES ${UtilFiles_hpp}			DESTINATION include/xe/util)

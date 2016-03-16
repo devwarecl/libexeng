@@ -74,8 +74,8 @@ namespace xe { namespace gfx { namespace gl3 {
 		::glfwWindowHint(GLFW_DEPTH_BITS, 24);
 		::glfwWindowHint(GLFW_DOUBLEBUFFER , GL_TRUE);
 
-        int width = displayMode.size.width;
-        int height = displayMode.size.height;
+        int width = displayMode.size.x;
+        int height = displayMode.size.y;
         
         GLFWwindow *window = ::glfwCreateWindow(width, height, "exeng-graphics-gl3 Window", monitor, NULL);
         
@@ -317,14 +317,14 @@ namespace xe { namespace gfx { namespace gl3 {
     }
 
     void GraphicsDriverGL3::setViewport(const Rectf& viewport) {
-        const auto minEdge = static_cast<Vector2i>(viewport.getMin());
-        const auto size = static_cast<Size2i>(viewport.getSize());
+        const Vector2i minEdge = viewport.getMinEdge();
+		const Vector2i size = viewport.getSize();
 
         ::glViewport (
 			minEdge.x, 
 			minEdge.y, 
-			size.width, 
-			size.height==0 ? 1 : size.height
+			size.x, 
+			size.y==0 ? 1 : size.y
 		);
 
 		this->viewport = viewport;
@@ -396,8 +396,8 @@ namespace xe { namespace gfx { namespace gl3 {
                 const TextureGL3 *texture = static_cast<const TextureGL3*>(layer->getTexture());
                 GLenum textureType = convTextureType(texture->getType());
                 GLenum textureId = texture->getTextureId();
-                
-                GLuint textureLocation = ::glGetUniformLocation(programId, layer->getName().c_str());
+				
+                GLuint textureLocation = ::glGetUniformLocation(programId, material->getFormat()->getLayerName(i).c_str());
                 GL3_CHECK();
 
                 ::glUniform1i(textureLocation, i);
@@ -475,11 +475,14 @@ namespace xe { namespace gfx { namespace gl3 {
 	}
 
 	void GraphicsDriverGL3::setShaderProgram(const ShaderProgram *program) {
-		this->shaderProgram = static_cast<const ShaderProgramGL3*>(program);
-        
-        GLint programId = shaderProgram->getProgramId();
-
-        ::glUseProgram(programId);
+		shaderProgram = static_cast<const ShaderProgramGL3*>(program);
+     
+		if (shaderProgram) {
+			GLint programId = shaderProgram->getProgramId();
+			::glUseProgram(programId);
+		} else {
+			::glUseProgram(0);
+		}
 	}
 
 	void GraphicsDriverGL3::setProgramMatrix(const std::string &name, const int count, const xe::Matrix4f *matrices) {

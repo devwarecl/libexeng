@@ -59,7 +59,7 @@ namespace xe { namespace sg {
         Vector4f getBackColor() const;
 
 	protected:
-		SceneNode* createSceneNode(const std::string &nodeName, IRenderable* renderable);
+		SceneNode* createSceneNode(const std::string &nodeName, Renderable* renderable);
 
     private:
         struct Private;

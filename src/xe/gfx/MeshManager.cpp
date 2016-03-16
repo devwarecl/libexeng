@@ -37,18 +37,21 @@ namespace xe { namespace gfx {
 	
     struct MeshManager::Private {
 		ProductManagerImpl<MeshLoader, Mesh> manager;
-
+		GraphicsDriver *driver = nullptr;
+		MaterialLibrary *library = nullptr;
+		TextureManager *textureManager = nullptr;
+		
 		Mesh* storeMesh(const std::string &id, MeshPtr mesh) {
 			Mesh* meshPtr = mesh.get();
 
-			this->manager.putProduct(id, std::move(mesh));
+			manager.putProduct(id, std::move(mesh));
 
 			return meshPtr;
 		}
     };
     
     MeshManager::MeshManager() {
-        this->impl = new MeshManager::Private();
+        impl = new MeshManager::Private();
     }
     
     MeshManager::~MeshManager() {
@@ -56,36 +59,91 @@ namespace xe { namespace gfx {
     }
     
     void MeshManager::addMeshLoader(MeshLoader *loader) {
-		assert(this->impl != nullptr);
+		assert(impl);
 
-        this->impl->manager.addLoader(loader);
+		loader->setGraphicsDriver(getGraphicsDriver());
+		loader->setMaterialLibrary(getMaterialLibrary());
+		loader->setTextureManager(getTextureManager());
+
+        impl->manager.addLoader(loader);
     }
     
     void MeshManager::removeMeshLoader(MeshLoader *loader) {
-		assert(this->impl != nullptr);
+		assert(impl);
 
-        this->impl->manager.removeLoader(loader);
+		loader->setGraphicsDriver(nullptr);
+		loader->setMaterialLibrary(nullptr);
+		loader->setTextureManager(nullptr);
+
+        impl->manager.removeLoader(loader);
     }
     
     Mesh* MeshManager::getMesh(const std::string &filename) {
-		assert(this->impl != nullptr);
+		assert(impl);
 
-		return this->impl->manager.getProduct(filename);
-    }
-
-    Mesh* MeshManager::getMesh(const std::string &id, MeshSubsetPtr subset) {
-        auto mesh = std::make_unique<Mesh>(std::move(subset));
-
-        return this->impl->storeMesh(id, std::move(mesh));
-    }
-
-    Mesh* MeshManager::getMesh(const std::string &id, std::vector<MeshSubsetPtr> subsets) {
-        auto mesh = std::make_unique<Mesh>(std::move(subsets));
-
-        return this->impl->storeMesh(id, std::move(mesh));
+		return impl->manager.getProduct(filename);
     }
 
 	Mesh* MeshManager::getMesh(const std::string &id, MeshPtr mesh)  {
-		return this->impl->storeMesh(id, std::move(mesh));
+		assert(impl);
+
+		return impl->storeMesh(id, std::move(mesh));
+	}
+
+	void MeshManager::setGraphicsDriver(GraphicsDriver *driver) {
+		assert(impl);
+
+		auto loaders = impl->manager.getLoaders();
+		for (MeshLoader *loader : loaders) {
+			loader->setGraphicsDriver(driver);
+		}
+
+		impl->driver = driver;
+	}
+
+	GraphicsDriver* MeshManager::getGraphicsDriver() {
+		assert(impl);
+
+		return impl->driver;
+	}
+
+	void MeshManager::setMaterialLibrary(MaterialLibrary *library) {
+		assert(impl);
+
+		auto loaders = impl->manager.getLoaders();
+		for (MeshLoader *loader : loaders) {
+			loader->setMaterialLibrary(library);
+		}
+
+		impl->library = library;
+	}
+
+	MaterialLibrary* MeshManager::getMaterialLibrary() {
+		assert(impl);
+
+		return impl->library;
+	}
+
+	void MeshManager::setTextureManager(TextureManager *textureManager) {
+		assert(impl);
+
+		auto loaders = impl->manager.getLoaders();
+		for (MeshLoader *loader : loaders) {
+			loader->setTextureManager(textureManager);
+		}
+
+		impl->textureManager = textureManager;
+	}
+
+	TextureManager * MeshManager::getTextureManager() {
+		assert(impl);
+		
+		return impl->textureManager;
+	}
+
+	void MeshManager::cleanup() {
+		assert(impl);
+
+		impl->manager.cleanup();
 	}
 }}

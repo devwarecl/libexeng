@@ -47,10 +47,6 @@ namespace xe { namespace gfx {
 		return this->createMeshSubset(std::move(vbuffers), vformat, std::move(ibuffer), IndexFormat::Unknown);
 	}
 
-	Material2Ptr GraphicsDriver::createMaterial(const MaterialFormat2 * /*format*/) {
-        return Material2Ptr();
-    }
-
     TexturePtr GraphicsDriver::createTexture(const Image *image) {
         assert(image);
 

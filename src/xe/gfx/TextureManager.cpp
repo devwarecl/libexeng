@@ -1,7 +1,6 @@
 
 #include "TextureManager.hpp"
 
-#include <xe/Size.hpp>
 #include <xe/ProductManagerImpl.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
 
@@ -14,49 +13,65 @@ namespace xe { namespace gfx {
 	};
 
 	TextureManager::TextureManager() {
-		this->impl = new TextureManager::Private();
+		impl = new TextureManager::Private();
 	}
 
 	TextureManager::~TextureManager() {
-		delete this->impl;
+		delete impl;
 	}
 
 	GraphicsDriver* TextureManager::getGraphicsDriver() {
-		return this->impl->graphicsDriver;
+		assert(impl);
+
+		return impl->graphicsDriver;
 	}
 
 	const GraphicsDriver* TextureManager::getGraphicsDriver() const {
-		return this->impl->graphicsDriver;
+		assert(impl);
+
+		return impl->graphicsDriver;
 	}
 
 	void TextureManager::setGraphicsDriver(GraphicsDriver *graphicsDriver) {
-		for (TextureLoader* loader: this->impl->manager.getLoaders()) {
+		assert(impl);
+
+		for (TextureLoader* loader: impl->manager.getLoaders()) {
 			loader->setGraphicsDriver(graphicsDriver);
 		}
 		
-		this->impl->graphicsDriver = graphicsDriver;
+		impl->graphicsDriver = graphicsDriver;
 	}
 
 	Texture* TextureManager::getTexture(const std::string &uri) {
-		return this->impl->manager.getProduct(uri);
+		assert(impl);
+
+		return impl->manager.getProduct(uri);
 	}
 
 	const Texture* TextureManager::getTexture(const std::string &uri) const {
-		return this->impl->manager.getProduct(uri);
+
+		assert(impl);
+		return impl->manager.getProduct(uri);
 	}
 
 	void TextureManager::addLoader(TextureLoader *loader) {
-		this->impl->manager.addLoader(loader);
+		assert(impl);
+
+		impl->manager.addLoader(loader);
 	}
 
 	void TextureManager::removeLoader(TextureLoader *loader) {
-		this->impl->manager.removeLoader(loader);
+		assert(impl);
+
+		impl->manager.removeLoader(loader);
 	}
 
 	Texture* TextureManager::generateCheckerboard(const std::string &uri, const Vector2i &size, const Vector2i &tileSize) {
+		assert(impl);
+
 		PixelFormat::Enum format = PixelFormat::R8G8B8A8;
 
-		TexturePtr texture = this->getGraphicsDriver()->createTexture(size, format);
+		TexturePtr texture = getGraphicsDriver()->createTexture(size, format);
         
         {
             auto locker = texture->getBuffer()->getLocker<Vector4ub>();
@@ -82,23 +97,27 @@ namespace xe { namespace gfx {
         
 		Texture *result = texture.get();
 
-		this->impl->manager.putProduct(uri, std::move(texture));
+		impl->manager.putProduct(uri, std::move(texture));
 
 		return result;
 	}
 
     Texture* TextureManager::create(const std::string &uri, const Vector2i &size) {
+		assert(impl);
+
 		PixelFormat::Enum format = PixelFormat::R8G8B8A8;
 
-		TexturePtr texture = this->getGraphicsDriver()->createTexture(size, format);
+		TexturePtr texture = getGraphicsDriver()->createTexture(size, format);
 
-        this->impl->manager.putProduct(uri, std::move(texture));
+        impl->manager.putProduct(uri, std::move(texture));
 
-        return this->getTexture(uri);
+        return getTexture(uri);
     }
 
     Texture* TextureManager::create(const std::string &uri, const Vector2i &size, const Vector4f &color) {
-        Texture *texture = this->create(uri, size);
+		assert(impl);
+
+        Texture *texture = create(uri, size);
 
         auto locker = texture->getBuffer()->getLocker<Vector4ub>();
         
@@ -111,10 +130,18 @@ namespace xe { namespace gfx {
     }
 
 	Texture* TextureManager::create(const std::string &uri, const Image *image) {
-		TexturePtr texture = this->getGraphicsDriver()->createTexture(image);
+		assert(impl);
 
-        this->impl->manager.putProduct(uri, std::move(texture));
+		TexturePtr texture = getGraphicsDriver()->createTexture(image);
 
-        return this->getTexture(uri);
+        impl->manager.putProduct(uri, std::move(texture));
+
+        return getTexture(uri);
+	}
+
+	void TextureManager::cleanup() {
+		assert(impl);
+
+		impl->manager.cleanup();
 	}
 }}

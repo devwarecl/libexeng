@@ -85,7 +85,7 @@ namespace xe { namespace sg {
         return light;
     }
 
-    SceneNode* Scene::createSceneNode(const std::string &nodeName, IRenderable* renderable) {
+    SceneNode* Scene::createSceneNode(const std::string &nodeName, Renderable* renderable) {
         assert(this->impl != nullptr);
         
         std::list<SceneNode*> *nodes = nullptr;
@@ -97,11 +97,11 @@ namespace xe { namespace sg {
     }
 
 	SceneNode* Scene::createSceneNode(const std::string &nodeName, Geometry* geometry) {
-		return this->createSceneNode(nodeName, static_cast<xe::sg::IRenderable*>(geometry));
+		return this->createSceneNode(nodeName, static_cast<xe::sg::Renderable*>(geometry));
 	}
 
 	SceneNode* Scene::createSceneNode(const std::string &nodeName, Light* light) {
-		SceneNode *node = this->createSceneNode(nodeName, static_cast<xe::sg::IRenderable*>(light));
+		SceneNode *node = this->createSceneNode(nodeName, static_cast<xe::sg::Renderable*>(light));
 
 		this->impl->lightNodes.push_back(node);
 
@@ -109,7 +109,7 @@ namespace xe { namespace sg {
 	}
 
 	SceneNode* Scene::createSceneNode(const std::string &nodeName, Camera* camera) {
-		SceneNode *node = this->createSceneNode(nodeName, static_cast<xe::sg::IRenderable*>(camera));
+		SceneNode *node = this->createSceneNode(nodeName, static_cast<xe::sg::Renderable*>(camera));
 
 		this->impl->cameraNodes.push_back(node);
 

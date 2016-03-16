@@ -107,7 +107,23 @@ public:
 		return program;
     }
     
-    xe::gfx::MeshPtr createMesh() {
+    /*xe::gfx::MeshPtr createMesh() {
+		xe::gfx::MeshSubsetGeneratorParams params;
+		params.format = &vertexFormat;
+		params.iformat = xe::gfx::IndexFormat::Index32;
+		params.slices = 2;
+		params.stacks = 2;
+
+		xe::gfx::MeshSubsetGeneratorBox generator(this->graphicsDriver.get());
+
+		auto subset = generator.generate(params);
+
+		subset->setMaterial(material.get());
+
+		return std::make_unique<xe::gfx::Mesh>(std::move(subset));
+    }*/
+
+	xe::gfx::MeshPtr createMesh() {
 		xe::gfx::MeshSubsetGeneratorParams params;
 		params.format = &vertexFormat;
 		params.iformat = xe::gfx::IndexFormat::Index32;
@@ -226,8 +242,8 @@ private:
 	xe::sg::ScenePtr scene;
 	xe::sg::SceneNode *boxNode = nullptr;
 
-	xe::sg::ISceneRendererPtr sceneRenderer;
-	xe::sg::IRendererPtr renderer;
+	xe::sg::SceneRendererPtr sceneRenderer;
+	xe::sg::RendererPtr renderer;
 };
 
 int main(int argc, char **argv) {

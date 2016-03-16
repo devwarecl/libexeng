@@ -40,14 +40,8 @@ namespace xe {
         xe::sys::PluginManager* getPluginManager();
         const xe::sys::PluginManager* getPluginManager() const;
         
-        xe::gfx::MeshManager* getMeshManager();
-        const xe::gfx::MeshManager* getMeshManager() const;
-        
         xe::gfx::GraphicsManager* getGraphicsManager();
         const xe::gfx::GraphicsManager* getGraphicsManager() const;
-        
-		xe::gfx::TextureManager* getTextureManager();
-        const xe::gfx::TextureManager* getTextureManager() const;
         
 		xe::sg::SceneManager* getSceneManager();
         const xe::sg::SceneManager* getSceneManager() const;
