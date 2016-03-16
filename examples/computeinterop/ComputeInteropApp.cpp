@@ -63,7 +63,6 @@ void ComputeInteropApp::doEvents() {
 
 void ComputeInteropApp::update(const float seconds) {
 	const float speed = 10.0f * seconds;
-	std::cout << speed << std::endl;
 	// check if the user wants to leave the demo
 	running = keyboardStatus->isKeyReleased(xe::input2::KeyCode::KeyEsc);
 
@@ -90,6 +89,15 @@ void ComputeInteropApp::update(const float seconds) {
 		camera.lookat.z += speed;
 		camera.position.z += speed;
 	}
+	
+	// spawn a new box
+	if (keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEnter)) {
+        xe::gfx::Mesh *mesh = meshManager->getMesh("boxMesh");
+        xe::Matrix4f transformation = xe::translate<float>(camera.position);
+        
+        scene->getRootNode()->addChild(transformation, mesh);
+	}
+	
 }
 
 void ComputeInteropApp::render() {
@@ -144,11 +152,12 @@ xe::sg::ScenePtr ComputeInteropApp::createScene() {
 	auto subset = generator.generate({renderer->getVertexFormat()});
 	subset->setMaterial(material);
 
-	// generate the box mesh
+	// create the box mesh
 	xe::sg::SceneNode *node = scene->getRootNode();
 
 	xe::gfx::Mesh *mesh = meshManager->getMesh("boxMesh", std::make_unique<xe::gfx::Mesh>(std::move(subset)));
-
+    
+    // populate the scene with the boxes
 	float values[] = {-2.0f, 0.0f, 2.0f};
 
 	for (float value1 : values) {
