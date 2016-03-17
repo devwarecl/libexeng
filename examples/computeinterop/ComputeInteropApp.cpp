@@ -90,14 +90,16 @@ void ComputeInteropApp::update(const float seconds) {
 		camera.position.z += speed;
 	}
 	
-	// spawn a new box
-	if (keyboardStatus->isKeyPressed(xe::input2::KeyCode::KeyEnter)) {
+	// spawn a new box is the user press the [enter] key
+	if (keyboardStatus->isKeyPushed(xe::input2::KeyCode::KeyEnter)) {
         xe::gfx::Mesh *mesh = meshManager->getMesh("boxMesh");
-        xe::Matrix4f transformation = xe::translate<float>(camera.position);
+        
+        xe::Vector3f position = camera.position + 2.0f * xe::normalize(camera.lookat - camera.position);
+        
+        xe::Matrix4f transformation = xe::translate<float>(position);
         
         scene->getRootNode()->addChild(transformation, mesh);
 	}
-	
 }
 
 void ComputeInteropApp::render() {

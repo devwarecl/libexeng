@@ -6,11 +6,15 @@
 namespace xe { namespace gfx {
 
 	void xe_handle_key(GLFWwindow* window, int key, int scancode, int action, int mods) {
+        if (action == GLFW_REPEAT) {
+            return;
+        }
+        
 		auto driver = static_cast<xe::gfx::gl3::GraphicsDriverGL3*>(::glfwGetWindowUserPointer(window));
 		auto manager = static_cast<InputManagerGLFW*>(driver->getInputManager());
 
 		// determine key code
-		xe::input2::KeyCode::Enum code = xe::input2::KeyCode::Unknown;
+		auto code = xe::input2::KeyCode::Unknown;
 
         switch (key) {
             case GLFW_KEY_ESCAPE:	code = xe::input2::KeyCode::KeyEsc;		break;
@@ -22,27 +26,25 @@ namespace xe { namespace gfx {
         }
 
 		// determine key status
-        xe::input2::KeyStatus::Enum status = xe::input2::KeyStatus::Unknown;
+        auto status = xe::input2::KeyStatus::Unknown;
 		
-		if (action == GLFW_RELEASE) {
-			status = xe::input2::KeyStatus::Release;
+		switch (action) {
+            case GLFW_RELEASE:  status = xe::input2::KeyStatus::Release;    break;
+            case GLFW_PRESS:    status = xe::input2::KeyStatus::Press;      break;
 		}
-
-		if (action == GLFW_PRESS) {
-			status = xe::input2::KeyStatus::Press;
-		}
-
-		if (action == GLFW_RELEASE || action == GLFW_PRESS) {
-			// set the key status
-			manager->getKeyboard()->getStatus()->setKeyStatus(code, status);
-
-		} else if (action == GLFW_REPEAT) {
+		
+		// set the key status
+		manager->getKeyboard()->getStatus()->setKeyStatus(code, status);
+		
+		/*
+		else if (action == GLFW_REPEAT) {
 			xe::input2::KeyStroke keyStroke;
 			keyStroke.code = code;
 			keyStroke.status = status;
 
 			manager->getKeyboard()->getKeyStrokeEvent()->raise(keyStroke);
 		}
+		*/
 	}
 
 	InputManagerGLFW::InputManagerGLFW() {}

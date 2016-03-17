@@ -45,7 +45,7 @@ namespace xe { namespace input2 {
 		};
 
 		Status current;
-		Status previous;
+		mutable Status previous;
 	};
 }}
 
