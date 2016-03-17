@@ -23,6 +23,7 @@ namespace xe { namespace input2 {
 		bool isKeyReleased(KeyCode::Enum keyCode) const;
 		bool isKeyPushed(KeyCode::Enum keyCode) const;
 		bool isKeyPopped(KeyCode::Enum keyCode) const;
+		
 	private:
 		static const int KEY_COUNT = KeyCode::Total + 1;
 

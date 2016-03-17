@@ -69,14 +69,13 @@ namespace xe { namespace gfx {
 	Texture* TextureManager::generateCheckerboard(const std::string &uri, const Vector2i &size, const Vector2i &tileSize) {
 		assert(impl);
 
-		PixelFormat::Enum format = PixelFormat::R8G8B8A8;
+		PixelFormat::Enum format = PixelFormat::R8G8B8;
 
 		TexturePtr texture = getGraphicsDriver()->createTexture(size, format);
         
         {
-            auto locker = texture->getBuffer()->getLocker<Vector4ub>();
-        
-            Vector4ub *pixels = locker.getPointer();
+            auto locker = texture->getBuffer()->getLocker<Vector3ub>();
+            auto pixels = locker.getPointer();
     
             for (int row=0; row<size.y; row++) {
                 for (int col=0; col<size.x; col++) {
@@ -88,7 +87,7 @@ namespace xe { namespace gfx {
                     pixels->x = (std::uint8_t) c;
                     pixels->y = (std::uint8_t) c;
                     pixels->z = (std::uint8_t) c;
-                    pixels->w = (std::uint8_t) 255;
+                    // pixels->w = (std::uint8_t) 255;
     
                     ++pixels;
                 }

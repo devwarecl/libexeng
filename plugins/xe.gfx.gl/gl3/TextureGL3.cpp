@@ -45,7 +45,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		GLenum textureTarget = convTextureType(type);
 		GLenum internalFormat = convFormat(format);
         GLenum dataType = GL_UNSIGNED_BYTE;
-    
+        
 		// allocate size for the texture
 		::glGenTextures(1, &textureId);
 		::glBindTexture(textureTarget, textureId);
