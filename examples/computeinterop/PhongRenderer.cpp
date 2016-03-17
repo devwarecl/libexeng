@@ -113,10 +113,10 @@ uniform float shininess;
 uniform sampler2D texture0;
 
 void main() {
-	vec4 light_direction = normalize(vec4(0.0f, -1.0f, 0.25f, 0.0f));
-	float factor = dot(light_direction, vec4(n, 1.0f));	
+	vec4 light_direction = normalize(vec4(0.0f, 1.0f, 0.25f, 0.0f));
+	float factor = 1.0f - dot(light_direction, vec4(n, 1.0f));	
 
-	color = (texture(texture0, uv) * 0.5 + diffuse * 0.5) * factor;
+	color = (texture(texture0, uv) * 0.75 + diffuse * 0.25 * factor);
 }
 )";
 
