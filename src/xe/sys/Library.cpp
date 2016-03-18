@@ -21,68 +21,58 @@
 
 namespace xe { namespace sys {
 
-	Library::Library()
-	{
-		this->impl = new Library::Private();
+	Library::Library() {
+		impl = new Library::Private();
 	}
 
-	Library::Library(const std::string &filename)
-	{
-		this->impl = new Library::Private();
-		this->load(filename);
+	Library::Library(const std::string &filename) {
+		impl = new Library::Private();
+		load(filename);
 	}
 
-	Library::~Library() 
-	{
-		this->unload();
-        boost::checked_delete(this->impl);
+	Library::~Library() {
+		unload();
+        boost::checked_delete(impl);
 	}
 
-	void Library::load(const std::string &filename) 
-	{
+	void Library::load(const std::string &filename) {
 		assert(this);
-		assert(this->impl);
-		this->impl->load(filename);
+		assert(impl);
+		impl->load(filename);
 	}
 		
-	void Library::unload() 
-	{
-		assert(this->impl != nullptr);
-		this->impl->unload();
+	void Library::unload() {
+		assert(impl);
+		impl->unload();
 	}
 		
-	bool Library::isValid() const 
-	{
-		assert(this->impl != nullptr);
-		return this->impl->handle != nullptr;
+	bool Library::isValid() const {
+		assert(impl);
+		return impl->handle;
 	}
     
-	std::string Library::getFileName() const 
-	{
-		assert(this->impl != nullptr);
-		return this->impl->name;
+	std::string Library::getFileName() const {
+		assert(impl);
+		return impl->name;
 	}
     
-	std::string Library::getName() const 
-	{
-		assert(this->impl != nullptr);
-		return this->impl->name;
+	std::string Library::getName() const {
+		assert(impl);
+		return impl->name;
 	}
     
-	std::string Library::toString() const 
-	{
-		assert(this->impl != nullptr);
+	std::string Library::toString() const {
+		assert(impl);
 
-        if (this->isValid() == true) {
-			return this->getName();
+        if (isValid() == true) {
+			return getName();
         } else {
 			return Object::toString();
         }
 	}
     
-	FunctionPtr Library::getFunctionPtr(const std::string& FunctionName) 
-	{
-		assert(this->impl != nullptr);
-		return this->impl->getFunctionPtr(FunctionName);
+	FunctionPtr Library::getFunctionPtr(const std::string& FunctionName) {
+		assert(impl);
+		return impl->getFunctionPtr(FunctionName);
 	}
 }}

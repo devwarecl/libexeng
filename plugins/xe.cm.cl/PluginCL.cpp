@@ -4,8 +4,7 @@
 
 #include "PluginCL.hpp"
 
-
-namespace xe { namespace cm {    
+namespace xe { namespace cm {
     PluginCL::PluginCL() {}
         
     PluginCL::~PluginCL() {}
@@ -40,4 +39,4 @@ namespace xe { namespace cm {
 #  endif
 #endif 
 
-EXENG_EXPORT_PLUGIN(xe::cm::PluginCL);
+EXENG_EXPORT_PLUGIN(xe::cm::PluginCL)

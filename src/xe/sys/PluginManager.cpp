@@ -54,13 +54,11 @@ namespace xe { namespace sys {
 				key = key.substr(3, key.size() - 3);
 			}
 
-			this->loadPluginFile(file, key);
+			loadPluginFile(file, key);
 		}
 
 		void loadPluginFile(const fs::path &file, const std::string &key) {
 			// check if the library is loaded previously
-			PluginMap &plugins = this->plugins;
-        
 			if (plugins.find(key) == plugins.end()) {
 				LibraryPtr library = std::make_unique<Library>(file.string());
 				PluginPtr pluginLibrary = std::make_unique<PluginLibrary>(std::move(library));
@@ -68,7 +66,7 @@ namespace xe { namespace sys {
 				pluginArray.push_back(pluginLibrary.get());
 
 				plugins[key] = std::move(pluginLibrary);
-				plugins[key]->initialize(this->core);
+				plugins[key]->initialize(core);
 			}
 		}
     };
@@ -117,46 +115,46 @@ namespace xe { namespace sys {
 	}
 
     PluginManager::PluginManager() {
-        this->impl = new PluginManager::Private();
-        this->impl->pluginPath = fs::current_path();
+        impl = new PluginManager::Private();
+        impl->pluginPath = fs::current_path();
     }
 
     PluginManager::~PluginManager() {
-        delete this->impl;
+        delete impl;
     }
     
 	void PluginManager::setCore(Core *core) {
-		assert(this->impl);
+		assert(impl);
 
-		this->impl->core = core;
+		impl->core = core;
 	}
 
     Core* PluginManager::getCore() {
-        assert(this->impl);
+        assert(impl);
         
-        return this->impl->core;
+        return impl->core;
     }
         
     const Core* PluginManager::getCore() const {
-        assert(this->impl);
+        assert(impl);
         
-        return this->impl->core;
+        return impl->core;
     }
     
     void PluginManager::loadPlugin(const std::string &name) {
-        assert(this->impl);
+        assert(impl);
         
-		fs::path file = this->impl->pluginPath / plugin_filename(name);
+		fs::path file = impl->pluginPath / plugin_filename(name);
 		std::string key = name;
 		
-		this->impl->loadPluginFile(file, key);
+		impl->loadPluginFile(file, key);
     }
     
     void PluginManager::unloadPlugin(const std::string &name) {
-        assert(this->impl);
+        assert(impl);
         
-        auto &plugins = this->impl->plugins;
-		auto &pluginArray = this->impl->pluginArray;
+        auto &plugins = impl->plugins;
+		auto &pluginArray = impl->pluginArray;
         auto it = plugins.find(name);
             
         if (it != plugins.end()) {
@@ -170,7 +168,7 @@ namespace xe { namespace sys {
     }
     
     void PluginManager::setPluginPath(const std::string &path) {
-        assert(this->impl);
+        assert(impl);
         
         fs::path pluginPath(path);
         
@@ -184,13 +182,13 @@ namespace xe { namespace sys {
 			EXENG_THROW_EXCEPTION("The directory '" + pluginPath.string() + "' is not valid.");
         }
         
-        this->impl->pluginPath = pluginPath;
+        impl->pluginPath = pluginPath;
     }
     
     std::string PluginManager::getPluginPath() const {
-        assert(this->impl);
+        assert(impl);
         
-        return this->impl->pluginPath.string();
+        return impl->pluginPath.string();
     }
     
 	std::string getPathSeparator() {
@@ -202,7 +200,7 @@ namespace xe { namespace sys {
 	}
 
     void PluginManager::loadPlugins() {
-		assert(this->impl);
+		assert(impl);
 
 		namespace ba = boost::adaptors;
 
@@ -233,7 +231,7 @@ namespace xe { namespace sys {
 		// finally, try to load the remaining plugins
 		for (const fs::path &plugin : plugins) {
 			try {
-				this->impl->loadPluginFile(plugin);
+				impl->loadPluginFile(plugin);
 
 			} catch (const std::exception &exp) {
 				std::cout << exp.what() << std::endl;
@@ -242,16 +240,16 @@ namespace xe { namespace sys {
     }
 
 	int PluginManager::getPluginCount() const {
-		assert(this->impl);
+		assert(impl);
 
-		return this->impl->pluginArray.size();
+		return impl->pluginArray.size();
 	}
 
 	const Plugin* PluginManager::getPlugin(const int index) const {
-		assert(this->impl);
+		assert(impl);
 		assert(index >= 0);
-		assert(index < this->getPluginCount());
+		assert(index < getPluginCount());
 
-		return this->impl->pluginArray[index];
+		return impl->pluginArray[index];
 	}
 }}

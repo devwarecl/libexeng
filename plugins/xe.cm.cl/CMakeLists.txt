@@ -15,6 +15,7 @@ set (xe_cm_cl_src
 	ComputeModuleFactoryCL.cpp ComputeModuleFactoryCL.hpp 
 	PlatformCL.cpp PlatformCL.hpp 
 	BufferCL.cpp BufferCL.hpp 
+	BufferCL_GL.cpp BufferCL_GL.hpp 
 	KernelCL.cpp KernelCL.hpp 
 	PluginCL.cpp PluginCL.hpp 
     DeviceCL.cpp DeviceCL.hpp 

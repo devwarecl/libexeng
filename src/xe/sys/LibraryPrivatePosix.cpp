@@ -20,58 +20,41 @@
 #include <stdexcept>
 #include <cassert>
 #include <sstream>
+#include <iostream>
 
 namespace xe { namespace sys {
 	
-	void Library::Private::load(const std::string &name) 
-	{
-		void *handle = nullptr;
-            
-		// Prevent the handle for the exeng shared object.
-		if (name.empty() == true) {
-			throw std::runtime_error("The module name cannot be a empty string");
-		}
-            
-		// Get the module handle
-		handle = ::dlopen(name.c_str(), RTLD_NOW | RTLD_LOCAL);
-            
+	void Library::Private::load(const std::string &name) {
+        assert(!name.empty());
+	
+		void *handle = ::dlopen(name.c_str(), RTLD_NOW | RTLD_LOCAL);
+        
 		// Report the error as a Exception
-		if (handle == NULL) {
-			std::string libname = std::string("./") + name;
-			handle = ::dlopen(libname.c_str(), RTLD_NOW | RTLD_LOCAL);
-                
-			if (handle == NULL) {
-				std::stringstream ss;
-                    
-				ss << "Library::Private::load(";
-				ss << libname << "): POSIX specific : ";
-				ss << ::dlerror();
-                    
-				throw std::runtime_error(ss.str());
-			}
+		if (!handle) {
+            std::cerr << "Error while loading module '" << name << "': " << ::dlerror() << std::endl;
 		}
             
+        assert(handle);
+        
 		this->name = name;
 		this->handle = handle;
 	}
         
-	void Library::Private::unload() 
-	{
-		if (this->handle != nullptr) {
-			::dlclose(this->handle);
-			this->handle = nullptr;
+	void Library::Private::unload() {
+		if (handle != nullptr) {
+			::dlclose(handle);
+			handle = nullptr;
 		}
 	}
         
-	FunctionPtr Library::Private::getFunctionPtr(const std::string &name) 
-	{
+	FunctionPtr Library::Private::getFunctionPtr(const std::string &name) {
 		void *fnptr = nullptr;
             
-		if (this->handle == nullptr) {
+		if (handle == nullptr) {
 			throw std::runtime_error("The library must be loaded first.");
 		}
             
-		fnptr = ::dlsym( this->handle, name.c_str() );
+		fnptr = ::dlsym( handle, name.c_str() );
             
 		if (fnptr == NULL) {
 			std::string strError = std::string("POSIX specific error: ") + ::dlerror();

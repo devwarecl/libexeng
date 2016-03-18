@@ -7,57 +7,61 @@
 
 namespace xe { namespace cm {
     
-    typedef std::map<xe::cm::ComputeModuleDesc, xe::cm::ComputeModuleFactory*> FactoryMap;
+    typedef std::map<ComputeModuleDesc, ComputeModuleFactory*> FactoryMap;
 
     struct ComputeManager::Private {
         FactoryMap factories;
     };
 
     ComputeManager::ComputeManager() {
-        this->impl = new ComputeManager::Private();        
+        impl = new ComputeManager::Private();        
     }
 
     ComputeManager::~ComputeManager() {
-        delete this->impl;
+        delete impl;
     }
     
     ComputeModulePtr ComputeManager::createComputeModule() {
-        assert(this->impl);
+        assert(impl);
         
 		ComputeModulePtr computeModule;
-
-        for (auto pair : this->impl->factories) {
+        
+        assert(impl->factories.size() > 0);
+        
+        for (auto pair : impl->factories) {
             computeModule = pair.second->create();
             break;
         }
+
+        assert(computeModule);
 
 		return computeModule;
     }
     
     ComputeModulePtr ComputeManager::createComputeModule(const ComputeModuleDesc &desc) {
-        assert(this->impl);
+        assert(impl);
         
-        return this->impl->factories[desc]->create();
+        return impl->factories[desc]->create();
     }
     
     void ComputeManager::addFactory(ComputeModuleFactory *factory) {
-        assert(this->impl);
+        assert(impl);
         
-        this->impl->factories[factory->getDesc()] = factory;
+        impl->factories[factory->getDesc()] = factory;
     }
     
     void ComputeManager::removeFactory(ComputeModuleFactory *factory) {
-        assert(this->impl);
+        assert(impl);
         
-        this->impl->factories.erase(factory->getDesc());
+        impl->factories.erase(factory->getDesc());
     }
     
     std::vector<ComputeModuleDesc> ComputeManager::enumerate() const {
-        assert(this->impl);
+        assert(impl);
         
         std::vector<ComputeModuleDesc> descs;
         
-        for (auto pair : this->impl->factories) {
+        for (auto pair : impl->factories) {
             descs.push_back(pair.first);
         }
         
