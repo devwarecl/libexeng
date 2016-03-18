@@ -24,6 +24,10 @@ namespace xe { namespace cm {
         
         virtual void enqueueWriteBuffer(Buffer *buffer, const int offset, const int writeSize, const void* data) = 0;
         
+        virtual void enqueueAcquire(const std::vector<xe::Object*> &objects) = 0;
+        
+        virtual void enqueueRelease(const std::vector<xe::Object*> &objects) = 0;
+        
         virtual void wait() = 0;
     };
     

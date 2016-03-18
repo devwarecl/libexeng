@@ -11,13 +11,15 @@ namespace xe { namespace cm {
 
     class ContextCL : public Context {
     public:
-        ContextCL(const cl::Device &device, cl_context_properties *properties);
+        ContextCL(const cl::Device &device, const cl::Platform &platform, xe::gfx::GraphicsDriver *graphicsDriver);
         
         ~ContextCL();
         
         virtual ComputeLanguage::Enum getLanguage() const override;
         
         virtual BufferPtr createBuffer(Queue *queue, const int size, const void *data) override;
+        
+        virtual BufferPtr createBuffer(Buffer *graphicsBuffer) override;
         
         virtual ProgramModulePtr createProgramModule(const std::string &source) override;
         
@@ -26,6 +28,8 @@ namespace xe { namespace cm {
         virtual KernelPtr createKernel(const Program* program, const std::string &kernel_name) override;
         
         virtual QueuePtr createQueue() override;
+        
+        virtual xe::gfx::ImagePtr createImage(xe::gfx::Texture *texture) override;
         
         cl::Context& getWrapped() {
             return context;
@@ -36,8 +40,9 @@ namespace xe { namespace cm {
         }
         
     private:
-        cl::Device device;
         cl::Context context;
+        cl::Device device;
+        xe::gfx::GraphicsDriver *graphicsDriver = nullptr;
     };    
 }}
 

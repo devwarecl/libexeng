@@ -2,11 +2,22 @@
 #include "MeshManipulator.hpp"
 
 #include <cassert>
+#include <xe/gfx/Mesh.hpp>
+#include <xe/gfx/MeshSubset.hpp>
 
 std::string kernel_src = R"(
-    __kernel void manipulateMesh(__global __write_only int* out, __global __read_only int* in1, __global __read_only int* in2) {
+    typedef struct {
+        float3 position;
+        float3 normal;
+        float2 texcoord;
+    } 
+    vertex_t;
+    
+    // Just scales the mesh position by a small margin
+    __kernel void manipulateMesh(__global __read_write vertex_t* vertices) {
         const int i = get_global_id(0);
-        out[i] = in1[i] + in2[i];
+        
+        vertices[i].position *= 1.00001f;
     }
 )";
 
@@ -28,36 +39,17 @@ MeshManipulator::~MeshManipulator() {}
 
 void MeshManipulator::manipulate(xe::gfx::Mesh *mesh) {
 	assert(mesh);
-
-	// prepare test data
-    const int SIZE = 10;
-    const int ARRAY_SIZE = SIZE * sizeof(int);
+    	
+	for (int i=0; i<mesh->getSubsetCount(); i++) {
+        xe::gfx::MeshSubset *subset = mesh->getSubset(i);
+        xe::Buffer *buffer = subset->getBuffer(0);
         
-    int out_array[SIZE] = {};
-    int in1_array[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    int in2_array[] = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+        // prepare kernel for execution
+        manipulateMeshKernel->setArg(0, buffer);
         
-    xe::BufferPtr out = context->createBuffer(queue.get(), ARRAY_SIZE, nullptr);
-    xe::BufferPtr in1 = context->createBuffer(queue.get(), ARRAY_SIZE, in1_array);
-    xe::BufferPtr in2 = context->createBuffer(queue.get(), ARRAY_SIZE, in2_array);
-        
-    // prepare execution of the kernel
-    manipulateMeshKernel->setArg(0, out.get());
-    manipulateMeshKernel->setArg(1, in1.get());
-    manipulateMeshKernel->setArg(2, in2.get());
-        
-    // execute kernel
-    queue->enqueueKernel(manipulateMeshKernel.get(), SIZE);
-        
-    // read back the results
-    queue->enqueueReadBuffer(out.get(), 0, ARRAY_SIZE, out_array);
-        
-    // show them in console
-    for (int value : out_array) {
-        std::cout << value << " ";
-    }
-        
-    std::cout << std::endl;
+        // execute the kernel
+        queue->enqueueKernel(manipulateMeshKernel.get(), subset->getVertexCount());
+	}
 }
 
 xe::cm::Device* MeshManipulator::findDevice() const {

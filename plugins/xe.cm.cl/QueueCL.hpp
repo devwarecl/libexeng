@@ -10,7 +10,7 @@
 namespace xe { namespace cm {
     class QueueCL : public Queue {
     public:
-        QueueCL(cl::Context &context);
+        QueueCL(cl::Context &context, xe::gfx::GraphicsDriver *graphicsDriver=nullptr);
 
         virtual ~QueueCL();
 
@@ -24,6 +24,10 @@ namespace xe { namespace cm {
         
         virtual void enqueueWriteBuffer(Buffer *buffer, const int offset, const int writeSize, const void* data) override;
         
+        virtual void enqueueAcquire(const std::vector<xe::Object*> &objects) override;
+        
+        virtual void enqueueRelease(const std::vector<xe::Object*> &objects) override;
+        
         virtual void wait() override;
 
         cl::CommandQueue& getWrapped() {
@@ -35,9 +39,13 @@ namespace xe { namespace cm {
         }
         
     private:
+        std::vector<cl::Memory> castObjects(const std::vector<xe::Object*> &objects);
+        
+    private:
         cl::Context &context;
         cl::CommandQueue queue;
         cl::Event event;
+        xe::gfx::GraphicsDriver *graphicsDriver;
     };
 }}
 

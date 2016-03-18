@@ -2,18 +2,58 @@
 #include "ContextCL.hpp"
 
 #include "BufferCL.hpp"
+#include "BufferCL_GL.hpp"
 #include "DeviceCL.hpp"
 #include "KernelCL.hpp"
 #include "PluginCL.hpp"
 #include "ProgramCL.hpp"
 #include "ProgramModuleCL.hpp"
 #include "QueueCL.hpp"
+#include "ImageCL.hpp"
+
+#include <vector>
 
 namespace xe { namespace cm {
-
-    ContextCL::ContextCL(const cl::Device &device_, cl_context_properties *properties) {
-        this->device = device_;
-        this->context = cl::Context(device, properties);
+    
+    ContextCL::ContextCL(const cl::Device &device_, const cl::Platform &platform, xe::gfx::GraphicsDriver *graphicsDriver_) {
+        
+        std::vector<cl_context_properties> properties = {
+            CL_CONTEXT_PLATFORM, (cl_context_properties)platform()
+        };
+        
+        if (graphicsDriver) {
+            assert(graphicsDriver->getBackend() == xe::gfx::GraphicsBackend::OpenGL_Core);
+            
+            auto backend = graphicsDriver->getOpenGLBackend();
+            
+            assert(backend);
+            
+            // We should check first for the cl_khr_gl_sharing extension.
+#if defined (EXENG_WINDOWS)
+            properties.push_back(CL_GL_CONTEXT_KHR);
+            properties.push_back((cl_context_properties)wglGetCurrentContext());
+            
+            properties.push_back(CL_WGL_HDC_KHR);
+            properties.push_back((cl_context_properties)wglGetCurrentDC());
+            
+#elif defined (EXENG_UNIX)
+            properties.push_back(CL_GL_CONTEXT_KHR);
+            properties.push_back((cl_context_properties)backend->getGLContext());
+            
+            properties.push_back(CL_GLX_DISPLAY_KHR);
+            properties.push_back((cl_context_properties)backend->getOSContext());
+            
+#elif defined (EXENG_MACOS)
+            properties.push_back(CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE);
+            properties.push_back(cl_context_properties)CGLGetShareGroup(CGLGetCurrentContext());
+#endif
+        }
+        
+        properties.push_back(0);
+    
+        device = device_;
+        graphicsDriver = graphicsDriver_;
+        context = cl::Context(device, properties.data());
     }
     
     ContextCL::~ContextCL() {}
@@ -37,6 +77,17 @@ namespace xe { namespace cm {
         return buffer;
     }
     
+    BufferPtr ContextCL::createBuffer(Buffer *graphicsBuffer) {
+        assert(graphicsBuffer);
+        assert(graphicsDriver);
+        
+        cl_GLuint bufferId = graphicsBuffer->getHandle();
+        
+        BufferPtr buffer = std::make_unique<BufferCL_GL>(context, bufferId);
+        
+        return buffer;
+    }
+    
     ProgramModulePtr ContextCL::createProgramModule(const std::string &source) {
         ProgramModulePtr module = std::make_unique<ProgramModuleCL>(source);
         
@@ -51,6 +102,8 @@ namespace xe { namespace cm {
     
     KernelPtr ContextCL::createKernel(const Program* program, const std::string &kernel_name) {
         KernelPtr kernel = std::make_unique<KernelCL> (
+            graphicsDriver,
+            context,
             static_cast<const ProgramCL*>(program)->getWrapped(),
             kernel_name
         );
@@ -62,5 +115,15 @@ namespace xe { namespace cm {
         QueuePtr queue = std::make_unique<QueueCL>(context);
         
         return queue;
+    }
+    
+    xe::gfx::ImagePtr ContextCL::createImage(gfx::Texture *texture) {
+        assert(texture);
+        
+        cl_GLuint textureId = texture->getHandle();
+        
+        xe::gfx::ImagePtr image = std::make_unique<ImageCL>(context, textureId);
+        
+        return image;
     }
 }}

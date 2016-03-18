@@ -38,50 +38,15 @@ namespace xe { namespace cm {
     }
     
     ContextPtr DeviceCL::createContext() {
-        cl_context_properties properties[] = {
-            CL_CONTEXT_PLATFORM, (cl_context_properties)platform(),
-            0, 0
-        };
-        
-        ContextPtr context = std::make_unique<ContextCL>(device, properties);
+        ContextPtr context = std::make_unique<ContextCL>(device, platform, nullptr);
         
         return context;
     }
     
     ContextPtr DeviceCL::createContext(xe::gfx::GraphicsDriver *driver) {
 		assert(driver);
-
-        std::vector<cl_context_properties> properties = {
-            CL_CONTEXT_PLATFORM, (cl_context_properties)platform()
-        };
         
-        if (driver->getBackend() == xe::gfx::GraphicsBackend::OpenGL_Core) {
-            // We should first check for cl_khr_gl_sharing extension.
-#if defined (EXENG_WINDOWS)
-            properties.push_back(CL_GL_CONTEXT_KHR);
-            properties.push_back((cl_context_properties)wglGetCurrentContext());
-            
-            properties.push_back(CL_WGL_HDC_KHR);
-            properties.push_back((cl_context_properties)wglGetCurrentDC());
-            
-#elif defined (EXENG_UNIX)
-            properties.push_back(CL_GL_CONTEXT_KHR);
-            properties.push_back((cl_context_properties)glXGetCurrentContext());
-            
-            properties.push_back(CL_GLX_DISPLAY_KHR);
-            properties.push_back((cl_context_properties)glXGetCurrentDisplay());
-            
-#elif defined (EXENG_MACOS)
-            properties.push_back(CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE);
-            properties.push_back(cl_context_properties)CGLGetShareGroup(CGLGetCurrentContext());
-#endif
-        } else {
-            EXENG_THROW_EXCEPTION("DeviceCL::createContext: Unsupported graphics backend.");
-        }
-        
-        properties.push_back(0);
-        
-        ContextPtr context = std::make_unique<ContextCL>(device, properties.data());
+        ContextPtr context = std::make_unique<ContextCL>(device, platform, driver);
         
         return context;
     }

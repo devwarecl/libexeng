@@ -11,6 +11,8 @@
 #include <xe/cm/Queue.hpp>
 #include <xe/cm/ComputeLanguage.hpp>
 #include <xe/cm/Program.hpp>
+#include <xe/gfx/Image.hpp>
+#include <xe/gfx/Texture.hpp>
 
 namespace xe { namespace cm {
     class EXENGAPI Context : public Object {
@@ -20,6 +22,8 @@ namespace xe { namespace cm {
         virtual ComputeLanguage::Enum getLanguage() const = 0;
         
         virtual BufferPtr createBuffer(Queue *queue, const int size, const void *data = nullptr) = 0;
+        
+        virtual BufferPtr createBuffer(Buffer *graphicsBuffer) = 0;
         
         virtual ProgramModulePtr createProgramModule(const std::string &source) = 0;
         
@@ -44,7 +48,9 @@ namespace xe { namespace cm {
         
         virtual KernelPtr createKernel(const Program* program, const std::string &kernel_name) = 0;
         
-        virtual QueuePtr createQueue() = 0;        
+        virtual QueuePtr createQueue() = 0;
+        
+        virtual xe::gfx::ImagePtr createImage(xe::gfx::Texture *texture) = 0;
     };
 
     typedef std::unique_ptr<Context> ContextPtr;    

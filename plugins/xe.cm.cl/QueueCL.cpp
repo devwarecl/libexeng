@@ -3,10 +3,14 @@
 
 #include "KernelCL.hpp"
 #include "BufferCL.hpp"
+#include "BufferCL_GL.hpp"
+#include "ImageCL.hpp"
+
+#include <xe/gfx/GraphicsDriver.hpp>
 
 namespace xe { namespace cm {
 
-    QueueCL::QueueCL(cl::Context &context_) : context(context_) {
+    QueueCL::QueueCL(cl::Context &context_, xe::gfx::GraphicsDriver *graphicsDriver_) : context(context_), graphicsDriver(graphicsDriver_) {
         cl::CommandQueue queue = cl::CommandQueue(context, 0);
         
         this->queue = queue;
@@ -63,5 +67,42 @@ namespace xe { namespace cm {
         
     void QueueCL::wait() {
         event.wait();
+    }
+    
+    std::vector<cl::Memory> QueueCL::castObjects(const std::vector<xe::Object*> &objects) {
+        std::vector<cl::Memory> buffers;
+        
+        for (xe::Object *object : objects) {
+        
+            if (object->getTypeInfo() == TypeId<ImageCL>()) {
+                auto image = static_cast<ImageCL*>(object);
+                buffers.push_back(image->getWrapped());
+                
+            } else if (object->getTypeInfo() == TypeId<BufferCL_GL>()) {
+                auto buffer = static_cast<BufferCL_GL*>(object);
+                buffers.push_back(buffer->getWrapped());
+                
+            } else {
+                assert(false);
+            }
+        }
+    
+        return buffers;
+    }
+    
+    void QueueCL::enqueueAcquire(const std::vector<xe::Object*> &objects) {
+        assert(graphicsDriver);
+        
+        auto buffers = this->castObjects(objects);
+        
+        queue.enqueueAcquireGLObjects(&buffers, nullptr, &event);
+    }
+        
+    void QueueCL::enqueueRelease(const std::vector<xe::Object*> &objects) {
+        assert(graphicsDriver);
+        
+        auto buffers = this->castObjects(objects);
+        
+        queue.enqueueReleaseGLObjects(&buffers, nullptr, &event);
     }
 }}

@@ -22,6 +22,7 @@ set (xe_cm_cl_src
 	QueueCL.cpp QueueCL.hpp 
 	ProgramCL.cpp ProgramCL.hpp 
 	ProgramModuleCL.cpp ProgramModuleCL.hpp 
+	ImageCL.cpp ImageCL.hpp 
 )
 
 source_group(\\ FILES ${xe_cm_cl_src})
