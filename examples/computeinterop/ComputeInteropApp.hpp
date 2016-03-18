@@ -47,6 +47,7 @@ private:
 	xe::sg::SceneRendererPtr sceneRenderer;
 	xe::gfx::MeshManager *meshManager = nullptr;
 	xe::gfx::TextureManager *textureManager = nullptr;
+	xe::cm::ComputeManager *computeManager = nullptr;
 	xe::input2::IInputManager *inputManager = nullptr;
 	xe::input2::KeyboardStatus *keyboardStatus = nullptr;
 };

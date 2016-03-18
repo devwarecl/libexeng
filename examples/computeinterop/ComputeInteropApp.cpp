@@ -18,6 +18,8 @@ void ComputeInteropApp::initialize() {
 	textureManager = this->getGraphicsManager()->getTextureManager();
 	meshManager = this->getGraphicsManager()->getMeshManager();
 
+    computeManager = this->getComputeManager();
+
 	// intialize graphics driver
 	graphicsDriver = this->createGraphicsDriver();
 	graphicsDriver->initialize();
@@ -47,7 +49,7 @@ void ComputeInteropApp::initialize() {
 	sceneRenderer->setScene(scene.get());
 
 	// create the Mesh Manipulator
-	meshManipulator = std::make_unique<MeshManipulator>(this->getComputeManager()->createComputeModule(), graphicsDriver.get());
+	meshManipulator = std::make_unique<MeshManipulator>(computeManager->createComputeModule(), graphicsDriver.get());
 
 	running = true;
 }

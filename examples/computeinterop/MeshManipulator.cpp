@@ -22,8 +22,9 @@ std::string kernel_src = R"(
 )";
 
 MeshManipulator::MeshManipulator(xe::cm::ComputeModulePtr computeModule_, xe::gfx::GraphicsDriver *graphicsDriver) {
+    assert(computeModule_);
 	assert(graphicsDriver);
-
+	
 	computeModule = std::move(computeModule_);
 	
 	xe::cm::Device* device = this->findDevice();
@@ -42,13 +43,20 @@ void MeshManipulator::manipulate(xe::gfx::Mesh *mesh) {
     	
 	for (int i=0; i<mesh->getSubsetCount(); i++) {
         xe::gfx::MeshSubset *subset = mesh->getSubset(i);
-        xe::Buffer *buffer = subset->getBuffer(0);
+        assert(subset);
         
+        xe::Buffer *buffer = subset->getBuffer(0);
+        assert(buffer);
+        
+        xe::BufferPtr computeBuffer = context->createBuffer(buffer);
+        break;
         // prepare kernel for execution
-        manipulateMeshKernel->setArg(0, buffer);
+        manipulateMeshKernel->setArg(0, computeBuffer.get());
         
         // execute the kernel
+        queue->enqueueAcquire(computeBuffer.get());
         queue->enqueueKernel(manipulateMeshKernel.get(), subset->getVertexCount());
+        queue->enqueueRelease(computeBuffer.get());
 	}
 }
 
@@ -56,6 +64,8 @@ xe::cm::Device* MeshManipulator::findDevice() const {
     xe::cm::Device *device = nullptr;
     
     // find device
+    assert(this);
+    assert(computeModule);
     auto platforms = computeModule->enumeratePlatforms();
 
     std::cout << "Found " << platforms.size() << " platform(s)." << std::endl;
