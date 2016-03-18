@@ -21,12 +21,23 @@ namespace xe { namespace cm {
             CL_CONTEXT_PLATFORM, (cl_context_properties)platform()
         };
         
-        if (graphicsDriver) {
-            assert(graphicsDriver->getBackend() == xe::gfx::GraphicsBackend::OpenGL_Core);
+        if (graphicsDriver_) {
+            assert(graphicsDriver_->getBackend() == xe::gfx::GraphicsBackend::OpenGL_Core);
             
-            auto backend = graphicsDriver->getOpenGLBackend();
+            auto backend = graphicsDriver_->getOpenGLBackend();
             
             assert(backend);
+            
+            const std::string extensions = device_.getInfo<CL_DEVICE_EXTENSIONS>();
+            const std::int32_t position = extensions.find("cl_khr_gl_sharing");
+            const bool found = position != std::string::npos;
+            
+            std::cout << "OpenCL extensions: " << std::endl;
+            std::cout << extensions << std::endl;
+            
+            if (!found) {
+                std::cerr << "The extension 'cl_khr_gl_sharing' wasn't found. I will continue anyway." << std::endl;
+            }
             
             // We should check first for the cl_khr_gl_sharing extension.
 #if defined (EXENG_WINDOWS)

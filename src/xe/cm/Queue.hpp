@@ -28,6 +28,18 @@ namespace xe { namespace cm {
         
         virtual void enqueueRelease(const std::vector<xe::Object*> &objects) = 0;
         
+        virtual void enqueueAcquire(xe::Object *object) {
+            std::vector<xe::Object*> objects = {object};
+            
+            this->enqueueAcquire(objects);
+        }
+        
+        virtual void enqueueRelease(xe::Object *object) {
+            std::vector<xe::Object*> objects = {object};
+            
+            this->enqueueRelease(objects);
+        }
+        
         virtual void wait() = 0;
     };
     

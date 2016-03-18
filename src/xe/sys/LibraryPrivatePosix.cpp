@@ -48,19 +48,15 @@ namespace xe { namespace sys {
 	}
         
 	FunctionPtr Library::Private::getFunctionPtr(const std::string &name) {
-		void *fnptr = nullptr;
-            
-		if (handle == nullptr) {
-			throw std::runtime_error("The library must be loaded first.");
+        assert(handle);
+	
+		void *fnptr = ::dlsym( handle, name.c_str());
+		if (!fnptr) {
+            std::cerr << "Error while loading symbol '" << name << "':" << ::dlerror() << std::endl;
 		}
-            
-		fnptr = ::dlsym( handle, name.c_str() );
-            
-		if (fnptr == NULL) {
-			std::string strError = std::string("POSIX specific error: ") + ::dlerror();
-			throw std::runtime_error(strError);
-		}
-            
+		
+		assert(fnptr);
+        
 		return fnptr;
 	}
 }}
