@@ -1,4 +1,6 @@
 
+#if 0
+
 #ifndef __EXENG_RAYTRACER_RENDERERS_HARDWARERENDERERPRIVATE_HPP__
 #define __EXENG_RAYTRACER_RENDERERS_HARDWARERENDERERPRIVATE_HPP__
 
@@ -16,10 +18,10 @@
 #include <xe/gfx/MaterialLibrary.hpp>
 #include <xe/sg/Ray.hpp>
 #include <xe/sg/Camera.hpp>
-#include <xe/sg/SceneNodeData.hpp>
+#include <xe/sg/Renderable.hpp>
 #include <xe/sg/AssetsLibrary.hpp>
 
-#include "xe.rt/samplers/Sampler.hpp"
+#include "Sampler.hpp"
 
 namespace xe { namespace raytracer { namespace renderers {
 
@@ -148,3 +150,6 @@ namespace xe { namespace raytracer { namespace renderers {
 }}}
 
 #endif  // __EXENG_RAYTRACER_RENDERERS_HARDWARERENDERER_HPP__
+
+#endif
+

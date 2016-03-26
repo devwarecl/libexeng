@@ -1,4 +1,6 @@
 
+#if 0
+
 #include "HardwareRenderer.hpp"
 #include "HardwareRendererPrivate.hpp"
 
@@ -39,3 +41,5 @@ namespace xe { namespace raytracer { namespace renderers {
         this->impl->computeImage();
     }
 }}}
+
+#endif

@@ -21,7 +21,7 @@ namespace xe {
     public:
 		ApplicationRT();
 		
-		virtual ~ApplicationRT() {};
+		virtual ~ApplicationRT() {}
         
         virtual int run(int argc, char **argv) override;
 

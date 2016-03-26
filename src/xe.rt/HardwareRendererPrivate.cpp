@@ -1,4 +1,6 @@
 
+#if 0
+
 #include "HardwareRendererPrivate.hpp"
 
 #include <iostream>
@@ -597,3 +599,5 @@ namespace xe { namespace raytracer { namespace renderers {
 		event.wait();
     }
 }}}
+
+#endif

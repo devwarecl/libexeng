@@ -1,14 +1,16 @@
 
+#if 0
+
 #ifndef __EXENG_RAYTRACER_RENDERERS_HARDWARERENDERER_HPP__
 #define __EXENG_RAYTRACER_RENDERERS_HARDWARERENDERER_HPP__
 
 #include <memory>
 #include <xe/gfx/MaterialLibrary.hpp>
 #include <xe/sg/AssetsLibrary.hpp>
-#include <xe/sg/SceneNodeData.hpp>
+#include <xe/sg/Renderable.hpp>
 #include <xe/sg/SceneRendererGeneric.hpp>
 
-#include "xe.rt/samplers/Sampler.hpp"
+#include "Sampler.hpp"
 
 namespace xe { namespace raytracer { namespace renderers {
 
@@ -39,4 +41,6 @@ namespace xe { namespace raytracer { namespace renderers {
     typedef std::unique_ptr<HardwareRenderer> HardwareRendererPtr;
 }}}
 
-#endif  // __EXENG_RAYTRACER_RENDERERS_HARDWARERENDERER_HPP__
+#endif  
+
+#endif
