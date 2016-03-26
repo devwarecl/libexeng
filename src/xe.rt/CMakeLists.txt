@@ -27,6 +27,9 @@ set (BaseFiles
     HardwareRenderer.hpp			HardwareRenderer.cpp
 	HardwareRendererPrivate.hpp     HardwareRendererPrivate.cpp
 	SoftwareRenderer.hpp			SoftwareRenderer.cpp
+    
+    PerspectiveCamera.hpp           PerspectiveCamera.cpp
+    PhongRenderer.hpp               PhongRenderer.cpp
 )
 
 ADD_EXECUTABLE (xe.rt ${BaseFiles})
