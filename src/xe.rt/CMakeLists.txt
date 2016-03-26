@@ -19,7 +19,6 @@ link_directories(${OpenGL_LIBRARY_DIR})
 # Grouping
 set (BaseFiles
 	RayTracerApp.hpp                RayTracerApp.cpp 
-    RayTracerSceneRenderer.hpp      RayTracerSceneRenderer.cpp 
     SceneLoader.hpp                 SceneLoader.cpp 
     
     Sampler.hpp                     Sampler.cpp 
