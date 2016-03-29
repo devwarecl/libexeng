@@ -2,21 +2,33 @@
 #include "SoftwarePipeline.hpp"
 
 #include <xe/gfx/GraphicsDriver.hpp>
+#include <xe/gfx/Mesh.hpp>
+#include <xe/gfx/Vertex.hpp>
+#include <xe/gfx/MeshSubsetGeneratorPlane.hpp>
 #include <xe/sg/Light.hpp>
 #include <xe/sg/Camera.hpp>
 
 namespace xe { namespace sg {
     
     struct SoftwarePipeline::Private {
-        xe::gfx::GraphicsDriver *driver = nullptr;
-        xe::gfx::Texture *texture = nullptr;
         xe::Matrix4f model = xe::identity<float, 4>();
         xe::Matrix4f view = xe::identity<float, 4>();
         xe::Matrix4f proj = xe::identity<float, 4>();
         xe::Vector4f color = xe::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         
-        xe::Vector4ub *surface = nullptr;
-    
+        xe::gfx::GraphicsDriver *driver = nullptr;
+        xe::gfx::TexturePtr screenTexture;
+        xe::gfx::MeshPtr screenMesh;
+        xe::gfx::MaterialPtr screenMaterial;
+        xe::gfx::MaterialFormat screenMF;
+        xe::gfx::VertexFormat screenVF;
+        xe::gfx::ShaderProgramPtr screenShader;
+
+        xe::Vector4ub *renderTargetSurface = nullptr;
+
+        std::vector<xe::sg::Ray> rays;
+        std::vector<xe::sg::IntersectInfo> synthetizationData;
+        
         int computeOffset(const xe::Vector2i &pixel, const xe::Vector2i &size) {
 		    assert(pixel.x >= 0);
 		    assert(pixel.y >= 0);
@@ -107,6 +119,64 @@ namespace xe { namespace sg {
 
         impl = new SoftwarePipeline::Private();
         impl->driver = driver;
+
+        // create the support objects
+        std::vector<xe::gfx::MaterialAttrib> mfAttribs = {};
+        std::vector<xe::gfx::MaterialLayerDesc> mfLayerDescs = {{"screenTexture"}};
+        impl->screenMF = xe::gfx::MaterialFormat(mfAttribs, mfLayerDescs);
+
+        impl->screenTexture = impl->driver->createTexture (
+            driver->getDisplayMode().size, 
+            xe::gfx::PixelFormat::R8G8B8A8
+        );
+
+        impl->screenMaterial = std::make_unique<xe::gfx::Material>(&impl->screenMF);
+        impl->screenMaterial->getLayer(0)->setTexture(impl->screenTexture.get());
+
+        impl->screenVF.fields[0] = {xe::gfx::VertexAttrib::Position, 2, xe::DataType::Float32};
+        impl->screenVF.fields[1] = {xe::gfx::VertexAttrib::TexCoord, 2, xe::DataType::Float32};
+
+        xe::gfx::MeshSubsetGeneratorPlane generator(driver);
+        xe::gfx::MeshSubsetPtr subset = generator.generate({&impl->screenVF});
+        subset->setMaterial(impl->screenMaterial.get());
+        impl->screenMesh = std::make_unique<xe::gfx::Mesh>(std::move(subset));
+
+        // set the custom shader
+        std::string vshader = R"(
+#version 330
+layout(location=0) 
+in vec2 coord;
+
+layout(location=1) 
+in vec2 tex_coord;
+
+out vec2 uv;
+
+void main() {
+    gl_Position = coord;
+    uv = tex_coord;
+} 
+        )";
+
+        std::string fshader = R"(
+#version 330
+
+in 
+vec2 uv;
+
+out 
+vec4 color;
+
+uniform 
+sampler2D screenTexture;
+
+void main() {
+    color = texture(screenTexture, uv);    
+}
+        )";
+
+        impl->screenShader = impl->driver->getModernModule()->createShaderProgram(vshader, fshader);
+        driver->getModernModule()->setShaderProgram(impl->screenShader.get());
     }
     
     SoftwarePipeline::~SoftwarePipeline() {
