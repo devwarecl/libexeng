@@ -16,13 +16,13 @@
 #include <boost/checked_delete.hpp>
 
 #include <xe/sg/Camera.hpp>
-#include <xe/sg/Renderer.hpp>
+#include <xe/sg/Pipeline.hpp>
 
 namespace xe { namespace sg {
     
     Camera::~Camera() {}
 
-	void Camera::renderWith(xe::sg::Renderer *renderer) {
+	void Camera::renderWith(xe::sg::Pipeline *renderer) {
 		renderer->render(this);
 	}
 }}

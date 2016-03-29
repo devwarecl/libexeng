@@ -61,7 +61,7 @@ namespace xe { namespace gfx {
         
         virtual TypeInfo getTypeInfo() const override;
 		
-		virtual void renderWith(xe::sg::Renderer *renderer) override;
+		virtual void renderWith(xe::sg::Pipeline *renderer) override;
 
     private:
         struct Private;

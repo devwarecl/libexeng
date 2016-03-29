@@ -81,6 +81,7 @@ ENDIF ()
 
 IF (XE_RT)
     ADD_SUBDIRECTORY (src/xe.rt)
+	ADD_SUBDIRECTORY (src/xe.sg.sw)
 ENDIF ()
 
 # Add example programs

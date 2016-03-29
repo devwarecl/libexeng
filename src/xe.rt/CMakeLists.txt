@@ -26,19 +26,15 @@ set (BaseFiles
     
     HardwareRenderer.hpp			HardwareRenderer.cpp
 	HardwareRendererPrivate.hpp     HardwareRendererPrivate.cpp
-	SoftwareRenderer.hpp			SoftwareRenderer.cpp
-    
+	
     PerspectiveCamera.hpp           PerspectiveCamera.cpp
     PhongRenderer.hpp               PhongRenderer.cpp
 )
 
-ADD_EXECUTABLE (xe.rt ${BaseFiles})
+add_executable (xe.rt ${BaseFiles})
 
-SET_PROPERTY (TARGET xe.rt PROPERTY CXX_STANDARD 14)
-IF (WIN32)
-    SET_PROPERTY(TARGET xe.rt PROPERTY RUNTIME_OUTPUT_DIRECTORY ${DEST_BIN_DIR})
-ENDIF ()
+set_property (TARGET xe.rt PROPERTY CXX_STANDARD 14)
 
-TARGET_LINK_LIBRARIES(xe.rt xe xe.main ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(xe.rt xe xe.main xe.sg.sw ${OPENGL_LIBRARIES} ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
-SOURCE_GROUP (\\ FILES ${BaseFiles})
+source_group (\\ FILES ${BaseFiles})

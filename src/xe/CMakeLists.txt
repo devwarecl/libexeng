@@ -157,7 +157,7 @@ set (InputFiles ${InputFiles_hpp} ${InputFiles_cpp})
 
 set (ScenegraphFiles_cpp
 	sg/Renderable.cpp
-	sg/Renderer.cpp
+	sg/Pipeline.cpp
     sg/SceneNode.cpp 
     sg/Scene.cpp
 	sg/SceneNodeAnimator.cpp
@@ -176,7 +176,7 @@ set (ScenegraphFiles_cpp
 set (ScenegraphFiles_hpp
 	sg/Forward.hpp 
 	sg/Renderable.hpp
-	sg/Renderer.hpp
+	sg/Pipeline.hpp
     sg/SceneNode.hpp      
     sg/Scene.hpp          
     sg/Camera.hpp         

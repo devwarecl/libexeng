@@ -32,7 +32,7 @@ namespace xe { namespace sg {
 
 		virtual Rectf getViewport() const = 0;
 
-		virtual void renderWith(xe::sg::Renderer *renderer) override;
+		virtual void renderWith(xe::sg::Pipeline *renderer) override;
     };
 
 	typedef std::unique_ptr<Camera> CameraPtr;

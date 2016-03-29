@@ -9,7 +9,7 @@
 #include <xe/gfx/MaterialLibrary.hpp>
 #include <xe/sg/Scene.hpp>
 #include <xe/sg/SceneRenderer.hpp>
-#include <xe/sg/Renderer.hpp>
+#include <xe/sg/Pipeline.hpp>
 
 #include "PerspectiveCamera.hpp"
 #include "PhongRenderer.hpp"

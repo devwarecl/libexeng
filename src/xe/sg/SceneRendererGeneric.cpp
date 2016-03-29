@@ -8,7 +8,7 @@
 
 namespace xe { namespace sg {
 
-	SceneRendererGeneric::SceneRendererGeneric(xe::sg::Renderer *renderer) {
+	SceneRendererGeneric::SceneRendererGeneric(xe::sg::Pipeline *renderer) {
 		this->setRenderer(renderer);
 	}
 
@@ -25,15 +25,15 @@ namespace xe { namespace sg {
 		return this->scene;
 	}
 
-	xe::sg::Renderer* SceneRendererGeneric::getRenderer() {
+	xe::sg::Pipeline* SceneRendererGeneric::getRenderer() {
 		return this->renderer;
 	}
 
-	const xe::sg::Renderer* SceneRendererGeneric::getRenderer() const {
+	const xe::sg::Pipeline* SceneRendererGeneric::getRenderer() const {
 		return this->renderer;
 	}
 
-	void SceneRendererGeneric::setRenderer(xe::sg::Renderer* renderer) {
+	void SceneRendererGeneric::setRenderer(xe::sg::Pipeline* renderer) {
 		this->renderer = renderer;
 	}
 
@@ -56,7 +56,7 @@ namespace xe { namespace sg {
 
 		transformStack->push(node->getTransform());
 
-		xe::sg::Renderer *renderer = this->getRenderer();
+		xe::sg::Pipeline *renderer = this->getRenderer();
 		renderer->setModel(transformStack->top());
 
 		xe::sg::Renderable *renderable = node->getRenderable();

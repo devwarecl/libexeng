@@ -8,11 +8,11 @@
 #include <xe/gfx/ShaderProgram.hpp>
 #include <xe/gfx/Material.hpp>
 #include <xe/gfx/VertexFormat.hpp>
-#include <xe/sg/Renderer.hpp>
+#include <xe/sg/Pipeline.hpp>
 
 namespace xe { namespace rt {
     
-    class PhongRenderer : public xe::sg::Renderer {
+    class PhongRenderer : public xe::sg::Pipeline {
     public:
         explicit PhongRenderer(xe::gfx::GraphicsDriver *graphicsDriver);
     

@@ -12,7 +12,7 @@
  */
 
 #include <xe/sg/Light.hpp>
-#include <xe/sg/Renderer.hpp>
+#include <xe/sg/Pipeline.hpp>
 
 #include <cassert>
 #include <boost/checked_delete.hpp>
@@ -131,7 +131,7 @@ namespace xe{ namespace sg {
         return impl->specular;
     }
 
-	void Light::renderWith(Renderer *renderer) {
+	void Light::renderWith(Pipeline *renderer) {
 		renderer->render(this);
 	}
 }}

@@ -243,7 +243,7 @@ private:
 	xe::sg::SceneNode *boxNode = nullptr;
 
 	xe::sg::SceneRendererPtr sceneRenderer;
-	xe::sg::RendererPtr renderer;
+	xe::sg::PipelinePtr renderer;
 };
 
 int main(int argc, char **argv) {

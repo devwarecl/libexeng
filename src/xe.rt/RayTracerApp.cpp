@@ -8,6 +8,7 @@
 #include <xe/gfx/MaterialLibraryImpl.hpp>
 #include <xe/gfx/MeshSubsetGeneratorBox.hpp>
 #include <xe/sg/SceneRendererGeneric.hpp>
+#include <xe.sg.sw/SoftwarePipeline.hpp>
 
 namespace xe { namespace rt {
 

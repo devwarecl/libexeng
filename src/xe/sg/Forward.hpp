@@ -19,7 +19,7 @@ namespace xe { namespace sg {
 	class EXENGAPI Light;
 
 	class EXENGAPI Renderable;
-	class EXENGAPI Renderer;
+	class EXENGAPI Pipeline;
 }}
 
 #endif

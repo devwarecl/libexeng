@@ -47,7 +47,7 @@ namespace xe { namespace sg {
 			
 		virtual TypeInfo getTypeInfo() const;
 
-		virtual void renderWith(xe::sg::Renderer *renderer) override;
+		virtual void renderWith(xe::sg::Pipeline *renderer) override;
 	};
 
 	typedef std::unique_ptr<Geometry> GeometryPtr;

@@ -87,7 +87,7 @@ namespace xe { namespace sg {
         xe::Vector4f getDiffuse() const;
         xe::Vector4f getSpecular() const;
         
-		virtual void renderWith(Renderer *renderer);
+		virtual void renderWith(Pipeline *renderer);
 
     private:
         struct Private;
