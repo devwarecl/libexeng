@@ -48,7 +48,7 @@ namespace xe { namespace sys {
 		
 	bool Library::isValid() const {
 		assert(impl);
-		return impl->handle;
+		return impl->handle?true:false;
 	}
     
 	std::string Library::getFileName() const {

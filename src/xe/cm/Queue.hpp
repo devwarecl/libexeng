@@ -5,6 +5,7 @@
 #define __xe_cm_queue_hpp__
 
 #include <memory>
+#include <vector>
 #include <xe/Vector.hpp>
 #include <xe/Object.hpp>
 #include <xe/cm/Kernel.hpp>
