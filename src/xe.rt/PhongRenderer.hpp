@@ -28,9 +28,9 @@ namespace xe { namespace rt {
     
         virtual void setModel(const xe::Matrix4f &) override;
     
-        const xe::gfx::VertexFormat* getVertexFormat() const;
+        const xe::gfx::VertexFormat* getVertexFormat() const override;
     
-        const xe::gfx::MaterialFormat* getMaterialFormat() const;
+        const xe::gfx::MaterialFormat* getMaterialFormat() const override;
     
     private:
         xe::gfx::GraphicsDriver *graphicsDriver = nullptr;

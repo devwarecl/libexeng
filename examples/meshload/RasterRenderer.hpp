@@ -23,6 +23,14 @@ public:
 
 	virtual void setModel(const xe::Matrix4f &transformation) override;
 
+    virtual const xe::gfx::VertexFormat* getVertexFormat() const override {
+        return nullptr;
+    }
+    
+    virtual const xe::gfx::MaterialFormat* getMaterialFormat() const override {
+        return nullptr;
+    }
+
 private:
 	xe::gfx::GraphicsDriver *driver = nullptr;
 	xe::gfx::ModernModule *programmableModule = nullptr;

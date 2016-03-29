@@ -2,6 +2,7 @@
 #include "SoftwareRenderer.hpp"
 
 #include <xe/gfx/GraphicsDriver.hpp>
+#include <xe/sg/Light.hpp>
 #include <xe/sg/Camera.hpp>
 
 namespace xe { namespace rt {
