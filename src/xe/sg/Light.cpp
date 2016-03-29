@@ -24,6 +24,9 @@ namespace xe{ namespace sg {
     struct Light::Private {
         Vector3f position;
         Vector3f target;
+        Vector4f ambient;
+        Vector4f diffuse;
+        Vector4f specular;
         LightType::Enum lightType;
         float range = 1.0f;
     };
@@ -35,60 +38,97 @@ namespace xe{ namespace sg {
         
         
     Light::~Light() {
-        boost::checked_delete(this->impl);
+        boost::checked_delete(impl);
     }
         
         
     LightType::Enum Light::getLightType() const {
-        assert(this->impl != nullptr);
-        return this->impl->lightType;
+        assert(impl);
+        return impl->lightType;
     }
         
         
     void Light::setLightType(LightType::Enum lightType) {
-        assert(this->impl != nullptr);
-        this->impl->lightType = lightType;
+        assert(impl);
+        impl->lightType = lightType;
     }
         
         
     void Light::setPosition(const Vector3f &pos){
-        assert(this->impl != nullptr);
-        this->impl->position = pos;
+        assert(impl);
+        impl->position = pos;
     }
         
         
     Vector3f Light::getPosition() const {
-        assert(this->impl != nullptr);
-        return this->impl->position;
+        assert(impl);
+        return impl->position;
     }
         
         
     void Light::setTarget(const Vector3f &target) {
-        assert(this->impl != nullptr);
-        this->impl->target = target;
+        assert(impl);
+        impl->target = target;
     }
         
         
     Vector3f Light::getTarget() const {
-        assert(this->impl != nullptr);
-        return this->impl->target;
+        assert(impl);
+        return impl->target;
     }
         
         
     void Light::setRange(float range) {
-        assert(this->impl != nullptr);
+        assert(impl);
             
         if (range < 0.0f) {
             range = 0.0;
         }
             
-        this->impl->range = range;
+        impl->range = range;
     }
         
         
     float Light::getRange() const {
-        assert(this->impl != nullptr);
-        return this->impl->range;
+        assert(impl);
+        return impl->range;
+    }
+
+
+    void Light::setAmbient(const xe::Vector4f &color) {
+        assert(impl);
+
+        impl->ambient = color;
+    }
+
+    void Light::setDiffuse(const xe::Vector4f &color)  {
+        assert(impl);
+
+        impl->diffuse = color;
+    }
+
+    void Light::setSpecular(const xe::Vector4f &color)  {
+        assert(impl);
+
+        impl->specular = color;
+    }
+
+    xe::Vector4f Light::getAmbient() const  {
+        assert(impl);
+
+        return impl->ambient;
+    }
+
+    xe::Vector4f Light::getDiffuse() const  {
+        assert(impl);
+
+        return impl->diffuse;
+    }
+
+    xe::Vector4f Light::getSpecular() const {
+        assert(impl);
+
+        return impl->specular;
     }
 
 	void Light::renderWith(Renderer *renderer) {

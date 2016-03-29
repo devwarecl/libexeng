@@ -1,6 +1,7 @@
 /**
  * @file 
  * @brief 
+ * @todo This class needs redesign
  */
 
 /*
@@ -9,6 +10,8 @@
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution.
  */
+
+#pragma once
 
 #ifndef __EXENG_SCENEGRAPH_LIGHT_HPP__
 #define __EXENG_SCENEGRAPH_LIGHT_HPP__
@@ -70,12 +73,20 @@ namespace xe { namespace sg {
          * @brief 
          */
         void setRange(float range);
-            
+        
         /**
          * @brief 
          */
         float getRange() const;
 
+        void setAmbient(const xe::Vector4f &color);
+        void setDiffuse(const xe::Vector4f &color);
+        void setSpecular(const xe::Vector4f &color);
+
+        xe::Vector4f getAmbient() const;
+        xe::Vector4f getDiffuse() const;
+        xe::Vector4f getSpecular() const;
+        
 		virtual void renderWith(Renderer *renderer);
 
     private:
