@@ -12,7 +12,6 @@
 #include <xe/sg/Pipeline.hpp>
 
 #include "PerspectiveCamera.hpp"
-#include "PhongRenderer.hpp"
 
 namespace xe { namespace rt {
 
@@ -42,8 +41,7 @@ namespace xe { namespace rt {
         xe::sg::ScenePtr scene;
         PerspectiveCamera camera;
     
-        std::unique_ptr<PhongRenderer> renderer;
-    
+		xe::sg::PipelinePtr pipeline;
         xe::sg::SceneRendererPtr sceneRenderer;
         xe::gfx::MeshManager *meshManager = nullptr;
         xe::gfx::TextureManager *textureManager = nullptr;

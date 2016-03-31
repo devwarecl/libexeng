@@ -14,6 +14,7 @@
 #include "DebugGL3.hpp"
 #include "GL3.hpp"
 
+#include <cassert>
 #include <map>
 #include <string>
 #include <sstream>
@@ -42,7 +43,8 @@ namespace xe { namespace gfx { namespace gl3 {
 			
 			std::stringstream ss;
             ss << error << " - " << file << ":" << line << std::endl;
-			EXENG_THROW_EXCEPTION(ss.str());
+
+			assert(false);
 		}
     }
 }}}

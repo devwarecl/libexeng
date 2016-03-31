@@ -146,13 +146,8 @@ namespace xe { namespace gfx {
 	
 	void Material::setAttribute(const int index, const void* data, const int size) {
         assert(impl);
-        
-#if defined(EXENG_DEBUG)
-        if (!getFormat()) {
-            throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
-        }
-#endif
-        
+		assert(impl->format);
+          
         BufferLocker<std::uint8_t> locker(impl->buffer.get(), BufferUsage::Write);
         
         const int offset = getFormat()->getOffset(index);
@@ -163,12 +158,8 @@ namespace xe { namespace gfx {
         
     void Material::getAttribute(const int index, void* data, const int size) const {
         assert(impl);
+		assert(impl->format);
 
-#if defined(EXENG_DEBUG)
-        if (!getFormat()) {
-            throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
-        }
-#endif
         BufferLockerConst<std::uint8_t> locker(impl->buffer.get());
         
         const int offset = getFormat()->getOffset(index);
@@ -189,24 +180,16 @@ namespace xe { namespace gfx {
     
 	MaterialLayer* Material::getLayer(int index) {
 		assert(impl);
-
-#ifdef EXENG_DEBUG
-		if (index < 0 || index >= LayerCount) {
-			throw std::out_of_range("Material::getLayer: Index out of range.");
-		}
-#endif
-
+		assert(index >= 0);
+		assert(index < LayerCount);
+		
 		return &impl->layers[index];
 	}
 	
 	const MaterialLayer* Material::getLayer(int index) const {
 		assert(impl);
-
-#ifdef EXENG_DEBUG
-		if (index < 0 || index >= LayerCount) {
-			throw std::out_of_range("Material::getLayer: Index out of range.");
-		}
-#endif
+		assert(index >= 0);
+		assert(index < LayerCount);
 
 		return &impl->layers[index];
 	}

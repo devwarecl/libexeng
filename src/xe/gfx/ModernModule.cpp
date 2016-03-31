@@ -6,7 +6,10 @@ namespace xe { namespace gfx {
 	ModernModule::~ModernModule() {}
 
 	ShaderProgramPtr ModernModule::createShaderProgram(const std::list<std::string> &vertexShaderSrcs, const std::list<std::string> &fragmentShaderSrcs) {
-		ShaderProgramPtr shaderProgram;
+
+		ShaderProgramPtr shaderProgram = this->createShaderProgram();
+
+		std::list<ShaderPtr> shaders;
 
 		// create vertex shaders
 		for (const std::string &source : vertexShaderSrcs) {
@@ -14,6 +17,8 @@ namespace xe { namespace gfx {
 			shader->compile();
 
 			shaderProgram->addShader(shader.get());
+
+			shaders.push_back(std::move(shader));
 		}
 
 		// create fragment shaders
@@ -22,6 +27,8 @@ namespace xe { namespace gfx {
 			shader->compile();
 
 			shaderProgram->addShader(shader.get());
+
+			shaders.push_back(std::move(shader));
 		}
 
 		shaderProgram->link();

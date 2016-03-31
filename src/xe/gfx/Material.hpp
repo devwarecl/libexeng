@@ -297,18 +297,11 @@ namespace xe { namespace gfx {
     }
 
     inline const MaterialAttrib* MaterialFormat::getAttrib(const std::string &name) const {
-#if defined (EXENG_DEBUG)
         const int index = this->getAttribIndex(name);
 
-        if (index == -1) {
-            std::stringstream ss;
+		assert(index >= 0);
+		assert(index < this->getAttribCount());
 
-            ss << "MaterialFormat::getAttrib: ";
-            ss << "Unknown attribute name '" << name << "'.";
-
-            throw std::runtime_error(ss.str());
-        }
-#endif
         return this->getAttrib(this->getAttribIndex(name));
     }
     

@@ -17,7 +17,7 @@ namespace xe { namespace gfx {
 
 		// mandatory overridables
 	public:
-		virtual MaterialFormat getFormat() const = 0;
+		virtual const MaterialFormat* getFormat() const = 0;
 		virtual Material* createMaterial(const std::string &name = "") = 0;
 		virtual Material* getMaterial(const int index) = 0;
 		virtual const Material* getMaterial(const int index) const = 0;

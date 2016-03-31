@@ -12,15 +12,17 @@ namespace xe { namespace gfx {
 
 	class MaterialLibraryImpl : public MaterialLibrary {
 	public:
-		explicit MaterialLibraryImpl(const MaterialFormat &format_) : format(format_) {}
+		explicit MaterialLibraryImpl(const MaterialFormat *format_) : format(format_) {
+			assert(format);
+		}
 		virtual ~MaterialLibraryImpl() {}
 
-		virtual MaterialFormat getFormat() const override {
+		virtual const MaterialFormat* getFormat() const override {
 			return format;
 		}
 
 		virtual Material* createMaterial(const std::string &name = "") override {
-			Material *material = new Material(&this->format);
+			Material *material = new Material(format);
 
 			material->setName(name);
 				
@@ -49,7 +51,7 @@ namespace xe { namespace gfx {
 
 	private:
 		std::vector<MaterialPtr> materials;
-		MaterialFormat format;
+		const MaterialFormat *format = nullptr;
 	};
 }}
 

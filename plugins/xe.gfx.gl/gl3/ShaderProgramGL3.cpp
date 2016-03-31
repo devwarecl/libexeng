@@ -86,18 +86,10 @@ namespace xe { namespace gfx { namespace gl3 {
     }
     
     void ShaderProgramGL3::addShader(Shader *shader) {
-        assert (this->programId != 0);
-    
-#if defined(EXENG_DEBUG)
-        if (shader == nullptr) {
-            throw std::invalid_argument("ShaderProgramGL3::addShader -> The shader object can't be null");
-        }
-        
-        if (shader->getTypeInfo() != TypeId<ShaderGL3>()) {
-            throw std::invalid_argument("ShaderProgramGL3::addShader -> The shader object must be of type ShaderGL3.");
-        }
-#endif
-        
+        assert(programId);
+		assert(shader);
+		assert(shader->getTypeInfo() == TypeId<ShaderGL3>());
+		
         //! TODO: Check the creator objects too
         this->modified = true;
         this->shaders.push_back(shader);

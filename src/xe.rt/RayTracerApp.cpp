@@ -10,6 +10,8 @@
 #include <xe/sg/SceneRendererGeneric.hpp>
 #include <xe.sg.sw/SoftwarePipeline.hpp>
 
+#include "PhongRenderer.hpp"
+
 namespace xe { namespace rt {
 
     RayTracerApp::RayTracerApp() {}
@@ -30,13 +32,13 @@ namespace xe { namespace rt {
         keyboardStatus = inputManager->getKeyboard()->getStatus();
     
         // create renderer pipeline
-        renderer = std::make_unique<PhongRenderer>(graphicsDriver.get());
+        pipeline = std::make_unique<xe::sg::SoftwarePipeline>(graphicsDriver.get());
     
         // create material library
-        materialLibrary = std::make_unique<xe::gfx::MaterialLibraryImpl>(*renderer->getMaterialFormat());
+        materialLibrary = std::make_unique<xe::gfx::MaterialLibraryImpl>(pipeline->getMaterialFormat());
         
         // create scene renderer
-        sceneRenderer = std::make_unique<xe::sg::SceneRendererGeneric>(renderer.get());
+        sceneRenderer = std::make_unique<xe::sg::SceneRendererGeneric>(pipeline.get());
     
         // attach
         textureManager->setGraphicsDriver(graphicsDriver.get());
@@ -151,7 +153,7 @@ namespace xe { namespace rt {
         material->getLayer(0)->setTexture(texture);
     
         // generate box subset
-        auto subset = generator.generate({renderer->getVertexFormat()});
+        auto subset = generator.generate({pipeline->getVertexFormat()});
         subset->setMaterial(material);
     
         // create the box mesh

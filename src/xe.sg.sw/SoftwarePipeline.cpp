@@ -15,7 +15,10 @@ namespace xe { namespace sg {
         xe::Matrix4f view = xe::identity<float, 4>();
         xe::Matrix4f proj = xe::identity<float, 4>();
         xe::Vector4f color = xe::Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-        
+
+		xe::gfx::MaterialFormat materialFormat;
+		xe::gfx::VertexFormat vertexFormat;
+
         xe::gfx::GraphicsDriver *driver = nullptr;
         xe::gfx::TexturePtr screenTexture;
         xe::gfx::MeshPtr screenMesh;
@@ -97,17 +100,18 @@ namespace xe { namespace sg {
             
             for (int i=0; i<rayCount; i++) {
                 xe::Vector2i coord = computePixel(i, size);
-                xe::Vector2f coordf = (xe::Vector2f)coord;
+                xe::Vector2f coordf = static_cast<xe::Vector2f>(coord);
                 xe::sg::Ray ray = castRay(coordf, sizef, cam_pos, cam_up, cam_dir, cam_right);
                 
                 rays[i] = ray;
             }
         }
         
-        void fillSurface(xe::Vector4ub *pixels, const int size, const xe::Vector4ub &color) {
-            assert(pixels);
+        void fillSurface(const int size, const xe::Vector4ub &color) {
             assert(size > 0);
         
+			xe::Vector4ub *pixels = renderTargetSurface;
+
             for (int i=0; i<size; i++) {   
                 *pixels++ = color;
             }
@@ -118,6 +122,7 @@ namespace xe { namespace sg {
         assert(driver);
 
         impl = new SoftwarePipeline::Private();
+		assert(impl);
         impl->driver = driver;
 
         // create the support objects
@@ -153,7 +158,7 @@ in vec2 tex_coord;
 out vec2 uv;
 
 void main() {
-    gl_Position = coord;
+    gl_Position = vec4(coord, 0.0f, 1.0f);
     uv = tex_coord;
 } 
         )";
@@ -183,14 +188,27 @@ void main() {
         delete impl;
     }
     
-    void SoftwarePipeline::beginFrame(const xe::Vector4f &color_) {
+    void SoftwarePipeline::beginFrame(const xe::Vector4f &color) {
         assert(impl);
-        impl->color = color_;
-        impl->driver->beginFrame(impl->color, xe::gfx::ClearFlags::Color);
+
+		xe::Vector3i size = impl->screenTexture->getSize();
+
+        impl->color = color;
+		impl->driver->beginFrame({0.0f, 0.0f, 0.0f, 1.0f} , xe::gfx::ClearFlags::Color);
+
+		auto data = impl->screenTexture->getBuffer()->lock(BufferUsage::ReadWrite);
+
+		impl->renderTargetSurface = (xe::Vector4ub*)data;
+
+		impl->fillSurface(size.x*size.y, color);
     }
     
     void SoftwarePipeline::endFrame() {
         assert(impl);
+
+		impl->renderTargetSurface = nullptr;
+		impl->screenTexture->getBuffer()->unlock();
+
         impl->driver->endFrame();
     }
     
@@ -198,7 +216,6 @@ void main() {
         //! TODO: Add custom code
         assert(impl);
         assert(light);
-    
     }
     
     void SoftwarePipeline::render(xe::sg::Camera *camera) {
@@ -211,15 +228,26 @@ void main() {
     void SoftwarePipeline::render(xe::sg::Geometry *geometry) {
         //! TODO: Add custom code
         assert(impl);
+		assert(geometry);
     }
     
     void SoftwarePipeline::render(xe::gfx::Mesh *mesh) {
         //! TODO: Add custom code
         assert(impl);
+		assert(mesh);
     }
     
-    void SoftwarePipeline::setModel(const xe::Matrix4f &model_) {
+    void SoftwarePipeline::setModel(const xe::Matrix4f &model) {
         assert(impl);
-        impl->model = model_;
+
+        impl->model = model;
     }
+
+	const xe::gfx::VertexFormat* SoftwarePipeline::getVertexFormat() const {
+		return &impl->vertexFormat;
+	}
+    
+    const xe::gfx::MaterialFormat* SoftwarePipeline::getMaterialFormat() const {
+		return &impl->materialFormat;
+	}
 }}

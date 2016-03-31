@@ -27,6 +27,10 @@ namespace xe { namespace sg {
 
 		virtual void setModel(const xe::Matrix4f &) override;
 		
+		virtual const xe::gfx::VertexFormat* getVertexFormat() const override;
+    
+        virtual const xe::gfx::MaterialFormat* getMaterialFormat() const override;
+
     private:
         struct Private;
         Private *impl = nullptr;

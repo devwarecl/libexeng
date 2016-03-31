@@ -32,7 +32,7 @@ void ComputeInteropApp::initialize() {
 	renderer = std::make_unique<PhongRenderer>(graphicsDriver.get());
 
 	// create material library
-	materialLibrary = std::make_unique<xe::gfx::MaterialLibraryImpl>(*renderer->getMaterialFormat());
+	materialLibrary = std::make_unique<xe::gfx::MaterialLibraryImpl>(renderer->getMaterialFormat());
 	
 	// create scene renderer
 	sceneRenderer = std::make_unique<xe::sg::SceneRendererGeneric>(renderer.get());

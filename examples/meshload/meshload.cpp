@@ -134,7 +134,7 @@ public:
         vertexFormat = createVertexFormat();
         materialFormat = createMaterialFormat();
         
-		materialLibrary = std::make_unique<xe::gfx::MaterialLibraryImpl>(materialFormat);
+		materialLibrary = std::make_unique<xe::gfx::MaterialLibraryImpl>(&materialFormat);
 
 		this->getGraphicsManager()->getMeshManager()->setMaterialLibrary(materialLibrary.get());
 		this->getGraphicsManager()->getMeshManager()->setGraphicsDriver(graphicsDriver.get());
