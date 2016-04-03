@@ -58,17 +58,17 @@ namespace xe { namespace gfx { namespace gl3 {
     void TextureBufferGL3::unlock() {
 		if (cache_ptr) {
 
-#if defined(EXENG_DEBUG)
-            std::uint8_t* pixels = (std::uint8_t*)cache_ptr;
-
-            for (int i=0; i<120; i++) {
-                std::cout << int(pixels[i]) << ", ";
-
-                if ((i+1)%12 == 0) {
-                    std::cout << std::endl;
-                }
-            }
-#endif
+//#if defined(EXENG_DEBUG)
+//            std::uint8_t* pixels = (std::uint8_t*)cache_ptr;
+//
+//            for (int i=0; i<120; i++) {
+//                std::cout << int(pixels[i]) << ", ";
+//
+//                if ((i+1)%12 == 0) {
+//                    std::cout << std::endl;
+//                }
+//            }
+//#endif
 
 		    const GLenum target = texture->getTarget();
 		    const xe::Vector3i size = texture->getSize();

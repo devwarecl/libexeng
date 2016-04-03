@@ -48,24 +48,23 @@ namespace xe { namespace gfx { namespace gl3 {
 		    ::glBufferSubData(this->target, 0, cacheBuffer->getSize(), cache_ptr);
 		    ::glBindBuffer(this->target, 0);
 
-            // display vertex data
-
-#if defined(EXENG_DEBUG)
-            std::cout << std::endl;
-
-            std::cout << std::endl;
-            float *values = (float *)cache_ptr;
-            const int value_count = cacheBuffer->getSize() / 4;
-
-            for (int i=0; i<value_count; i++) {
-                std::cout << values[i] << ", ";
-
-                if ( (i+1) % 8 == 0) {
-                    std::cout << std::endl;
-                }
-            }
-#endif
-
+//#if defined(EXENG_DEBUG)
+//			// display vertex data
+//
+//            std::cout << std::endl;
+//
+//            std::cout << std::endl;
+//            float *values = (float *)cache_ptr;
+//            const int value_count = cacheBuffer->getSize() / 4;
+//
+//            for (int i=0; i<value_count; i++) {
+//                std::cout << values[i] << ", ";
+//
+//                if ( (i+1) % 8 == 0) {
+//                    std::cout << std::endl;
+//                }
+//            }
+//#endif
             cache_ptr = nullptr;
 
             GL3_CHECK();

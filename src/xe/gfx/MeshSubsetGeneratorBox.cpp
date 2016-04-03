@@ -167,17 +167,17 @@ namespace xe { namespace gfx {
 				assert(std::memcmp(&testTexCoord, &texCoords[j], params.format->getAttrib(VertexAttrib::TexCoord).getSize()) == 0);
 #endif
 
-#if defined(EXENG_DEBUG)
-				std::cout << "(" << vertexPosition << "), (" << vertexNormal << "), ("  << texCoords[j] << ")" << std::endl;
-#endif
+//#if defined(EXENG_DEBUG)
+//				std::cout << "(" << vertexPosition << "), (" << vertexNormal << "), ("  << texCoords[j] << ")" << std::endl;
+//#endif
 			}
 		}
 
-#if defined(EXENG_DEBUG)
-		displayVertexData(params.format, locker.getPointer(), locker.getSize());
-
-		std::cout << std::endl;
-#endif
+//#if defined(EXENG_DEBUG)
+//		displayVertexData(params.format, locker.getPointer(), locker.getSize());
+//
+//		std::cout << std::endl;
+//#endif
     }
 
     void MeshSubsetGeneratorBox::generateIndexBuffer(const MeshSubsetGeneratorParams &params, Buffer *buffer) const {
