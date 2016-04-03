@@ -52,10 +52,8 @@ namespace xe { namespace sys {
 	
 		void *fnptr = ::dlsym( handle, name.c_str());
 		if (!fnptr) {
-            std::cerr << "Error while loading symbol '" << name << "':" << ::dlerror() << std::endl;
+            std::cerr << "Library::Private::getFunctionPtr: Error while loading symbol '" << name << "':" << ::dlerror() << std::endl;
 		}
-		
-		assert(fnptr);
         
 		return fnptr;
 	}

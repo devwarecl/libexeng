@@ -43,15 +43,9 @@ namespace xe { namespace sys {
     };
 
 	inline PluginLibrary::PluginLibrary(std::unique_ptr<Library> library_) : library(std::move(library_)) {
-	    // check for a valid library
-        if (!library) {
-			EXENG_THROW_EXCEPTION("Library pointer can't be nullptr.");
-        }
-    
-	    if (library->isValid() == false) {
-			EXENG_THROW_EXCEPTION("The library object must be valid.");
-	    }
-
+        assert(library);
+        assert(library->isValid());
+	
 		std::string getPluginObjectNameStr = "";
 
 #if defined(EXENG_WINDOWS)

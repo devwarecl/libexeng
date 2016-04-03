@@ -10,6 +10,8 @@ set (target_files ${target_headers} ${target_sources})
 
 add_library(${target_name} SHARED ${target_files})
 
+set_property(TARGET ${target_name} PROPERTY CXX_STANDARD 14)
+
 target_link_libraries(${target_name} xe)
 
 source_group(\\ FILES ${target_files})
