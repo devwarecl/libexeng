@@ -15,6 +15,8 @@ OPTION (XE_GFX_ASSIMP "Enable Assimp mesh loader plugin" OFF)
 OPTION (XE_RT "Enable scene rendering trough Ray Tracing" OFF)
 OPTION (XE_TESTING "Enable unit testings" OFF)
 
+OPTION (XE_EXAMPLES "Build examples" OFF)
+
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 SET (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 
@@ -85,14 +87,16 @@ IF (XE_RT)
 ENDIF ()
 
 # Add example programs
-add_subdirectory(examples/scene)
-add_subdirectory(examples/triangle)
-add_subdirectory(examples/texture)
-add_subdirectory(examples/simplemesh)
-add_subdirectory(examples/geogen)
-add_subdirectory(examples/compute)
-add_subdirectory(examples/computeinterop)
-add_subdirectory(examples/meshload)
+if (XE_EXAMPLES)
+	add_subdirectory(examples/scene)
+	add_subdirectory(examples/triangle)
+	add_subdirectory(examples/texture)
+	add_subdirectory(examples/simplemesh)
+	add_subdirectory(examples/geogen)
+	add_subdirectory(examples/compute)
+	add_subdirectory(examples/computeinterop)
+	add_subdirectory(examples/meshload)
+endif()
 
 # Engine plugins
 IF(XE_GFX_GL)

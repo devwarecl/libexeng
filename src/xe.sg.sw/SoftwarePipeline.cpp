@@ -60,8 +60,8 @@ namespace xe { namespace sg {
             const xe::Vector3f &cam_right) {
 		
 		    // normalized coordinates
-		    const Vector2f nc = (coordsf / (sizef - Vector2f(1.0f, 1.0f)) ) - Vector2f(0.5f, 0.5f);
-		    const Vector3f image_point = nc.x * cam_right + nc.y * cam_up + cam_pos + cam_dir;
+		    const xe::Vector2f nc = (coordsf / (sizef - Vector2f(1.0f, 1.0f)) ) - Vector2f(0.5f, 0.5f);
+		    const xe::Vector3f image_point = nc.x * cam_right + nc.y * cam_up + cam_pos + cam_dir;
     
 		    const xe::sg::Ray ray = {
 			    cam_pos, 
@@ -182,6 +182,17 @@ void main() {
 
         impl->screenShader = impl->driver->getModernModule()->createShaderProgram(vshader, fshader);
         driver->getModernModule()->setShaderProgram(impl->screenShader.get());
+
+		// create the vertex and material formats
+		impl->vertexFormat = xe::gfx::StandardVertex::getFormat();
+
+		impl->materialFormat = xe::gfx::MaterialFormat({
+			{"ambient", xe::DataType::Float32, 4}, 
+			{"diffuse", xe::DataType::Float32, 4}, 
+			{"specular", xe::DataType::Float32, 4}, 
+			{"emissive", xe::DataType::Float32, 4}, 
+			{"shininess", xe::DataType::Float32, 1},
+		});
     }
     
     SoftwarePipeline::~SoftwarePipeline() {

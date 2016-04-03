@@ -15,6 +15,7 @@ namespace xe { namespace gfx {
 		explicit MaterialLibraryImpl(const MaterialFormat *format_) : format(format_) {
 			assert(format);
 		}
+
 		virtual ~MaterialLibraryImpl() {}
 
 		virtual const MaterialFormat* getFormat() const override {
