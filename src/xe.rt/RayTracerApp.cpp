@@ -148,7 +148,8 @@ namespace xe { namespace rt {
     
         // generate material
         xe::gfx::Material *material = materialLibrary->createMaterial();
-    
+		
+		material->setAttribute("ambient", xe::Vector4f(0.2f, 0.2f, 0.2f, 1.0f));
         material->setAttribute("diffuse", xe::Vector4f(0.8f, 0.8f, 0.8f, 1.0f));
         material->getLayer(0)->setTexture(texture);
     
@@ -172,7 +173,6 @@ namespace xe { namespace rt {
     
         return scene;
     }
-
 }}
 
 namespace xe {

@@ -397,7 +397,9 @@ namespace xe { namespace gfx { namespace gl3 {
                 GLenum textureType = convTextureType(texture->getType());
                 GLenum textureId = texture->getTextureId();
 				
-                GLuint textureLocation = ::glGetUniformLocation(programId, material->getFormat()->getLayerName(i).c_str());
+				std::string textureName = material->getFormat()->getLayerName(i);
+
+                GLuint textureLocation = ::glGetUniformLocation(programId, textureName.c_str());
                 GL3_CHECK();
 
                 ::glUniform1i(textureLocation, i);
@@ -407,31 +409,31 @@ namespace xe { namespace gfx { namespace gl3 {
                 GL3_CHECK();
 
                 ::glBindTexture(textureType, textureId);
+
+				GL3_CHECK();
             }
         }
         
         GL3_CHECK();
 
-        if (material->getFormat()) {
-            // Set material attributes
-            const MaterialFormat *materialFormat = material->getFormat();
+        // Set material attributes
+        const MaterialFormat *materialFormat = material->getFormat();
             
-            for(int i=0; i<materialFormat->getAttribCount(); ++i) {
-                const MaterialAttrib &attrib = *materialFormat->getAttrib(i);
-                const GLint uniformLocation = ::glGetUniformLocation(programId, attrib.name.c_str());
+        for(int i=0; i<materialFormat->getAttribCount(); ++i) {
+            const MaterialAttrib &attrib = *materialFormat->getAttrib(i);
+            const GLint uniformLocation = ::glGetUniformLocation(programId, attrib.name.c_str());
                 
-                if (uniformLocation <= -1) {
-                    continue;
-                }
-                
-                if (attrib.dataType != DataType::Float32) {
-                    continue;
-                }
-                
-                Vector4f value = material->getAttribute<Vector4f>(i);
-
-                getUniformFunction(attrib.dimension)(uniformLocation, 1, value.data);
+            if (uniformLocation <= -1) {
+                continue;
             }
+                
+            if (attrib.dataType != DataType::Float32) {
+                continue;
+            }
+                
+            Vector4f value = material->getAttribute<Vector4f>(i);
+
+            getUniformFunction(attrib.dimension)(uniformLocation, 1, value.data);
         }
         
         GL3_CHECK();

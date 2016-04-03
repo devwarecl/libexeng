@@ -125,28 +125,32 @@ namespace xe { namespace sg {
 		assert(impl);
         impl->driver = driver;
 
-        // create the support objects
+        // create custom material format
         std::vector<xe::gfx::MaterialAttrib> mfAttribs = {};
         std::vector<xe::gfx::MaterialLayerDesc> mfLayerDescs = {{"screenTexture"}};
         impl->screenMF = xe::gfx::MaterialFormat(mfAttribs, mfLayerDescs);
 
+		// backbuffer texture
         impl->screenTexture = impl->driver->createTexture (
             driver->getDisplayMode().size, 
             xe::gfx::PixelFormat::R8G8B8A8
         );
 
+		// backbuffer material
         impl->screenMaterial = std::make_unique<xe::gfx::Material>(&impl->screenMF);
         impl->screenMaterial->getLayer(0)->setTexture(impl->screenTexture.get());
 
+		// generate custom vertex format
         impl->screenVF.fields[0] = {xe::gfx::VertexAttrib::Position, 2, xe::DataType::Float32};
         impl->screenVF.fields[1] = {xe::gfx::VertexAttrib::TexCoord, 2, xe::DataType::Float32};
 
+		// generate backbuffer plane mesh
         xe::gfx::MeshSubsetGeneratorPlane generator(driver);
         xe::gfx::MeshSubsetPtr subset = generator.generate({&impl->screenVF});
         subset->setMaterial(impl->screenMaterial.get());
         impl->screenMesh = std::make_unique<xe::gfx::Mesh>(std::move(subset));
 
-        // set the custom shader
+        // generate custom shaders
         std::string vshader = R"(
 #version 330
 layout(location=0) 
@@ -183,7 +187,7 @@ void main() {
         impl->screenShader = impl->driver->getModernModule()->createShaderProgram(vshader, fshader);
         driver->getModernModule()->setShaderProgram(impl->screenShader.get());
 
-		// create the vertex and material formats
+		// create the vertex and material formats for normal rendering (phong based ray tracing)
 		impl->vertexFormat = xe::gfx::StandardVertex::getFormat();
 
 		impl->materialFormat = xe::gfx::MaterialFormat({
@@ -205,13 +209,13 @@ void main() {
 		xe::Vector3i size = impl->screenTexture->getSize();
 
         impl->color = color;
-		impl->driver->beginFrame({0.0f, 0.0f, 0.0f, 1.0f} , xe::gfx::ClearFlags::Color);
+		impl->driver->beginFrame({1.0f, 1.0f, 1.0f, 1.0f} , xe::gfx::ClearFlags::Color);
 
 		auto data = impl->screenTexture->getBuffer()->lock(BufferUsage::ReadWrite);
 
 		impl->renderTargetSurface = (xe::Vector4ub*)data;
 
-		impl->fillSurface(size.x*size.y, color);
+		impl->fillSurface(size.x*size.y, (color * 255.0f));
     }
     
     void SoftwarePipeline::endFrame() {
@@ -220,6 +224,7 @@ void main() {
 		impl->renderTargetSurface = nullptr;
 		impl->screenTexture->getBuffer()->unlock();
 
+		impl->driver->render(impl->screenMesh.get());
         impl->driver->endFrame();
     }
     

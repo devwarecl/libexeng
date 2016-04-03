@@ -66,7 +66,6 @@ namespace xe { namespace gfx {
 	struct Material::Private {
 		std::string name;
         const MaterialFormat *format = nullptr;
-		const ShaderProgram *shaderProgram = nullptr;
         MaterialLayer layers[LayerCount];
 
 		std::unique_ptr<HeapBuffer> buffer;
