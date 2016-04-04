@@ -9,7 +9,11 @@
 #include <xe/sg/Camera.hpp>
 
 namespace xe { namespace sg {
-    
+
+	// generate custom shaders
+    extern std::string vshader;
+	extern std::string fshader;
+
     struct SoftwarePipeline::Private {
         xe::Matrix4f model = xe::identity<float, 4>();
         xe::Matrix4f view = xe::identity<float, 4>();
@@ -126,9 +130,7 @@ namespace xe { namespace sg {
         impl->driver = driver;
 
         // create custom material format
-        std::vector<xe::gfx::MaterialAttrib> mfAttribs = {};
-        std::vector<xe::gfx::MaterialLayerDesc> mfLayerDescs = {{"screenTexture"}};
-        impl->screenMF = xe::gfx::MaterialFormat(mfAttribs, mfLayerDescs);
+		impl->screenMF = xe::gfx::MaterialFormat({}, {{"screenTexture"}});
 
 		// backbuffer texture
         impl->screenTexture = impl->driver->createTexture (
@@ -151,39 +153,6 @@ namespace xe { namespace sg {
         impl->screenMesh = std::make_unique<xe::gfx::Mesh>(std::move(subset));
 
         // generate custom shaders
-        std::string vshader = R"(
-#version 330
-layout(location=0) 
-in vec2 coord;
-
-layout(location=1) 
-in vec2 tex_coord;
-
-out vec2 uv;
-
-void main() {
-    gl_Position = vec4(coord, 0.0f, 1.0f);
-    uv = tex_coord;
-} 
-        )";
-
-        std::string fshader = R"(
-#version 330
-
-in 
-vec2 uv;
-
-out 
-vec4 color;
-
-uniform 
-sampler2D screenTexture;
-
-void main() {
-    color = texture(screenTexture, uv);    
-}
-        )";
-
         impl->screenShader = impl->driver->getModernModule()->createShaderProgram(vshader, fshader);
         driver->getModernModule()->setShaderProgram(impl->screenShader.get());
 
@@ -214,7 +183,6 @@ void main() {
 		auto data = impl->screenTexture->getBuffer()->lock(BufferUsage::ReadWrite);
 
 		impl->renderTargetSurface = (xe::Vector4ub*)data;
-
 		impl->fillSurface(size.x*size.y, (color * 255.0f));
     }
     
@@ -266,4 +234,36 @@ void main() {
     const xe::gfx::MaterialFormat* SoftwarePipeline::getMaterialFormat() const {
 		return &impl->materialFormat;
 	}
+
+
+	std::string vshader = R"(
+#version 330
+layout(location=0) 
+in vec2 coord;
+
+layout(location=1) 
+in vec2 tex_coord;
+
+out vec2 uv;
+
+void main() {
+    gl_Position = vec4(coord, 0.0f, 1.0f);
+    uv = tex_coord;
+} 
+    )";
+
+    std::string fshader = R"(
+#version 330
+
+in vec2 uv;
+out vec4 color;
+
+uniform sampler2D screenTexture;
+
+void main() {
+    // color = texture(screenTexture, uv);    
+	color = vec4(0.0, 0.0, 0.0, 1.0);
+}
+	)";
+
 }}

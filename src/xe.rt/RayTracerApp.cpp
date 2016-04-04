@@ -33,6 +33,7 @@ namespace xe { namespace rt {
     
         // create renderer pipeline
         pipeline = std::make_unique<xe::sg::SoftwarePipeline>(graphicsDriver.get());
+		// pipeline = std::make_unique<PhongRenderer>(graphicsDriver.get());
     
         // create material library
         materialLibrary = std::make_unique<xe::gfx::MaterialLibraryImpl>(pipeline->getMaterialFormat());

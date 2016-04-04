@@ -179,7 +179,6 @@ namespace xe { namespace gfx { namespace gl3 {
 
     void GraphicsDriverGL3::setMeshSubset(const MeshSubset *meshSubset) {
 #if defined(EXENG_DEBUG)
-		assert(this);
 		assert(meshSubset);
 		assert(static_cast<const MeshSubsetGL3*>(meshSubset)->getVertexArrayId());
 		
@@ -478,19 +477,20 @@ namespace xe { namespace gfx { namespace gl3 {
 
 	void GraphicsDriverGL3::setShaderProgram(const ShaderProgram *program) {
 		shaderProgram = static_cast<const ShaderProgramGL3*>(program);
-     
+		
+		GLint programId = 0;
+
 		if (shaderProgram) {
-			GLint programId = shaderProgram->getProgramId();
-			::glUseProgram(programId);
-		} else {
-			::glUseProgram(0);
+			programId = shaderProgram->getProgramId();
 		}
+		::glUseProgram(programId);
 	}
 
 	void GraphicsDriverGL3::setProgramMatrix(const std::string &name, const int count, const xe::Matrix4f *matrices) {
 		assert(matrices);
 		assert(count > 0);
 		assert(shaderProgram);
+		assert(matrices);
 
 		int programId = shaderProgram->getProgramId();
 		int location = glGetUniformLocation(programId, name.c_str());

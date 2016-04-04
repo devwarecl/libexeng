@@ -5,7 +5,9 @@
 
 namespace xe { namespace gfx {
 
-    MeshSubsetGeneratorPlane::MeshSubsetGeneratorPlane(GraphicsDriver *driver) : MeshSubsetGenerator(driver) {}
+    MeshSubsetGeneratorPlane::MeshSubsetGeneratorPlane(GraphicsDriver *driver) : MeshSubsetGenerator(driver) {
+		assert(driver);
+	}
 
     int MeshSubsetGeneratorPlane::getVertexBufferSize(const MeshSubsetGeneratorParams &params) const {
         assert(params.format && params.format->getSize() > 0);
@@ -59,7 +61,7 @@ namespace xe { namespace gfx {
 						xe::lerp( 0.0f, 1.0f, tj),
 						xe::lerp( 1.0f, 0.0f, ti),
 						0.0f, 1.0f    
-					);
+					);//sdv	
 
 					array.setValue(vertexIndex, VertexAttrib::TexCoord, tex_coord);
 				}
@@ -83,10 +85,12 @@ namespace xe { namespace gfx {
 				const int p2 = (i + 0) + (j + 1) * (params.slices + 1);
 				const int p3 = (i + 1) + (j + 1) * (params.slices + 1);
 
+				// first triangle
 				indices.push_back(p0);
 				indices.push_back(p1);
 				indices.push_back(p2);
 
+				// second triangle
 				indices.push_back(p1);
 				indices.push_back(p3);
 				indices.push_back(p2);

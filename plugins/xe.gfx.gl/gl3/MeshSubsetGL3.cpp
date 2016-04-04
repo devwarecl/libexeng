@@ -8,9 +8,7 @@ namespace xe { namespace gfx { namespace gl3 {
 
 	const std::string errMessage = "MeshSubsetGL3::MeshSubsetGL3 -> The vertex buffer vector must contain at least one element.";
 	
-    MeshSubsetGL3::MeshSubsetGL3(const MeshSubsetGL3& other) {
-
-    }
+    MeshSubsetGL3::MeshSubsetGL3(const MeshSubsetGL3& other) {}
 
     MeshSubsetGL3::MeshSubsetGL3(std::vector<BufferPtr> vertexBuffers, const VertexFormat *format) {
 #if defined(EXENG_DEBUG)
@@ -118,15 +116,14 @@ namespace xe { namespace gfx { namespace gl3 {
 		    if (field.attribute == VertexAttrib::Unused) {
 			    break;
 		    }
-				
-		    const DataType::Enum dataTypeKey = field.dataType;
-		    const GLenum dataType = convDataType(dataTypeKey);
+			
+		    const GLenum dataType = convDataType(field.dataType);
 		    const void *data = reinterpret_cast<const void*>(offset);
 
 		    ::glEnableVertexAttribArray(baseAttrib);
 		    ::glVertexAttribPointer(baseAttrib, field.count, dataType, GL_FALSE, format->getSize(), data);
-            
-		    offset += field.count * DataType::getSize(dataTypeKey);
+			
+		    offset += field.getSize();
 		    ++baseAttrib;
 	    }
 
@@ -167,6 +164,7 @@ namespace xe { namespace gfx { namespace gl3 {
     }
 
     MeshSubsetGL3* MeshSubsetGL3::cloneImpl() const {
-        return new MeshSubsetGL3(*this);
+		// return new MeshSubsetGL3(*this);
+        return nullptr;
     }
 }}}
