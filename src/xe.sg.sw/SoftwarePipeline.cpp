@@ -236,8 +236,8 @@ namespace xe { namespace sg {
 	}
 
 
-	std::string vshader = R"(
-#version 330
+	std::string vshader = 
+R"(#version 330
 layout(location=0) 
 in vec2 coord;
 
@@ -249,11 +249,10 @@ out vec2 uv;
 void main() {
     gl_Position = vec4(coord, 0.0f, 1.0f);
     uv = tex_coord;
-} 
-    )";
+})";
 
-    std::string fshader = R"(
-#version 330
+    std::string fshader = 
+R"(#version 330
 
 in vec2 uv;
 out vec4 color;
@@ -263,7 +262,6 @@ uniform sampler2D screenTexture;
 void main() {
     // color = texture(screenTexture, uv);    
 	color = vec4(0.0, 0.0, 0.0, 1.0);
-}
-	)";
+})";
 
 }}

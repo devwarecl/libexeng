@@ -56,10 +56,9 @@ namespace xe  { namespace gfx { namespace gl3 {
     }
 
     void ShaderGL3::compile() {
-        if (this->sourceCode.empty() == true) {
-            throw std::runtime_error("ShaderGL3::compile: The source code must be non empty.");
-        }
         
+        assert(!sourceCode.empty());
+    
         if (this->modified == true || this->compiled == false) {
             const char* shaderSource = this->sourceCode.c_str();
             ::glShaderSource( this->name, 1, &shaderSource, NULL );
@@ -80,9 +79,13 @@ namespace xe  { namespace gfx { namespace gl3 {
                 infoLog.resize(infoLogLength + 1);
                 ::glGetShaderInfoLog(this->name, infoLogLength, NULL, (GLchar*) infoLog.c_str());
                 
-                throw std::runtime_error("ShaderGL3::compile: Compile failure in " + 
-                                        shaderTypeStr(this->type) + " shader: \n" + infoLog);
+                std::cerr << "ShaderGL3::compile: Compile failure in ";
+                std::cerr << shaderTypeStr(this->type);
+                std::cerr << " shader: \n" + infoLog;
+                std::cerr << std::endl;
             }
+            
+            assert(status);
             
             GL3_CHECK();
             
