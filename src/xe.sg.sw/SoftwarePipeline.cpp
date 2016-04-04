@@ -131,8 +131,8 @@ namespace xe { namespace sg {
     out vec2 uv;
     
     void main() {
-        gl_Position = vec4(coord, 0.0f, 1.0f);
         uv = tex_coord;
+        gl_Position = vec4(coord, 0.0f, 1.0f);
     }
     )";
     
