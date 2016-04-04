@@ -10,10 +10,6 @@
 
 namespace xe { namespace sg {
 
-	// generate custom shaders
-    extern std::string vshader;
-	extern std::string fshader;
-
     struct SoftwarePipeline::Private {
         xe::Matrix4f model = xe::identity<float, 4>();
         xe::Matrix4f view = xe::identity<float, 4>();
@@ -124,6 +120,34 @@ namespace xe { namespace sg {
 
     SoftwarePipeline::SoftwarePipeline(xe::gfx::GraphicsDriver *driver) {
         assert(driver);
+        
+        // shader source code
+        std::string vshader = 
+    R"(
+    #version 330
+    layout(location=0) in vec2 coord;
+    layout(location=1) in vec2 tex_coord;
+    
+    out vec2 uv;
+    
+    void main() {
+        gl_Position = vec4(coord, 0.0f, 1.0f);
+        uv = tex_coord;
+    }
+    )";
+    
+        std::string fshader = 
+    R"(#version 330
+    
+    in vec2 uv;
+    out vec4 color;
+    
+    uniform sampler2D screenTexture;
+    
+    void main() {
+        // color = texture(screenTexture, uv);    
+        color = vec4(0.0, 0.0, 0.0, 1.0);
+    })";
 
         impl = new SoftwarePipeline::Private();
 		assert(impl);
@@ -234,34 +258,4 @@ namespace xe { namespace sg {
     const xe::gfx::MaterialFormat* SoftwarePipeline::getMaterialFormat() const {
 		return &impl->materialFormat;
 	}
-
-
-	std::string vshader = 
-R"(#version 330
-layout(location=0) 
-in vec2 coord;
-
-layout(location=1) 
-in vec2 tex_coord;
-
-out vec2 uv;
-
-void main() {
-    gl_Position = vec4(coord, 0.0f, 1.0f);
-    uv = tex_coord;
-})";
-
-    std::string fshader = 
-R"(#version 330
-
-in vec2 uv;
-out vec4 color;
-
-uniform sampler2D screenTexture;
-
-void main() {
-    // color = texture(screenTexture, uv);    
-	color = vec4(0.0, 0.0, 0.0, 1.0);
-})";
-
 }}
