@@ -8,6 +8,9 @@
 #include <xe/sg/Camera.hpp>
 #include <xe/sg/Light.hpp>
 
+#include <xe/sg/Scene.hpp>
+#include <xe/sg/SceneNode.hpp>
+
 using namespace xe;
 using namespace xe::sg;
 
@@ -107,4 +110,10 @@ BOOST_AUTO_TEST_CASE( RayTest )
 	BOOST_CHECK_EQUAL( ray1.getPointAt(0.0f), ray1.getPoint() );
 	BOOST_CHECK_EQUAL( ray1.getPointAt(1.0f), ray1.getPoint() + ray1.getDirection() );
 	BOOST_CHECK_EQUAL( ray1.getPointAt(0.5f), ray1.getPoint() + 0.5f * ray1.getDirection() );
+}
+
+BOOST_AUTO_TEST_CASE(ScenegraphTest)
+{
+	auto root = std::make_unique<SceneNode>();
+
 }
