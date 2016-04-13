@@ -68,8 +68,8 @@ namespace xe { namespace gfx { namespace gl3 {
         }
         
         ::glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-        ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+        ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         ::glfwWindowHint(GLFW_OPENGL_CORE_PROFILE, GL_TRUE);
 		::glfwWindowHint(GLFW_DEPTH_BITS, 24);
 		::glfwWindowHint(GLFW_DOUBLEBUFFER , GL_TRUE);
@@ -79,10 +79,8 @@ namespace xe { namespace gfx { namespace gl3 {
         
         GLFWwindow *window = ::glfwCreateWindow(width, height, "exeng-graphics-gl3 Window", monitor, NULL);
         
-        if (!window) {
-			EXENG_THROW_EXCEPTION("GraphicsDriverGL3::GraphicsDriverGL3: Cann't create a GLFW Window.");
-        }
-        
+        assert(window);
+
         ::glfwMakeContextCurrent(window);
         
         // Initialize the OpenGL 3 core functions
