@@ -5,8 +5,10 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_SCENEGRAPH_SCENE_HPP__
-#define __EXENG_SCENEGRAPH_SCENE_HPP__
+#pragma once
+
+#ifndef __xe_sg_scene_hpp__
+#define __xe_sg_scene_hpp__
 
 #include <memory>
 #include <xe/Object.hpp>
@@ -26,27 +28,12 @@ namespace xe { namespace sg {
      */
     class EXENGAPI Scene : public Object {
     public:
-        explicit Scene(/*Core *core*/);
+        explicit Scene();
         
         virtual ~Scene();
         
         SceneNode* getRootNode();
         const SceneNode* getRootNode() const;
-
-        /**
-         * @brief Create a new camera. 
-         */
-        Camera* createCamera();
-
-		Camera* getCamera(int index) const;
-
-		int getCameraCount() const;
-
-        Light* createLight();
-
-		SceneNode* createSceneNode(const std::string &nodeName, Geometry* geometry);
-		SceneNode* createSceneNode(const std::string &nodeName, Light* light);
-		SceneNode* createSceneNode(const std::string &nodeName, Camera* camera);
 
         /**
          * @brief Sets the scene background color.
@@ -57,9 +44,6 @@ namespace xe { namespace sg {
          * @brief Gets the scene background color.
          */
         Vector4f getBackColor() const;
-
-	protected:
-		SceneNode* createSceneNode(const std::string &nodeName, Renderable* renderable);
 
     private:
         struct Private;

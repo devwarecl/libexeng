@@ -168,7 +168,8 @@ namespace xe { namespace rt {
     
         for (float value1 : values) {
             for (float value2 : values) {
-                node->addChild(xe::translate<float>(xe::Vector3f(value1, 0.0f, value2)), mesh);
+				auto translation = xe::translate<float>({value1, 0.0f, value2});
+                node->addChild(translation, mesh);
             }
         }
     

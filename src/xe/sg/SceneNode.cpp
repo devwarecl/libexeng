@@ -11,189 +11,142 @@
  * found in the file LICENSE in this distribution.
  */
 
+#include "SceneNode.hpp"
+
 #include <cassert>
 #include <vector>
-#include <stdexcept>
 #include <boost/checked_delete.hpp>
 #include <boost/range/algorithm/find.hpp>
-#include <xe/Exception.hpp>
-#include <xe/sg/SceneNode.hpp>
 
 using namespace xe;
 using namespace xe::sg;
 
 namespace xe { namespace sg {
 
+	typedef std::vector<SceneNodePtr> SceneNodePtrVector;
+	typedef SceneNodePtrVector::iterator SceneNodePtrIterator;
+
     //! SceneNode private data
     struct SceneNode::Private {
-        std::string name;							//! Node name
-        Matrix4f transform = identity<float, 4>();  //! Node transformation
-        SceneNode* parentPtr = nullptr;				//! 
-        SceneNodes childs;							//! Node childs
-        Renderable *renderable = nullptr;			//! Private data
-        
-        SceneNodesIterator getChild(const std::string &name) {
-            auto &childs = this->childs;
-            
-            return std::find_if(std::begin(childs), std::end(childs), [&name](SceneNode *node) {
-                return node->impl->name == name;
-            });
-        }
+        std::string name;
+        Matrix4f transform = xe::identity<float, 4>();
+        SceneNode* parent = nullptr;
+        Renderable *renderable = nullptr;
+		SceneNodePtrVector childs;
     };
 }}
 
 namespace xe { namespace sg {
         
-    SceneNode::SceneNode() {
-        this->impl = new SceneNode::Private();
+    SceneNode::SceneNode(const std::string& name, SceneNode *parent, Renderable* renderable) {
+        impl = new SceneNode::Private();
+		
+		this->setName(name);
+		this->setParent(parent);
+		this->setRenderable(renderable);
     }
 
-    SceneNode::SceneNode(const std::string &name) {
-        this->impl = new SceneNode::Private();
-
-        this->setName(name);
-    }
-    
-    SceneNode::SceneNode(const std::string &name, SceneNode *parent) {
-        this->impl = new SceneNode::Private();
-        this->setName(name);
-        this->setParent(parent);
-    }
-    
     SceneNode::~SceneNode() {
-        if (this->impl == nullptr) {
-            return;
-        }
-        
-        // delete childs also
-        for (SceneNode *child : this->impl->childs) {
-            if (child == nullptr) {
-                continue;
-            }
-            
-            delete child;
-        }
-        
-        boost::checked_delete(this->impl);
+        boost::checked_delete(impl);
     }
     
     std::string SceneNode::toString() const {
-        assert(this->impl != nullptr);
+        assert(impl);
 
-        if (this->hasParent() == false) {
-            return "";
+        if (!this->getParent()) {
+            return this->getName();
+
         } else {
-            return this->getParent()->toString() + "\\" + this->getName();
+            return this->getParent()->toString() + "/" + this->getName();
         }
     }
 
     Matrix4f SceneNode::getTransform() const {
-        assert(this->impl != nullptr);
-        return this->impl->transform;
+        assert(impl);
+
+        return impl->transform;
     }
 
     void SceneNode::setTransform(const Matrix4f& transform) {
-        assert(this->impl != nullptr);
-        this->impl->transform = transform;
+        assert(impl);
+
+        impl->transform = transform;
     }
 
     std::string SceneNode::getName() const {
-        assert(this->impl != nullptr);
+        assert(impl);
 
-        // Devuelve el nombre por valor 
-        return this->impl->name;
+        return impl->name;
     }
 
     void SceneNode::setName(const std::string &name) {
-        assert(this->impl != nullptr);
-
-        if (this->hasParent() == true) {
-            if (this->getParent()->existChild(name) == true) {
-                throw std::logic_error("Ya existe un nodo hermano con ese nombre.");
-            }
-        }
-                
-        this->impl->name = name;
+        assert(impl);
+		assert(this->getParent() && !this->getParent()->getChild(name));
+        
+        impl->name = name;
     }
 
     int SceneNode::getChildCount() const {
-        assert(this->impl != nullptr);
-        return static_cast<int>(this->impl->childs.size());
+        assert(impl);
+        return static_cast<int>(impl->childs.size());
     }
 
     SceneNode* SceneNode::getChild(int index) const {
-        assert(this->impl != nullptr);
-        return this->impl->childs[index];
-    }
-
-    SceneNode* SceneNode::getChild(const std::string& name) {
-        assert(this->impl != nullptr);
-
-        SceneNode *childPtr = nullptr;
-
-        childPtr = *this->impl->getChild(name);
-
-        // Como no existe el nodo hijo, instanciamos uno y devolvemos su referencia
-        if (childPtr == nullptr) {
-            childPtr = this->addChild(name);
-        }
-
-        return childPtr;
+        assert(impl);
+        return impl->childs[index].get();
     }
 
     SceneNode* SceneNode::getChild(const std::string& name) const {
-        assert(this->impl != nullptr);
+        assert(impl);
 
-        SceneNode *childPtr = nullptr;
-                
-        childPtr = *this->impl->getChild(name);
+		auto &childs = impl->childs;
+		auto childIt = std::find_if(childs.begin(), childs.end(), [name](const SceneNodePtr& child) {
+			return child.get()->getName() == name;
+		});
 
-        if (childPtr == nullptr) {
-            // Lanzar una excpecion, ya que no podemos modificar al grafo de escena 
-            // si este es constante
-            std::string msg;
+		SceneNode *child = nullptr;
 
-            msg += "El nodo con el nombre '";
-            msg += name;
-            msg += "' no fue encontrado.";
+		if (childIt != childs.end()) {
+			child = childIt->get();
+		}
 
-            throw std::logic_error(msg);
-        }
-
-        return childPtr;
+		return child;
     }
 
     SceneNode* SceneNode::getParent() const {
-        assert(this->impl != nullptr);
+        assert(impl);
 
-        if (this->hasParent() == false) {
-            std::string msg;
-
-            msg += "El nodo " + this->toString();
-            msg += " no posee nodo padre.";
-
-            throw std::logic_error(msg);
-        }
-
-        return this->impl->parentPtr;
+		return impl->parent;
     }
 
     void SceneNode::setParent(SceneNode* parent) {
-        assert(this->impl != nullptr);
+        assert(impl);
 
-        // Para cambiar el padre, es necesario primero desvincular al nodo 
-        // de su padre previo (si lo tiene)
-        if (this->hasParent() == true) {
-            this->getParent()->removeChild(this);
-        }
+		SceneNodePtr this_;
 
-        // Ahora, agregamos el nuevo nodo al padre
-        parent->addChild(this);
-    }
+		// remove from previous parent
+		if (this->impl->parent) {
+			auto &childs = parent->impl->childs;
+			auto childIt = std::find_if(childs.begin(), childs.end(), [this](const SceneNodePtr &child) {
+				return child.get() == this;
+			});
 
-    bool SceneNode::hasParent() const {
-        assert(this->impl != nullptr);
-        return this->impl->parentPtr != nullptr;
+			assert(childIt != childs.end());
+
+			this_ = std::move(*childIt);
+			childs.erase(childIt);
+		}
+
+		// update current parent
+		this->impl->parent = parent;
+
+		// append to new parent
+		if (parent) {
+			parent->impl->childs.push_back(std::move(this_));
+
+		} else {
+			this_.release();
+		}
     }
 
 	const SceneNode* SceneNode::findNode(const std::string &name) const {
@@ -201,17 +154,14 @@ namespace xe { namespace sg {
 			return this;
 		}
 
-		for (const SceneNode *child : this->impl->childs) {
-			const SceneNode *node = child->findNode(name);
+		for (int i=0; i<this->getChildCount(); i++) {
+			const SceneNode *node = this->getChild(i)->findNode(name);
 
 			if (node) {
 				return node;
 			}
 		}
 
-#if defined(EXENG_DEBUG)
-        EXENG_THROW_EXCEPTION("The node '" + name + "' wasn't found in the node branch '" + this->getName() + "'.");
-#endif
 		return nullptr;
 	}
 
@@ -223,120 +173,58 @@ namespace xe { namespace sg {
         return const_cast<SceneNode*>(node);
 	}
 
-    bool SceneNode::existChild(const std::string &name) const {
-        assert(this->impl != nullptr);
+    SceneNode* SceneNode::addChild(SceneNodePtr child) {
+        assert(impl);
+		assert(child);
+		assert(!child->getParent());
 
-        // Si el nodo hijo con el nombre indicado existe, entonces devolvemos true
-        return *this->impl->getChild(name) != nullptr;
+		SceneNode *node = child.get();
+
+		child->impl->parent = this;
+		this->impl->childs.push_back(std::move(child));
+
+		return node;
     }
 
-    SceneNode* SceneNode::addChild(SceneNode *childPtr) {
-        assert(this->impl != nullptr);
+    SceneNodePtr SceneNode::removeChild(SceneNode* child) {
+        assert(impl);
+		assert(child);
+		assert(child->getParent());
+		assert(child->getParent() == this);
 
-        // Debemos considerar que este metodo debe modificar los padres directamente, 
-        // ya que en la implementacion actual, otros metodos relacionados con la modificacion
-        // de la jerarquia del grafo de escena son depedientes de este.
-        if (childPtr->hasParent() == true) {
-            // Desvincular al nodo padre 
-            childPtr->getParent()->removeChild(childPtr);
-        }
-                
-        childPtr->impl->parentPtr = this;
-        this->impl->childs.push_back(childPtr);
+		SceneNodePtr node;
 
-        return childPtr;
-    }
+		auto &childs = impl->childs;
+		auto childIt = std::find_if(childs.begin(), childs.end(), [child](const SceneNodePtr &current) {
+			return current.get() == child;
+		});
 
-    SceneNode* SceneNode::removeChild(const std::string& name) {
-        assert(this->impl != nullptr);
+		assert(childIt != childs.end());
 
-        // Implementacion rapida y sucia
-        SceneNodesIterator it = this->impl->getChild(name);
-        SceneNode* child = *it;
+		node = std::move(*childIt);
+		
+		childs.erase(childIt);
 
-        return this->removeChild(child);
-    }
+		node->impl->parent = nullptr;
 
-    SceneNode* SceneNode::removeChild(SceneNode* childPtr) {
-        assert(this->impl != nullptr);
-
-        // Determinar si el padre de este nodo somos nosotros antes de continuar
-        if (this->impl->parentPtr == this) {
-            // Buscar el iterador correspondiente
-            auto &childs = this->impl->childs;
-            auto it = childs.begin();
-            
-            for (it=childs.begin(); it!=childs.end(); ++it) {
-                if (*it == childPtr) {
-                    break;
-                }
-            }
-
-            // Indica en tiempo de ejecucion errores internos
-            assert(it != childs.end());
-                    
-            // Sacar el nodo de la lista de los hijos
-            this->impl->childs.erase(it);
-            childPtr->impl->parentPtr = nullptr;
-
-            return childPtr;
-        } else {
-            std::string msg;
-
-            msg += "SceneNode::removeChildPtr: The node '" + 
-            msg += childPtr->getName();
-            msg += "' doesn't belong to this hierarchy. ";
-            msg += this->toString();
-
-            throw std::logic_error(msg);
-        }	
-    }
-
-    SceneNode* SceneNode::addChild(const std::string& name) {
-        assert(this->impl != nullptr);
-
-        SceneNode* childPtr = new SceneNode(name);
-        return this->addChild(childPtr);
-    }
-
-	SceneNode* SceneNode::addChild(const Matrix4f &transformation, Renderable* renderable) {
-		SceneNode *child = this->addChild("");
-
-		child->setTransform(transformation);
-		child->setRenderable(renderable);
-
-		return child;
-	}
-
-    void SceneNode::orphan() {
-        assert(this->impl != nullptr);
-        
-        if (this->hasParent() == true) {
-            this->getParent()->removeChild(this);
-        }
+		return node;
     }
 	
 	void SceneNode::setRenderable(Renderable *renderable) {
-		assert(this->impl != nullptr);
+		assert(impl);
 
-		this->impl->renderable = renderable;
+		impl->renderable = renderable;
 	}
 
 	Renderable* SceneNode::getRenderable() {
-		assert(this->impl != nullptr);
+		assert(impl);
 
-		return this->impl->renderable;
+		return impl->renderable;
 	}
 
 	const Renderable* SceneNode::getRenderable() const {
-		assert(this->impl != nullptr);
+		assert(impl);
 
-		return this->impl->renderable;
+		return impl->renderable;
 	}
-    
-    const SceneNodes& SceneNode::getChilds() const {
-        assert(this->impl != nullptr);
-        
-        return this->impl->childs;
-    }
 }}
