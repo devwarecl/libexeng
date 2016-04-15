@@ -1,4 +1,5 @@
 
+/*
 #include <memory>
 
 #include <xe/Application.hpp>
@@ -10,7 +11,7 @@
 #include <xe/gfx/TextureManager.hpp>
 #include <xe.main/Main.hpp>
 
-namespace demo {
+namespace xe {
 	class DemoApplication : public xe::Application {
 	public:
 		DemoApplication() {
@@ -87,6 +88,7 @@ namespace demo {
 
 namespace xe { 
 	int main(int argc, char** argv) {
-		return xe::Application::execute<demo::DemoApplication>(argc, argv);
+		return xe::Application::execute<xe::DemoApplication>(argc, argv);
 	}
 }
+*/

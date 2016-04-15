@@ -146,8 +146,8 @@ public:
 
 		scene->getRootNode()->setRenderable(&camera);
 
-		boxNode = scene->getRootNode()->addChild("boxNode");
-		boxNode->setRenderable(mesh.get());
+		// boxNode = scene->getRootNode()->addChild("boxNode");
+		// boxNode->setRenderable(mesh.get());
 
 		return scene;
 	}

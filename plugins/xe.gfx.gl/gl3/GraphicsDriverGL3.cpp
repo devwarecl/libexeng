@@ -68,7 +68,7 @@ namespace xe { namespace gfx { namespace gl3 {
         }
         
         ::glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-        ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+        ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         ::glfwWindowHint(GLFW_OPENGL_CORE_PROFILE, GL_TRUE);
 		::glfwWindowHint(GLFW_DEPTH_BITS, 24);

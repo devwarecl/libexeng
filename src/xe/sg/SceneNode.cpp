@@ -81,7 +81,10 @@ namespace xe { namespace sg {
 
     void SceneNode::setName(const std::string &name) {
         assert(impl);
-		assert(this->getParent() && !this->getParent()->getChild(name));
+        
+        if (this->getParent()) {
+            assert(this->getParent() && !this->getParent()->getChild(name));
+        }
         
         impl->name = name;
     }
