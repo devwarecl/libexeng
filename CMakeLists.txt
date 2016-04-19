@@ -1,21 +1,23 @@
 
-PROJECT (libexeng)
+cmake_minimum_required (VERSION 3.0)
 
-CMAKE_MINIMUM_REQUIRED (VERSION 3.0)
+project (libexeng)
 
 # Engine options
-OPTION (XE_GFX_GL "Enable OpenGL graphics driver" OFF)
-OPTION (XE_GFX_D3D "Enable Direct3D graphics driver" OFF)
-OPTION (XE_GFX_FI "Enable FreeImage-based image loader implementation" OFF)
-OPTION (XE_GFX_LWO "Enable mesh loading from LWO files" OFF)
-OPTION (XE_SG_XML "Enable scene loading from XML files" OFF)
-OPTION (XE_CM_CL "Enable OpenCL computing module" OFF)
-OPTION (XE_GFX_ASSIMP "Enable Assimp mesh loader plugin" OFF)
+option (XE_GFX_GL "Enable OpenGL graphics driver" OFF)
+option (XE_GFX_D3D "Enable Direct3D graphics driver" OFF)
+option (XE_GFX_FI "Enable FreeImage-based image loader implementation" OFF)
+option (XE_GFX_LWO "Enable mesh loading from LWO files" OFF)
+option (XE_SG_XML "Enable scene loading from XML files" OFF)
+option (XE_CM_CL "Enable OpenCL computing module" OFF)
+option (XE_GFX_ASSIMP "Enable Assimp mesh loader plugin" OFF)
 
-OPTION (XE_RT "Enable scene rendering trough Ray Tracing" OFF)
-OPTION (XE_TESTING "Enable unit testings" OFF)
+option (XE_RT "Enable scene rendering trough Ray Tracing" OFF)
+option (XE_TESTING "Enable unit testings" OFF)
 
-OPTION (XE_EXAMPLES "Build examples" OFF)
+option (XE_EXAMPLES "Build examples" OFF)
+
+option (XE_MINIGAMES "Build minigames examples" OFF)
 
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 SET (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
@@ -74,8 +76,11 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 ADD_SUBDIRECTORY (src/xe)
 ADD_SUBDIRECTORY (src/xe.demo)
 ADD_SUBDIRECTORY (src/xe.main)
-# ADD_SUBDIRECTORY (src/xe.sandbox)
 ADD_SUBDIRECTORY (src/xmlpp)
+
+if(XE_MINIGAMES)
+    add_subdirectory (minigames/tetris)
+endif()
 
 IF (XE_TESTING)
 	ADD_SUBDIRECTORY (src/xe.tests)
