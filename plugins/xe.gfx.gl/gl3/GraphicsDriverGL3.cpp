@@ -386,8 +386,8 @@ namespace xe { namespace gfx { namespace gl3 {
         for(int i=0; i<material->getLayerCount(); ++i) {
             const MaterialLayer *layer = material->getLayer(i);
             
-            if (layer->hasTexture() == true) {
-                const TextureGL3 *texture = static_cast<const TextureGL3*>(layer->getTexture());
+            if (layer->texture) {
+                const TextureGL3 *texture = static_cast<const TextureGL3*>(layer->texture);
                 GLenum textureType = convTextureType(texture->getType());
                 GLuint textureId = texture->getTextureId();
 				
@@ -432,8 +432,8 @@ namespace xe { namespace gfx { namespace gl3 {
         for (int i=0; i<material->getLayerCount(); ++i) {
 			const MaterialLayer *layer = material->getLayer(i);
 
-            if (layer->hasTexture() == true) {
-                const TextureGL3 *texture = static_cast<const TextureGL3*>(layer->getTexture());
+            if (layer->texture) {
+                const TextureGL3 *texture = static_cast<const TextureGL3*>(layer->texture);
                 GLenum textureType = convTextureType(texture->getType());
                 
                 ::glActiveTexture(GL_TEXTURE0 + i);

@@ -1,11 +1,12 @@
 
+#pragma once
+
 #ifndef __EXENG_GRAPHICS_MATERIALLIBRARY_HPP__
 #define __EXENG_GRAPHICS_MATERIALLIBRARY_HPP__
 
 #include <string>
 #include <memory>
 #include <xe/gfx/Material.hpp>
-#include <xe/gfx/ShaderProgram.hpp>
 
 namespace xe { namespace gfx {
 	/**

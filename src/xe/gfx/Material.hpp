@@ -11,8 +11,10 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_GRAPHICS_MATERIAL_HPP__
-#define __EXENG_GRAPHICS_MATERIAL_HPP__
+#pragma once
+
+#ifndef __xe_gfx_material_hpp__
+#define __xe_gfx_material_hpp__
 
 #include <cassert>
 #include <vector>

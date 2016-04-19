@@ -45,10 +45,10 @@ namespace xe { namespace gfx {
 			material->setAttribute("diffuse", xe::Vector4f(colorDiffuse.r, colorDiffuse.g, colorDiffuse.b, 1.0f));
 			material->setAttribute("specular", xe::Vector4f(colorSpecular.r, colorSpecular.g, colorSpecular.b, 1.0f));
 
-			material->getLayer(0)->setTexture( this->getTextureManager()->getTexture(diffuseTextureId.C_Str()) );
-			material->getLayer(1)->setTexture( this->getTextureManager()->getTexture(specularTextureId.C_Str()) );
-			material->getLayer(2)->setTexture( this->getTextureManager()->getTexture(heightTextureId.C_Str()) );
-
+			material->getLayer(0)->texture = this->getTextureManager()->getTexture(diffuseTextureId.C_Str());
+			material->getLayer(1)->texture =  this->getTextureManager()->getTexture(specularTextureId.C_Str());
+			material->getLayer(2)->texture = this->getTextureManager()->getTexture(heightTextureId.C_Str());
+            
 			materials.push_back(material);
 		}
 
