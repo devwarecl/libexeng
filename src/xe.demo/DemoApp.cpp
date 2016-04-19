@@ -12,25 +12,29 @@ namespace xe {
         
         keyboard = graphicsDriver->getInputManager()->getKeyboard();
         
-        pipeline = std::make_unique<xe::PhongPipeline>(graphicsDriver.get());
+        pipeline = std::make_unique<xe::sg::PhongPipeline>(graphicsDriver.get());
         renderer = std::make_unique<xe::sg::SceneRendererGeneric>(pipeline.get());
+        
+        this->initializeScene();
+        
         renderer->setScene(&scene);
         
         running = true;
     }
     
-    void DemoApp::terminate() {
-        
+    void DemoApp::initializeScene() {
+        scene.setBackColor({0.2f, 0.2f, 0.8f, 1.0f});
     }
+    
+    void DemoApp::terminate() {}
     
     void DemoApp::doEvents() {
         xe::input2::KeyboardStatus *keyStatus = keyboard->getStatus();
         
         graphicsDriver->getInputManager()->poll();
         
-        if (keyStatus->isKeyPopped(xe::input2::KeyCode::KeyEsc)) {
-            running = false;
-        }
+        running = !keyStatus->isKeyPopped(xe::input2::KeyCode::KeyEsc);
+        
     }
     
     void DemoApp::update(const float seconds) {

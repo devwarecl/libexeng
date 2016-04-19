@@ -10,10 +10,16 @@
  * found in the file LICENSE in this distribution.
  */
 
+#include <map>
+#include <glbinding/Binding.h>
+#include <xe/DataType.hpp>
+#include <xe/Exception.hpp>
+#include <xe/input/IEventHandler.hpp>
+#include <xe/gfx/VertexFormat.hpp>
+#include <xe/gfx/Material.hpp>
+
 #include "GL3.hpp"
 #include "UtilGL3.hpp"
-#include <GLFW/glfw3.h>
-
 #include "GraphicsDriverGL3.hpp"
 #include "PluginGL3.hpp"
 #include "GraphicsDriverFactoryGL3.hpp"
@@ -24,19 +30,11 @@
 #include "ShaderProgramGL3.hpp"
 #include "MeshSubsetGL3.hpp"
 
-#include <xe/DataType.hpp>
-#include <xe/Exception.hpp>
-#include <xe/input/IEventHandler.hpp>
-#include <xe/gfx/VertexFormat.hpp>
-#include <xe/gfx/Material.hpp>
-
-#include <map>
-
-using namespace xe;
-using namespace xe::gfx;
-using namespace xe::input2;
-
 namespace xe { namespace gfx { namespace gl3 {
+
+    using namespace xe;
+    using namespace xe::gfx;
+    using namespace xe::input2;
 
     int GraphicsDriverGL3::initializedCount = 0;
 
@@ -67,12 +65,12 @@ namespace xe { namespace gfx { namespace gl3 {
             case DisplayStatus::Fullscreen: monitor = ::glfwGetPrimaryMonitor() ; break;
         }
         
-        ::glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+        ::glfwWindowHint(GLFW_RESIZABLE, 0);
         ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-        ::glfwWindowHint(GLFW_OPENGL_CORE_PROFILE, GL_TRUE);
+        ::glfwWindowHint(GLFW_OPENGL_CORE_PROFILE, 1);
 		::glfwWindowHint(GLFW_DEPTH_BITS, 24);
-		::glfwWindowHint(GLFW_DOUBLEBUFFER , GL_TRUE);
+		::glfwWindowHint(GLFW_DOUBLEBUFFER, 0);
 
         int width = displayMode.size.x;
         int height = displayMode.size.y;
@@ -84,7 +82,7 @@ namespace xe { namespace gfx { namespace gl3 {
         ::glfwMakeContextCurrent(window);
         
         // Initialize the OpenGL 3 core functions
-        ::ogl_LoadFunctions();
+        glbinding::Binding::initialize(false);
         
 		// Configure OpenGL state
 		::glEnable(GL_CULL_FACE);
@@ -120,37 +118,36 @@ namespace xe { namespace gfx { namespace gl3 {
         return this->initialized;
     }
 
-    void GraphicsDriverGL3::beginFrame(const Vector4f &color, ClearFlags::Flags flags) 
-    {
-#if defined(EXENG_DEBUG)
-        if (this->renderingFrame == true) {
-            std::string msg;
-            
-            msg += "GraphicsDriverGL3::beginFrame: ";
-            msg += "Can't rendering a new frame if the current one hasn't been completed.";
-            
-            EXENG_THROW_EXCEPTION(msg);
-        }       
-#endif
-        GLenum clearFlags = 0L;
-        clearFlags |= flags.isActivated(ClearFlags::Color)?GL_COLOR_BUFFER_BIT:0;
-        clearFlags |= flags.isActivated(ClearFlags::Depth)?GL_DEPTH_BUFFER_BIT:0;
-        clearFlags |= flags.isActivated(ClearFlags::Stencil)?GL_STENCIL_BUFFER_BIT:0;
+    void GraphicsDriverGL3::beginFrame(const Vector4f &color, ClearFlags::Flags flags)  {
+        assert(!renderingFrame);
+        assert(flags);
         
-#if defined(EXENG_DEBUG)
-        if (!clearFlags) {
-            std::string msg;
-            
-            msg += "GraphicsDriverGL3::beginScene: ";
-            msg += "Flags must be non 0.";
-            
-            EXENG_THROW_EXCEPTION(msg);
+        /*
+        int clearFlags;
+        
+        if (flags.isActivated(ClearFlags::Color)) {
+            clearFlags = GL_COLOR_BUFFER_BIT;
         }
-#endif  
-        ::glClearColor(color.x, color.y, color.z, color.w);
-        ::glClear(clearFlags);
         
-        this->renderingFrame = true;
+        if (flags.isActivated(ClearFlags::Depth)) {
+            clearFlags = GL_DEPTH_BUFFER_BIT;
+        }
+        
+        if (flags.isActivated(ClearFlags::Stencil)) {
+            clearFlags = GL_STENCIL_BUFFER_BIT;
+        }
+        
+        auto flag1 = flags.isActivated(ClearFlags::Color)?GL_COLOR_BUFFER_BIT:0;
+        auto flag2 = flags.isActivated(ClearFlags::Depth)?GL_DEPTH_BUFFER_BIT:0;
+        auto flag3 = flags.isActivated(ClearFlags::Stencil)?GL_STENCIL_BUFFER_BIT:0;
+        
+        auto clearFlags = flag1 | flag2 | flag3;
+        */
+        
+        ::glClearColor(color.x, color.y, color.z, color.w);
+        ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+        
+        renderingFrame = true;
         
         GL3_CHECK();
     }
@@ -340,7 +337,7 @@ namespace xe { namespace gfx { namespace gl3 {
 
 		} else {
 			const IndexFormat::Enum indexFormat = this->meshSubset->getIndexFormat();
-			const GLuint dataType = convIndexFormatType(indexFormat);
+			const GLenum dataType = convIndexFormatType(indexFormat);
 			const int indexCount = this->meshSubset->getIndexCount();
 
 			::glDrawElements(primitive, indexCount, dataType, nullptr);
@@ -366,7 +363,7 @@ namespace xe { namespace gfx { namespace gl3 {
         return shaderProgram;
     }
     
-    typedef void (CODEGEN_FUNCPTR *__glUniformfv)(GLint, GLsizei, const GLfloat *);
+    typedef void (*__glUniformfv)(GLint, GLsizei, const GLfloat *);
     
     inline __glUniformfv getUniformFunction(int dimension) 
     {
@@ -392,19 +389,14 @@ namespace xe { namespace gfx { namespace gl3 {
             if (layer->hasTexture() == true) {
                 const TextureGL3 *texture = static_cast<const TextureGL3*>(layer->getTexture());
                 GLenum textureType = convTextureType(texture->getType());
-                GLenum textureId = texture->getTextureId();
+                GLuint textureId = texture->getTextureId();
 				
 				std::string textureName = material->getFormat()->getLayerName(i);
 
                 GLuint textureLocation = ::glGetUniformLocation(programId, textureName.c_str());
-                GL3_CHECK();
-
+                
                 ::glUniform1i(textureLocation, i);
-                GL3_CHECK();
-
                 ::glActiveTexture(GL_TEXTURE0 + i);
-                GL3_CHECK();
-
                 ::glBindTexture(textureType, textureId);
 
 				GL3_CHECK();
@@ -437,7 +429,6 @@ namespace xe { namespace gfx { namespace gl3 {
     }
 
     void GraphicsDriverGL3::postRenderMaterial(const Material *material) {
-
         for (int i=0; i<material->getLayerCount(); ++i) {
 			const MaterialLayer *layer = material->getLayer(i);
 

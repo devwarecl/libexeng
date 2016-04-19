@@ -68,7 +68,7 @@ namespace xe  { namespace gfx { namespace gl3 {
             GLint status;
             ::glGetShaderiv(this->name, GL_COMPILE_STATUS, &status);
             
-            if (status == GL_FALSE) {
+            if (!status) {
                 // Get the log string length
                 GLint infoLogLength;
                 ::glGetShaderiv(this->name, GL_INFO_LOG_LENGTH, &infoLogLength);

@@ -7,6 +7,11 @@
 #ifndef __GL3_HPP__
 #define __GL3_HPP__
 
-#include "gl_core_3_3.h"
+#define GLFW_INCLUDE_NONE
+
+#include <glbinding/gl33core/gl.h>
+#include <GLFW/glfw3.h>
+
+using namespace gl33core;
 
 #endif	//__GL3_HPP__

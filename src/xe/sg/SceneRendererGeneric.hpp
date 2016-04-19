@@ -38,6 +38,6 @@ namespace xe { namespace sg {
 		xe::sg::Scene* scene = nullptr;
 		xe::sg::Pipeline* renderer = nullptr;
 	};
-
 }}
+
 #endif

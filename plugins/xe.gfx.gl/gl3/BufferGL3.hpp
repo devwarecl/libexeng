@@ -44,8 +44,8 @@ namespace xe { namespace gfx { namespace gl3 {
         }
 
     private:
-        ::GLuint bufferId = 0;
-        ::GLenum target = 0;
+        GLuint bufferId = 0;
+        GLenum target;
         
         HeapBufferPtr cacheBuffer;
         void *cache_ptr = nullptr;

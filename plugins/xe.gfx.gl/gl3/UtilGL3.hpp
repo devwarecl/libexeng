@@ -33,7 +33,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			case TextureType::Tex1D: return GL_TEXTURE_1D;
 			case TextureType::Tex2D: return GL_TEXTURE_2D;
 			case TextureType::Tex3D: return GL_TEXTURE_3D;
-			default: return GL_FALSE;
+			default: assert(false);
         }
     }
 
@@ -41,7 +41,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		switch (format) {
 			case PixelFormat::R8G8B8:	return GL_RGB;
 			case PixelFormat::R8G8B8A8:	return GL_RGBA;
-			default: return GL_FALSE;
+			default: assert(false);
 		}
     }
 
@@ -50,7 +50,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			case ShaderType::Vertex:    return GL_VERTEX_SHADER;
 			case ShaderType::Fragment:  return GL_FRAGMENT_SHADER;
 			case ShaderType::Geometry:  return GL_GEOMETRY_SHADER;
-			default: return GL_FALSE;
+			default: assert(false);
         }
     }
 	
@@ -59,7 +59,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			case ShaderType::Vertex:    return "vertex";
 			case ShaderType::Fragment:  return "fragment";
 			case ShaderType::Geometry:  return "geometry";
-			default: return GL_FALSE;
+			default: assert(false);
         }
     }
 
@@ -72,7 +72,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			case Primitive::TriangleList:   return GL_TRIANGLES;
 			case Primitive::TriangleStrip:  return GL_TRIANGLE_STRIP;
 			case Primitive::TriangleFan:    return GL_TRIANGLE_FAN;
-			default: return GL_FALSE;
+			default: assert(false);
         }
     }
 
@@ -85,7 +85,7 @@ namespace xe { namespace gfx { namespace gl3 {
 			case DataType::Int16:   return GL_SHORT;
 			case DataType::Int32:   return GL_INT;
 			case DataType::Float32: return GL_FLOAT;
-			default: return GL_FALSE;
+			default: assert(false);
         }
     }
 
@@ -93,7 +93,7 @@ namespace xe { namespace gfx { namespace gl3 {
 		switch (indexFormat) {
 			case IndexFormat::Index16:	return GL_UNSIGNED_SHORT;
 			case IndexFormat::Index32:	return GL_UNSIGNED_INT;
-			default: return GL_FALSE;
+			default: assert(false);
 		}
 	}
 

@@ -9,7 +9,7 @@
 extern std::string fshader_src;
 extern std::string vshader_src;
 
-namespace xe {
+namespace xe { namespace sg {
 
     PhongPipeline::PhongPipeline(xe::gfx::GraphicsDriver *graphicsDriver) {
         assert(graphicsDriver);
@@ -96,7 +96,7 @@ namespace xe {
     const xe::gfx::MaterialFormat* PhongPipeline::getMaterialFormat() const {
         return &materialFormat;
     }
-}
+}}
 
 std::string fshader_src = 
 R"(

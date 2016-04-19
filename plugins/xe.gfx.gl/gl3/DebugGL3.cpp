@@ -38,7 +38,7 @@ namespace xe { namespace gfx { namespace gl3 {
                     break;
 
 				default:
-					error = "Unknown GL error:" + std::to_string(err);
+					error = "Unknown GL error:" + std::to_string(static_cast<int>(err));
             }
 			
 			std::stringstream ss;

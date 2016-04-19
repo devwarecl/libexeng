@@ -27,6 +27,9 @@ namespace xe {
         }
         
     private:
+        void initializeScene();
+        
+    private:
         xe::gfx::GraphicsDriverPtr graphicsDriver;
         xe::input2::IKeyboard *keyboard = nullptr;
         xe::sg::PipelinePtr pipeline;

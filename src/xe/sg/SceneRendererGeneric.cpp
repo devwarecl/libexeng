@@ -50,6 +50,7 @@ namespace xe { namespace sg {
 	}
 
 	void SceneRendererGeneric::renderNode(xe::sg::TransformationStack *transformStack, xe::sg::SceneNode* node) {
+        assert(transformStack);
 		assert(node);
 
 		// std::cout << "SceneRendererGeneric::renderNode(" << node->getName() << ")" << std::endl;

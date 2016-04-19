@@ -111,7 +111,7 @@ namespace xe { namespace gfx { namespace gl3 {
         GLint status = 0;
         ::glGetProgramiv(this->programId, GL_LINK_STATUS, &status);
             
-        if (status == GL_FALSE) {
+        if (!status) {
             // Get the error string length
             GLint infoLogLength = 0;
             ::glGetProgramiv(this->programId, GL_INFO_LOG_LENGTH, &infoLogLength);

@@ -1,6 +1,8 @@
 
 set (target xe.gfx.gl)
 
+find_package(glbinding REQUIRED)
+
 find_package (OpenGL REQUIRED)
 include_directories (${OpenGL_INCLUDE_DIRS})
 link_directories (${OpenGL_LIBRARY_DIR})
@@ -45,6 +47,8 @@ target_link_libraries (${target}
     ${GLFW3_LIBRARY} 
     ${OPENGL_LIBRARIES} 
     ${Boost_LIBRARIES}
+    glbinding
+    
 )
 
 install (

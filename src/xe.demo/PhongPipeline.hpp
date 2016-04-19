@@ -1,8 +1,8 @@
 
 #pragma once
 
-#ifndef __xe_phongrenderer_hpp__
-#define __xe_phongrenderer_hpp__
+#ifndef __xe_sg_phongrenderer_hpp__
+#define __xe_sg_phongrenderer_hpp__
 
 #include <xe/gfx/Forward.hpp>
 #include <xe/gfx/ShaderProgram.hpp>
@@ -10,7 +10,7 @@
 #include <xe/gfx/VertexFormat.hpp>
 #include <xe/sg/Pipeline.hpp>
 
-namespace xe {
+namespace xe { namespace sg {
     class PhongPipeline : public xe::sg::Pipeline {
     public:
         explicit PhongPipeline(xe::gfx::GraphicsDriver *graphicsDriver);
@@ -39,6 +39,6 @@ namespace xe {
         xe::gfx::VertexFormat vertexFormat;
         xe::gfx::MaterialFormat materialFormat;
     };
-}
+}}
 
 #endif
