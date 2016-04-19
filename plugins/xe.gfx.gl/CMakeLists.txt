@@ -30,7 +30,6 @@ set (gl3_files
     gl3/UtilGL3.hpp
     gl3/BufferStatusGL3.hpp 
     gl3/GL3.hpp 
-    gl3/gl_core_3_3.h                   gl3/gl_core_3_3.c
     gl3/PluginGL3.hpp                   gl3/PluginGL3.cpp
     gl3/Context.hpp                     gl3/Context.cpp
 )
@@ -47,8 +46,7 @@ target_link_libraries (${target}
     ${GLFW3_LIBRARY} 
     ${OPENGL_LIBRARIES} 
     ${Boost_LIBRARIES}
-    glbinding
-    
+    glbinding    
 )
 
 install (
