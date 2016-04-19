@@ -22,41 +22,6 @@
 #include <xe/gfx/Texture.hpp>
 #include <xe/HeapBuffer.hpp>
 
-namespace xe { namespace gfx {
-	struct MaterialLayer::Private {
-		Texture* texture = nullptr;
-		std::string name;
-	};
-    
-	MaterialLayer::MaterialLayer() {
-        impl = new MaterialLayer::Private();
-    }
-
-	MaterialLayer::~MaterialLayer() {
-		boost::checked_delete(impl);
-	}
-
-	const Texture* MaterialLayer::getTexture() const {
-		assert(impl);
-		return impl->texture;
-	}
-
-	Texture* MaterialLayer::getTexture() {
-		assert(impl);
-		return impl->texture;
-	}
-    
-	void MaterialLayer::setTexture(Texture* texture) {
-		assert(impl);
-		impl->texture = texture;
-	}
-
-	bool MaterialLayer::hasTexture() const {
-		assert(impl);
-		return impl->texture != nullptr;
-	}
-}}
-
 
 // Material implementation
 namespace xe { namespace gfx {
@@ -209,12 +174,11 @@ namespace xe { namespace gfx {
 		const MaterialLayer *layer = nullptr;
     
 		for (int i=0; i<getLayerCount(); ++i ) {
-			layer = getLayer(i);
-        
-			if (layer->hasTexture() == true) {
-				if (layer->getTexture()->getTypeInfo() != textureTypeInfo) {
-					return false;
-				}
+            
+            Texture *texture = this->getLayer(i)->texture;
+            
+			if (texture && texture->getTypeInfo() != textureTypeInfo) {
+                return false;
 			}
 		}
     

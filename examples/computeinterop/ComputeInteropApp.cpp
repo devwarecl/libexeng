@@ -153,7 +153,7 @@ xe::sg::ScenePtr ComputeInteropApp::createScene() {
 	xe::gfx::Material *material = materialLibrary->createMaterial();
 
 	material->setAttribute("diffuse", xe::Vector4f(0.8f, 0.8f, 0.8f, 1.0f));
-	material->getLayer(0)->setTexture(texture);
+	material->getLayer(0)->texture = texture;
 
 	// generate box subset
 	auto subset = generator.generate({renderer->getVertexFormat()});

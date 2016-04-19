@@ -28,38 +28,31 @@
 #endif
 
 namespace xe { namespace gfx {
-
-    /**
-     * @brief Material Layer. Holds a texture, and associated state.
-     */
-    class EXENGAPI MaterialLayer {
-    public:
-        MaterialLayer();
-        ~MaterialLayer();
+    
+    struct TextureFilter : public Enum {
+        enum Enum {
+            Linear,
+            Nearest
+        };
+    };
+    
+    struct TextureWrap : public Enum {
+        enum Enum {
+            Clamp,
+            Repeat
+        };
+    };
+    
+    struct MaterialLayer {
+        Texture *texture = nullptr;
         
-        /**
-         * @brief Get the texture of the material.
-         */
-        const Texture* getTexture() const;
+        TextureFilter::Enum magFilter = TextureFilter::Linear;
+        TextureFilter::Enum minFilter = TextureFilter::Linear;
         
-        /**
-         * @brief Get the texture of the material.
-         */
-        Texture* getTexture();
-        
-        /**
-         * @brief Set the currently used texture
-         */
-        void setTexture(Texture* texture);
-        
-        /**
-         * @brief Check if the current material layer has a texture.
-         */
-        bool hasTexture() const;
-        
-    private:
-        struct Private;
-        Private *impl = nullptr;
+        TextureWrap::Enum xWrap = TextureWrap::Repeat;
+        TextureWrap::Enum yWrap = TextureWrap::Repeat;
+        TextureWrap::Enum zWrap = TextureWrap::Repeat;
+        TextureWrap::Enum wWrap = TextureWrap::Repeat;
     };
     
     struct MaterialAttrib {

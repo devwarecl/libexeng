@@ -164,8 +164,8 @@ namespace xe { namespace sg {
 
 		// backbuffer material
         impl->screenMaterial = std::make_unique<xe::gfx::Material>(&impl->screenMF);
-        impl->screenMaterial->getLayer(0)->setTexture(impl->screenTexture.get());
-
+        impl->screenMaterial->getLayer(0)->texture = impl->screenTexture.get();
+        
 		// generate custom vertex format
         impl->screenVF.fields[0] = {xe::gfx::VertexAttrib::Position, 2, xe::DataType::Float32};
         impl->screenVF.fields[1] = {xe::gfx::VertexAttrib::TexCoord, 2, xe::DataType::Float32};

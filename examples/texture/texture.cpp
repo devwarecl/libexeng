@@ -49,7 +49,7 @@ public:
     xe::gfx::MaterialPtr createMaterial() {
         auto material = std::make_unique<xe::gfx::Material>(&materialFormat);
         
-        material->getLayer(0)->setTexture(texture.get());
+        material->getLayer(0)->texture = texture.get();
 		material->setAttribute("ambient", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("diffuse", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material->setAttribute("specular", xe::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
