@@ -1,10 +1,10 @@
 
 #pragma once 
 
-#ifndef __xe_input2_keystatus_hpp__
-#define __xe_input2_keystatus_hpp__
+#ifndef __xe_input_keystatus__
+#define __xe_input_keystatus__
 
-namespace xe { namespace input2 {
+namespace xe { namespace input {
 	struct KeyStatus {
 		enum Enum {
 			Release,

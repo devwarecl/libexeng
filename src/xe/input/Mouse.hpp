@@ -3,10 +3,10 @@
 #include <xe/Enum.hpp>
 #include <xe/Config.hpp>
 #include <xe/Vector.hpp>
-#include <xe/input/IInputDevice.hpp>
+#include <xe/input/InputDevice.hpp>
 #include <xe/input/KeyStatus.hpp>
 
-namespace xe { namespace input2 {
+namespace xe { namespace input {
 
 	struct MouseButton : public Enum {
 		enum Enum {
@@ -81,9 +81,9 @@ namespace xe { namespace input2 {
 		Status previous;
 	};
 
-	class EXENGAPI IMouse : public IInputDevice {
+	class EXENGAPI Mouse : public InputDevice {
 	public:
-		virtual ~IMouse() {}
+		virtual ~Mouse() {}
 
 		virtual MouseStatus getStatus() = 0;
 	};

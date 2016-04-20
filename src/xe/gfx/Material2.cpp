@@ -3,5 +3,15 @@
 #include <cassert>
 
 namespace xe { namespace gfx {
-	Material2::~Material2() {}
+	Texture* Material::getTexture(const int index) {
+		return nullptr;	
+	}
+
+	const Texture* Material::getTexture(const int index) const {
+		return nullptr;
+	}
+
+	void Material::setTexture(const int index, Texture* texture) {
+
+	}
 }}

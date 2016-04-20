@@ -11,19 +11,20 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_GRAPHICS_GRAPHICSDRIVER_HPP__
-#define __EXENG_GRAPHICS_GRAPHICSDRIVER_HPP__
+#pragma once
+
+#ifndef __xe_gfx_graphicsdevice__
+#define __xe_gfx_graphicsdevice__
 
 #include <string>
 #include <vector>
 #include <memory>
 #include <xe/Enum.hpp>
 #include <xe/TFlags.hpp>
-#include <xe/Boundary.hpp>
 #include <xe/Vector.hpp>
 #include <xe/Matrix.hpp>
 #include <xe/Buffer.hpp>
-#include <xe/input/IInputManager.hpp>
+#include <xe/input/InputManager.hpp>
 #include <xe/gfx/Image.hpp>
 #include <xe/gfx/Material.hpp>
 #include <xe/gfx/PixelFormat.hpp>
@@ -73,36 +74,21 @@ namespace xe { namespace gfx {
     };
     
     /**
-    * @brief Encapsulate a display mode.
-    */
-    struct DisplayMode {
-		//! Width and height, in pixels.
-        Size2i size = Size2i(640, 480);
+     * @brief Encapsulate a display mode.
+     */
+    struct GraphicsDeviceMode {
+		int screenWidth = 800;
+		int screenHeight = 600;
 
-		//! Frame buffer colors.
-		Vector<std::uint8_t, 4> colorFormat = Vector<std::uint8_t, 4>(8, 8, 8, 8);
+		int redBits = 8;
+		int greenBits = 8;
+		int blueBits = 8;
+		int alphaBits = 8;
 
-		//! Other frame buffer 
-        int depthBits = 16;
-		int stencilBits = 0;
+		int depthBits = 16;
+		int stencilBits = 8;
 
-		//! Fullscreen or window?
         DisplayStatus::Enum status = DisplayStatus::Window;        
-        
-		DisplayMode() {}
-
-        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat) {
-			this->size = size;
-			this->colorFormat = colorFormat;
-		}
-
-        DisplayMode(const Size2i &size, const Vector<std::uint8_t, 4> &colorFormat, int depthBits, int stencilBits, DisplayStatus::Enum status) {
-			this->size = size;
-			this->colorFormat = colorFormat;
-			this->depthBits = depthBits;
-			this->stencilBits = stencilBits;
-			this->status = status;
-		}
     };
     
 	class EXENGAPI OpenGLGraphicsBackend {
@@ -116,11 +102,14 @@ namespace xe { namespace gfx {
     /**
      * @brief Software interface to graphics hardware
      */
-	class EXENGAPI GraphicsDriver {
+	class EXENGAPI GraphicsDevice {
+	public:
+		typedef std::unique_ptr<GraphicsDevice> Ptr;
+
     public:
-        virtual ~GraphicsDriver();
+		virtual ~GraphicsDevice() {}
         
-		virtual DisplayMode getDisplayMode() const = 0;
+		virtual GraphicsDeviceMode getMode() const = 0;
 
         /**
          * @brief Initializes the graphics driver, with the settings included. 
@@ -128,15 +117,7 @@ namespace xe { namespace gfx {
          * supplied settings.
          * @param displayMode The settings requested.
          */
-        virtual void initialize(const DisplayMode &displayMode) = 0;
-        
-        /**
-         * @brief Initializes the graphics driver, with the states specified by default
-         * on the DisplayMode structure.
-         * Throws exception if the graphics drives can't be initialized with the supplied settings.
-         * @param displayMode The settings requested.
-         */
-        virtual void initialize() = 0;
+        virtual void initialize(const GraphicsDeviceMode &mode = GraphicsDeviceMode()) = 0;
         
         /**
          * @brief Terminate the use of the graphics drivers, killing all resources 
@@ -145,7 +126,7 @@ namespace xe { namespace gfx {
         virtual void terminate() = 0;
         
         /**
-         * @brief Checks if the GraphicsDriver has been initialized.
+         * @brief Checks if the GraphicsDevice instance has been initialized.
          * @return true if the graphics drivers has been correctly initialized, 
          * and false in other case.
          */
@@ -154,10 +135,10 @@ namespace xe { namespace gfx {
         /**
          * @brief Start the rendering of a new frame, clearing the previous one
          */
-        virtual void beginFrame(const Vector4f &color, ClearFlags::Flags flags=ClearFlags::ColorDepth) = 0;
+		virtual void beginFrame(const Vector4f &color={0.0f, 0.0f, 0.0f, 1.0f}, ClearFlags::Flags flags=ClearFlags::ColorDepth) = 0;
         
         /**
-         * @brief Flip the backbuffer and the front buffer
+         * @brief Flip the backbuffer and the front buffer, showing the results on the screen.
          */
         virtual void endFrame() = 0;
         
@@ -285,8 +266,6 @@ namespace xe { namespace gfx {
 		 */
 		virtual void render(const xe::gfx::Mesh *mesh);
     };
-
-	typedef std::unique_ptr<GraphicsDriver> GraphicsDriverPtr;
 }}
 
 #endif

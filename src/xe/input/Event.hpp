@@ -1,50 +1,25 @@
-#pragma once
 
-#ifndef __xe_input2_event_hpp__
-#define __xe_input2_event_hpp__
+#pragma once 
 
-#include <cassert>
-#include <vector>
-#include <algorithm>
-#include <xe/input/IEvent.hpp>
+#ifndef __xe_input_event__
+#define __xe_input_event__
 
-namespace xe { namespace input2 {
+#include <xe/input/EventHandler.hpp>
+
+namespace xe { namespace input {
 	template<typename EventData>
-	class Event : public IEvent<EventData> {
+	class Event {
 	public:
-		Event() {}
 		virtual ~Event() {}
 
-		virtual int getHandlerCount() const override {
-			return handlers.size();
-		}
+		virtual int getHandlerCount() const = 0;
+		virtual EventHandler<EventData>* getHandler(const int index) = 0;
 
-		virtual IEventHandler<EventData>* getHandler(const int index) override {
-			assert(index >= 0);
-			assert(index < this->getHandlerCount());
+		virtual void addHandler(EventHandler<EventData>*) = 0;
+		virtual void removeHandler(EventHandler<EventData>*) = 0;
 
-			return handlers[index];
-		}
-
-		virtual void addHandler(IEventHandler<EventData>* handler) override {
-			handlers.push_back(handler);
-		}
-
-		virtual void removeHandler(IEventHandler<EventData>* handler) override {
-            std::remove(handlers.begin(), handlers.end(), handler);
-		}
-
-		virtual void raise(const EventData &eventData) override {
-			for (IEventHandler<EventData> *handler : this->handlers) {
-				if (!handler->handleEvent(eventData)) {
-					break;
-				}
-			}
-		}
-
-	private:
-		std::vector<IEventHandler<EventData>*> handlers;
+		virtual void raise(const EventData &) = 0;
 	};
 }}
 
-#endif 
+#endif

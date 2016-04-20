@@ -1,12 +1,12 @@
 
 #pragma once 
 
-#ifndef __xe_input2_keycode_hpp__
-#define __xe_input2_keycode_hpp__
+#ifndef __xe_input_keycode__
+#define __xe_input_keycode__
 
 #include <xe/Enum.hpp>
 
-namespace xe { namespace input2 {
+namespace xe { namespace input {
 	struct KeyCode : public Enum {
 		enum Enum {
 			Unknown,

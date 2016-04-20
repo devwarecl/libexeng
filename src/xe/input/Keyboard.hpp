@@ -5,19 +5,19 @@
 #define __xe_input2_ikeyboard_hpp__
 
 #include <string>
-#include <xe/input/IEvent.hpp>
-#include <xe/input/IInputDevice.hpp>
+#include <xe/input/Event.hpp>
+#include <xe/input/InputDevice.hpp>
 #include <xe/input/KeyboardStatus.hpp>
 #include <xe/input/KeyStroke.hpp>
 
-namespace xe { namespace input2 {
+namespace xe { namespace input {
 
 	/**
 	 * @brief Interface to the keyboard device
 	 */
-	class EXENGAPI IKeyboard : public IInputDevice {
+	class EXENGAPI Keyboard : public InputDevice {
 	public:
-		virtual ~IKeyboard() {}
+		virtual ~Keyboard() {}
 
 		/**
 		 * @brief Get the most recent key status
@@ -29,7 +29,7 @@ namespace xe { namespace input2 {
 		/**
 		 * @brief Get the key stroke event interface
 		 */
-		virtual IEvent<xe::input2::KeyStroke>* getKeyStrokeEvent() = 0;
+		virtual Event<xe::input2::KeyStroke>* getKeyStrokeEvent() = 0;
 	};
 }}
 

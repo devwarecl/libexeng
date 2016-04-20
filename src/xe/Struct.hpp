@@ -1,91 +1,61 @@
 
-#ifndef __xe_struct_hpp__
-#define __xe_struct_hpp__
+#pragma once
+
+#ifndef __xe_struct__
+#define __xe_struct__
 
 #include <string>
 #include <xe/Config.hpp>
 #include <xe/DataType.hpp>
 
 namespace xe {
-	/**
-	 * @brief 
-	 */
-	class EXENGAPI Field final {
-	public:
-		Field();
-		Field(const std::string &name, DataType::Enum type, int count, int align);
-		
-		~Field();
-		
-		int getSize() const;
-		
-		std::string getName() const;
-		
-		void setName(const std::string &name);
-		
-		void setType(DataType::Enum type);
-		
-		DataType::Enum getType() const;
-		
-		void setCount(const int count);
-		
-		int getCount() const;
-		
-		void setAlign(const int align);
-		
-		int getAlign() const;
-		
-		int getOffset() const;
-		
-		void setOffset(const int offset);
-		
-	private:
-		//! The name of the field
-		char name[16] = {};
-		
-		//! The storage datatype
+
+	struct Field {
+		std::string name;
 		DataType::Enum type = DataType::Unknown;
-		
-		//! The member field count of the specified type
 		int count = 0;
-		
-		//! The member alignment 
-		int align = 0;
-		
-		//! The memory offset 
-		int offset = 0;
+		int align = 1;
 
-	public:
-		template<typename BasicType>
-		static Field create(const std::string &fieldName) {
-			return Field (
+		std::size_t getSize() const {
+			const int temp_size = count * xe::DataType::getSize(type);
+            const int size = temp_size + temp_size%align;
+            
+            return size;
+		}
 
-			);
+		bool operator== (const Field &other) const {
+			if (name != other.name) {return false;}
+			if (type != other.type) {return false;}
+			if (count != other.count) {return false;}
+			if (align != other.align) {return false;}
+			
+			return true;
+		}
+
+        bool operator!= (const Field &other) const {
+			return !(*this == other);
 		}
 	};
-	
-	class EXENGAPI Struct final {
+
+	struct Format {
+		std::vector<Field> fields;
+
+		std::size_t getSize() const {
+			int size = 0;
+
+			for (const Field &field : fields) {
+				size += field.getSize();
+			}
+
+			return size;
+		}
+	};
+
+	template<typename Attrib1, typename Attrib2, typename Attrib3> 
+	class Struct {
 	public:
-		Struct();
-		explicit Struct(const int field_count);
-		
-		~Struct();
-		
-		int getFieldCount() const;
-		
-		Field* getField(const int index);
-		
-		const Field* getField(const int index) const;
-		
-		void computeOffsets();
-		
-		bool isValid() const;
-		
-		int getSize() const;
-		
-	private:
-		struct Private;
-		Private *impl = nullptr;
+		static StructFormat getFormat() {
+		}
 	};
 }
 

@@ -1,8 +1,8 @@
 
 #pragma once 
 
-#ifndef __xe_input2_keyboardstatus_hpp__
-#define __xe_input2_keyboardstatus_hpp__
+#ifndef __xe_input_keyboardstatus__
+#define __xe_input_keyboardstatus__
 
 #include <array>
 #include <algorithm>
@@ -10,7 +10,7 @@
 #include <xe/input/KeyStatus.hpp>
 #include <xe/input/KeyCode.hpp>
 
-namespace xe { namespace input2 {
+namespace xe { namespace input {
 	class EXENGAPI KeyboardStatus {
 	public:
 		KeyboardStatus();
@@ -23,6 +23,7 @@ namespace xe { namespace input2 {
 		bool isKeyReleased(KeyCode::Enum keyCode) const;
 		bool isKeyPushed(KeyCode::Enum keyCode) const;
 		bool isKeyPopped(KeyCode::Enum keyCode) const;
+
 	private:
 		static const int KEY_COUNT = KeyCode::Total + 1;
 

@@ -1,32 +1,32 @@
 
-#pragma once
+#pragma once 
 
-#ifndef __xe_input2_inputmanager_hpp__
-#define __xe_input2_inputmanager_hpp__
+#ifndef __xe_input_inputmanager__
+#define __xe_input_inputmanager__
 
-#include <xe/input/IInputManager.hpp>
+#include <xe/Config.hpp>
+#include <xe/input/Keyboard.hpp>
+#include <xe/input/Mouse.hpp>
 
-namespace xe { namespace input2 {
-
-	/**
-	 * @brief InputManager base implementation
-	 */
-	class EXENGAPI InputManager : public IInputManager {
+namespace xe { namespace input {
+	class EXENGAPI InputManager {
 	public:
+		virtual ~InputManager() {}
 
-		InputManager();
+		/**
+		 * @brief Get the current keyboard interface
+		 */
+		virtual Keyboard* getKeyboard() = 0;
 
-		virtual ~InputManager();
+		/**
+		 * @brief Get the current mouse interface
+		 */
+		virtual Mouse* getMouse() = 0;
 
-		virtual IKeyboard* getKeyboard() override;
-
-		virtual IMouse* getMouse() override;
-
-		virtual void poll() override;
-
-	protected:
-		IKeyboard *keyboard = nullptr;
-		IMouse *mouse = nullptr;
+		/**
+		 * Poll all available devices
+		 */
+		virtual void poll() = 0;
 	};
 }}
 
