@@ -1,5 +1,5 @@
 
-PROJECT (libexeng2)
+PROJECT (libexeng)
 
 CMAKE_MINIMUM_REQUIRED (VERSION 3.0)
 

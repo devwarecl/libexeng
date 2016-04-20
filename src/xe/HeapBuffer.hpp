@@ -1,31 +1,19 @@
-/**
- * @file 
- * @brief 
- */
 
+#pragma once
 
-/*
- * Copyright (c) 2013 Felipe Apablaza.
- *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution.
- */
-
-#ifndef __EXENG_HEAPBUFFER_HPP__
-#define __EXENG_HEAPBUFFER_HPP__
+#ifndef __xe_heapbuffer__
+#define __xe_heapbuffer__
 
 #include <memory>
 #include <vector>
 #include <xe/Buffer.hpp>
 
 namespace xe {
-
 	/**
-	 * @brief Implementation of the buffer class, for heap memory.
+	 * @brief Heap-memory based buffer
 	 */
 	class EXENGAPI HeapBuffer : public Buffer {
 	public:
-		/* HeapBuffer class specific methods */
 		HeapBuffer() {}
 
 		explicit HeapBuffer(const int size) {
@@ -45,44 +33,18 @@ namespace xe {
 
 		void free();
 
-		virtual const void* lock() const override {
-			return this->data;
+		virtual std::size_t getSize() const override {
+			return size;
 		}
 
-		virtual void* lock(BufferUsage::Enum) override {
-			return this->data;
-		}
+		virtual void read(void* destination, const int size = 0, const int offset = 0, const int destination_offset = 0) const override;
 
-		virtual void unlock() const override {}
-		virtual void unlock() override {}
-
-		/* Buffer class overrided methods*/
-		virtual int getSize() const override {
-			return this->size;
-		}
-
-		virtual int getHandle() const override {
-            return 0;
-		}
-
-		virtual void read(void* data, const int dataSize, const int dataOffset, const int bufferOffset) const override;
-
-		virtual void write(const void* data, const int dataSize, const int dataOffset, const int bufferOffset) override;
-
-		inline void read(void* data) const {
-			this->read(data, this->getSize(), 0, 0);
-		}
-
-		inline void write(const void* data) {
-			this->write(data, this->getSize(), 0, 0);
-		}
+		virtual void write(const void *source, const int size = 0, const int offset = 0, const int source_offset = 0) override;
 
 	private:
-		void* data = nullptr;
-		int size = 0;
+		std::uint8_t* data = nullptr;
+		std::size_t size = 0;
 	};
-
-	typedef std::unique_ptr<HeapBuffer> HeapBufferPtr;
 }
 
 #endif // __EXENG_HEAPBUFFER_HPP__

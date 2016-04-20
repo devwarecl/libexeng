@@ -16,8 +16,8 @@
 #include <xe/Exception.hpp>
 
 #include <cstdlib>
-#include <cstring>
-#include <stdexcept>
+#include <cstring>#
+#include <cassert>
 #include <memory>
 
 namespace xe {
@@ -25,11 +25,9 @@ namespace xe {
 	void HeapBuffer::alloc(const int size) {
 		free();
 
-		void* data = std::malloc(size);
+		std::uint8_t* data = static_cast<std::uint8_t*>(std::malloc(size));
 
-		if (!data) {
-			EXENG_THROW_EXCEPTION("No enough memory.");
-		}
+		assert(data);
 
 		if (data) {
 			this->data = data;
@@ -45,26 +43,25 @@ namespace xe {
 		}
 	}
 
-	void HeapBuffer::read(void* data, const int size, const int dataOffset, const int bufferOffset) const {
-#if defined (EXENG_DEBUG)
-		if (bufferOffset + size > this->getSize()) {
-			EXENG_THROW_EXCEPTION("Buffer overrun.");
-		}
-#endif
-		const std::uint8_t* srcData = static_cast<const std::uint8_t*>(this->data) + bufferOffset;
-		std::uint8_t* dstData = static_cast<std::uint8_t*>(data) + dataOffset;
+	void HeapBuffer::read(void* destination, const int size, const int offset, const int destination_offset) const {
+		assert(destination);
+		assert(offset + size < this->getSize());
 
-		std::memcpy(dstData, srcData, size);
+		std::memcpy (
+			static_cast<std::uint8_t*>(destination) + destination_offset, 
+			data + offset, 
+			size
+		);
 	}
 
-	void HeapBuffer::write(const void *data, const int size, const int dataOffset, const int bufferOffset) {
-#if defined (EXENG_DEBUG)
-		if (bufferOffset + size > this->getSize()) {
-			EXENG_THROW_EXCEPTION("Buffer overrun.");
-		}
-#endif
-		const std::uint8_t* srcData = static_cast<const std::uint8_t*>(data) + dataOffset;
-		std::uint8_t* dstData = static_cast<std::uint8_t*>(this->data) + bufferOffset;
-		std::memcpy(dstData, srcData, size);
+	void HeapBuffer::write(const void *source, const int size, const int offset, const int source_offset) {
+		assert(source);
+		assert(offset + size < this->getSize());
+
+		std::memcpy ( 
+			data + offset, 
+			static_cast<const std::uint8_t*>(source) + source_offset, 
+			size
+		);
 	}
 }

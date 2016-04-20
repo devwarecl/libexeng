@@ -1,5 +1,5 @@
 
-ADD_DEFINITIONS(-DEXENG_BUILD)
+add_definitions (-DEXENG_BUILD)
 
 set (BaseFiles_hpp 
 	Forward.hpp
@@ -247,7 +247,6 @@ add_library (xe SHARED
     ${SystemFiles}
     ${UtilFiles}
 )
-
 
 set_property (TARGET xe PROPERTY CXX_STANDARD 14)
 
