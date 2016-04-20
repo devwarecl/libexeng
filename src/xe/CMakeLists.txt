@@ -8,7 +8,6 @@ set (BaseFiles_hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
     HeapBuffer.hpp StaticBuffer.hpp 
 	ProductManager.hpp ProductManagerImpl.hpp
-	Timer.hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp
 	Application.hpp ApplicationRT.hpp 
 	
@@ -18,7 +17,7 @@ set (BaseFiles_hpp
 set (BaseFiles_cpp Enum.cpp Object.cpp 
     Version.cpp  Core.cpp TypeInfo.cpp
     Buffer.cpp HeapBuffer.cpp StaticBuffer.cpp
-    Timer_Win.cpp Timer_Unix.cpp Exception.cpp
+	Exception.cpp
 	Application.cpp ApplicationRT.cpp
 
 	Struct.cpp
