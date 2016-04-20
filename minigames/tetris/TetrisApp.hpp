@@ -6,10 +6,13 @@
 
 #include <xe/ApplicationRT.hpp>
 #include <xe/gfx/GraphicsDriver.hpp>
-#include <xe/input2/IKeyboard.hpp>
+#include <xe/gfx/Mesh.hpp>
 #include <xe/sg/Pipeline.hpp>
 #include <xe/sg/SceneRendererGeneric.hpp>
 #include <xe/sg/Scene.hpp>
+#include <xe/input2/IKeyboard.hpp>
+
+#include "PerspectiveCamera.hpp"
 
 namespace xe {
 
@@ -27,14 +30,27 @@ namespace xe {
         }
         
     private:
-        void initializeScene();
+        xe::sg::ScenePtr createScene();
+        
+        xe::gfx::MeshPtr createCubeMesh(xe::gfx::Material *material);
+        
+        xe::gfx::MaterialPtr createMaterial(const xe::Vector4f &color);
         
     private:
         xe::gfx::GraphicsDriverPtr graphicsDriver;
         xe::input2::IKeyboard *keyboard = nullptr;
         xe::sg::PipelinePtr pipeline;
         xe::sg::SceneRendererPtr renderer;
-        xe::sg::Scene scene;
+        xe::sg::ScenePtr scene;
+        
+        xe::sg::PerspectiveCamera camera;
+        
+        xe::gfx::MeshPtr cubeMesh1;
+        xe::gfx::MeshPtr cubeMesh2;
+        xe::gfx::MeshPtr cubeMesh3;
+        xe::gfx::MaterialPtr material1;
+        xe::gfx::MaterialPtr material2;
+        xe::gfx::MaterialPtr material3;
         
         bool running = false;
     };

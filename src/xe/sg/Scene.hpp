@@ -28,7 +28,7 @@ namespace xe { namespace sg {
      */
     class EXENGAPI Scene : public Object {
     public:
-        explicit Scene();
+        Scene();
         
         virtual ~Scene();
         

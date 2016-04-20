@@ -3,6 +3,7 @@ set (target tetris)
 set (sources 
     TetrisApp.hpp TetrisApp.cpp 
     PhongPipeline.hpp PhongPipeline.cpp 
+    PerspectiveCamera.hpp PerspectiveCamera.cpp
 )
 
 source_group(\\ FILES ${sources})
