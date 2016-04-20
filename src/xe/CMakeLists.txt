@@ -260,7 +260,7 @@ source_group(sg 		FILES ${ScenegraphFiles})
 source_group(sys	    FILES ${SystemFiles})
 source_group(util		FILES ${UtilFiles})
 
-TARGET_LINK_LIBRARIES(xe ${UNIX_LIBRARIES} xmlpp ${Boost_LIBRARIES} ${LIBXML2_LIBRARIES})
+TARGET_LINK_LIBRARIES(xe ${UNIX_LIBRARIES} ${Boost_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 INSTALL (
 	TARGETS xe 
