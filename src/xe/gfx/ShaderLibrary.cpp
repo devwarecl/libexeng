@@ -40,37 +40,43 @@ namespace xe { namespace gfx {
 	}
 
 	Shader* ShaderLibrary::createShader(const std::string &name, ShaderType::Enum type) {
-		assert(impl != nullptr);
+		//assert(impl != nullptr);
 
-		ShaderPtr shaderPtr = this->impl->driver->getModernModule()->createShader(type);
-		Shader* shader = shaderPtr.get();
+		//ShaderPtr shaderPtr = this->impl->driver->getModernModule()->createShader(type);
+		//Shader* shader = shaderPtr.get();
 
-		this->impl->shaders[name] = std::move(shaderPtr);
+		//this->impl->shaders[name] = std::move(shaderPtr);
 
-		return shader;
+		//return shader;
+
+        return nullptr;
 	}
 
 	ShaderProgram* ShaderLibrary::getProgram(const std::string &name) {
-		assert(impl != nullptr);
+		//assert(impl != nullptr);
 
-		ShaderProgram* program = nullptr;
+		//ShaderProgram* program = nullptr;
 
-		auto pos = this->impl->programs.find(name);
-		if (pos != this->impl->programs.end()) {
-			program = pos->second.get();
-		}
+		//auto pos = this->impl->programs.find(name);
+		//if (pos != this->impl->programs.end()) {
+		//	program = pos->second.get();
+		//}
 
-		return program;
+		//return program;
+
+        return nullptr;
 	}
 
 	ShaderProgram* ShaderLibrary::createProgram(const std::string &name) {
-		assert(impl != nullptr);
+		//assert(impl != nullptr);
 
-		ShaderProgramPtr programPtr = this->impl->driver->getModernModule()->createShaderProgram();
-		ShaderProgram* program = programPtr.get();
+		//ShaderProgramPtr programPtr = this->impl->driver->getModernModule()->createShaderProgram();
+		//ShaderProgram* program = programPtr.get();
 
-		this->impl->programs[name] = std::move(programPtr);
+		//this->impl->programs[name] = std::move(programPtr);
 
-		return program;
+		//return program;
+
+        return nullptr;
 	}
 }}

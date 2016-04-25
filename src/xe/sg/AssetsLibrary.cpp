@@ -2,12 +2,11 @@
 #include "AssetsLibrary.hpp"
 
 #include <map>
-#include <xe/StaticBuffer.hpp>
 #include <xe/Exception.hpp>
 
 namespace xe { namespace sg {
 	struct AssetLibrary::Private {
-		std::map<std::string, BufferPtr> assets;
+		std::map<std::string, Buffer::Ptr> assets;
 	};
 	
 	AssetLibrary::AssetLibrary() {
@@ -28,12 +27,12 @@ namespace xe { namespace sg {
 			EXENG_THROW_EXCEPTION("Invalid buffer size");
 		}
 #endif
-		StaticBufferPtr assetData = std::make_unique<StaticBuffer>(data, dataSize);
-		this->impl->assets[fileId] = std::move(assetData);
+		//StaticBufferPtr assetData = std::make_unique<StaticBuffer>(data, dataSize);
+		//this->impl->assets[fileId] = std::move(assetData);
 	}
 
-	void AssetLibrary::addAsset(const std::string &fileId, BufferPtr assetData) {
-		this->impl->assets[fileId] = std::move(assetData);
+	void AssetLibrary::addAsset(const std::string &fileId, Buffer::Ptr assetData) {
+		//this->impl->assets[fileId] = std::move(assetData);
 	}
 
 	Buffer* AssetLibrary::getAsset(const std::string &file) {

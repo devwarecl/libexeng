@@ -19,7 +19,7 @@ namespace xe { namespace cm {
         
         virtual ComputeLanguage::Enum getLanguage() const = 0;
         
-        virtual BufferPtr createBuffer(Queue *queue, const int size, const void *data = nullptr) = 0;
+        virtual Buffer::Ptr createBuffer(Queue *queue, const int size, const void *data = nullptr) = 0;
         
         virtual ProgramModulePtr createProgramModule(const std::string &source) = 0;
         

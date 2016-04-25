@@ -68,7 +68,7 @@ namespace xe { namespace gfx {
 	}
 
 	Texture* TextureManager::generateCheckerboard(const std::string &uri, const Vector2i &size, const Vector2i &tileSize) {
-		assert(impl);
+		/*assert(impl);
 
 		PixelFormat::Enum format = PixelFormat::R8G8B8A8;
 
@@ -100,44 +100,52 @@ namespace xe { namespace gfx {
 
 		impl->manager.putProduct(uri, std::move(texture));
 
-		return result;
+		return result;*/
+
+        return nullptr;
 	}
 
     Texture* TextureManager::create(const std::string &uri, const Vector2i &size) {
-		assert(impl);
+		//assert(impl);
 
-		PixelFormat::Enum format = PixelFormat::R8G8B8A8;
+		//PixelFormat::Enum format = PixelFormat::R8G8B8A8;
 
-		TexturePtr texture = getGraphicsDriver()->createTexture(size, format);
+		//TexturePtr texture = getGraphicsDriver()->createTexture(size, format);
 
-        impl->manager.putProduct(uri, std::move(texture));
+  //      impl->manager.putProduct(uri, std::move(texture));
 
-        return getTexture(uri);
+  //      return getTexture(uri);
+
+        return nullptr;
     }
 
     Texture* TextureManager::create(const std::string &uri, const Vector2i &size, const Vector4f &color) {
-		assert(impl);
+		//assert(impl);
 
-        Texture *texture = create(uri, size);
+  //      Texture *texture = create(uri, size);
 
-        auto locker = texture->getBuffer()->getLocker<Vector4ub>();
-        
-        Vector4ub *textureData = locker.getPointer();
-        for (int i=0; i<size.x * size.y; ++i) {
-			textureData[i] = static_cast<Vector4ub>(color * Vector4f(255.0f, 255.0f, 255.0f, 255.0f));
-        }
-        
-        return texture;
+  //      auto locker = texture->getBuffer()->getLocker<Vector4ub>();
+  //      
+  //      Vector4ub *textureData = locker.getPointer();
+  //      for (int i=0; i<size.x * size.y; ++i) {
+		//	textureData[i] = static_cast<Vector4ub>(color * Vector4f(255.0f, 255.0f, 255.0f, 255.0f));
+  //      }
+  //      
+  //      return texture;
+
+        return nullptr;
     }
 
 	Texture* TextureManager::create(const std::string &uri, const Image *image) {
-		assert(impl);
+		//assert(impl);
 
-		TexturePtr texture = getGraphicsDriver()->createTexture(image);
+		//TexturePtr texture = getGraphicsDriver()->createTexture(image);
 
-        impl->manager.putProduct(uri, std::move(texture));
+  //      impl->manager.putProduct(uri, std::move(texture));
 
-        return getTexture(uri);
+  //      return getTexture(uri);
+
+        return nullptr;
 	}
 
 	void TextureManager::cleanup() {

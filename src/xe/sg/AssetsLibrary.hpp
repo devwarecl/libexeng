@@ -15,7 +15,7 @@ namespace xe { namespace sg {
 		~AssetLibrary();
 
 		void addAsset(const std::string &fileId, void* data, const int dataSize);
-		void addAsset(const std::string &fileId, BufferPtr assetData);
+		void addAsset(const std::string &fileId, Buffer::Ptr assetData);
 		Buffer* getAsset(const std::string &fileId);
 		const Buffer* getAsset(const std::string &fileId) const;
 

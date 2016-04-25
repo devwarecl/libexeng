@@ -54,8 +54,7 @@ namespace xe {
 	template<typename Attrib1, typename Attrib2, typename Attrib3> 
 	class Struct {
 	public:
-		static StructFormat getFormat() {
-		}
+
 	};
 }
 

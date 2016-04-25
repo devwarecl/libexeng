@@ -17,14 +17,13 @@
 
 namespace xe { namespace gfx {
 
-	GraphicsDriver::~GraphicsDriver() {}
     
-	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(BufferPtr vertexBuffer, const VertexFormat *format) {
-		std::vector<BufferPtr> vertexBuffers;
+	xe::gfx::MeshSubsetPtr GraphicsDevice::createMeshSubset(Buffer::Ptr vertexBuffer, const VertexFormat *format) {
+		std::vector<Buffer::Ptr> vertexBuffers;
 
 		vertexBuffers.push_back(std::move(vertexBuffer));
 
-		BufferPtr ibuffer;
+		Buffer::Ptr ibuffer;
 		return this->createMeshSubset (
 			std::move(vertexBuffers), 
 			format, 
@@ -34,22 +33,27 @@ namespace xe { namespace gfx {
 
 	}
 
-	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(BufferPtr vertexBuffer, const VertexFormat *format, BufferPtr ibuffer, IndexFormat::Enum iformat) {
-		std::vector<BufferPtr> vertexBuffers;
-
-		vertexBuffers.push_back(std::move(vertexBuffer));
-
-		return this->createMeshSubset(std::move(vertexBuffers), format, std::move(ibuffer), iformat);
+	xe::gfx::MeshSubsetPtr GraphicsDevice::createMeshSubset(Buffer::Ptr vertexBuffer, const VertexFormat *format, Buffer::Ptr ibuffer, IndexFormat::Enum iformat) {
+		return xe::gfx::MeshSubsetPtr();
+        // std::vector<BufferPtr> vertexBuffers;
+		// vertexBuffers.push_back(std::move(vertexBuffer));
+		// return this->createMeshSubset(std::move(vertexBuffers), format, std::move(ibuffer), iformat);
 	}
 
-	xe::gfx::MeshSubsetPtr GraphicsDriver::createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat *vformat) {
-		BufferPtr ibuffer;
-		return this->createMeshSubset(std::move(vbuffers), vformat, std::move(ibuffer), IndexFormat::Unknown);
+	xe::gfx::MeshSubsetPtr GraphicsDevice::createMeshSubset(std::vector<Buffer::Ptr> vbuffers, const VertexFormat *vformat) {
+
+        return xe::gfx::MeshSubsetPtr();
+
+		// BufferPtr ibuffer;
+		// return this->createMeshSubset(std::move(vbuffers), vformat, std::move(ibuffer), IndexFormat::Unknown);
 	}
 
-    TexturePtr GraphicsDriver::createTexture(const Image *image) {
+    TexturePtr GraphicsDevice::createTexture(const Image *image) {
         assert(image);
 
+        return TexturePtr();
+
+        /*
 		if (image->getType() == ImageType::Img2D) {
 			Vector2i size = image->getSize();
                 
@@ -63,9 +67,10 @@ namespace xe { namespace gfx {
 		} else {
 			return nullptr;
 		}
+        */
 	}
 
-	void GraphicsDriver::render(const xe::gfx::Mesh *mesh) {
+	void GraphicsDevice::render(const xe::gfx::Mesh *mesh) {
 		assert(mesh);
 
 		for (int i=0; i<mesh->getSubsetCount(); i++) {

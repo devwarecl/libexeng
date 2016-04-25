@@ -29,7 +29,7 @@ namespace xe { namespace input {
 		/**
 		 * @brief Get the key stroke event interface
 		 */
-		virtual Event<xe::input2::KeyStroke>* getKeyStrokeEvent() = 0;
+		virtual Event<xe::input::KeyStroke>* getKeyStrokeEvent() = 0;
 	};
 }}
 

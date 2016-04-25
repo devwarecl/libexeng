@@ -1,4 +1,6 @@
 
+/*
+
 #include "Algorithm.hpp"
 
 #include <xe/Vector.hpp>
@@ -38,3 +40,4 @@ namespace xe { namespace gfx {
         }
     }
 }}
+*/

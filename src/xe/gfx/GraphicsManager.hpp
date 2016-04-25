@@ -97,13 +97,13 @@ namespace xe { namespace gfx {
          * @brief Create the best available graphics driver, from the current 
          * registered ones.
          */
-        GraphicsDriverPtr createDriver();
+        // GraphicsDriver::Ptr createDriver();
         
         /**
          * @brief Create the graphics driver corresponding with the
          * supplied driver desc.
          */
-        GraphicsDriverPtr createDriver(const GraphicsDriverInfo &info);
+        // GraphicsDriverPtr createDriver(const GraphicsDriverInfo &info);
 
 		/**
 		 * @brief Get available device descriptions.

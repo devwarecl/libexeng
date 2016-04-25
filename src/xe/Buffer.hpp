@@ -17,6 +17,7 @@
 
 #include <memory>
 #include <cstdint>
+#include <cassert>
 #include <xe/Object.hpp>
 
 namespace xe {
@@ -51,6 +52,105 @@ namespace xe {
 		 */
 		virtual std::string toString() const override;
 	};
+
+    struct HeapCachePolicy {
+	    explicit HeapCachePolicy(int size) {
+		    assert(size > 0);
+		    cache = (std::uint8_t *) std::malloc(size);
+	    }
+
+	    ~HeapCachePolicy() {
+		    std::free(cache);
+	    }
+
+	    std::uint8_t *cache = nullptr;
+    };
+
+    template<typename BufferCache, typename Type>
+    class BufferLocker {
+    public:
+	    BufferLocker(BufferCache &cache_, const int size_) : cache(cache_), size(size_) {
+            assert(size > 0);
+            assert(sizeof(Type) % size == 0);
+
+		    data = cache.lock();
+	    }
+        
+	    ~BufferLocker() {
+		    cache.unlock();
+	    }
+
+        const Type& operator[](const int index) const {
+            assert(index > 0);
+            assert(index < this->getCount());
+
+            return data[index];
+        }
+
+        Type& operator[](const int index) {
+            assert(index > 0);
+            assert(index < this->getCount());
+
+            return data[index];
+        }
+
+        const int getCount() const {
+            return sizeof(Type)/size;
+        }
+
+    private:
+	    BufferCache &cache;
+	    Type *data = nullptr;
+        const int size;
+    };
+
+    template<typename CachePolicy>
+    class BufferCache : public CachePolicy {
+    public:
+	    explicit BufferCache(Buffer::Ptr buffer_) : CachePolicy(buffer_->getSize()) {
+		    assert(cache);
+
+		    buffer = std::move(buffer_);
+		    buffer->read(cache);
+	    }
+	
+	    ~BufferCache() {}
+
+	    void write(const void* data) {
+		    buffer->write(data);
+	    }
+
+	    void read(void *data) const {
+		    buffer->read(data);
+	    }
+	
+        template<typename Type>
+	    BufferLocker<BufferCache<CachePolicy>, Type> getLocker() {
+		    return BufferLocker<BufferCache<CachePolicy>, Type>> (*this);
+	    }
+
+        template<typename Type>
+	    const BufferLocker< BufferCache<CachePolicy>, Type > getLocker() const {
+		    return BufferLocker<const BufferCache<CachePolicy>, Type>> (*this);
+	    }
+
+	    void* lock() {
+		    return cache;
+	    }
+
+	    void unlock() {
+		    buffer->write(cache);
+	    }
+
+	    const void* lock() const {
+		    return cache;
+	    }
+
+	    void unlock() const {}
+
+    private:
+	    Buffer::Ptr buffer;
+    };
 }
 
 #endif

@@ -101,16 +101,16 @@ namespace xe { namespace gfx {
 		 */
 		void fill() 
 		{
-            BufferLocker<std::uint8_t> locker(this->buffer.get(), BufferUsage::Write);
-            
-			std::uint8_t *bufferData = locker.getPointer();
+   //         BufferLocker<std::uint8_t> locker(this->buffer.get(), BufferUsage::Write);
+   //         
+			//std::uint8_t *bufferData = locker.getPointer();
 
-			for (int i=0; i<this->format->getAttribCount(); i++) {
-				const MaterialAttrib *attrib = this->format->getAttrib(i);
-				const int offset = this->format->getOffset(i);
+			//for (int i=0; i<this->format->getAttribCount(); i++) {
+			//	const MaterialAttrib *attrib = this->format->getAttrib(i);
+			//	const int offset = this->format->getOffset(i);
 
-				this->fillBuffer(&bufferData[offset], attrib->dataType, attrib->dimension);
-			}
+			//	this->fillBuffer(&bufferData[offset], attrib->dataType, attrib->dimension);
+			//}
 		}
 	};
     
@@ -145,36 +145,36 @@ namespace xe { namespace gfx {
 	}
 	
 	void Material::setAttribute(const int index, const void* data, const int size) {
-        assert(this->impl);
-        
-#if defined(EXENG_DEBUG)
-        if (!this->getFormat()) {
-            throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
-        }
-#endif
-        
-        BufferLocker<std::uint8_t> locker(this->impl->buffer.get(), BufferUsage::Write);
-        
-        const int offset = this->getFormat()->getOffset(index);
-        std::uint8_t* materialData = locker.getPointer();
-        
-        std::memcpy(materialData + offset, data, this->getFormat()->getAttrib(index)->getSize());
+//        assert(this->impl);
+//        
+//#if defined(EXENG_DEBUG)
+//        if (!this->getFormat()) {
+//            throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
+//        }
+//#endif
+//        
+//        BufferLocker<std::uint8_t> locker(this->impl->buffer.get(), BufferUsage::Write);
+//        
+//        const int offset = this->getFormat()->getOffset(index);
+//        std::uint8_t* materialData = locker.getPointer();
+//        
+//        std::memcpy(materialData + offset, data, this->getFormat()->getAttrib(index)->getSize());
     }
         
     void Material::getAttribute(const int index, void* data, const int size) const {
-        assert(this->impl);
-
-#if defined(EXENG_DEBUG)
-        if (!this->getFormat()) {
-            throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
-        }
-#endif
-        BufferLockerConst<std::uint8_t> locker(this->impl->buffer.get());
-        
-        const int offset = this->getFormat()->getOffset(index);
-        const std::uint8_t* materialData = locker.getPointer();
-        
-        std::memcpy(data, materialData + offset, this->getFormat()->getAttrib(index)->getSize());
+//        assert(this->impl);
+//
+//#if defined(EXENG_DEBUG)
+//        if (!this->getFormat()) {
+//            throw std::runtime_error("Material::setAttribute: The MaterialFormat instance is a nullptr.");
+//        }
+//#endif
+//        BufferLockerConst<std::uint8_t> locker(this->impl->buffer.get());
+//        
+//        const int offset = this->getFormat()->getOffset(index);
+//        const std::uint8_t* materialData = locker.getPointer();
+//        
+//        std::memcpy(data, materialData + offset, this->getFormat()->getAttrib(index)->getSize());
     }
 	
 	std::string Material::getName() const {

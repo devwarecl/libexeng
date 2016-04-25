@@ -42,12 +42,12 @@ namespace xe { namespace gfx {
 		
 	};
 
-    class EXENGAPI Material : public Object {
+    class EXENGAPI Material2 : public Object {
 	public:
-		typedef std::unique_ptr<Material> Ptr;
+		typedef std::unique_ptr<Material2> Ptr;
 
     public:
-		virtual ~Material() {}
+		virtual ~Material2() {}
 
 		virtual const MaterialFormat* getFormat() const = 0;
 

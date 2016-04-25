@@ -155,51 +155,39 @@ namespace xe { namespace gfx {
         /**
          * @brief Create a new hardware-based vertex buffer. 
          */
-        virtual BufferPtr createVertexBuffer(const std::int32_t size, const void* data = nullptr) = 0;
+        virtual Buffer::Ptr createVertexBuffer(const std::int32_t size, const void* data = nullptr) = 0;
         
 		template<typename Type>
-		BufferPtr createVertexBuffer(const std::vector<Type> &vertices) {
+		Buffer::Ptr createVertexBuffer(const std::vector<Type> &vertices) {
 			const int bufferSize = sizeof(Type) * vertices.size();
 			const void *bufferData = vertices.data();
 
 			return this->createVertexBuffer(bufferSize, bufferData);
 		}
 
-		BufferPtr createVertexBuffer(Buffer *buffer) {
-			BufferLocker<void> locker(buffer, BufferUsage::Read);
-            
-			return this->createVertexBuffer(buffer->getSize(), locker.getPointer());
-		}
-
         /**
          * @brief Like CreateVertexBuffer, create a new hardware based index buffer.
          */
-        virtual BufferPtr createIndexBuffer(const std::int32_t size, const void* data = nullptr) = 0;
+        virtual Buffer::Ptr createIndexBuffer(const std::int32_t size, const void* data = nullptr) = 0;
 
-		BufferPtr createIndexBuffer(Buffer *buffer) {
-            BufferLocker<void> locker(buffer, BufferUsage::Read);
-            
-			return this->createIndexBuffer(buffer->getSize(), locker.getPointer());
-		}
-        
 		template<typename Type>
-		BufferPtr createIndexBuffer(const std::vector<Type> &indices) {
+		Buffer::Ptr createIndexBuffer(const std::vector<Type> &indices) {
 			const int bufferSize = sizeof(Type) * indices.size();
 			const void *bufferData = indices.data();
 
 			return this->createIndexBuffer(bufferSize, bufferData);
 		}
 
-        MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, const VertexFormat *format);
+        MeshSubsetPtr createMeshSubset(Buffer::Ptr vertexBuffer, const VertexFormat *format);
 
-		MeshSubsetPtr createMeshSubset(BufferPtr vertexBuffer, const VertexFormat *format, BufferPtr ibuffer, IndexFormat::Enum iformat);
+		MeshSubsetPtr createMeshSubset(Buffer::Ptr vertexBuffer, const VertexFormat *format, Buffer::Ptr ibuffer, IndexFormat::Enum iformat);
 
-		MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat *vformat);
+		MeshSubsetPtr createMeshSubset(std::vector<Buffer::Ptr> vbuffers, const VertexFormat *vformat);
 
         /**
          * @brief Create a new mesh subset object.
          */
-        virtual MeshSubsetPtr createMeshSubset(std::vector<BufferPtr> vbuffers, const VertexFormat *vformat, BufferPtr ibuffer, IndexFormat::Enum iformat) = 0;
+        virtual MeshSubsetPtr createMeshSubset(std::vector<Buffer::Ptr> vbuffers, const VertexFormat *vformat, Buffer::Ptr ibuffer, IndexFormat::Enum iformat) = 0;
 
         /**
          * @brief Bound the specified MeshSubset object.
@@ -248,7 +236,7 @@ namespace xe { namespace gfx {
 		 */
 		virtual ModernModule* getModernModule() = 0;
 
-		virtual xe::input2::IInputManager* getInputManager() = 0;
+		virtual xe::input::InputManager* getInputManager() = 0;
         
         /** 
          * @brief Get the underlying graphics backend identification

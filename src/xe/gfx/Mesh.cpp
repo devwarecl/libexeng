@@ -173,75 +173,77 @@ namespace xe { namespace gfx {
      * @brief Detect intersection between a Ray and a MeshPart.
      */
     inline bool meshSubsetIntersect(MeshSubset *subset, const Ray &ray, IntersectInfo *intersectInfo=nullptr) {
-        if (Primitive::isTriangle(subset->getPrimitive()) == false) {
-            return false;
-        }
-        
-        Primitive::Enum type = subset->getPrimitive();
-        Buffer *vertexBuffer = subset->getBuffer(0);
-        
-        const VertexFormat *vertexFormat = subset->getFormat();
+  //      if (Primitive::isTriangle(subset->getPrimitive()) == false) {
+  //          return false;
+  //      }
+  //      
+  //      Primitive::Enum type = subset->getPrimitive();
+  //      Buffer *vertexBuffer = subset->getBuffer(0);
+  //      
+  //      const VertexFormat *vertexFormat = subset->getFormat();
 
-		auto locker = vertexBuffer->getLocker<void>();
+		//auto locker = vertexBuffer->getLocker<void>();
 
-        const void* vertexData = locker.getPointer();
-        
-        int vertexOffset = vertexFormat->getAttribOffset(VertexAttrib::Position);
-        int vertexStride = vertexFormat->getSize();
-        
-        // TODO: Handle properly the vertex format
-        IntersectInfo info;
-        
-        int triangleCount = getTriangleCount(vertexBuffer->getSize() / vertexFormat->getSize(), subset->getPrimitive());
-        
-        for (int triangleIndex=0; triangleIndex<triangleCount; triangleIndex++) {
-            IntersectInfo localInfo;
-            
-            // Get the triangle points, based on the triangle type and the vertex format
-            int i1, i2, i3;
-            
-            switch (type) {
-                case Primitive::TriangleList:
-                    i1 = getVertexIndex_TriangleList(triangleIndex, 0);
-                    i2 = getVertexIndex_TriangleList(triangleIndex, 1);
-                    i3 = getVertexIndex_TriangleList(triangleIndex, 2);
-                    break;
-                    
-                case Primitive::TriangleStrip:
-                    i1 = getVertexIndex_TriangleStrip(triangleIndex, 0);
-                    i2 = getVertexIndex_TriangleStrip(triangleIndex, 1);
-                    i3 = getVertexIndex_TriangleStrip(triangleIndex, 2);
-                    break;
-                    
-                case Primitive::TriangleFan:
-                    i1 = getVertexIndex_TriangleFan(triangleIndex, 0);
-                    i2 = getVertexIndex_TriangleFan(triangleIndex, 1);
-                    i3 = getVertexIndex_TriangleFan(triangleIndex, 2);
-                    break;
-                    
-                default: assert(false);
-            }
-            
-            // TODO: Get the normal vector from the mesh data, if exists.
-            const Vector3f &p1 = *reinterpret_cast<const Vector3f*>(static_cast<const float*>(vertexData) + i1*vertexStride + vertexOffset);
-            const Vector3f &p2 = *reinterpret_cast<const Vector3f*>(static_cast<const float*>(vertexData) + i2*vertexStride + vertexOffset);
-            const Vector3f &p3 = *reinterpret_cast<const Vector3f*>(static_cast<const float*>(vertexData) + i3*vertexStride + vertexOffset);
-            
-            Vector3f n = computeNormal(p1, p2, p3);
-            
-            if (intersectWithTriangle(p1, p2, p3, n, ray, &localInfo) && localInfo.distance >= 0.0f ) {
-                localInfo.material = subset->getMaterial();
-                if (localInfo.distance > info.distance) {
-                    info = localInfo;
-                }
-            }
-        }
-        
-        if (intersectInfo) {
-            *intersectInfo = info;
-        }
-        
-        return info.intersect;
+  //      const void* vertexData = locker.getPointer();
+  //      
+  //      int vertexOffset = vertexFormat->getAttribOffset(VertexAttrib::Position);
+  //      int vertexStride = vertexFormat->getSize();
+  //      
+  //      // TODO: Handle properly the vertex format
+  //      IntersectInfo info;
+  //      
+  //      int triangleCount = getTriangleCount(vertexBuffer->getSize() / vertexFormat->getSize(), subset->getPrimitive());
+  //      
+  //      for (int triangleIndex=0; triangleIndex<triangleCount; triangleIndex++) {
+  //          IntersectInfo localInfo;
+  //          
+  //          // Get the triangle points, based on the triangle type and the vertex format
+  //          int i1, i2, i3;
+  //          
+  //          switch (type) {
+  //              case Primitive::TriangleList:
+  //                  i1 = getVertexIndex_TriangleList(triangleIndex, 0);
+  //                  i2 = getVertexIndex_TriangleList(triangleIndex, 1);
+  //                  i3 = getVertexIndex_TriangleList(triangleIndex, 2);
+  //                  break;
+  //                  
+  //              case Primitive::TriangleStrip:
+  //                  i1 = getVertexIndex_TriangleStrip(triangleIndex, 0);
+  //                  i2 = getVertexIndex_TriangleStrip(triangleIndex, 1);
+  //                  i3 = getVertexIndex_TriangleStrip(triangleIndex, 2);
+  //                  break;
+  //                  
+  //              case Primitive::TriangleFan:
+  //                  i1 = getVertexIndex_TriangleFan(triangleIndex, 0);
+  //                  i2 = getVertexIndex_TriangleFan(triangleIndex, 1);
+  //                  i3 = getVertexIndex_TriangleFan(triangleIndex, 2);
+  //                  break;
+  //                  
+  //              default: assert(false);
+  //          }
+  //          
+  //          // TODO: Get the normal vector from the mesh data, if exists.
+  //          const Vector3f &p1 = *reinterpret_cast<const Vector3f*>(static_cast<const float*>(vertexData) + i1*vertexStride + vertexOffset);
+  //          const Vector3f &p2 = *reinterpret_cast<const Vector3f*>(static_cast<const float*>(vertexData) + i2*vertexStride + vertexOffset);
+  //          const Vector3f &p3 = *reinterpret_cast<const Vector3f*>(static_cast<const float*>(vertexData) + i3*vertexStride + vertexOffset);
+  //          
+  //          Vector3f n = computeNormal(p1, p2, p3);
+  //          
+  //          if (intersectWithTriangle(p1, p2, p3, n, ray, &localInfo) && localInfo.distance >= 0.0f ) {
+  //              localInfo.material = subset->getMaterial();
+  //              if (localInfo.distance > info.distance) {
+  //                  info = localInfo;
+  //              }
+  //          }
+  //      }
+  //      
+  //      if (intersectInfo) {
+  //          *intersectInfo = info;
+  //      }
+        /*
+        return info.intersect;*/
+
+        return false;
     }
 }}
 

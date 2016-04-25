@@ -3,7 +3,7 @@
 
 #include <cstring>
 
-namespace xe { namespace input2 {
+namespace xe { namespace input {
 	KeyboardStatus::KeyboardStatus() {}
 
 	void KeyboardStatus::setKeyStatus(KeyCode::Enum keyCode, KeyStatus::Enum keyStatus) {

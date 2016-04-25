@@ -14,12 +14,14 @@ namespace xe { namespace gfx {
 	}
 
 	TexturePtr TextureLoaderImage::load(const std::string &uri) {
-		Image *image = this->imageLoader->getImage(uri);
+		//Image *image = this->imageLoader->getImage(uri);
 
-		if (!image) {
-			return TexturePtr();
-		}
+		//if (!image) {
+		//	return TexturePtr();
+		//}
 
-		return this->getGraphicsDriver()->createTexture(image);
+		//return this->getGraphicsDriver()->createTexture(image);
+
+        return TexturePtr();
 	}
 }}

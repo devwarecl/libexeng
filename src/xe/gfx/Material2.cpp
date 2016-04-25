@@ -3,15 +3,15 @@
 #include <cassert>
 
 namespace xe { namespace gfx {
-	Texture* Material::getTexture(const int index) {
+	Texture* Material2::getTexture(const int index) {
 		return nullptr;	
 	}
 
-	const Texture* Material::getTexture(const int index) const {
+	const Texture* Material2::getTexture(const int index) const {
 		return nullptr;
 	}
 
-	void Material::setTexture(const int index, Texture* texture) {
+	void Material2::setTexture(const int index, Texture* texture) {
 
 	}
 }}

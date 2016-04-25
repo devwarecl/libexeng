@@ -13,16 +13,18 @@ namespace xe { namespace gfx {
     MeshSubsetGenerator::~MeshSubsetGenerator() {}
 
     MeshSubsetPtr MeshSubsetGenerator::generate(const MeshSubsetGeneratorParams &params) {
-        const int buffer_size = this->getVertexBufferSize(params);
-        const int ibuffer_size = this->getIndexBufferSize(params);
+        //const int buffer_size = this->getVertexBufferSize(params);
+        //const int ibuffer_size = this->getIndexBufferSize(params);
 
-        BufferPtr buffer = this->getGraphicsDriver()->createVertexBuffer(buffer_size);
-        BufferPtr ibuffer = this->getGraphicsDriver()->createIndexBuffer(ibuffer_size);
+        //Buffer::Ptr buffer = this->getGraphicsDriver()->createVertexBuffer(buffer_size);
+        //Buffer::Ptr ibuffer = this->getGraphicsDriver()->createIndexBuffer(ibuffer_size);
 
-        this->generateVertexBuffer(params, buffer.get());
-        this->generateIndexBuffer(params, ibuffer.get());
+        //this->generateVertexBuffer(params, buffer.get());
+        //this->generateIndexBuffer(params, ibuffer.get());
 
-        return this->getGraphicsDriver()->createMeshSubset(std::move(buffer), params.format, std::move(ibuffer), params.iformat);
+        //return this->getGraphicsDriver()->createMeshSubset(std::move(buffer), params.format, std::move(ibuffer), params.iformat);
+
+        return MeshSubsetPtr();
     }
 
     GraphicsDriver* MeshSubsetGenerator::getGraphicsDriver() {

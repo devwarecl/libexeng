@@ -5,8 +5,7 @@ set (BaseFiles_hpp
 	Forward.hpp
     DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
     Object.hpp Version.hpp Core.hpp
-    TypeInfo.hpp TFlags.hpp Buffer.hpp
-    HeapBuffer.hpp StaticBuffer.hpp 
+    TypeInfo.hpp TFlags.hpp Buffer.hpp HeapBuffer.hpp
 	ProductManager.hpp ProductManagerImpl.hpp
     Common.hpp Boundary.hpp Matrix.hpp Size.hpp Vector.hpp Exception.hpp Quaternion.hpp
 	Application.hpp ApplicationRT.hpp 
@@ -16,10 +15,11 @@ set (BaseFiles_hpp
 
 set (BaseFiles_cpp Enum.cpp Object.cpp 
     Version.cpp  Core.cpp TypeInfo.cpp
-    Buffer.cpp HeapBuffer.cpp StaticBuffer.cpp
+    Buffer.cpp 
 	Exception.cpp
 	Application.cpp ApplicationRT.cpp
 
+	HeapBuffer.cpp
 	Struct.cpp
 )
 set (BaseFiles ${BaseFiles_hpp} ${BaseFiles_cpp})
@@ -143,14 +143,14 @@ set (GraphicsFiles_cpp
 set (GraphicsFiles ${GraphicsFiles_hpp} ${GraphicsFiles_cpp})
 
 set (InputFiles_hpp
+	input/EventImpl.hpp 
 	input/Event.hpp 
-	input/IEvent.hpp 
-	input/IEventHandler.hpp 
-	input/IInputDevice.hpp 
-	input/IInputManager.hpp 
-	input/IKeyboard.hpp 
-	input/IMouse.hpp 
+	input/EventHandler.hpp 
+	input/InputDevice.hpp 
 	input/InputManager.hpp 
+	input/Keyboard.hpp 
+	input/Mouse.hpp 
+	input/InputManagerImpl.hpp 
 	input/KeyboardStatus.hpp 
 	input/KeyCode.hpp 
 	input/KeyStatus.hpp 
@@ -158,7 +158,7 @@ set (InputFiles_hpp
 )
 
 set (InputFiles_cpp
-	input/InputManager.cpp 
+	input/InputManagerImpl.cpp 
 	input/KeyboardStatus.cpp 
 )
 

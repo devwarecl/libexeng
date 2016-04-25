@@ -71,28 +71,28 @@ namespace xe { namespace gfx {
         factories.erase(pos);
     }
     
-    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver() {
-        assert(impl);
-        
-        for (auto element : impl->factories) {
-            return element.second->create();
-        }
-        
-        return nullptr;
-    }
-    
-    std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver(const GraphicsDriverInfo &info) {
-        assert(impl);
-        
-        auto &factories = impl->factories;
-        auto pos = factories.find(info);
-        
-        if (pos == factories.end()) {
-            throw std::runtime_error("GraphicsManager::createDriver -> Driver with the specified info not registered.");
-        }
-        
-        return pos->second->create();
-    }
+    //std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver() {
+    //    assert(impl);
+    //    
+    //    for (auto element : impl->factories) {
+    //        return element.second->create();
+    //    }
+    //    
+    //    return nullptr;
+    //}
+    //
+    //std::unique_ptr<GraphicsDriver> GraphicsManager::createDriver(const GraphicsDriverInfo &info) {
+    //    assert(impl);
+    //    
+    //    auto &factories = impl->factories;
+    //    auto pos = factories.find(info);
+    //    
+    //    if (pos == factories.end()) {
+    //        throw std::runtime_error("GraphicsManager::createDriver -> Driver with the specified info not registered.");
+    //    }
+    //    
+    //    return pos->second->create();
+    //}
 
 	std::vector<GraphicsDriverInfo> GraphicsManager::getAvailableDrivers() const {
 		assert(impl);
