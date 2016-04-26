@@ -67,16 +67,16 @@ namespace xe {
     };
 
     template<typename BufferCache, typename Type>
-    class BufferLocker {
+    class BufferWrapper {
     public:
-	    BufferLocker(BufferCache &cache_, const int size_) : cache(cache_), size(size_) {
+	    BufferWrapper(BufferCache &cache_, const int size_) : cache(cache_), size(size_) {
             assert(size > 0);
             assert(sizeof(Type) % size == 0);
 
 		    data = cache.lock();
 	    }
         
-	    ~BufferLocker() {
+	    ~BufferWrapper() {
 		    cache.unlock();
 	    }
 
@@ -116,14 +116,14 @@ namespace xe {
 	
 	    ~BufferCache() {}
 
-	    void write(const void* data) {
-		    buffer->write(data);
+	    void write(const void *source, const int size = 0, const int offset = 0, const int source_offset = 0) {
+		    buffer->write(source, size, offset, source_offset);
 	    }
 
-	    void read(void *data) const {
-		    buffer->read(data);
+	    void read(void* destination, const int size = 0, const int offset = 0, const int destination_offset = 0) const {
+		    buffer->read(destination, size, offset, destination_offset);
 	    }
-	
+	    
         template<typename Type>
 	    BufferLocker<BufferCache<CachePolicy>, Type> getLocker() {
 		    return BufferLocker<BufferCache<CachePolicy>, Type>> (*this);
