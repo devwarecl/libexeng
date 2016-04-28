@@ -53,6 +53,17 @@ namespace xe {
 		virtual std::string toString() const override;
 	};
 
+    template<int Size>
+    struct StackCachePolicy {
+	    explicit StackCachePolicy(int size) {
+		    static_assert(Size > 0);
+		    assert(Size >= size);
+		    assert(size > 0);
+	    }
+
+	    std::uint8_t cache[Size];
+    };
+
     struct HeapCachePolicy {
 	    explicit HeapCachePolicy(int size) {
 		    assert(size > 0);
@@ -107,7 +118,10 @@ namespace xe {
     template<typename CachePolicy>
     class BufferCache : public CachePolicy {
     public:
-	    explicit BufferCache(Buffer::Ptr buffer_) : CachePolicy(buffer_->getSize()) {
+        typedef BufferCache<CachePolicy> BufferCacheType;
+
+    public:
+	    explicit BufferCache(Buffer* buffer_) : CachePolicy(buffer_->getSize()) {
 		    assert(cache);
 
 		    buffer = std::move(buffer_);
@@ -125,13 +139,13 @@ namespace xe {
 	    }
 	    
         template<typename Type>
-	    BufferLocker<BufferCache<CachePolicy>, Type> getLocker() {
-		    return BufferLocker<BufferCache<CachePolicy>, Type>> (*this);
+	    BufferWrapper<BufferCacheType, Type> wrap() {
+		    return BufferLocker<BufferCacheType, Type>> (*this);
 	    }
 
         template<typename Type>
-	    const BufferLocker< BufferCache<CachePolicy>, Type > getLocker() const {
-		    return BufferLocker<const BufferCache<CachePolicy>, Type>> (*this);
+	    const BufferWrapper<const BufferCacheType, Type > wrap() const {
+		    return BufferWrapper<const BufferCacheType, Type>> (*this);
 	    }
 
 	    void* lock() {
@@ -149,7 +163,7 @@ namespace xe {
 	    void unlock() const {}
 
     private:
-	    Buffer::Ptr buffer;
+	    Buffer* buffer = nullptr;
     };
 }
 

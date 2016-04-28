@@ -8,6 +8,7 @@
 #include <cassert>
 #include <xe/DataType.hpp>
 #include <xe/Buffer.hpp>
+#include <xe/Struct.hpp>
 #include <xe/gfx/Texture.hpp>
 
 namespace xe { namespace gfx {
@@ -39,7 +40,7 @@ namespace xe { namespace gfx {
 	};
 
 	struct MaterialFormat {
-		
+
 	};
 
     class EXENGAPI Material2 : public Object {

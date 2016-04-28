@@ -7,16 +7,23 @@
 #include <string>
 #include <xe/Config.hpp>
 #include <xe/DataType.hpp>
+#include <xe/Vector.hpp>
 
 namespace xe {
 
+    /**
+     * @brief Field descriptor for structures
+     */
 	struct Field {
-		std::string name;
-		DataType::Enum type = DataType::Unknown;
-		int count = 0;
-		int align = 1;
+		std::string name;                           //! Name of the field
+		DataType::Enum type = DataType::Unknown;    //! Data type enumeration
+		int count = 0;                              //! Count of elements in the field
+		int align = 1;                              //! Field alignment
 
-		std::size_t getSize() const {
+        /**
+         * @brief Get the storage size, in bytes, of the field.
+         */
+		std::size_t getStorage() const {
 			const int temp_size = count * xe::DataType::getSize(type);
             const int size = temp_size + temp_size%align;
             
@@ -37,19 +44,19 @@ namespace xe {
 		}
 	};
 
-	struct Format {
-		std::vector<Field> fields;
+    template<typename Type>
+    struct FieldBuilder {
+        static Field build(const std::string &name) {
+            return {"", DataTypeTraits<Type>::Enum, 1, 1}
+        }
+    };
 
-		std::size_t getSize() const {
-			int size = 0;
-
-			for (const Field &field : fields) {
-				size += field.getSize();
-			}
-
-			return size;
-		}
-	};
+    template<typename Type, int Count>
+    struct FieldBuilder<Vector<Type, Count>>  {
+        static Field build(const std::string &name) {
+            return {name, Vector<Type, Count>::Enum, Count,  }
+        }
+    };
 
 	template<typename Attrib1, typename Attrib2, typename Attrib3> 
 	class Struct {
