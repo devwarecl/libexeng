@@ -1,8 +1,8 @@
 
 #pragma once
 
-#ifndef __xe_matrix2_hpp__
-#define __xe_matrix2_hpp__
+#ifndef __xe_matrix__
+#define __xe_matrix__
 
 #include <cassert>
 #include <cmath>
@@ -11,15 +11,14 @@
 #include <xe/Boundary.hpp>
 
 namespace xe {
-
 	template<typename Type, int RowCount, int ColumnCount>
-	class Matrix2 {
+	class Matrix {
 	public:
-		typedef Matrix2<Type, RowCount, ColumnCount> MatrixType;
+		typedef Matrix<Type, RowCount, ColumnCount> MatrixType;
 		static const int ValueCount = RowCount * ColumnCount;
 
 	public:
-		Matrix2() {}
+		Matrix() {}
 
 		// accessors
 		const Type& get(const int i, const int j) const {
@@ -588,13 +587,13 @@ namespace xe {
 		return result;
 	}
 
-	typedef Matrix2<float, 2, 2> Matrix2f;
-	typedef Matrix2<float, 3, 3> Matrix3f;
-    typedef Matrix2<float, 4, 4> Matrix4f;
+	typedef Matrix<float, 2, 2> Matrix2f;
+	typedef Matrix<float, 3, 3> Matrix3f;
+    typedef Matrix<float, 4, 4> Matrix4f;
 
-    typedef Matrix2<double, 2, 2> Matrix2d;
-    typedef Matrix2<double, 3, 3> Matrix3d;
-    typedef Matrix2<double, 4, 4> Matrix4d;
+    typedef Matrix<double, 2, 2> Matrix2d;
+    typedef Matrix<double, 3, 3> Matrix3d;
+    typedef Matrix<double, 4, 4> Matrix4d;
 }
 
 #endif

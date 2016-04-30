@@ -57,7 +57,7 @@ namespace xe { namespace gfx {
         TextureWrap::Enum wWrap = TextureWrap::Repeat;
     };
     
-    struct MaterialAttrib {
+    struct MaterialAttribDescriptor {
         std::string name;
         DataType::Enum dataType = DataType::Float32;
         int dimension = 4;

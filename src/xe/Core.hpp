@@ -18,10 +18,12 @@
 #include <xe/Config.hpp>
 #include <xe/Version.hpp>
 
-#include <xe/sys/Forward.hpp>
-#include <xe/sg/Forward.hpp>
-#include <xe/gfx/Forward.hpp>
-#include <xe/cm/Forward.hpp>
+#include <xe/sys/PluginManager.hpp>
+#include <xe/gfx/GraphicsManager.hpp>
+#include <xe/gfx/TextureManager.hpp>
+#include <xe/gfx/MeshManager.hpp>
+#include <xe/sg/SceneManager.hpp>
+#include <xe/cm/ComputeManager.hpp>
 
 namespace xe {
 	
@@ -36,22 +38,8 @@ namespace xe {
         virtual ~Core();
         
         Version getVersion() const;
-        
-        xe::sys::PluginManager* getPluginManager();
-        const xe::sys::PluginManager* getPluginManager() const;
-        
-        xe::gfx::GraphicsManager* getGraphicsManager();
-        const xe::gfx::GraphicsManager* getGraphicsManager() const;
-        
-		xe::sg::SceneManager* getSceneManager();
-        const xe::sg::SceneManager* getSceneManager() const;
 
-		xe::cm::ComputeManager* getComputeManager();
-		const xe::cm::ComputeManager* getComputeManager() const;
-
-    private:
-        struct Private;
-        Private *impl = nullptr;
+		xe::sys::PluginManager pluginManager;
     };
 }
 

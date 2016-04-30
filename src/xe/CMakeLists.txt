@@ -7,7 +7,8 @@ set (BaseFiles_hpp
     Object.hpp Version.hpp Core.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
     HeapBuffer.hpp StaticBuffer.hpp 
-	ProductManager.hpp ProductManagerImpl.hpp
+
+    ProductLoader.hpp ProductManager.hpp ProductManagerImpl.hpp
 	Timer.hpp
     Common.hpp Boundary.hpp Matrix.hpp Vector.hpp Exception.hpp Quaternion.hpp
 	Application.hpp ApplicationRT.hpp 
@@ -262,7 +263,6 @@ INSTALL (
 # INSTALL (FILES ExengConfig.cmake		DESTINATION lib/cmake/xe/)
 INSTALL (FILES ${BaseFiles_hpp}			DESTINATION include/xe)
 INSTALL (FILES ${AudioFiles_hpp}		DESTINATION include/xe/sfx)
-INSTALL (FILES ${ComputeFiles_hpp}		DESTINATION include/xe/cm)
 INSTALL (FILES ${GraphicsFiles_hpp}		DESTINATION include/xe/gfx)
 INSTALL (FILES ${InputFiles_hpp}		DESTINATION include/xe/input)
 INSTALL (FILES ${ScenegraphFiles_hpp}	DESTINATION include/xe/sg)
