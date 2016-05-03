@@ -6,7 +6,7 @@ set (BaseFiles_hpp
     DetectEnv.hpp Config.hpp Enum.hpp DataType.hpp 
     Object.hpp Version.hpp Core.hpp
     TypeInfo.hpp TFlags.hpp Buffer.hpp
-    HeapBuffer.hpp StaticBuffer.hpp 
+    HeapBuffer.hpp StaticBuffer.hpp
 
     ProductLoader.hpp ProductManager.hpp ProductManagerImpl.hpp
 	Timer.hpp

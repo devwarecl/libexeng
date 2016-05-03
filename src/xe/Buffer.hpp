@@ -10,8 +10,10 @@
  * found in the file LICENSE in this distribution.
  */
 
-#ifndef __EXENG_BUFFER_HPP__
-#define __EXENG_BUFFER_HPP__
+#pragma once
+
+#ifndef __xe_buffer__
+#define __xe_buffer__
 
 #include <cstdint>
 #include <memory>

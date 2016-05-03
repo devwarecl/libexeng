@@ -22,10 +22,16 @@ option (XE_MINIGAMES "Build minigames examples" OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_include_directories_PROJECT_BEFORE ON)
 
-set(XE_VERSION_MAJOR		0)
-set(XE_VERSION_MINOR		1)
-set(XE_VERSION_REVISION	1)
-set(DEST_BIN_DIR ${PROJECT_BINARY_DIR}/bin)
+# Engine version
+set(XE_VERSION_MAJOR    0)
+set(XE_VERSION_MINOR    1)
+set(XE_VERSION_REVISION 1)
+set(XE_VERSION_BUILD    0)
+
+add_definitions(-DXE_VERSION_MAJOR=${XE_VERSION_MAJOR})
+add_definitions(-DXE_VERSION_MINOR=${XE_VERSION_MINOR})
+add_definitions(-DXE_VERSION_REVISION=${XE_VERSION_REVISION})
+add_definitions(-DXE_VERSION_BUILD=${XE_VERSION_BUILD})
 
 # Enable dynamic library generation
 add_definitions (-DEXENG_DYNAMIC)

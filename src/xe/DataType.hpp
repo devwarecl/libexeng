@@ -65,7 +65,7 @@ namespace xe {
 			}
 		}
 
-		static int getSize(DataType::Enum dataType)  {
+		static std::size_t getSize(DataType::Enum dataType)  {
 			switch (dataType) {
 				case DataType::UInt8:
 				case DataType::Int8:

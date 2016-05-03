@@ -23,6 +23,7 @@
 #include <xe/Object.hpp>
 #include <xe/Vector.hpp>
 #include <xe/DataType.hpp>
+#include <xe/DataFormat.hpp>
 #include <xe/gfx/Forward.hpp>
 
 #if defined(EXENG_DEBUG)
@@ -45,7 +46,11 @@ namespace xe { namespace gfx {
         };
     };
     
+    typedef Attrib MaterialAttrib;
+
     struct MaterialLayer {
+        std::string name;
+
         Texture *texture = nullptr;
         
         TextureFilter::Enum magFilter = TextureFilter::Linear;
@@ -57,58 +62,10 @@ namespace xe { namespace gfx {
         TextureWrap::Enum wWrap = TextureWrap::Repeat;
     };
     
-    struct MaterialAttribDescriptor {
-        std::string name;
-        DataType::Enum dataType = DataType::Float32;
-        int dimension = 4;
-        int alignment = 1;
+    struct MaterialFormat : public DataFormat<MaterialAttrib, 8> {
         
-        int getSize() const;
-        
-        MaterialAttrib();
-        
-        MaterialAttrib (std::string name, 
-            DataType::Enum dataType = DataType::Float32, 
-            int dimension = 4, 
-            int alignment = 1);
-        
-        bool operator== (const MaterialAttrib &other) const;
-        bool operator!= (const MaterialAttrib &other) const;
     };
-    
-	struct MaterialLayerDesc {
-		std::string name;
-	};
 
-    class MaterialFormat {
-    public:
-        MaterialFormat();
-        
-        MaterialFormat(const std::vector<MaterialAttrib> &attribs, const std::vector<MaterialLayerDesc> &layerdecs = std::vector<MaterialLayerDesc>());
-        
-        int getSize() const;
-        
-        int getOffset(int attribIndex) const;
-        
-        int getAttribCount() const;
-        
-        const MaterialAttrib* getAttrib(const int index) const;
-        
-		const int getAttribIndex(const std::string &name) const;
-
-		const MaterialAttrib* getAttrib(const std::string &name) const;
-        
-		std::string getLayerName(const int index) const;
-
-		bool operator== (const MaterialFormat &other) const;
-        
-        bool operator!= (const MaterialFormat &other) const;
-		
-    private:
-        std::vector<MaterialAttrib> attribs;
-		std::vector<MaterialLayerDesc> layerdecs;
-    };
-    
     /**
      * @brief Describes the visual appearance of the objects.
      * @note Class interface subject to change.

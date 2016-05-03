@@ -29,6 +29,6 @@ namespace xe {
 
     Version Core::getVersion() const {
         //! TODO: put here the version information 
-        return Version(1, 0, 0, 1);
+        return {XE_VERSION_MAJOR, XE_VERSION_MINOR, XE_VERSION_REVISION, XE_VERSION_BUILD};
     }    
 }

@@ -64,7 +64,6 @@ namespace xe {
 		int build = 0;
 	};
 	
-	
 	inline Version::Version() {}
 	
 	inline Version::Version(int Major, int Minor, int Revision, int Build) {
@@ -75,31 +74,25 @@ namespace xe {
 		*this = Other;
 	}
 	
-	
 	inline int Version::getMajor() const {
 		return this->_major;
 	}
-	
 	
 	inline int Version::getMinor() const {
 		return this->_minor;
 	}
 	
-	
 	inline int Version::getRevision() const {
 		return this->revision;
 	}
-	
 	
 	inline int Version::getBuild() const {
 		return this->build;
 	}
 	
-	
 	inline void Version::setMajor(int Value) {
 		this->_major = Value;
 	}
-	
 	
 	inline void Version::setMinor(int Value) {
 		this->_minor = Value;
