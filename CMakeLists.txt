@@ -19,31 +19,31 @@ option (XE_EXAMPLES "Build examples" OFF)
 
 option (XE_MINIGAMES "Build minigames examples" OFF)
 
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-SET (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_include_directories_PROJECT_BEFORE ON)
 
-SET (XE_VERSION_MAJOR		0)
-SET (XE_VERSION_MINOR		1)
-SET (XE_VERSION_REVISION	1)
-SET (DEST_BIN_DIR ${PROJECT_BINARY_DIR}/bin)
+set(XE_VERSION_MAJOR		0)
+set(XE_VERSION_MINOR		1)
+set(XE_VERSION_REVISION	1)
+set(DEST_BIN_DIR ${PROJECT_BINARY_DIR}/bin)
 
 # Enable dynamic library generation
-ADD_DEFINITIONS (-DEXENG_DYNAMIC)
+add_definitions (-DEXENG_DYNAMIC)
 
 # Prepropressor for Visual C++
-ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)	
-ADD_DEFINITIONS (-D_SCL_SECURE_NO_WARNINGS)
+add_definitions (-D_CRT_SECURE_NO_WARNINGS)	
+add_definitions (-D_SCL_SECURE_NO_WARNINGS)
 
 # Boost.
-SET (Boost_USE_STATIC_LIBS OFF)
-SET (Boost_USE_MULTITHREADED ON)
-SET (Boost_USE_STATIC_RUNTIME OFF)
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
 
-ADD_DEFINITIONS (-DBOOST_ALL_DYN_LINK)
-ADD_DEFINITIONS (-DBOOST_ALL_NO_LIB)
-ADD_DEFINITIONS (-DBOOST_TEST_DYN_LINK)
+add_definitions (-DBOOST_ALL_DYN_LINK)
+add_definitions (-DBOOST_ALL_NO_LIB)
+add_definitions (-DBOOST_TEST_DYN_LINK)
 
-FIND_PACKAGE (Boost 
+find_package (Boost 
 	COMPONENTS 
 		filesystem 
 		system 
@@ -54,45 +54,45 @@ FIND_PACKAGE (Boost
 	REQUIRED
 )
 
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
+link_directories(${Boost_LIBRARY_DIRS})
 
 # libxml2
-FIND_PACKAGE(libxml2 REQUIRED)
-INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIRS})
+find_package(libxml2 REQUIRED)
+include_directories(${LIBXML2_INCLUDE_DIR})
+include_directories(${LIBXML2_INCLUDE_DIRS})
 
 # Additional import libraries for unix
-SET (UNIX_LIBRARIES "")
+set(UNIX_LIBRARIES "")
 
-IF(UNIX AND NOT APPLE)
-	SET (UNIX_LIBRARIES dl rt)	
-ENDIF()
-
-# 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+if(UNIX AND NOT APPLE)
+	set(UNIX_LIBRARIES dl rt)	
+endif()
 
 # 
-ADD_SUBDIRECTORY (src/xe)
-ADD_SUBDIRECTORY (src/xe.demo)
-ADD_SUBDIRECTORY (src/xe.main)
-ADD_SUBDIRECTORY (src/xmlpp)
+include_directories(${PROJECT_SOURCE_DIR}/src)
+
+# 
+add_subdirectory (src/xe)
+add_subdirectory (src/xe.demo)
+add_subdirectory (src/xe.main)
+add_subdirectory (src/xmlpp)
 
 if(XE_MINIGAMES)
     add_subdirectory (minigames/tetris)
 endif()
 
-IF (XE_TESTING)
-	ADD_SUBDIRECTORY (src/xe.tests)
-ENDIF ()
+if(XE_TESTING)
+	add_subdirectory (src/xe.tests)
+endif()
 
-IF (XE_RT)
-    ADD_SUBDIRECTORY (src/xe.rt)
-	ADD_SUBDIRECTORY (src/xe.sg.sw)
-ENDIF ()
+if(XE_RT)
+    add_subdirectory (src/xe.rt)
+	add_subdirectory (src/xe.sg.sw)
+endif()
 
 # Add example programs
-if (XE_EXAMPLES)
+if(XE_EXAMPLES)
 	add_subdirectory(examples/scene)
 	add_subdirectory(examples/triangle)
 	add_subdirectory(examples/texture)
@@ -104,26 +104,26 @@ if (XE_EXAMPLES)
 endif()
 
 # Engine plugins
-IF(XE_GFX_GL)
-	ADD_SUBDIRECTORY (plugins/xe.gfx.gl)
-ENDIF ()
+if(XE_GFX_GL)
+	add_subdirectory (plugins/xe.gfx.gl)
+endif()
 
-IF(XE_SG_XML)
-	ADD_SUBDIRECTORY (plugins/xe.sg.scene_xml)
-ENDIF()
+if(XE_SG_XML)
+	add_subdirectory (plugins/xe.sg.scene_xml)
+endif()
 
-IF(XE_GFX_FI)
-	ADD_SUBDIRECTORY (plugins/xe.gfx.fi)
-ENDIF()
+if(XE_GFX_FI)
+	add_subdirectory (plugins/xe.gfx.fi)
+endif()
 
-IF(XE_GFX_LWO)
-	ADD_SUBDIRECTORY (plugins/xe.gfx.lwo)
-ENDIF()
+if(XE_GFX_LWO)
+	add_subdirectory (plugins/xe.gfx.lwo)
+endif()
 
-IF(XE_CM_CL)
-	ADD_SUBDIRECTORY (plugins/xe.cm.cl)
-ENDIF()
+if(XE_CM_CL)
+	add_subdirectory (plugins/xe.cm.cl)
+endif()
 
-IF(XE_GFX_ASSIMP)
-	ADD_SUBDIRECTORY (plugins/xe.gfx.assimp)
-ENDIF()
+if(XE_GFX_ASSIMP)
+	add_subdirectory (plugins/xe.gfx.assimp)
+endif()

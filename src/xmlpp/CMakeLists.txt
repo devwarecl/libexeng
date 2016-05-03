@@ -1,7 +1,7 @@
 
 # Simple C++ Wrapper over libxml2
 
-FIND_PACKAGE(libxml2 REQUIRED)
+find_package(libxml2 REQUIRED)
 
 IF(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64") 
     ADD_DEFINITIONS(-fPIC) 

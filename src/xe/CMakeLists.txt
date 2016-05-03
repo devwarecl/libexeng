@@ -66,7 +66,7 @@ set (GraphicsFiles_hpp
     gfx/Primitive.hpp
     gfx/ShaderType.hpp           
     gfx/TextureType.hpp			
-    gfx/GraphicsDriver.hpp       
+    gfx/Device.hpp       
     gfx/GraphicsDriverBase.hpp   
     gfx/GraphicsManager.hpp      
     gfx/Image.hpp                
@@ -81,7 +81,7 @@ set (GraphicsFiles_hpp
     gfx/Shader.hpp               
     gfx/ShaderProgram.hpp        
 	gfx/Forward.hpp        
-    gfx/MeshSubset.hpp			
+    gfx/Subset.hpp			
     gfx/MeshSubsetBase.hpp	
 	gfx/Algorithm.hpp
 	gfx/Mesh.hpp
@@ -103,7 +103,7 @@ set (GraphicsFiles_hpp
 
 set (GraphicsFiles_cpp
     gfx/TextureType.cpp 
-    gfx/GraphicsDriver.cpp 
+    gfx/Device.cpp 
     gfx/GraphicsManager.cpp 
     gfx/Image.cpp 
 	gfx/ImageLoader.cpp 
@@ -116,7 +116,7 @@ set (GraphicsFiles_cpp
     gfx/Texture.cpp
     gfx/Shader.cpp
     gfx/ShaderProgram.cpp
-    gfx/MeshSubset.cpp
+    gfx/Subset.cpp
 	gfx/Algorithm.cpp
 	gfx/Mesh.cpp
     gfx/MeshManager.cpp
