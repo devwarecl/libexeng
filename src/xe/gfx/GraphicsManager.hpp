@@ -19,7 +19,7 @@
 
 #include <xe/Object.hpp>
 #include <xe/Version.hpp>
-#include <xe/gfx/GraphicsDriver.hpp>
+#include <xe/gfx/Device.hpp>
 #include <xe/gfx/ImageLoader.hpp>
 #include <xe/gfx/TextureManager.hpp>
 #include <xe/gfx/MeshManager.hpp>
