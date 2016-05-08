@@ -11,6 +11,7 @@
  * found in the file LICENSE in this distribution.
  */
 
+#pragma once
 
 #ifndef __EXENG_GRAPHICS_TEXTURE_HPP__
 #define __EXENG_GRAPHICS_TEXTURE_HPP__
@@ -35,7 +36,7 @@ namespace xe { namespace gfx {
             PositiveZ, NegativeZ
         };
 
-		inline std::array<TextureCubeMapFace::Enum, 6> enumerate() {
+		std::array<TextureCubeMapFace::Enum, 6> enumerate() {
 			return {PositiveX, NegativeX, PositiveY, NegativeY, PositiveZ, NegativeZ};
 		}
     };
@@ -45,9 +46,10 @@ namespace xe { namespace gfx {
      */
     class EXENGAPI Texture : public Object {
     public:
-        Texture();
-        
-        virtual ~Texture();
+        typedef std::unique_ptr<Texture> Ptr;
+
+    public:
+        virtual ~Texture() {}
 
 		virtual Buffer* getBuffer() = 0;
 
@@ -80,8 +82,6 @@ namespace xe { namespace gfx {
          */
         virtual int getHandle() const = 0;
     };
-
-	typedef std::unique_ptr<Texture> TexturePtr;
 }}
 
 #endif  // __EXENG_GRAPHICS_TEXTURE_HPP__

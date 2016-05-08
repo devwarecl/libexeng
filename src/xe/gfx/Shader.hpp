@@ -25,9 +25,10 @@ namespace xe { namespace gfx {
      */
     class EXENGAPI Shader : public Object {
     public:
-        Shader();
-    
-        virtual ~Shader();
+        typedef std::unique_ptr<Shader> Ptr;
+
+    public:    
+        virtual ~Shader() {}
     
         /**
          * @brief Set the current source code for the shader.
@@ -63,8 +64,6 @@ namespace xe { namespace gfx {
          */
         virtual ShaderType::Enum getType() const = 0;
     };
-
-	typedef std::unique_ptr<Shader> ShaderPtr;
 }}
 
 #endif // __EXENG_GRAPHICS_SHADER_HPP__

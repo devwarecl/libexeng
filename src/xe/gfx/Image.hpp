@@ -42,7 +42,10 @@ namespace xe { namespace gfx {
 	 */
     class EXENGAPI Image : public Object {
     public:
-		virtual ~Image();
+	    typedef std::unique_ptr<Image> Ptr;
+
+    public:
+        virtual ~Image() {}
 
 		virtual Buffer* getBuffer() = 0;
 
@@ -55,7 +58,6 @@ namespace xe { namespace gfx {
 		virtual Vector3i getSize() const = 0;
     };
 
-	typedef std::unique_ptr<Image> ImagePtr;
 }}
 
-#endif  //__EXENG_GRAPHICS_IMAGE_HPP__
+#endif 
